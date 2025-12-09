@@ -1,0 +1,31 @@
+# Unreal 기본 무시
+/Binaries/
+/Intermediate/
+/DerivedDataCache/
+/Saved/
+/Build/
+/.plugins/
+
+# VS / Rider
+*.sln
+*.suo
+*.opensdf
+*.VC.db
+*.VC.VC.opendb
+/.vs/
+/.idea/
+
+# Content 전체 무시하고 내가 만든 것만 살리기
+/Content/*
+!/Content/Developers/
+!/Content/Developers/**
+!/Content/Maps/
+!/Content/Maps/**
+!/Content/Blueprints/
+!/Content/Blueprints/**
+!/Content/Materials/
+!/Content/Materials/**
+!/Content/Textures/
+!/Content/Textures/**
+!/Content/DarkEden/			#mine
+!/Content/DarkEden/**
