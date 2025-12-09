@@ -16,6 +16,7 @@
 /.idea/
 
 # ────────────
+/Content/*
 !/Content/DarkEden/
 !/Content/DarkEden/**
 !/Content/Maps/
@@ -28,5 +29,5 @@
 !/Content/Materials/**
 !/Content/Textures/
 !/Content/Textures/**
-/Content/*
+
 # ─────────────────────────────────────
