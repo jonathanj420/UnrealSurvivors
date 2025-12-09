@@ -15,17 +15,18 @@
 /.vs/
 /.idea/
 
-# Content 전체 무시하고 내가 만든 것만 살리기
-/Content/*
-!/Content/Developers/
-!/Content/Developers/**
+# ────────────
+!/Content/DarkEden/
+!/Content/DarkEden/**
 !/Content/Maps/
 !/Content/Maps/**
+!/Content/Developers/
+!/Content/Developers/**
 !/Content/Blueprints/
 !/Content/Blueprints/**
 !/Content/Materials/
 !/Content/Materials/**
 !/Content/Textures/
 !/Content/Textures/**
-!/Content/DarkEden/			#mine
-!/Content/DarkEden/**
+/Content/*
+# ─────────────────────────────────────
