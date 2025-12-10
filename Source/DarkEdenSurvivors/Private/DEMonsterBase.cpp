@@ -34,7 +34,7 @@ ADEMonsterBase::ADEMonsterBase()
 	TestMesh->SetupAttachment(RootComponent);
 	TestMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	TestMesh->SetRelativeLocation(FVector(0.0f, 0.0f, -96.0f));
-	ConstructorHelpers::FObjectFinder<UStaticMesh>SM_TESTMESH(TEXT("/Game/MedievalDungeon/Meshes/Props/SM_Statue_Hooded.SM_Statue_Hooded"));
+	ConstructorHelpers::FObjectFinder<UStaticMesh>SM_TESTMESH(TEXT("/Game/InfinityBladeWeapons/Weapons/Staff/StaticMesh/SM_Stf_StaffofAncients.SM_Stf_StaffofAncients"));
 	if (SM_TESTMESH.Succeeded())
 	{
 		TestMesh->SetStaticMesh(SM_TESTMESH.Object);
@@ -133,9 +133,7 @@ float ADEMonsterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 
 void ADEMonsterBase::ApplyKnockback(const FVector& Direction, float Strength)
 {
-	//if (Strength <= 0.f) Strength = KnockbackStrength;
 	FVector Dir = Direction;
-	//Dircetion should be force
 	Dir.Z = 0.0f;
 	Dir = Dir.GetSafeNormal();
 	if (Dir.IsNearlyZero()) return;
@@ -250,3 +248,8 @@ void ADEMonsterBase::Die()
 	OnMonsterDeath.Broadcast(this);
 }
 
+bool ADEMonsterBase::IsActive()
+{
+	return !IsHidden();
+
+}

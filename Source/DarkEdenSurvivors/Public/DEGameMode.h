@@ -20,9 +20,14 @@ public:
     virtual void BeginPlay() override;
 public:
     float GetElapsedTime() const { return ElapsedTime; }
+    int32 GetSpawnLimit() const { return SpawnLimit; }
+
 protected:
-    UPROPERTY(VisibleInstanceOnly, Category = "Time")
+    UPROPERTY(VisibleInstanceOnly, Category = "GameInfo")
     float ElapsedTime;
+    UPROPERTY(VisibleInstanceOnly, Category = "GameInfo")
+    int32 SpawnLimit;
+
 
 
     // ... 나머지 매니저 포인터도 선언

@@ -19,7 +19,7 @@ ADEFemaleVampire::ADEFemaleVampire()
 		GetMesh()->SetSkeletalMesh(SM_COUNTESS.Object);
 	}
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -88.0f), FRotator(0.0f, -90.0f, 0.0f));
-	BaseSkillID = 2;
+	BaseSkillID = 4;
 }
 
 // Called when the game starts or when spawned

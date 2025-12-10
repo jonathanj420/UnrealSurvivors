@@ -43,7 +43,7 @@ ADEAcidBolt::ADEAcidBolt()
 
 
     static ConstructorHelpers::FObjectFinder<USoundBase> SoundObj(
-        TEXT("/Game/DarkEden/Data/Sound/SkillSoundEffect/Vampire_Acid_ABolt2.Vampire_Acid_ABolt2")
+        TEXT("/Game/DarkEden/Data/Sound/SkillSoundEffect/Custom/AcidBolt2.AcidBolt2")
     );
 
     if (SoundObj.Succeeded())

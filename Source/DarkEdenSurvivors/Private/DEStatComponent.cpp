@@ -33,39 +33,39 @@ void UDEStatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 
 	if (bIsPlayer)
 	{
+		if (GEngine)
+		{
+			// 1. HP 정보 출력
+			FString HP_Msg = FString::Printf(
+				TEXT("[HP] %s: %.1f / %.1f"),
+				*GetOwner()->GetName(), // 몬스터 이름/플레이어 이름
+				CurrentHP,
+				MaxHP
+			);
+			GEngine->AddOnScreenDebugMessage(
+				1, // Key 1번: HP 전용 위치
+				-1.0f, // TimeToDisplay: -1.0f는 다음 프레임에 갱신될 때까지 유지 (Tick에서 사용 시 효과적)
+				FColor::Cyan,
+				HP_Msg
+			);
 
+			// 2. EXP 정보 출력 (플레이어에게만 해당된다면 조건문으로 감싸야 합니다.)
+			FString EXP_Msg = FString::Printf(
+				TEXT("[EXP] LV %d: %.0f / %.0f"),
+				Level,
+				CurrentEXP,
+				NextLevelEXP
+			);
+			GEngine->AddOnScreenDebugMessage(
+				2, // Key 2번: EXP 전용 위치 (HP 밑에 나옴)
+				-1.0f,
+				FColor::Yellow,
+				EXP_Msg
+			);
+		}
 	}
 	// ...
-	if (GEngine)
-	{
-		// 1. HP 정보 출력
-		FString HP_Msg = FString::Printf(
-			TEXT("[HP] %s: %.1f / %.1f"),
-			*GetOwner()->GetName(), // 몬스터 이름/플레이어 이름
-			CurrentHP,
-			MaxHP
-		);
-		GEngine->AddOnScreenDebugMessage(
-			1, // Key 1번: HP 전용 위치
-			-1.0f, // TimeToDisplay: -1.0f는 다음 프레임에 갱신될 때까지 유지 (Tick에서 사용 시 효과적)
-			FColor::Cyan,
-			HP_Msg
-		);
-
-		// 2. EXP 정보 출력 (플레이어에게만 해당된다면 조건문으로 감싸야 합니다.)
-		FString EXP_Msg = FString::Printf(
-			TEXT("[EXP] LV %d: %.0f / %.0f"),
-			Level,
-			CurrentEXP,
-			NextLevelEXP
-		);
-		GEngine->AddOnScreenDebugMessage(
-			2, // Key 2번: EXP 전용 위치 (HP 밑에 나옴)
-			-1.0f,
-			FColor::Yellow,
-			EXP_Msg
-		);
-	}
+	
 }
 
 

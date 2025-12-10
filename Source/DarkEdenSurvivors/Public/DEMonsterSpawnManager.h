@@ -4,8 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Engine/DataTable.h"
+#include "Data/DEStageWaveData.h"    
 #include "DEMonsterSpawnManager.generated.h"
 
+class ADEGameMode;
+class ADEMonsterBase;
 
 USTRUCT()
 struct FMonsterWaveEntry
@@ -49,7 +53,8 @@ public:
     TArray<class ADEMonsterBase*> MonsterPool;
 
     UFUNCTION()
-    ADEMonsterBase* SpawnFromPool(const FVector& SpawnLocation, const FRotator& SpawnRotation = FRotator::ZeroRotator);
+    ADEMonsterBase* SpawnFromPool(TSubclassOf<ADEMonsterBase> MonsterClass, const FVector& Location);
+    // old ADEMonsterBase* SpawnFromPool(const FVector& SpawnLocation, const FRotator& SpawnRotation = FRotator::ZeroRotator);
     UFUNCTION()
     void ReturnMonsterToPool(class ADEMonsterBase* Monster);
 
@@ -57,7 +62,30 @@ public:
     int32 InitialPoolSize = 50;
 
     
-    void InitializePool();
+    //old void InitializePool();
+
+    //**************** New Wave System**********
+    UPROPERTY(EditAnywhere, Category = "Wave")
+    UDataTable* StageWaveTable;
+
+    TArray<FName> StageRowNames;
+
+    UPROPERTY(VisibleAnywhere, Category = "Wave")
+    int32 CurrentWaveIndex;
+
+    UPROPERTY(VisibleAnywhere, Category = "Wave")
+    float WaveElapsedTime;
+
+    UPROPERTY(VisibleAnywhere, Category = "Wave")
+    float NextSpawnTime;
+
+    UPROPERTY()
+    ADEGameMode* GameMode;
+
+    void ProcessWave(float DeltaTime);
+    void StartWave(int32 WaveIndex);
+    bool TrySpawnMonster(const FDEStageWaveData& WaveData);
+    bool SpawnBoss(const FDEStageWaveData& WaveData);
 
 
     //************* Monster Wave***********
@@ -83,8 +111,8 @@ public:
 
     FVector GetRandomSpawnLocation();
 
-    void StartNextWave();
-    void SpawnWaveMonster();
+    //void StartNextWave();
+    //void SpawnWaveMonster();
     //**** MONSTER COLLISION****
     UPROPERTY(EditAnywhere, Category = "Collision")
     float MinSeparationDistance = 80.f; // 몬스터간 최소 거리 (반지름*2 정도)
@@ -103,7 +131,7 @@ public:
     //void SpawnMonster();
 
     // 플레이어 참조
-    class ADEFemaleVampire* Player;
+    class ADECharacterBase* Player;
 
 private:
 

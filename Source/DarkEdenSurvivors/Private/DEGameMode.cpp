@@ -15,6 +15,7 @@ ADEGameMode::ADEGameMode()
     //PlayerControllerClass = AABPlayerController::StaticClass();
 	PrimaryActorTick.bCanEverTick = true;
 	ElapsedTime = 0.0f;
+    SpawnLimit = 300;
 
 }
 

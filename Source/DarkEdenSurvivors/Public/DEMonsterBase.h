@@ -57,6 +57,8 @@ protected:
 	float EXPDrop = 10.0f;
 	UPROPERTY(EditAnywhere, Category = "Monster Stats")
 	bool bIsDying = false;
+	UPROPERTY(EditAnywhere, Category = "Monster Stats")
+	bool bIsBoss = false;
 
 
 public:
@@ -66,8 +68,6 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Monster Stats")
 	float KnockbackResistance = 6.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Monster Stats")
-	float KnockbackStrength = 1600.0f; // ³Ë¹é Èû (Ãæµ¹ ¼ø°£ Àû¿ë)
 
 public:
 	void MoveToPlayer(float DeltaTime);
@@ -89,6 +89,9 @@ public:
 	FOnMonsterDeath OnMonsterDeath;
 	void DropExp();
 	void ResetMonster();
+	bool IsBoss() { return bIsBoss; }
+	bool IsActive();
+
 protected:
 	void Die();
 

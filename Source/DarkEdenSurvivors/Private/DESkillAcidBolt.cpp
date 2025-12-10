@@ -10,7 +10,7 @@ UDESkillAcidBolt::UDESkillAcidBolt()
 {
     ProjectileClass = ADEAcidBolt::StaticClass();
     static ConstructorHelpers::FObjectFinder<USoundBase> SoundObj(
-        TEXT("/Game/DarkEden/Data/Sound/SkillSoundEffect/Vampire_Acid_ABolt1.Vampire_Acid_ABolt1")
+        TEXT("/Game/DarkEden/Data/Sound/SkillSoundEffect/Custom/AcidBolt1.AcidBolt1")
     );
 
     if (SoundObj.Succeeded())

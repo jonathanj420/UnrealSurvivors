@@ -14,6 +14,7 @@ ADECharacterBase::ADECharacterBase()
     StatComponent = CreateDefaultSubobject<UDEStatComponent>(TEXT("StatComponent"));
     StatComponent->SetMaxHP(200.0f);
     StatComponent->SetCurrentHP(200.0f);
+    StatComponent->SetPlayer(true);
     SkillManager = CreateDefaultSubobject<UDESkillManagerComponent>(TEXT("SkillManager"));
 
     SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));

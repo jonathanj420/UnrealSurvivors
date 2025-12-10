@@ -18,7 +18,7 @@ public:
     float StartTime = 0.f;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TSubclassOf<AActor> MonsterClass;
+    TArray<TSubclassOf<class ADEMonsterBase>> MonsterClasses;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int32 MinimumCount = 1;
@@ -26,9 +26,12 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float SpawnInterval = 0.1f;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float Duration = 0.0f;
+
     // 보스 또는 특수 몬스터
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    TArray<TSubclassOf<ADEMonsterBase>> Bosses;
+    TSubclassOf<class ADEMonsterBase> BossClass;
 
     // 맵 이벤트나 트리거용 텍스트
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
