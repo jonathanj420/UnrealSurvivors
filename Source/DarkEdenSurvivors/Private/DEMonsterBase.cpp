@@ -6,7 +6,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "EngineUtils.h"
-#include "DEFemaleVampire.h"
+#include "DECharacterBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "DEEXPCrystal.h"
 #include "DEStatComponent.h"
@@ -43,6 +43,18 @@ ADEMonsterBase::ADEMonsterBase()
 	EXPCrystal = ADEEXPCrystal::StaticClass();
 	StatComp = CreateDefaultSubobject<UDEStatComponent>(TEXT("StatComponent"));
 	StatComp->SetMaxHP(10.0f);
+
+
+	static ConstructorHelpers::FObjectFinder<UNiagaraSystem> NS_BloodDrainCustom(TEXT("/Game/DarkEden/Data/Niagara/NS_BloodDrainCustom.NS_BloodDrainCustom"));
+	if (NS_BloodDrainCustom.Succeeded())
+	{
+		NiagaraSystem = NS_BloodDrainCustom.Object;
+	}
+
+	NiagaraEffectComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraEffect"));
+	NiagaraEffectComponent->SetupAttachment(RootComponent);
+	NiagaraEffectComponent->bAutoActivate = false; // 기본 비활성화
+
 }
 
 // Called when the game starts or when spawned
@@ -51,7 +63,7 @@ void ADEMonsterBase::BeginPlay()
 	Super::BeginPlay();
 	StatComp->ResetStat();
 	
-	TargetPlayer = Cast<ADEFemaleVampire>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
+	TargetPlayer = Cast<ADECharacterBase>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 	for (TActorIterator<ADEMonsterSpawnManager> It(GetWorld()); It; ++It)
 	{
 		SpawnManager = *It;
@@ -69,7 +81,9 @@ void ADEMonsterBase::BeginPlay()
 // Called every frame
 void ADEMonsterBase::Tick(float DeltaTime)
 {
-
+	Super::Tick(DeltaTime);
+	NiagaraEffectComponent->SetVectorParameter(FName("PlayerPosition"), TargetPlayer->GetActorLocation());
+	
 }
 
 void ADEMonsterBase::MoveToPlayer(float DeltaTime)
@@ -116,6 +130,14 @@ void ADEMonsterBase::MoveToPlayer(float DeltaTime)
 
 float ADEMonsterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+
+
+	NiagaraEffectComponent->SetAsset(NiagaraSystem);
+	bool shit;
+	
+	NiagaraEffectComponent->Activate(true);
+	
+	UE_LOG(LogTemp, Warning, TEXT("[Niagara Debug] Sending PlayerPosition = %s"), *NiagaraEffectComponent->GetVariableVec3(FName("PlayerPosition"), shit).ToString());
 	LOG_CALL();
 	StatComp->TakeDamage(DamageAmount, DamageCauser);
 	/*CurrentHP -= DamageAmount;

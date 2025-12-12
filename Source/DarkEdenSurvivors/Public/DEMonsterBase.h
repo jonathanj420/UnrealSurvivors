@@ -4,6 +4,8 @@
 
 #include "DarkEdenSurvivors.h"
 #include "GameFramework/Actor.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraComponent.h"
 #include "DEMonsterBase.generated.h"
 
 //class ADEMonsterBase;
@@ -44,6 +46,13 @@ protected:
 	TSubclassOf<class ADEEXPCrystal> EXPCrystal;
 	UPROPERTY()
 	class ADEMonsterSpawnManager* SpawnManager;
+	// 실제 Niagara 컴포넌트
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Effects")
+	UNiagaraComponent* NiagaraEffectComponent;
+
+	// 나이아가라 시스템 에셋
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effects")
+	UNiagaraSystem* NiagaraSystem;
 
 protected:
 
@@ -99,7 +108,7 @@ protected:
 	//***************** AI ****************
 protected:
 	UPROPERTY(EditAnywhere, Category = "AI")
-	class ADEFemaleVampire* TargetPlayer;
+	class ADECharacterBase* TargetPlayer;
 
 
 };
