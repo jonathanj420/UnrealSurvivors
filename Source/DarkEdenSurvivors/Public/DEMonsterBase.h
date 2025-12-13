@@ -4,14 +4,22 @@
 
 #include "DarkEdenSurvivors.h"
 #include "GameFramework/Actor.h"
-#include "NiagaraFunctionLibrary.h"
-#include "NiagaraComponent.h"
 #include "DEMonsterBase.generated.h"
 
 //class ADEMonsterBase;
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMonsterDeath, ADEMonsterBase*, Monster);
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMonsterDeath, ADEMonsterBase*, Monster);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnMonsterDeath, ADEMonsterBase*);
+
+enum class EMonsterCrowdControl : uint8
+{
+	None,
+	Stun,
+	// Slow,
+	// Root,
+	// Fear ...
+};
+
 
 UCLASS()
 class DARKEDENSURVIVORS_API ADEMonsterBase : public AActor
@@ -46,13 +54,6 @@ protected:
 	TSubclassOf<class ADEEXPCrystal> EXPCrystal;
 	UPROPERTY()
 	class ADEMonsterSpawnManager* SpawnManager;
-	// 실제 Niagara 컴포넌트
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Effects")
-	UNiagaraComponent* NiagaraEffectComponent;
-
-	// 나이아가라 시스템 에셋
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effects")
-	UNiagaraSystem* NiagaraSystem;
 
 protected:
 
@@ -76,6 +77,8 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Monster Stats")
 	float KnockbackResistance = 6.0f;
+	
+	
 
 
 public:
@@ -99,7 +102,28 @@ public:
 	void DropExp();
 	void ResetMonster();
 	bool IsBoss() { return bIsBoss; }
-	bool IsActive();
+
+
+	bool IsAlive();
+protected:
+	UPROPERTY(EditAnywhere, Category = "Monster Stats")
+	bool bIsAlive = false;
+	
+
+public:
+	// ===== CC =====
+	void ApplyStun(float Duration);
+	bool IsStunned() const;
+	void UpdateCrowdControl(float CurrentTime);
+
+private:
+	// 현재 CC 상태
+	EMonsterCrowdControl CCState = EMonsterCrowdControl::None;
+
+	// CC 종료 시간 (World Time)
+	float CCEndTime = 0.f;
+
+	
 
 protected:
 	void Die();

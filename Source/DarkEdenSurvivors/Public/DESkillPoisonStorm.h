@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "DESkillBase.h"
+#include "DEAutoSkillBase.h"
 #include "DESkillPoisonStorm.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DARKEDENSURVIVORS_API UDESkillPoisonStorm : public UDESkillBase
+class DARKEDENSURVIVORS_API UDESkillPoisonStorm : public UDEAutoSkillBase
 {
 	GENERATED_BODY()
 	

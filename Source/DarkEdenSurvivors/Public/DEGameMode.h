@@ -18,8 +18,13 @@ public:
     ADEGameMode();
     virtual void Tick(float DeltaTime) override;
     virtual void BeginPlay() override;
+
 public:
     float GetElapsedTime() const { return ElapsedTime; }
+    void RegisterMonsterSpawnManager(class ADEMonsterSpawnManager* InManager);
+    class ADEMonsterSpawnManager* GetMonsterSpawnManager() { return MonsterSpawnManager; }
+
+
     int32 GetSpawnLimit() const { return SpawnLimit; }
 
 protected:
@@ -27,6 +32,9 @@ protected:
     float ElapsedTime;
     UPROPERTY(VisibleInstanceOnly, Category = "GameInfo")
     int32 SpawnLimit;
+    UPROPERTY(VisibleInstanceOnly, Category = "GameInfo")
+    class ADEMonsterSpawnManager* MonsterSpawnManager = nullptr;
+
 
 
 

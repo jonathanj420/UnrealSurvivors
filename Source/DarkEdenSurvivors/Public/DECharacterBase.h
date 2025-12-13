@@ -92,11 +92,20 @@ private:
 	UFUNCTION()
 	void BloodDrain();
 	UPROPERTY(VisibleinstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
-	bool bIsMovable;
+	bool bCanMove;
+public:
+	void SetCanMove(bool bInCanMove);
+	bool CanMove() const { return bCanMove; }
+protected:
+	bool bAutoSkillsPaused = false;
+
+public:
+	void SetAutoSkillsPaused(bool bPaused);
+	bool IsAutoSkillsPaused() const { return bAutoSkillsPaused; }
 
 public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
-
+	void Heal(float Amount);
 	void AddEXP(float v);
 public:
 	// 캐릭터가 기본적으로 가지고 태어나는 스킬 ID
@@ -109,5 +118,34 @@ public:
 	UFUNCTION()
 	UDESkillManagerComponent* GetSkillManagerComponent() { return SkillManager; }
 	
+protected:
+	UPROPERTY()
+	class UDEActiveSkillBase* ActiveSkill;
+
+	//UPROPERTY()
+	void OnActiveSkillInput();
+
+	UPROPERTY()
+	TArray<class UDEActiveSkillBase*> ActiveSkills;
+
+	int32 CurrentActiveSkillIndex = 0;
+	void UseActiveSkill();
+
+	float BloodDrainGauge;
+	float BloodDrainGaugeMax;
+	float BloodDrainGainPerKill;
+
+public:
+	void AddBloodDrainGauge(float Amount);
+	void ConsumeBloodDrainGauge();
+	bool CanActivateBloodDrain();
+	float GetBloodDrainGainPerKill();
+
+public:
+	float GetCapsuleHalfRadius();
+
+
+
+
 
 };

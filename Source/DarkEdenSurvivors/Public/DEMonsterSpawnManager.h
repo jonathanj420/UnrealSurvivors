@@ -53,7 +53,7 @@ public:
     TArray<class ADEMonsterBase*> MonsterPool;
 
     UFUNCTION()
-    ADEMonsterBase* SpawnFromPool(TSubclassOf<ADEMonsterBase> MonsterClass, const FVector& Location);
+    ADEMonsterBase* SpawnFromPool(TSubclassOf<ADEMonsterBase> MonsterClass, FVector& Location);
     // old ADEMonsterBase* SpawnFromPool(const FVector& SpawnLocation, const FRotator& SpawnRotation = FRotator::ZeroRotator);
     UFUNCTION()
     void ReturnMonsterToPool(class ADEMonsterBase* Monster);
@@ -121,11 +121,16 @@ public:
     float ChainKnockbackTransfer = 0.5f; // 앞->뒤로 전달 비율
 
     void ResolveMonsterOverlap(ADEMonsterBase* A, ADEMonsterBase* B);
+    void ResolvePlayerPush(ADEMonsterBase* Mob);
+    // 겹침 방지 최소 거리 배율
+    float SoftPushRangeMultiplier = 1.3f; // 1.2 ~ 1.5 추천
 
+    // 소프트 밀림 강도
+    float SoftPushStrength = 1.0f; // 기본 1.0
 
 public:
     void OnMonsterDied(class ADEMonsterBase* Monster);
-
+    const TArray<ADEMonsterBase*>& GetActiveMonsters() const;
 
     // 실제 스폰하는 함수
     //void SpawnMonster();

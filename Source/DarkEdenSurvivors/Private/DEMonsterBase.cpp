@@ -44,17 +44,6 @@ ADEMonsterBase::ADEMonsterBase()
 	StatComp = CreateDefaultSubobject<UDEStatComponent>(TEXT("StatComponent"));
 	StatComp->SetMaxHP(10.0f);
 
-
-	static ConstructorHelpers::FObjectFinder<UNiagaraSystem> NS_BloodDrainCustom(TEXT("/Game/DarkEden/Data/Niagara/NS_BloodDrainCustom.NS_BloodDrainCustom"));
-	if (NS_BloodDrainCustom.Succeeded())
-	{
-		NiagaraSystem = NS_BloodDrainCustom.Object;
-	}
-
-	NiagaraEffectComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraEffect"));
-	NiagaraEffectComponent->SetupAttachment(RootComponent);
-	NiagaraEffectComponent->bAutoActivate = false; // 기본 비활성화
-
 }
 
 // Called when the game starts or when spawned
@@ -82,7 +71,6 @@ void ADEMonsterBase::BeginPlay()
 void ADEMonsterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	NiagaraEffectComponent->SetVectorParameter(FName("PlayerPosition"), TargetPlayer->GetActorLocation());
 	
 }
 
@@ -130,14 +118,6 @@ void ADEMonsterBase::MoveToPlayer(float DeltaTime)
 
 float ADEMonsterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-
-
-	NiagaraEffectComponent->SetAsset(NiagaraSystem);
-	bool shit;
-	
-	NiagaraEffectComponent->Activate(true);
-	
-	UE_LOG(LogTemp, Warning, TEXT("[Niagara Debug] Sending PlayerPosition = %s"), *NiagaraEffectComponent->GetVariableVec3(FName("PlayerPosition"), shit).ToString());
 	LOG_CALL();
 	StatComp->TakeDamage(DamageAmount, DamageCauser);
 	/*CurrentHP -= DamageAmount;
@@ -252,26 +232,55 @@ void ADEMonsterBase::DropExp()
 
 void ADEMonsterBase::ResetMonster()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ResetMonster"));
 	StatComp->ResetStat();
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
 	SetActorTickEnabled(true);
+	bIsAlive = true;
 }
 
 void ADEMonsterBase::Die()
 {
-	LOG_CALL();
-	UE_LOG(LogTemp, Warning, TEXT("%s Die Called"),*GetName());
+
 	if (bIsDying) return;  // 이중 죽음 방지
 	bIsDying = true;
+	bIsAlive = false;
+
 	DropExp();
 
 	OnMonsterDeath.Broadcast(this);
 }
 
-bool ADEMonsterBase::IsActive()
+bool ADEMonsterBase::IsAlive()
 {
-	return !IsHidden();
+	
+	return StatComp->GetCurrentHP() > 0.0f && bIsAlive;
 
+
+}
+void ADEMonsterBase::ApplyStun(float Duration)
+{
+	const float Now = GetWorld()->GetTimeSeconds();
+
+	CCState = EMonsterCrowdControl::Stun;
+
+	// ✔ 핵심: 기존 스턴보다 길면 갱신
+	CCEndTime = FMath::Max(CCEndTime, Now + Duration);
+}
+
+bool ADEMonsterBase::IsStunned() const
+{
+	return CCState == EMonsterCrowdControl::Stun;
+}
+
+void ADEMonsterBase::UpdateCrowdControl(float CurrentTime)
+{
+	if (CCState == EMonsterCrowdControl::None)
+		return;
+
+	if (CurrentTime >= CCEndTime)
+	{
+		CCState = EMonsterCrowdControl::None;
+		CCEndTime = 0.f;
+	}
 }

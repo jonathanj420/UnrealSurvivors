@@ -144,7 +144,8 @@ void UDEStatComponent::LevelUp()
 {
 	Level++;
 	CurrentEXP = 0.f;
-	NextLevelEXP *= 1.3f;  // 필요하면 조절
+	//NextLevelEXP *= 1.3f;  // 필요하면 조절/
+	NextLevelEXP += 9999.0f;
 	UE_LOG(LogTemp, Warning, TEXT("LEVEL UP! New Level: %d"), Level);
 
 	OnLevelUp.Broadcast();

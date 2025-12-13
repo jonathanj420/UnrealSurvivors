@@ -6,6 +6,7 @@
 #include "DEFemaleVampire.h"
 #include "DEPlayerController.h"
 #include "Kismet/GameplayStatics.h"
+#include "DEMonsterSpawnManager.h"
 
 ADEGameMode::ADEGameMode()
 {
@@ -36,6 +37,17 @@ void ADEGameMode::BeginPlay()
         FActorSpawnParameters SpawnParams;
         SpawnParams.Owner = this; // GameMode를 소유자로 지정
         // ... 나머지 SpawnerManager와 PlayerSystemManager도 동일하게 생성합니다.
+    }
+
+}
+
+void ADEGameMode::RegisterMonsterSpawnManager(ADEMonsterSpawnManager* InManager)
+{
+    UE_LOG(LogTemp, Warning, TEXT("Try Spawn Manager Register"));
+    if (InManager != nullptr)
+    {
+        MonsterSpawnManager = InManager;
+        UE_LOG(LogTemp, Warning, TEXT("Monster Manager Registered"));
     }
 
 }

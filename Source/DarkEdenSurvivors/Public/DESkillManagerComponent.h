@@ -7,7 +7,7 @@
 #include "Data/DESkillData.h"
 #include "DESkillManagerComponent.generated.h"
 
-class UDESkillBase;
+class UDEAutoSkillBase;
 
 
 USTRUCT()
@@ -16,7 +16,7 @@ struct FActiveSkill
 	GENERATED_BODY()
 
 	UPROPERTY()
-	UDESkillBase* SkillObject = nullptr;
+	UDEAutoSkillBase* SkillObject = nullptr;
 
 	FDESkillData* RowData = nullptr;   // 데이터 테이블 Row
 	UPROPERTY()
@@ -97,7 +97,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ApplySkillChoice(int32 SkillID);
 
-	
+protected:
+	bool bAutoSkillPaused = false;
+
+public:
+	void PauseAutoSkills();
+	void ResumeAutoSkills();
+	bool IsAutoSkillPaused() const { return bAutoSkillPaused; }
 
 
 };

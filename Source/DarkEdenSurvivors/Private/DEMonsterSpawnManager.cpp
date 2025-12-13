@@ -30,6 +30,12 @@ void ADEMonsterSpawnManager::BeginPlay()
 {
     Super::BeginPlay();
     GameMode = Cast<ADEGameMode>(UGameplayStatics::GetGameMode(this));
+    if (GameMode)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Game Mode CHECKED"));
+        GameMode->RegisterMonsterSpawnManager(this);
+    }
+    
     APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 
     if (PlayerController)
@@ -81,9 +87,21 @@ void ADEMonsterSpawnManager::Tick(float DeltaTime)
 {
     //control all monsters' logic here
     Super::Tick(DeltaTime);
+    const float Now = GetWorld()->GetTimeSeconds();
 
     if (!Player) return;
+    if (GEngine)
+    {
+        GEngine->AddOnScreenDebugMessage(
+            -1,
+            0.0f,
+            FColor::Green,
+            FString::Printf(TEXT("Active Monsters Count : %d"), ActiveMonsters.Num())
 
+
+        );
+
+    }
     ProcessWave(DeltaTime);
 
     FVector PlayerLocation = Player->GetActorLocation();
@@ -92,8 +110,13 @@ void ADEMonsterSpawnManager::Tick(float DeltaTime)
         ADEMonsterBase* Mob = ActiveMonsters[i];
         if (!Mob) continue;
 
+        Mob->UpdateCrowdControl(Now);
         Mob->UpdateKnockback(DeltaTime);
+
+        if (Mob->IsStunned())
+            continue;
         Mob->MoveToPlayer(DeltaTime);
+        ResolvePlayerPush(Mob);
     }
 
     // 2) push-out (겹침 해소) - O(n^2), 필요시 spatial partitioning 사용
@@ -234,9 +257,8 @@ bool ADEMonsterSpawnManager::TrySpawnMonster(const FDEStageWaveData& WaveData)
 
     int32 RandIdx = FMath::RandRange(0, WaveData.MonsterClasses.Num() - 1);
     TSubclassOf<ADEMonsterBase> SelectedClass = WaveData.MonsterClasses[RandIdx];
-
+    
     FVector SpawnLocation = GetRandomSpawnLocation();
-
     SpawnFromPool(SelectedClass, SpawnLocation);
     return true;
 }
@@ -252,8 +274,11 @@ bool ADEMonsterSpawnManager::SpawnBoss(const FDEStageWaveData& WaveData)
     return true;
 }
 
-ADEMonsterBase* ADEMonsterSpawnManager::SpawnFromPool(TSubclassOf<ADEMonsterBase> MonsterClass, const FVector& Location)
+ADEMonsterBase* ADEMonsterSpawnManager::SpawnFromPool(TSubclassOf<ADEMonsterBase> MonsterClass, FVector& Location)
 {
+    const ADEMonsterBase* CDO = MonsterClass.GetDefaultObject();
+
+    Location.Z = CDO->GetCapsuleHalfHeight();
     // Try reuse from pool first (matching subclass is optional: pool contains base class instances)
     for (ADEMonsterBase* Monster : MonsterPool)
     {
@@ -268,7 +293,7 @@ ADEMonsterBase* ADEMonsterSpawnManager::SpawnFromPool(TSubclassOf<ADEMonsterBase
             Monster->ResetMonster();    // Show, enable, reset stats
             ActiveMonsters.Add(Monster);
 
-            UE_LOG(LogTemp, Verbose, TEXT("Reused monster from pool: %s"), *Monster->GetName());
+            //UE_LOG(LogTemp, Verbose, TEXT("Reused monster from pool: %s"), *Monster->GetName());
             return Monster;
         }
     }
@@ -276,16 +301,17 @@ ADEMonsterBase* ADEMonsterSpawnManager::SpawnFromPool(TSubclassOf<ADEMonsterBase
     // Spawn new one
     UWorld* World = GetWorld();
     if (!World) return nullptr;
-
+    
     ADEMonsterBase* NewMonster = World->SpawnActor<ADEMonsterBase>(MonsterClass, Location, FRotator::ZeroRotator);
     if (!NewMonster) return nullptr;
 
     // 초기화 및 바인딩
     MonsterPool.Add(NewMonster);
+    NewMonster->ResetMonster();    // Show, enable, reset stats
     ActiveMonsters.Add(NewMonster);
     NewMonster->OnMonsterDeath.AddUObject(this, &ADEMonsterSpawnManager::OnMonsterDied);
 
-    UE_LOG(LogTemp, Warning, TEXT("Spawned new monster: %s"), *NewMonster->GetName());
+    //UE_LOG(LogTemp, Warning, TEXT("Spawned new monster: %s"), *NewMonster->GetName());
     return NewMonster;
 
 }
@@ -429,17 +455,96 @@ FVector ADEMonsterSpawnManager::GetRandomSpawnLocation()
 
 void ADEMonsterSpawnManager::OnMonsterDied(ADEMonsterBase* Monster)
 {
-    if (Monster)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("%s : Died"), *Monster->GetName());
+    if (!Monster)
+        return;
 
-    }
+
 
     ActiveMonsters.Remove(Monster);
-    UE_LOG(LogTemp, Warning, TEXT("Monster Died, Instantly Removed"));
+    UE_LOG(LogTemp, Warning, TEXT("Monster Died, Instantly Removed // TO FIX"));
     ReturnMonsterToPool(Monster);
+    if (Player)
+    {
+        Player->AddBloodDrainGauge(Player->GetBloodDrainGainPerKill());
+    }
+
 }
 
+const TArray<ADEMonsterBase*>& ADEMonsterSpawnManager::GetActiveMonsters() const
+{
+    return ActiveMonsters;
+}
+//void ADEMonsterSpawnManager::ResolveMonsterOverlap(ADEMonsterBase* A, ADEMonsterBase* B)
+//{
+//    if (!A || !B) return;
+//    //if (A->IsImmovable() || B->IsImmovable()) return;
+//
+//    FVector PosA = A->GetActorLocation();
+//    FVector PosB = B->GetActorLocation();
+//
+//    FVector FlatA(PosA.X, PosA.Y, 0.f);
+//    FVector FlatB(PosB.X, PosB.Y, 0.f);
+//
+//    FVector Delta = FlatB - FlatA;
+//    float Dist = Delta.Size();
+//
+//    float RadiusA = A->GetCollisionRadius();
+//    float RadiusB = B->GetCollisionRadius();
+//
+//    float MinDist = RadiusA + RadiusB;
+//    float SoftRange = MinDist * SoftPushRangeMultiplier;
+//
+//    if (Dist < KINDA_SMALL_NUMBER)
+//    {
+//        FVector Nudge = FVector(
+//            FMath::FRandRange(-1.f, 1.f),
+//            FMath::FRandRange(-1.f, 1.f),
+//            0.f
+//        ).GetSafeNormal() * 0.5f;
+//
+//        A->AddActorWorldOffset(-Nudge, false);
+//        B->AddActorWorldOffset(Nudge, false);
+//        return;
+//    }
+//
+//    if (Dist >= SoftRange)
+//        return;
+//
+//    FVector PushDir = Delta / Dist;
+//
+//    // 0~1 (멀수록 0, 가까울수록 1)
+//    float Alpha = 1.f - (Dist / SoftRange);
+//
+//    // 곡선: 가까울수록 급격히 밀림
+//    float PushFactor = Alpha * Alpha;
+//
+//    float PushAmount = PushFactor * (SoftRange - Dist) * SoftPushStrength;
+//
+//    FVector PushA = -PushDir * PushAmount * 0.5f;
+//    FVector PushB = PushDir * PushAmount * 0.5f;
+//
+//    A->AddActorWorldOffset(PushA, false);
+//    B->AddActorWorldOffset(PushB, false);
+//
+//    // 체인 넉백 전파 (기존 로직 유지)
+//    float AKnockMag = A->KnockbackVelocity.Size();
+//    if (AKnockMag > 1.f)
+//    {
+//        float Transfer = AKnockMag * ChainKnockbackTransfer * PushFactor;
+//        B->ApplyKnockback(PushDir, Transfer);
+//        A->KnockbackVelocity *= 0.5f;
+//    }
+//
+//    float BKnockMag = B->KnockbackVelocity.Size();
+//    if (BKnockMag > 1.f)
+//    {
+//        float Transfer = BKnockMag * ChainKnockbackTransfer * PushFactor;
+//        A->ApplyKnockback(-PushDir, Transfer);
+//        B->KnockbackVelocity *= 0.5f;
+//    }
+//}
+
+// older 
 void ADEMonsterSpawnManager::ResolveMonsterOverlap(ADEMonsterBase* A, ADEMonsterBase* B)
 {
     if (!A || !B) return;
@@ -495,4 +600,34 @@ void ADEMonsterSpawnManager::ResolveMonsterOverlap(ADEMonsterBase* A, ADEMonster
             B->KnockbackVelocity *= 0.5f;
         }
     }
+}
+
+void ADEMonsterSpawnManager::ResolvePlayerPush(ADEMonsterBase* Mob)
+{
+    if (!Mob || !Player) return;
+
+    FVector PlayerPos = Player->GetActorLocation();
+    FVector MobPos = Mob->GetActorLocation();
+
+    FVector Delta = MobPos - PlayerPos;
+    Delta.Z = 0.f;
+
+    float DistSq = Delta.SizeSquared();
+
+    float PlayerRadius = Player->GetCapsuleHalfRadius(); // 캡슐 반지름
+    float MobRadius = Mob->GetCollisionRadius();
+    float MinDist = PlayerRadius + MobRadius;
+
+    float MinDistSq = MinDist * MinDist;
+
+    if (DistSq >= MinDistSq || DistSq < KINDA_SMALL_NUMBER)
+        return;
+
+    float Dist = FMath::Sqrt(DistSq);
+    FVector PushDir = Delta / Dist;
+
+    float Penetration = MinDist - Dist;
+
+    // 몬스터만 밀린다
+    Mob->AddActorWorldOffset(PushDir * Penetration, false);
 }

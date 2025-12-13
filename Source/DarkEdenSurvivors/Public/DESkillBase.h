@@ -17,19 +17,18 @@ class DARKEDENSURVIVORS_API UDESkillBase : public UObject
 
 public:
     UDESkillBase();
-    //virtual void ActivateSkill(const FSkillSpec& Spec) PURE_VIRTUAL(UDESkillBase::ActivateSkill, );
-    virtual void ActivateSkill(FDESkillData* SkillData) PURE_VIRTUAL(UDESkillBase::ActivateSkill, );
-    FSkillSpec CurrentSpec;
+    //virtual void ActivateSkill(FDESkillData* SkillData) PURE_VIRTUAL(UDESkillBase::ActivateSkill, );
+    //FSkillSpec CurrentSpec;
 
-    FDESkillData* RowData = nullptr;  // 초기 스킬 데이터
+    //FDESkillData* RowData = nullptr;  // 초기 스킬 데이터
 
     UPROPERTY()
     AActor* SkillOwner = nullptr;
 
     void SetOwner(AActor* InOwner) { SkillOwner = InOwner; }
 
-    // 최종 스펙 계산 (캐릭터 보정, 강화 옵션 적용 등)
-    virtual FSkillSpec GetFinalSpec(int32 CurrentLevel) const;
+    //// 최종 스펙 계산 (캐릭터 보정, 강화 옵션 적용 등)
+    //virtual FSkillSpec GetFinalSpec(int32 CurrentLevel) const;
    
 
 };

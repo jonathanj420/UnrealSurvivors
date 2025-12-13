@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "DESkillBase.h"
+#include "DEAutoSkillBase.h"
 #include "DESkillAcidBolt.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DARKEDENSURVIVORS_API UDESkillAcidBolt : public UDESkillBase
+class DARKEDENSURVIVORS_API UDESkillAcidBolt : public UDEAutoSkillBase
 {
 	GENERATED_BODY()
 

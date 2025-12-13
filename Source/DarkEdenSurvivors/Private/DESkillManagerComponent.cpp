@@ -2,7 +2,7 @@
 
 
 #include "DESkillManagerComponent.h"
-#include "DESkillBase.h"
+#include "DEAutoSkillBase.h"
 #include "DESkillBloodyKnife.h"
 #include "DECharacterBase.h"
 #include "Engine/World.h"
@@ -39,7 +39,8 @@ void UDESkillManagerComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 {
     DeltaCheck += DeltaTime;
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
+    if (bAutoSkillPaused)
+        return;
     for (auto& Pair : ActiveSkills)
     {
         FActiveSkill& Active = Pair.Value;
@@ -315,7 +316,7 @@ void UDESkillManagerComponent::LevelUpSkill(int32 SkillID)
         // 스킬 오브젝트 생성
         if (RowInfo.SkillClass)
         {
-            NewSkill.SkillObject = NewObject<UDESkillBase>(this, RowInfo.SkillClass);
+            NewSkill.SkillObject = NewObject<UDEAutoSkillBase>(this, RowInfo.SkillClass);
             NewSkill.SkillObject->SetOwner(GetOwner());
         }
         else
@@ -409,4 +410,13 @@ TArray<FDESkillData*> UDESkillManagerComponent::GetRandomSkillChoices(int32 Coun
 void UDESkillManagerComponent::ApplySkillChoice(int32 SkillID)
 {
     LevelUpSkill(SkillID);
+}
+void UDESkillManagerComponent::PauseAutoSkills()
+{
+    bAutoSkillPaused = true;
+}
+
+void UDESkillManagerComponent::ResumeAutoSkills()
+{
+    bAutoSkillPaused = false;
 }

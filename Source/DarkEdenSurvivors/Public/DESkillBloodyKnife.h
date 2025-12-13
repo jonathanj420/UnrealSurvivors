@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "DESkillBase.h"
+#include "DEAutoSkillBase.h"
 #include "DESkillBloodyKnife.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DARKEDENSURVIVORS_API UDESkillBloodyKnife : public UDESkillBase
+class DARKEDENSURVIVORS_API UDESkillBloodyKnife : public UDEAutoSkillBase
 {
 	GENERATED_BODY()
 

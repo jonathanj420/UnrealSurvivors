@@ -4,6 +4,8 @@
 #include "DECharacterBase.h"
 #include "DESkillManagerComponent.h"
 #include "DEPlayerController.h"
+#include "DEActiveSkillBase.h"
+#include "DESkillBloodDrain.h"
 #include "DEStatComponent.h"
 
 // Sets default values
@@ -28,12 +30,17 @@ ADECharacterBase::ADECharacterBase()
     ArmLengthSpeed = 3.0f;
     ArmRotationSpeed = 10.0f;
     IsFPS = false;
-    bIsMovable = true;
     bMoveCamera = false;
+    bCanMove = true;
     GetCharacterMovement()->MaxWalkSpeed = 600.0f;
 
     SetControlMode(EControlMode::FREETPS);
     GetCapsuleComponent()->SetCollisionProfileName(TEXT("TestCharacter"));
+
+    BloodDrainGauge=0.0f;
+    BloodDrainGaugeMax=10.0f;
+    BloodDrainGainPerKill=5.0f;
+
 
 }
 
@@ -58,12 +65,27 @@ void ADECharacterBase::BeginPlay()
     }
     //StatComponent->OnLevelUp.AddDynamic(this, &ADEPlayerController::ShowLevelUpUI);
     SetControlMode(EControlMode::FIXEDTPS);
+    ActiveSkill = NewObject<UDESkillBloodDrain>(this);
+    ActiveSkill->SetOwner(this);
 }
 
 // Called every frame
 void ADECharacterBase::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
+
+    if (GEngine)
+    {
+        GEngine->AddOnScreenDebugMessage(
+            -1,
+            0.0f,
+            FColor::Green,
+            FString::Printf(TEXT("Max Blood Drain Gauge: %.1f, Current: %.1f"), BloodDrainGaugeMax, BloodDrainGauge)
+
+
+        );
+
+    }
     if (bMoveCamera)
     {
         SpringArm->TargetArmLength = FMath::FInterpTo(SpringArm->TargetArmLength, ArmLengthTo, DeltaTime, ArmLengthSpeed);
@@ -116,6 +138,7 @@ void ADECharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
     PlayerInputComponent->BindAction("ViewChange", IE_Pressed, this, &ADECharacterBase::ViewChange);
 
     PlayerInputComponent->BindAction("BloodDrain", IE_Pressed, this, &ADECharacterBase::BloodDrain);
+    PlayerInputComponent->BindAction("ActiveSkill", IE_Pressed, this, &ADECharacterBase::OnActiveSkillInput);
 
 
 }
@@ -124,44 +147,20 @@ void ADECharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void ADECharacterBase::MoveForward(float value)
 {
-    if (bIsMovable) {
-        switch (CurrentControlMode)
-        {
-        case ADECharacterBase::EControlMode::FIXEDTPS:
-            //DirectionToMove.X = value;
-            AddMovementInput(FRotationMatrix(FRotator(0.0f, GetControlRotation().Yaw, 0.0f)).GetUnitAxis(EAxis::X), value);
-            break;
-        case ADECharacterBase::EControlMode::FREETPS:
-            AddMovementInput(FRotationMatrix(FRotator(0.0f, GetControlRotation().Yaw, 0.0f)).GetUnitAxis(EAxis::X), value);
-            break;
-        case ADECharacterBase::EControlMode::FPS:
-            AddMovementInput(FRotationMatrix(FRotator(0.0f, GetControlRotation().Yaw, 0.0f)).GetUnitAxis(EAxis::X), value);
-            break;
-        }
+    if (!bCanMove) {
+        return;
     }
-
+    AddMovementInput(FRotationMatrix(FRotator(0.0f, GetControlRotation().Yaw, 0.0f)).GetUnitAxis(EAxis::X), value);
 
 }
 
 
 void ADECharacterBase::MoveRight(float value)
 {
-    if (bIsMovable)
-    {
-        switch (CurrentControlMode)
-        {
-        case ADECharacterBase::EControlMode::FIXEDTPS:
-            //DirectionToMove.Y = value;
-            AddMovementInput(FRotationMatrix(FRotator(0.0f, GetControlRotation().Yaw, 0.0f)).GetUnitAxis(EAxis::Y), value);
-            break;
-        case ADECharacterBase::EControlMode::FREETPS:
-            AddMovementInput(FRotationMatrix(FRotator(0.0f, GetControlRotation().Yaw, 0.0f)).GetUnitAxis(EAxis::Y), value);
-            break;
-        case ADECharacterBase::EControlMode::FPS:
-            AddMovementInput(FRotationMatrix(FRotator(0.0f, GetControlRotation().Yaw, 0.0f)).GetUnitAxis(EAxis::Y), value);
-            break;
-        }
+    if (!bCanMove) {
+        return;
     }
+    AddMovementInput(FRotationMatrix(FRotator(0.0f, GetControlRotation().Yaw, 0.0f)).GetUnitAxis(EAxis::Y), value);
 
 
 
@@ -288,7 +287,7 @@ void ADECharacterBase::ViewChange()
 
 void ADECharacterBase::BloodDrain()
 {
-    //방폭 느낌 광흡
+    //테스트 용도
     if (GEngine)
     {
         GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("BloodDrain"));
@@ -297,10 +296,83 @@ void ADECharacterBase::BloodDrain()
 
 }
 
+void ADECharacterBase::SetCanMove(bool bInCanMove)
+{
+    bCanMove = bInCanMove;
+
+    if (!bCanMove)
+    {
+        GetCharacterMovement()->StopMovementImmediately();
+    }
+}
+void ADECharacterBase::SetAutoSkillsPaused(bool bPaused)
+{
+    if (bAutoSkillsPaused == bPaused)
+        return;
+
+    bAutoSkillsPaused = bPaused;
+
+    if (SkillManager!=nullptr)
+    {
+        if (bPaused)
+        {
+            SkillManager->PauseAutoSkills();
+        }
+        else
+        {
+            SkillManager->ResumeAutoSkills();
+        }
+    }
+}
+void ADECharacterBase::UseActiveSkill()
+{
+    ActiveSkill->ActivateSkill();
+
+
+}
+
+float ADECharacterBase::GetBloodDrainGainPerKill()
+{
+    float BonusMultiplier = 1.0f;
+
+    // TODO: 영구 업그레이드 적용
+    // BonusMultiplier += BloodDrainUpgradePercent;
+
+    return BloodDrainGainPerKill * BonusMultiplier;
+}
+
+void ADECharacterBase::AddBloodDrainGauge(float Amount)
+{
+    if (Amount <= 0.f) return;
+
+    BloodDrainGauge = FMath::Clamp(
+        BloodDrainGauge + Amount,
+        0.f,
+        BloodDrainGaugeMax
+    );
+
+}
+
+void ADECharacterBase::ConsumeBloodDrainGauge()
+{
+    BloodDrainGauge = 0.f;
+}
+
+bool ADECharacterBase::CanActivateBloodDrain()
+{
+    return BloodDrainGauge >= BloodDrainGaugeMax;
+}
+
 float ADECharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
     StatComponent->TakeDamage(DamageAmount);
     return DamageAmount;
+}
+
+void ADECharacterBase::Heal(float Amount)
+{
+    StatComponent->Heal(Amount);
+
 }
 
 void ADECharacterBase::AddEXP(float v)
@@ -314,4 +386,37 @@ void ADECharacterBase::OnCharacterLevelUp()
     {
         DEPlayerController->ShowLevelUpUI(); // 인자 없는 버전이면 바로 호출
     }
+}
+
+void ADECharacterBase::OnActiveSkillInput()
+{
+   /* if (GEngine)
+    {
+        GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Active Skill"));
+    }
+    if (!ActiveSkill) return;
+
+    if (ActiveSkill->CanActivate())
+    {
+        ActiveSkill->ActivateSkill();
+    }*/
+    if (ActiveSkill)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("arimasuyo"));
+        ActiveSkill->ActivateSkill();
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("naidesuyo"));
+        return;
+
+    }
+    
+
+
+}
+
+float ADECharacterBase::GetCapsuleHalfRadius()
+{
+    return GetCapsuleComponent()->GetScaledCapsuleRadius();
 }
