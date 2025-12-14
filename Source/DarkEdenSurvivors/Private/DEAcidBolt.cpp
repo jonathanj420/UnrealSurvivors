@@ -125,7 +125,7 @@ void ADEAcidBolt::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherAc
 void ADEAcidBolt::Explode()
 {
     // Radius = Damage * 5
-    UGameplayStatics::ApplyRadialDamage(
+    if (UGameplayStatics::ApplyRadialDamage(
         this,
         Damage,
         GetActorLocation(),
@@ -135,7 +135,14 @@ void ADEAcidBolt::Explode()
         this,
         nullptr,
         false
-    );
+    ))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Hit Something"));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Exploded but no damage"));
+    }
     DrawDebugSphere(GetWorld(), GetActorLocation(), Damage * 5, 16, FColor::Green, 0, 1.0f, 0, 0.0f);
     // ---- 2) 소리 간헐 재생 ----
     static double LastExplosionSoundTime = 0.0;

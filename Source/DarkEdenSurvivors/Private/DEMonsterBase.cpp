@@ -63,7 +63,7 @@ void ADEMonsterBase::BeginPlay()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("SpawnManager not found!"));
 	}
-	StatComp->OnZeroHP.AddUObject(this, &ADEMonsterBase::Die);
+	//StatComp->OnZeroHP.AddUObject(this, &ADEMonsterBase::Die);
 
 }
 
@@ -118,18 +118,15 @@ void ADEMonsterBase::MoveToPlayer(float DeltaTime)
 
 float ADEMonsterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	LOG_CALL();
+	UE_LOG(LogTemp, Warning, TEXT("Monster : %s Took : %f Damage from %s (Before Stat Calc)"), *GetName(), DamageAmount, *DamageCauser->GetName());
 	StatComp->TakeDamage(DamageAmount, DamageCauser);
-	/*CurrentHP -= DamageAmount;
-	UE_LOG(LogTemp, Warning, TEXT("Took : %f Damage , HP: %f"),DamageAmount, CurrentHP);
+	UE_LOG(LogTemp, Warning, TEXT("Monster : %s Took : %f Damage from %s , HP: %f (After Stat Calc)"),*GetName(), DamageAmount, *DamageCauser->GetName(), StatComp->GetCurrentHP());
 
-	if (CurrentHP <= 0.f)
+	if (StatComp->GetCurrentHP() <= 0.f)
 	{
-		CurrentHP = 0.0f;
 		Die();
 	}
 
-	return DamageAmount;*/
 	return DamageAmount;
 }
 

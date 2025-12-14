@@ -57,11 +57,15 @@ private:
     /** 주변 몬스터 수집 */
     void CollectTargets(TArray<ADEMonsterBase*>& OutTargets) const;
 
-    /** 스턴 + 이펙트만 적용 */
-    void ApplyDrainEffect(
-        ADEMonsterBase* Monster,
-        ADECharacterBase* Player
+    void SpawnBloodDrainNiagara(
+        ADECharacterBase* Player,
+        const TArray<FVector>& MonsterPositions
     ) const;
+    ///** 스턴 + 이펙트만 적용 */
+    //void ApplyDrainEffect(
+    //    ADEMonsterBase* Monster,
+    //    ADECharacterBase* Player
+    //) const;
 
     /** 종료 시 데미지 적용 */
     void ApplyFinishDamage(

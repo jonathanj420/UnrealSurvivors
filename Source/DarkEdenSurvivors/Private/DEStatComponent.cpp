@@ -100,7 +100,7 @@ float UDEStatComponent::TakeDamage(float DamageAmount, AActor* DamageCauser)
 
 	if (CurrentHP <= 0.f)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Took Damage"));
+		UE_LOG(LogTemp, Warning, TEXT("Took Damage to Death"));
 		CurrentHP = 0.f;
 		OnZeroHP.Broadcast(); // Monster/Player에서 바인딩
 	}
