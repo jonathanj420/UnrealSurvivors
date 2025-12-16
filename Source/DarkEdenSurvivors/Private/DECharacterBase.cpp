@@ -32,7 +32,7 @@ ADECharacterBase::ADECharacterBase()
     IsFPS = false;
     bMoveCamera = false;
     bCanMove = true;
-    GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+    GetCharacterMovement()->MaxWalkSpeed = 200.0f;
 
     SetControlMode(EControlMode::FREETPS);
     GetCapsuleComponent()->SetCollisionProfileName(TEXT("TestCharacter"));

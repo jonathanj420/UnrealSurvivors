@@ -58,7 +58,7 @@ protected:
 protected:
 
 	UPROPERTY(EditAnywhere, Category = "Monster Stats")
-	float MoveSpeed = 300.0f;
+	float MoveSpeed = 100.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Monster Stats")
 	float Damage = 10.0f;
@@ -77,7 +77,6 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Monster Stats")
 	float KnockbackResistance = 6.0f;
-	
 	
 
 

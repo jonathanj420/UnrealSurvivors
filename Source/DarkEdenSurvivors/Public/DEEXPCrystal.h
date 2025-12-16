@@ -28,7 +28,7 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float EXPAmount = 10;
+	float EXPAmount = 2;
 
 	UPROPERTY(EditAnywhere)
 	class USphereComponent* Collision;

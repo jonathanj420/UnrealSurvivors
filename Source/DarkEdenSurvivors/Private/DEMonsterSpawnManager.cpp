@@ -90,18 +90,6 @@ void ADEMonsterSpawnManager::Tick(float DeltaTime)
     const float Now = GetWorld()->GetTimeSeconds();
 
     if (!Player) return;
-    if (GEngine)
-    {
-        GEngine->AddOnScreenDebugMessage(
-            -1,
-            0.0f,
-            FColor::Green,
-            FString::Printf(TEXT("Active Monsters Count : %d"), ActiveMonsters.Num())
-
-
-        );
-
-    }
     ProcessWave(DeltaTime);
 
     FVector PlayerLocation = Player->GetActorLocation();
@@ -110,6 +98,7 @@ void ADEMonsterSpawnManager::Tick(float DeltaTime)
         ADEMonsterBase* Mob = ActiveMonsters[i];
         if (!Mob) continue;
 
+
         Mob->UpdateCrowdControl(Now);
         Mob->UpdateKnockback(DeltaTime);
 
@@ -117,6 +106,7 @@ void ADEMonsterSpawnManager::Tick(float DeltaTime)
             continue;
         Mob->MoveToPlayer(DeltaTime);
         ResolvePlayerPush(Mob);
+        
     }
 
     // 2) push-out (겹침 해소) - O(n^2), 필요시 spatial partitioning 사용
@@ -273,6 +263,7 @@ bool ADEMonsterSpawnManager::SpawnBoss(const FDEStageWaveData& WaveData)
     UE_LOG(LogTemp, Warning, TEXT("BOSS : %s SPAWNED"), *WaveData.BossClass->GetName());
     return true;
 }
+
 
 ADEMonsterBase* ADEMonsterSpawnManager::SpawnFromPool(TSubclassOf<ADEMonsterBase> MonsterClass, FVector& Location)
 {

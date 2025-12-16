@@ -34,8 +34,8 @@ ADEBloodyNail::ADEBloodyNail()
 
 void ADEBloodyNail::PerformSweepAttack()
 {
-	Super::PerformSweepAttack();
-    //DoFanShapeAttack(Damage, 200.0f, 90);
+	//Super::PerformSweepAttack();
+    DoFanShapeAttack(Damage, 200.0f, 90);
 
 }
 
@@ -47,14 +47,14 @@ void ADEBloodyNail::DoFanShapeAttack(float inDamage, float Range, float AngleDeg
     FVector SweepOrigin = GetActorLocation();
     FVector ForwardDir = GetActorForwardVector().GetSafeNormal();
 
-    float HalfAngle = 90 * 0.5f; // degrees
+    float HalfAngle = 180 * 0.5f; // degrees
     float Radius = 200.0f;
 
     // 부채꼴 디버그 그리기
     const int32 NumLines = 16; // 부채꼴 선 개수
     for (int32 i = 0; i <= NumLines; ++i)
     {
-        float Alpha = -HalfAngle + (90.0f * i / NumLines); // -45 ~ 45 같은 범위
+        float Alpha = -HalfAngle + (180.0f * i / NumLines); // -45 ~ 45 같은 범위
         FRotator Rot(0.f, Alpha, 0.f);
         FVector Dir = Rot.RotateVector(ForwardDir);
         DrawDebugLine(GetWorld(), SweepOrigin, SweepOrigin + Dir * Radius, FColor::Red, false, 1.f, 0, 2.f);
