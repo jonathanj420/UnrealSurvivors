@@ -24,7 +24,6 @@ public:
     //void FireSequence();   // 여러 번 반복 발사
     void FireRandom();
 
-    FSkillSpec CurrentSpec;
 
     int32 ProjectileFired = 0;        // 몇 개 반복했는지
     int32 MaxProjectile = 10;         // 총몇발 연사할지

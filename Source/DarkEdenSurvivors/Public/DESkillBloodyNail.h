@@ -15,7 +15,6 @@ class DARKEDENSURVIVORS_API UDESkillBloodyNail : public UDEAutoSkillBase
 	GENERATED_BODY()
     UDESkillBloodyNail();
 	virtual void ActivateSkill(FDESkillData* SkillData) override;
-    FSkillSpec CurrentSpec;
 
     FTimerHandle FireTimerHandle;
 private:

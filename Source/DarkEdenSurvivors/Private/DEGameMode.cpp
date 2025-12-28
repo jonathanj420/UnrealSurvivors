@@ -6,7 +6,6 @@
 
 
 #include "DEGameMode.h"
-#include "TestCharacter.h"
 #include "DEFemaleVampire.h"
 #include "DEPlayerController.h"
 #include "Kismet/GameplayStatics.h"

@@ -39,6 +39,7 @@ void ADEMonsterRepositionManager::Tick(float DeltaTime)
     const FVector PlayerLoc = Player->GetActorLocation();
     const float MaxDistSq = MaxDistanceFromPlayer * MaxDistanceFromPlayer;
 
+
     for (ADEMonsterBase* Monster : Monsters)
     {
         if (!Monster->IsAlive())

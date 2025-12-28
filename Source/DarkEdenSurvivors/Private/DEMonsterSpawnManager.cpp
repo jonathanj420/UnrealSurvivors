@@ -7,16 +7,13 @@
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
 #include "DECharacterBase.h"
+#include "DEGameInstance.h"
 #include "DEGameMode.h"
 
 ADEMonsterSpawnManager::ADEMonsterSpawnManager()
 {
     PrimaryActorTick.bCanEverTick = true;
-    //MonsterClass = ADEMonsterBase::StaticClass();
-    MonsterClasses.Add(ADEMonsterBase::StaticClass());
-    //MonsterClasses.Add(ADEMonsterBase::StaticClass());
-    //MonsterClasses.Add(ADEMonsterBase::StaticClass()); . . . . . 
-
+    MonsterBase = ADEMonsterBase::StaticClass();
     CurrentWaveIndex = -1;
     WaveElapsedTime = 0.0f;
     NextSpawnTime = 0.0f;
@@ -29,6 +26,14 @@ ADEMonsterSpawnManager::ADEMonsterSpawnManager()
 void ADEMonsterSpawnManager::BeginPlay()
 {
     Super::BeginPlay();
+
+    GameInstanceCache = Cast<UDEGameInstance>(GetGameInstance());
+
+    if (!GameInstanceCache)
+    {
+        UE_LOG(LogTemp, Error, TEXT("MonsterSpawnManager: Failed to cache GameInstance!"));
+    }
+
     GameMode = Cast<ADEGameMode>(UGameplayStatics::GetGameMode(this));
     if (GameMode)
     {
@@ -206,12 +211,12 @@ void ADEMonsterSpawnManager::StartWave(int32 WaveIndex)
     UE_LOG(LogTemp, Warning, TEXT("StartWave %d (StartTime %.2f)"), WaveIndex, WaveData->StartTime);
 
     // 보스 즉시 스폰 (보스가 지정되어 있으면 한 번만)
-    if (WaveData->BossClass)
+    if (!WaveData->BossMonsterID.IsNone())
     {
         SpawnBoss(*WaveData);
     }
 
-    // MinimumCount 즉시 보충 (SpawnLimit 고려)
+    // 2. MinimumCount 즉시 보충 (SpawnLimit 고려)
     int32 CurrentActive = ActiveMonsters.Num();
     int32 SpawnLimit = GameMode ? GameMode->GetSpawnLimit() : INT32_MAX;
     int32 Need = FMath::Max(0, WaveData->MinimumCount - CurrentActive);
@@ -220,90 +225,222 @@ void ADEMonsterSpawnManager::StartWave(int32 WaveIndex)
 
     for (int32 i = 0; i < ToSpawn; ++i)
     {
-        if (WaveData->MonsterClasses.Num() == 0) break;
-        int32 RandIdx = FMath::RandRange(0, WaveData->MonsterClasses.Num() - 1);
-        TSubclassOf<ADEMonsterBase> SelectedClass = WaveData->MonsterClasses[RandIdx];
-        FVector SpawnLocation = GetRandomSpawnLocation();
-        SpawnFromPool(SelectedClass, SpawnLocation);
+        // [수정] 클래스 배열 대신 ID 배열(SpawnMonsterIDs) 체크
+        if (WaveData->SpawnMonsterIDs.Num() == 0) break;
+
+        // A. 랜덤 ID 뽑기
+        int32 RandIdx = FMath::RandRange(0, WaveData->SpawnMonsterIDs.Num() - 1);
+        FName TargetID = WaveData->SpawnMonsterIDs[RandIdx];
+
+        // B. GameInstance에서 데이터 포인터 가져오기 (O(1) 속도)
+        const FDEMonsterData* MonsterData = GameInstanceCache->GetMonsterData(TargetID);
+
+        // C. 데이터가 유효하면 스폰 (데이터 주입)
+        if (MonsterData)
+        {
+            FVector SpawnLocation = GetRandomSpawnLocation();
+
+            // SpawnFromPool(위치, 데이터포인터) 호출
+            SpawnFromPool(SpawnLocation, MonsterData);
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("StartWave: Monster Data Not Found for ID '%s'"), *TargetID.ToString());
+        }
     }
 
-    // 다음 스폰 시간 초기화(즉시 스폰 시작 가능)
+    // 다음 스폰 시간 초기화
     NextSpawnTime = GameMode ? GameMode->GetElapsedTime() : 0.0f;
     
 }
 
 bool ADEMonsterSpawnManager::TrySpawnMonster(const FDEStageWaveData& WaveData)
 {
+
+    UE_LOG(LogTemp, Error, TEXT("Try to Spawn Monster"));
+    // A. 스폰 제한 체크
     const int32 CurrentActiveCount = ActiveMonsters.Num();
-    const int32 SpawnLimit = GameMode ? GameMode->GetSpawnLimit() : INT32_MAX;
+    const int32 SpawnLimit = GameMode ? GameMode->GetSpawnLimit() : 500;
 
-    // 만약 현재가 SpawnLimit 이상이면 스폰 중지
-    if (CurrentActiveCount >= SpawnLimit)
+    if (CurrentActiveCount >= SpawnLimit) return false;
+    if (WaveData.SpawnMonsterIDs.Num() == 0) return false;
+
+    // B. 이번에 소환할 몬스터 ID 랜덤 선택
+    int32 RandIdx = FMath::RandRange(0, WaveData.SpawnMonsterIDs.Num() - 1);
+    FName TargetID = WaveData.SpawnMonsterIDs[RandIdx];
+
+    // C. GameInstance에서 캐싱된 데이터 가져오기 (초고속 조회)
+    const FDEMonsterData* MonsterData = GameInstanceCache->GetMonsterData(TargetID);
+    if (!MonsterData)
+    {
+        // 오타나서 데이터 없으면 로그 띄우고 패스
+        UE_LOG(LogTemp, Error, TEXT("Spawn Failed: Data Not Found for ID '%s'"), *TargetID.ToString());
         return false;
+    }
 
-    // 주기 스폰은 1마리
-    if (WaveData.MonsterClasses.Num() == 0)
-        return false;
-
-    int32 RandIdx = FMath::RandRange(0, WaveData.MonsterClasses.Num() - 1);
-    TSubclassOf<ADEMonsterBase> SelectedClass = WaveData.MonsterClasses[RandIdx];
-    
+    // D. 위치 잡고 스폰 실행 (데이터 전달)
     FVector SpawnLocation = GetRandomSpawnLocation();
-    SpawnFromPool(SelectedClass, SpawnLocation);
+
+    // 더 이상 MonsterClass를 넘기지 않음 (MasterClass 사용)
+    SpawnFromPool(SpawnLocation, MonsterData);
+
     return true;
 }
 
 bool ADEMonsterSpawnManager::SpawnBoss(const FDEStageWaveData& WaveData)
 {
-    if (!WaveData.BossClass)
+    // 1. 유효성 체크
+    if (WaveData.BossMonsterID.IsNone() || !GameInstanceCache)
         return false;
 
-    FVector SpawnLocation =GetRandomSpawnLocation();
-    SpawnFromPool(WaveData.BossClass, SpawnLocation);
-    UE_LOG(LogTemp, Warning, TEXT("BOSS : %s SPAWNED"), *WaveData.BossClass->GetName());
-    return true;
+    // 2. 데이터 가져오기
+    const FDEMonsterData* BossData = GameInstanceCache->GetMonsterData(WaveData.BossMonsterID);
+    if (!BossData)
+    {
+        UE_LOG(LogTemp, Error, TEXT("SpawnBoss Failed: Data Not Found (%s)"), *WaveData.BossMonsterID.ToString());
+        return false;
+    }
+
+    // 3. 보스 전용 클래스 확인 (OverrideClass)
+    // 보스는 무조건 데이터 테이블에 전용 BP(OverrideClass)가 지정되어 있어야 함!
+    TSubclassOf<ADEMonsterBase> BossClassToSpawn;
+
+    if (!BossData->OverrideClass.IsNull())
+    {
+        // 보스는 한 마리니까 여기서 즉시 로딩(Synchronous Load)해도 괜찮음
+        BossClassToSpawn = BossData->OverrideClass.LoadSynchronous();
+    }
+
+    if (!BossClassToSpawn)
+    {
+        UE_LOG(LogTemp, Error, TEXT("SpawnBoss Failed: No OverrideClass in Data (%s). Boss needs a specific BP!"), *WaveData.BossMonsterID.ToString());
+        return false;
+    }
+
+    // 4. 스폰 실행 (풀링 X, 직접 생성)
+    FVector SpawnLocation = GetRandomSpawnLocation(); // 나중엔 보스 전용 스폰 위치로 변경 가능
+
+    FActorSpawnParameters Params;
+    Params.Owner = this;
+    Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn; // 보스는 껴서라도 나와야 함
+
+    ADEMonsterBase* SpawnedBoss = GetWorld()->SpawnActor<ADEMonsterBase>(
+        BossClassToSpawn,
+        SpawnLocation,
+        FRotator::ZeroRotator,
+        Params
+    );
+
+    // 5. 초기화 및 연출 시작
+    if (SpawnedBoss)
+    {
+        // 데이터(체력 등) 적용
+        SpawnedBoss->ResetMonster(BossData);
+
+        // [연출 포인트] 여기서 보스 등장 로직 실행!
+        // 예: 카메라 쉐이크, 보스 이름 UI 띄우기, 포효 애니메이션 등
+        // AADEBossMonster* RealBoss = Cast<AADEBossMonster>(SpawnedBoss);
+        // if (RealBoss) RealBoss->PlayIntroSequence();
+
+        UE_LOG(LogTemp, Warning, TEXT("!!! BOSS SPAWNED: %s !!!"), *BossData->DisplayName.ToString());
+
+        // 보스는 ActiveMonsters에 넣을지 말지 선택 (일반 몹 카운트에 포함시킬지?)
+        // 보통 보스는 별도 관리하거나 포함시키더라도 Limit 체크에서 예외 처리함
+        ActiveMonsters.Add(SpawnedBoss);
+
+        return true;
+    }
+
+    return false;
 }
 
 
-ADEMonsterBase* ADEMonsterSpawnManager::SpawnFromPool(TSubclassOf<ADEMonsterBase> MonsterClass, FVector& Location)
+ADEMonsterBase* ADEMonsterSpawnManager::SpawnFromPool(FVector& Location, const FDEMonsterData* DataToApply)
 {
-    const ADEMonsterBase* CDO = MonsterClass.GetDefaultObject();
+    //const ADEMonsterBase* CDO = MonsterClass.GetDefaultObject();
 
-    Location.Z = CDO->GetCapsuleHalfHeight();
-    // Try reuse from pool first (matching subclass is optional: pool contains base class instances)
-    for (ADEMonsterBase* Monster : MonsterPool)
+    //Location.Z = CDO->GetCapsuleHalfHeight();
+    //// Try reuse from pool first (matching subclass is optional: pool contains base class instances)
+    //for (ADEMonsterBase* Monster : MonsterPool)
+    //{
+    //    if (!Monster) continue;
+
+    //    // 기존 ResetForPool() / InitializePool()가 풀에 넣을 때 Hide 시킨다고 가정
+    //    if (Monster->IsHidden())
+    //    {
+    //        // Optionally, you can cast to check if this Monster can be used as MonsterClass,
+    //        // or you can change the actor's properties to become the desired 'type'.
+    //        Monster->SetActorLocation(Location);
+    //        Monster->ResetMonster();    // Show, enable, reset stats
+    //        ActiveMonsters.Add(Monster);
+
+    //        //UE_LOG(LogTemp, Verbose, TEXT("Reused monster from pool: %s"), *Monster->GetName());
+    //        return Monster;
+    //    }
+    //}
+
+    //// Spawn new one
+    //UWorld* World = GetWorld();
+    //if (!World) return nullptr;
+    //
+    //ADEMonsterBase* NewMonster = World->SpawnActor<ADEMonsterBase>(MonsterClass, Location, FRotator::ZeroRotator);
+    //if (!NewMonster) return nullptr;
+
+    //// 초기화 및 바인딩
+    //MonsterPool.Add(NewMonster);
+    //NewMonster->ResetMonster();    // Show, enable, reset stats
+    //ActiveMonsters.Add(NewMonster);
+    //NewMonster->OnMonsterDeath.AddUObject(this, &ADEMonsterSpawnManager::OnMonsterDied);
+
+    ////UE_LOG(LogTemp, Warning, TEXT("Spawned new monster: %s"), *NewMonster->GetName());
+    //return NewMonster;
+
+    // 1. 어떤 클래스로 만들지 결정 (Decision)
+    TSubclassOf<ADEMonsterBase> ClassToSpawn = MonsterBase; // 기본값
+
+    // 데이터에 "나는 특별한 클래스 쓸거야"라고 적혀있다면?
+    if (DataToApply && !DataToApply->OverrideClass.IsNull())
     {
-        if (!Monster) continue;
-
-        // 기존 ResetForPool() / InitializePool()가 풀에 넣을 때 Hide 시킨다고 가정
-        if (Monster->IsHidden())
-        {
-            // Optionally, you can cast to check if this Monster can be used as MonsterClass,
-            // or you can change the actor's properties to become the desired 'type'.
-            Monster->SetActorLocation(Location);
-            Monster->ResetMonster();    // Show, enable, reset stats
-            ActiveMonsters.Add(Monster);
-
-            //UE_LOG(LogTemp, Verbose, TEXT("Reused monster from pool: %s"), *Monster->GetName());
-            return Monster;
-        }
+        // 동기 로딩 (보스는 한 마리니까 괜찮음)
+        ClassToSpawn = DataToApply->OverrideClass.LoadSynchronous();
     }
 
-    // Spawn new one
+    if (!ClassToSpawn) return nullptr;
+
+    // 2. 풀링 or 생성 (이제 ClassToSpawn을 사용)
+    // 주의: 보스처럼 특수 클래스는 풀링을 안 하고 그냥 매번 생성/파괴하는 게 관리하기 편할 수 있습니다.
+    // 여기서는 간단하게 그냥 생성한다고 가정 (풀링 로직은 일반몹 위주로)
+
     UWorld* World = GetWorld();
-    if (!World) return nullptr;
-    
-    ADEMonsterBase* NewMonster = World->SpawnActor<ADEMonsterBase>(MonsterClass, Location, FRotator::ZeroRotator);
-    if (!NewMonster) return nullptr;
+    ADEMonsterBase* SpawnedMonster = nullptr;
 
-    // 초기화 및 바인딩
-    MonsterPool.Add(NewMonster);
-    NewMonster->ResetMonster();    // Show, enable, reset stats
-    ActiveMonsters.Add(NewMonster);
-    NewMonster->OnMonsterDeath.AddUObject(this, &ADEMonsterSpawnManager::OnMonsterDied);
+    // (일반 몹인 경우 풀 뒤지기 로직 유지...)
+    // (보스인 경우 or 풀에 없으면 새로 생성)
+    {
+        FActorSpawnParameters Params;
+        Params.Owner = this;
+        Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-    //UE_LOG(LogTemp, Warning, TEXT("Spawned new monster: %s"), *NewMonster->GetName());
-    return NewMonster;
+        SpawnedMonster = World->SpawnActor<ADEMonsterBase>(
+            ClassToSpawn, // <--- 결정된 클래스로 스폰!
+            Location,
+            FRotator::ZeroRotator,
+            Params
+        );
+    }
+
+    // 3. 데이터 주입 (보스도 체력, 공격력 등은 테이블 데이터 따라감)
+    if (SpawnedMonster && DataToApply)
+    {
+        // 보스 클래스 내부에서 ResetMonster를 오버라이드해서 
+        // 고유 패턴 등을 초기화하면 됨
+        SpawnedMonster->ResetMonster(DataToApply);
+
+        ActiveMonsters.Add(SpawnedMonster);
+        SpawnedMonster->OnMonsterDeath.AddUObject(this, &ADEMonsterSpawnManager::OnMonsterDied);
+    }
+
+    return SpawnedMonster;
 
 }
 
@@ -319,83 +456,6 @@ void ADEMonsterSpawnManager::ReturnMonsterToPool(ADEMonsterBase* Monster)
 
 
 
-//**************************************** OLD FUNC
-//ADEMonsterBase* ADEMonsterSpawnManager::SpawnFromPool(const FVector& SpawnLocation, const FRotator& SpawnRotation)
-//{
-//    for (ADEMonsterBase* Monster : MonsterPool)
-//    {
-//        if (!Monster) continue;
-//
-//        // Find Monsters inactive
-//        if (Monster->IsHidden())
-//        {
-//            FVector MobLocation;
-//            MobLocation = SpawnLocation;
-//            MobLocation.Z = Monster->GetCapsuleHalfHeight()+0.5f;
-//            Monster->SetActorLocation(MobLocation);
-//            Monster->SetActorRotation(SpawnRotation);
-//
-//            Monster->ResetMonster();
-//
-//            ActiveMonsters.Add(Monster);
-//
-//            return Monster;
-//        }
-//    }
-//
-//    // If no Monster in Pool
-//    UE_LOG(LogTemp, Warning, TEXT("Monster Pool exhausted!"));
-//    return nullptr;
-//}
-//
-//void ADEMonsterSpawnManager::ReturnMonsterToPool(ADEMonsterBase* Monster)
-//{
-//    if (!Monster) return;
-//
-//    Monster->ResetForPool();
-//
-//    Monster->SetActorLocation(FVector::ZeroVector);
-//    UE_LOG(LogTemp, Warning, TEXT("%s Returned to Pool"),*Monster->GetName());
-//}
-//
-//
-//void ADEMonsterSpawnManager::InitializePool()
-//{
-//    if (MonsterClasses.Num() == 0) return;
-//
-//    UWorld* World = GetWorld();
-//    if (!World) return;
-//
-//    for (int32 i = 0; i < InitialPoolSize; i++)
-//    {
-//        // Choose Random Monster
-//        int32 RandIndex = FMath::RandRange(0, MonsterClasses.Num() - 1);
-//        TSubclassOf<ADEMonsterBase> MonsterClass = MonsterClasses[RandIndex];
-//
-//        // Spawn in Pool
-//        FActorSpawnParameters Params;
-//        Params.Owner = this;
-//        Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-//
-//        ADEMonsterBase* Monster = World->SpawnActor<ADEMonsterBase>(
-//            MonsterClass,
-//            FVector::ZeroVector,      // Temp Location
-//            FRotator::ZeroRotator,
-//            Params
-//        );
-//
-//        if (Monster)
-//        {
-//            Monster->SetActorHiddenInGame(true);
-//            Monster->SetActorEnableCollision(false);
-//            Monster->SetActorTickEnabled(false);
-//            Monster->OnMonsterDeath.AddUObject(this, &ADEMonsterSpawnManager::OnMonsterDied);
-//            MonsterPool.Add(Monster);
-//        }
-//    }
-//
-//    UE_LOG(LogTemp, Warning, TEXT("Monster Pool Initialized: %d"), MonsterPool.Num());
-//}
 
 FVector ADEMonsterSpawnManager::GetRandomSpawnLocation()
 {
@@ -413,36 +473,6 @@ FVector ADEMonsterSpawnManager::GetRandomSpawnLocation()
     return FVector(SpawnX, SpawnY, SpawnZ);
 }
 
-//void ADEMonsterSpawnManager::StartNextWave()
-//{
-//    CurrentWave++;
-//    UE_LOG(LogTemp, Warning, TEXT("Wave : %d Start"), CurrentWave);
-//    if (CurrentWave > TotalWaves)
-//    {
-//        return; // 모든 웨이브 종료
-//    }
-//
-//    SpawnedThisWave = 0;
-//    GetWorldTimerManager().SetTimer(SpawnTimerHandle, this, &ADEMonsterSpawnManager::SpawnWaveMonster, SpawnInterval, true);
-//}
-
-//void ADEMonsterSpawnManager::SpawnWaveMonster()
-//{
-//    if (SpawnedThisWave >= MonstersPerWave)
-//    {
-//        GetWorldTimerManager().ClearTimer(SpawnTimerHandle);
-//        GetWorldTimerManager().SetTimer(WaveTimerHandle, this, &ADEMonsterSpawnManager::StartNextWave, WaveInterval, false);
-//        return;
-//    }
-//
-//    FVector SpawnLocation = GetRandomSpawnLocation();
-//    FRotator SpawnRotation = FRotator::ZeroRotator;
-//    ADEMonsterBase* Monster = SpawnFromPool(SpawnLocation, SpawnRotation);
-//    if (Monster)
-//    {
-//        SpawnedThisWave++;
-//    }
-//}
 
 void ADEMonsterSpawnManager::OnMonsterDied(ADEMonsterBase* Monster)
 {

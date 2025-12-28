@@ -10,7 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "DEEXPCrystal.h"
 #include "DEStatComponent.h"
-#include "DEMonsterSpawnManager.h"
+#include "Data/DEMonsterData.h"
 
 // Sets default values
 ADEMonsterBase::ADEMonsterBase()
@@ -30,15 +30,15 @@ ADEMonsterBase::ADEMonsterBase()
 	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
 	
-	TestMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TestMesh"));
-	TestMesh->SetupAttachment(RootComponent);
-	TestMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	TestMesh->SetRelativeLocation(FVector(0.0f, 0.0f, -96.0f));
-	ConstructorHelpers::FObjectFinder<UStaticMesh>SM_TESTMESH(TEXT("/Game/InfinityBladeWeapons/Weapons/Staff/StaticMesh/SM_Stf_StaffofAncients.SM_Stf_StaffofAncients"));
-	if (SM_TESTMESH.Succeeded())
-	{
-		TestMesh->SetStaticMesh(SM_TESTMESH.Object);
-	}
+	//TestMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TestMesh"));
+	//TestMesh->SetupAttachment(RootComponent);
+	//TestMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//TestMesh->SetRelativeLocation(FVector(0.0f, 0.0f, -96.0f));
+	//ConstructorHelpers::FObjectFinder<UStaticMesh>SM_TESTMESH(TEXT("/Game/InfinityBladeWeapons/Weapons/Staff/StaticMesh/SM_Stf_StaffofAncients.SM_Stf_StaffofAncients"));
+	//if (SM_TESTMESH.Succeeded())
+	//{
+	//	TestMesh->SetStaticMesh(SM_TESTMESH.Object);
+	//}
 
 	EXPCrystal = ADEEXPCrystal::StaticClass();
 	StatComp = CreateDefaultSubobject<UDEStatComponent>(TEXT("StatComponent"));
@@ -53,16 +53,16 @@ void ADEMonsterBase::BeginPlay()
 	StatComp->ResetStat();
 	
 	TargetPlayer = Cast<ADECharacterBase>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
-	for (TActorIterator<ADEMonsterSpawnManager> It(GetWorld()); It; ++It)
-	{
-		SpawnManager = *It;
-		break; // 월드에 하나만 있다고 가정
-	}
+	//for (TActorIterator<ADEMonsterSpawnManager> It(GetWorld()); It; ++It)
+	//{
+	//	SpawnManager = *It;
+	//	break; // 월드에 하나만 있다고 가정
+	//}
 
-	if (!SpawnManager)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("SpawnManager not found!"));
-	}
+	//if (!SpawnManager)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("SpawnManager not found!"));
+	//}
 	//StatComp->OnZeroHP.AddUObject(this, &ADEMonsterBase::Die);
 
 }
@@ -204,6 +204,11 @@ float ADEMonsterBase::GetCurrentHP()
 	return StatComp->GetCurrentHP();
 }
 
+float ADEMonsterBase::GetMaxHP()
+{
+	return StatComp->GetMaxHP();
+}
+
 void ADEMonsterBase::DropExp()
 {
 	if (!EXPCrystal) return;
@@ -227,8 +232,61 @@ void ADEMonsterBase::DropExp()
 
 }
 
-void ADEMonsterBase::ResetMonster()
+void ADEMonsterBase::ResetMonster(const FDEMonsterData* Data)
 {
+	if (!Data) return;
+
+	//mesh for later
+	// 1. 메쉬 교체 (Soft Pointer 로딩)
+	if (!Data->MonsterMesh.IsNull())
+	{
+		// 동기 로딩 (Synchronous Load). 
+		// 뱀서류는 웨이브 시작 전 매니저가 미리 로딩해두는 게 정석이지만,
+		// 구현 편의상 여기서 즉시 로딩해도 초기에는 문제 없음.
+		USkeletalMesh* NewMesh = Data->MonsterMesh.LoadSynchronous();
+		if (NewMesh)
+		{
+			Mesh->SetSkeletalMesh(NewMesh);
+		}
+	}
+
+
+	//anim for later
+	//// 2. 애니메이션 설정 (Single Node Mode)
+	//if (!Data->WalkAnim.IsNull())
+	//{
+	//	UAnimSequence* NewAnim = Data->WalkAnim.LoadSynchronous();
+	//	if (NewAnim)
+	//	{
+	//		// [핵심] AnimBP를 안 쓰고, 그냥 이 애니메이션만 주구장창 재생하라고 설정
+	//		GetMesh()->SetAnimationMode(EAnimationMode::AnimationSingleNode);
+	//		GetMesh()->PlayAnimation(NewAnim, true); // true = Loop
+	//	}
+	//}
+	//else
+	//{
+	//	// 애니메이션 없으면 T 포즈라도 잡게 초기화
+	//	GetMesh()->SetAnimationMode(EAnimationMode::UseAnimationBlueprint);
+	//}
+
+	// 3. 캡슐 및 트랜스폼 보정
+	Capsule->InitCapsuleSize(Data->CapsuleRadius, Data->CapsuleHalfHeight);
+
+	// 메쉬 위치 보정 (발바닥 높이 맞추기)
+	//GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, Data->MeshZOffset));
+
+	// 전체 크기 보정
+	//SetActorScale3D(FVector(Data->ScaleMultiplier));
+
+
+	// 4. 스탯 적용 (기존과 동일)
+	StatComp->SetMaxHP(Data->MaxHP);
+	MoveSpeed = Data->MoveSpeed;
+	AttackDamage = Data->AttackDamage;
+	AttackInterval = Data->AttackInterval;
+	KnockbackResistance = Data->KnockbackResistance;
+
+	// 5. 상태 초기화
 	StatComp->ResetStat();
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);

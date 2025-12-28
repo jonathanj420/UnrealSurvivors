@@ -6,27 +6,12 @@
 #include "GameFramework/Actor.h"
 #include "Engine/DataTable.h"
 #include "Data/DEStageWaveData.h"    
+#include "Data/DEMonsterData.h"
 #include "DEMonsterSpawnManager.generated.h"
 
 class ADEGameMode;
 class ADEMonsterBase;
-
-USTRUCT()
-struct FMonsterWaveEntry
-{
-    GENERATED_BODY()
-
-    TSubclassOf<ADEMonsterBase> MonsterClass;
-    int32 Count;
-};
-
-USTRUCT()
-struct FMonsterWave
-{
-    GENERATED_BODY()
-
-    TArray<FMonsterWaveEntry> Entries;
-};
+class UDEGameInstance;
 
 UCLASS()
 class DARKEDENSURVIVORS_API ADEMonsterSpawnManager : public AActor
@@ -52,17 +37,14 @@ public:
     UPROPERTY(EditAnywhere, Category = "Pooling")
     TArray<class ADEMonsterBase*> MonsterPool;
 
-    UFUNCTION()
-    ADEMonsterBase* SpawnFromPool(TSubclassOf<ADEMonsterBase> MonsterClass, FVector& Location);
-    // old ADEMonsterBase* SpawnFromPool(const FVector& SpawnLocation, const FRotator& SpawnRotation = FRotator::ZeroRotator);
+    ADEMonsterBase* SpawnFromPool(FVector& Location, const struct FDEMonsterData* DataToApply);
     UFUNCTION()
     void ReturnMonsterToPool(class ADEMonsterBase* Monster);
 
     UPROPERTY(EditAnywhere, Category = "Pooling")
     int32 InitialPoolSize = 50;
 
-    
-    //old void InitializePool();
+  
 
     //**************** New Wave System**********
     UPROPERTY(EditAnywhere, Category = "Wave")
@@ -111,8 +93,6 @@ public:
 
     FVector GetRandomSpawnLocation();
 
-    //void StartNextWave();
-    //void SpawnWaveMonster();
     //**** MONSTER COLLISION****
     UPROPERTY(EditAnywhere, Category = "Collision")
     float MinSeparationDistance = 80.f; // 몬스터간 최소 거리 (반지름*2 정도)
@@ -132,13 +112,13 @@ public:
     void OnMonsterDied(class ADEMonsterBase* Monster);
     const TArray<ADEMonsterBase*>& GetActiveMonsters() const;
 
-    // 실제 스폰하는 함수
-    //void SpawnMonster();
 
     // 플레이어 참조
     class ADECharacterBase* Player;
-
+    // 몬스터 참조
+    TSubclassOf<ADEMonsterBase> MonsterBase;
 private:
-
+    UPROPERTY()
+    TObjectPtr<UDEGameInstance> GameInstanceCache;
 
 };

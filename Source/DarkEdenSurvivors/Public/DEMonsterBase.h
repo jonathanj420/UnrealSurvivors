@@ -52,19 +52,19 @@ protected:
 	class UDEStatComponent* StatComp;
 	UPROPERTY(EditAnywhere, Category = "EXP")
 	TSubclassOf<class ADEEXPCrystal> EXPCrystal;
-	UPROPERTY()
-	class ADEMonsterSpawnManager* SpawnManager;
 
 protected:
 
 	UPROPERTY(EditAnywhere, Category = "Monster Stats")
 	float MoveSpeed = 100.0f;
-
 	UPROPERTY(EditAnywhere, Category = "Monster Stats")
-	float Damage = 10.0f;
-
+	float AttackDamage = 5.0f;
+	UPROPERTY(EditAnywhere, Category = "Monster Stats")
+	float AttackInterval = 0.2f;
 	UPROPERTY(EditAnywhere, Category = "Monster Stats")
 	float EXPDrop = 10.0f;
+	UPROPERTY(EditAnywhere, Category = "Monster Stats")
+	float KnockbackResistance = 6.0f;
 	UPROPERTY(EditAnywhere, Category = "Monster Stats")
 	bool bIsDying = false;
 	UPROPERTY(EditAnywhere, Category = "Monster Stats")
@@ -75,8 +75,7 @@ public:
 	UPROPERTY()
 	FVector KnockbackVelocity;
 
-	UPROPERTY(EditAnywhere, Category = "Monster Stats")
-	float KnockbackResistance = 6.0f;
+
 	
 
 
@@ -96,10 +95,12 @@ public:
 	float GetCapsuleHalfHeight() const;
 	float GetMoveSpeed() const;
 	float GetDamage();
+	float GetAttackDamage() const { return AttackDamage; }
 	float GetCurrentHP();
+	float GetMaxHP();
 	FOnMonsterDeath OnMonsterDeath;
 	void DropExp();
-	void ResetMonster();
+	void ResetMonster(const struct FDEMonsterData* Data);
 	bool IsBoss() { return bIsBoss; }
 
 

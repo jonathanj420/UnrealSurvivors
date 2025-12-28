@@ -67,6 +67,7 @@ void ADEBloodyKnife::Tick(float DeltaTime)
     LifeTimeCounter += DeltaTime;
     if (LifeTimeCounter >= LifeTime)
     {
+        HitActors.Empty();
         ReturnToPool();
     }
 
@@ -104,6 +105,7 @@ void ADEBloodyKnife::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* Othe
         Monster->ApplyKnockback(Monster->GetActorLocation() - GetActorLocation(), KnockbackForce);
         if (Penetration <= 0)
         {
+            HitActors.Empty();
             ReturnToPool();
         }
     }
