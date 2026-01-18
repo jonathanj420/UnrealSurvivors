@@ -3,6 +3,11 @@
 
 #include "DESkillPoisonStorm.h"
 
-void UDESkillPoisonStorm::ActivateSkill(FDESkillData* SkillData)
+//void UDESkillPoisonStorm::ActivateSkill(FDESkillData* SkillData)
+//{
+//}
+
+void UDESkillPoisonStorm::InitBehaviors()
 {
+	Super::InitBehaviors();
 }

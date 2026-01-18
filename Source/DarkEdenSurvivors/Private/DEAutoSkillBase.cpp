@@ -2,36 +2,46 @@
 
 
 #include "DEAutoSkillBase.h"
+#include "DESkillBehavior.h"
 
-UDEAutoSkillBase::UDEAutoSkillBase()
+void UDEAutoSkillBase::Activate()
 {
+	if (!SkillOwner) return;
+
+	FDESkillContext Context;
+	BuildContext(Context);
+
+	for (UDESkillBehavior* Behavior : Behaviors)
+	{
+		if (Behavior) Behavior->Execute(Context);
+	}
 }
 
-//FSkillSpec UDEAutoSkillBase::GetFinalSpec(int32 CurrentLevel) const
-//{
-//    FSkillSpec Spec;
-//
-//    if (!RowData) return Spec;
-//
-//    Spec.Level = CurrentLevel;
-//    Spec.Damage = RowData->Damage;
-//    Spec.ProjectileCount = RowData->ProjectileCount;
-//    Spec.Penetration = RowData->Penetration;
-//    Spec.Cooldown = RowData->Cooldown;
-//
-//    // 예시: 캐릭터 공격력 보정
-//    if (SkillOwner)
-//    {
-//        float CharDamageMultiplier = 1.f;
-//        // 캐릭터에 공격력 증가 옵션이 있다고 가정
-//        // CharDamageMultiplier = SkillOwner->GetDamageMultiplier();
-//        Spec.Damage *= CharDamageMultiplier;
-//    }
-//
-//    // 나중에 스킬 강화 옵션 적용 가능
-//    // 예: 특정 스킬이면 ProjectileCount +1
-//    // if (RowData->SkillID == SPECIAL_SKILL_ID) Spec.ProjectileCount += 1;
-//
-//    return Spec;
-//}
+void UDEAutoSkillBase::SetSkillData(const FDESkillData* NewData)
+{
+	SkillData = NewData;
+	if (SkillData) CurrentLevel = SkillData->Level;
+	UE_LOG(LogTemp, Warning, TEXT("[Skill] %s : level : %d, "), *NewData->SkillName,NewData->Level);
+}
 
+void UDEAutoSkillBase::InitBehaviors()
+{
+	Behaviors.Empty();
+}
+
+void UDEAutoSkillBase::BuildContext(FDESkillContext& OutContext)
+{
+	OutContext.Instigator = SkillOwner;
+
+	if (SkillData)
+	{
+		// 1. 메인 변수 복사
+		OutContext.Damage = SkillData->Damage;
+		OutContext.ProjectileCount = SkillData->ProjectileCount;
+		OutContext.Penetration = SkillData->Penetration;
+		OutContext.Speed = SkillData->ProjectileSpeed;
+
+		// 2. 맵 데이터(옵션) 통째로 복사
+		OutContext.CustomValues = SkillData->OptionValues;
+	}
+}

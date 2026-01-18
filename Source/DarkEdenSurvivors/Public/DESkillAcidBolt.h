@@ -16,7 +16,9 @@ class DARKEDENSURVIVORS_API UDESkillAcidBolt : public UDEAutoSkillBase
 
 public:
 	UDESkillAcidBolt();
-	virtual void ActivateSkill(FDESkillData* SkillData) override;
+	//virtual void ActivateSkill(FDESkillData* SkillData) override;
+	virtual void InitBehaviors() override;
+
 
 private:
 	FDESkillData* CurrentData = nullptr;

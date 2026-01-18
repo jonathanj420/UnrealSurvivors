@@ -4,31 +4,25 @@
 
 #include "CoreMinimal.h"
 #include "DEAutoSkillBase.h"
-#include "DESkillBloodyKnife.generated.h"
+#include "DESkillVenomCircle.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DARKEDENSURVIVORS_API UDESkillBloodyKnife : public UDEAutoSkillBase
+class DARKEDENSURVIVORS_API UDESkillVenomCircle : public UDEAutoSkillBase
 {
 	GENERATED_BODY()
+	
 
-public:
-    UDESkillBloodyKnife();
     //virtual void ActivateSkill(FDESkillData* SkillData) override;
     virtual void InitBehaviors() override;
 
-//    void FireRandom();
 
 
-    int32 ProjectileFired = 0;        // 몇 개 반복했는지
-    int32 MaxProjectile = 10;         // 총몇발 연사할지
-
-    FTimerHandle FireTimerHandle;
 private:
     FDESkillData* CurrentData = nullptr;
 
-    TSubclassOf<AActor> ProjectileClass;
+    TSubclassOf<AActor> AttackClass;
     USoundBase* FireSound;
 };

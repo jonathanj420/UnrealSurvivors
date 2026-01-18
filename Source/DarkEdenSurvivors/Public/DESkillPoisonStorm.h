@@ -14,5 +14,6 @@ class DARKEDENSURVIVORS_API UDESkillPoisonStorm : public UDEAutoSkillBase
 {
 	GENERATED_BODY()
 	
-	virtual void ActivateSkill(FDESkillData* SkillData) override;
+	//virtual void ActivateSkill(FDESkillData* SkillData) override;
+	virtual void InitBehaviors() override;
 };

@@ -5,23 +5,35 @@
 #include "CoreMinimal.h"
 #include "DESkillBase.h"
 #include "Data/DESkillData.h"
+#include "DESkillContext.h"
 #include "DEAutoSkillBase.generated.h"
+
 
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class DARKEDENSURVIVORS_API UDEAutoSkillBase : public UDESkillBase
 {
 	GENERATED_BODY()
-	
+
 public:
-    UDEAutoSkillBase();
-    virtual void ActivateSkill(FDESkillData* SkillData) PURE_VIRTUAL(UDESkillBase::ActivateSkill, );
-    //FSkillSpec CurrentSpec;
+	// 외부(매니저)에서 호출하는 실행 함수
+	virtual void Activate();
 
-    //FDESkillData* RowData = nullptr;  // 초기 스킬 데이터
+	// 데이터 주입 (레벨업 시 호출)
+	void SetSkillData(const FDESkillData* NewData);
 
-    //// 최종 스펙 계산 (캐릭터 보정, 강화 옵션 적용 등)
-    //virtual FSkillSpec GetFinalSpec(int32 CurrentLevel) const;
+	// 자식 클래스에서 Behavior 조립
+	virtual void InitBehaviors();
+
+protected:
+	virtual void BuildContext(FDESkillContext& OutContext);
+
+protected:
+	UPROPERTY()
+	TArray<class UDESkillBehavior*> Behaviors;
+
+	// 현재 스킬 스펙 (포인터만 참조)
+	const FDESkillData* SkillData = nullptr;
 };

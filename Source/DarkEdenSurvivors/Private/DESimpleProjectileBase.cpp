@@ -6,7 +6,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "DEPoolSubsystem.h"
-#include "Subsystems/WorldSubsystem.h"
+#include "DESkillContext.h"
 
 // Sets default values
 ADESimpleProjectileBase::ADESimpleProjectileBase()
@@ -60,6 +60,26 @@ void ADESimpleProjectileBase::InitializeProjectile(float InDamage, float InSpeed
 	Penetration = InPenetration;
 
 	MovementComponent->Velocity = Direction * Speed;
+}
+
+void ADESimpleProjectileBase::InitializeFromContext(const FDESkillContext& Context, const FVector& Direction)
+{
+	// 1. 메인 스탯 적용
+	InitializeProjectile(Context.Damage, Context.Speed, Context.Penetration, Direction);
+
+	// 2. 확장 스탯 적용 (Map에서 꺼내오기)
+	// "KnockbackForce" 키가 있으면 적용, 없으면 0
+	float KForce = Context.KnockbackForce;
+	SetKnockbackForce(KForce);
+
+	// "Radius"나 "Size" 키가 있다면?
+	float NewSize = Context.GetValue(TEXT("Size"), -1.f);
+	if (NewSize > 0.f)
+	{
+		SetSize(NewSize);
+		// 여기서 실제 Mesh 스케일 조절 로직 호출
+	}
+
 }
 
 void ADESimpleProjectileBase::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,

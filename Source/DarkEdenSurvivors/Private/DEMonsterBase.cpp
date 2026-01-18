@@ -17,7 +17,7 @@ ADEMonsterBase::ADEMonsterBase()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
-
+	Tags.Add(TEXT("Enemy"));
 	Capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
 	Capsule->InitCapsuleSize(42.0f, 96.0f); // 반지름, 높이
 	Capsule->SetCollisionProfileName(TEXT("Monster"));

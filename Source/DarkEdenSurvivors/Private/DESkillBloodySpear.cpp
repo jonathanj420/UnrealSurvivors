@@ -11,27 +11,32 @@ UDESkillBloodySpear::UDESkillBloodySpear()
 
 }
 
-void UDESkillBloodySpear::ActivateSkill(FDESkillData* SkillData)
+//void UDESkillBloodySpear::ActivateSkill(FDESkillData* SkillData)
+//{
+//    ADEMonsterBase* Target = FindBestTarget();
+//    if (!Target) return;
+//
+//    TWeakObjectPtr<ADEMonsterBase> LockedTarget = Target;
+//
+//    // 예고 FX
+//    //SpawnNiagara(WarningFX, Target->GetActorLocation());
+//
+//    // 지연 타격
+//    /*GetWorld()->GetTimerManager().SetTimer(
+//        Timer,
+//        [this, LockedTarget]()
+//        {
+//            if (!LockedTarget.IsValid()) return;
+//            LockedTarget->ApplySkillDamage(Damage, ...);
+//            SpawnNiagara(ImpactFX, LockedTarget->GetActorLocation());
+//        },
+//        Delay,
+//        false*/
+//}
+
+void UDESkillBloodySpear::InitBehaviors()
 {
-    ADEMonsterBase* Target = FindBestTarget();
-    if (!Target) return;
-
-    TWeakObjectPtr<ADEMonsterBase> LockedTarget = Target;
-
-    // 예고 FX
-    //SpawnNiagara(WarningFX, Target->GetActorLocation());
-
-    // 지연 타격
-    /*GetWorld()->GetTimerManager().SetTimer(
-        Timer,
-        [this, LockedTarget]()
-        {
-            if (!LockedTarget.IsValid()) return;
-            LockedTarget->ApplySkillDamage(Damage, ...);
-            SpawnNiagara(ImpactFX, LockedTarget->GetActorLocation());
-        },
-        Delay,
-        false*/
+    Super::InitBehaviors();
 }
 
 ADEMonsterBase* UDESkillBloodySpear::FindBestTarget()

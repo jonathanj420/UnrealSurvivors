@@ -4,28 +4,10 @@
 #include "DESkillBloodyKnife.h"
 #include "DEBloodyKnife.h"
 #include "Kismet/GameplayStatics.h"
-#include "DEPoolSubsystem.h"
+//#include "DEPoolSubsystem.h"
+#include "DEBehavior_FireProjectile.h"
 
-//void UDESkillBloodyKnife::ActivateSkill(const FSkillSpec& Spec)
-//{
-//    UE_LOG(LogTemp, Warning, TEXT("Bloody Knife Projectile : %d by Self"), Spec.ProjectileCount);
-//    if (!Spec.SkillActorClass || !SkillOwner) return;
-//
-//    CurrentSpec = Spec;
-//    ShotsFired = 0;
-//
-//    // ※ 얼마나 연사할지는 원하는 대로 조절
-//    MaxShots = 1;
-//
-//    // 일정 간격으로 FireSequence 반복
-//    SkillOwner->GetWorldTimerManager().SetTimer(
-//        FireTimerHandle,
-//        this,
-//        &UDESkillBloodyKnife::FireSequence,
-//        0.5f,         // 연사 간격
-//        true
-//    );
-//}
+
 
 UDESkillBloodyKnife::UDESkillBloodyKnife()
 {
@@ -40,121 +22,59 @@ UDESkillBloodyKnife::UDESkillBloodyKnife()
     }
 }
 
-void UDESkillBloodyKnife::ActivateSkill(FDESkillData* SkillData)
+void UDESkillBloodyKnife::InitBehaviors()
 {
-//    UE_LOG(LogTemp, Warning, TEXT("%f seconds from last shot"), DeltaCheck);
-    if (!SkillData || !SkillOwner) return;
+    Super::InitBehaviors();
+    // 나중에 여기에 각 스킬에 맞는 Behavior 추가하면 됨
+    // 
+    // 1. 행동(부품) 생성
+    UDEBehavior_FireProjectile* FireAction = NewObject<UDEBehavior_FireProjectile>(this);
 
-    CurrentData = SkillData;
-    //UE_LOG(LogTemp, Warning, TEXT("Bloody Knife Projectile : %d by Self"), CurrentData->ProjectileCount);
-    ProjectileFired = 0;
-    MaxProjectile = SkillData->ProjectileCount;
+    // 2. 부품 설정 (이 스킬만의 특징 주입)
+    FireAction->ProjectileClass = this->ProjectileClass; // "블러디 나이프를 던져라"
+    FireAction->FireSound = this->FireSound;             // "이 소리를 내라"
+    FireAction->BurstInterval = 0.1f;
+    FireAction->RandomPositionRange = 40.0f;
 
-    /*SkillOwner->GetWorldTimerManager().SetTimer(
-        FireTimerHandle,
-        this,
-        &UDESkillBloodyKnife::FireRandom,
-        1.0f/SkillData->ProjectileCount,
-        true
-    );*/
-    SkillOwner->GetWorldTimerManager().SetTimer(
-        FireTimerHandle,
-        this,
-        &UDESkillBloodyKnife::FireRandom,
-        0.1f,
-        true
-    );
+
+    // 3. 장착
+    Behaviors.Add(FireAction);
 }
 
-
-void UDESkillBloodyKnife::FireRandom()
-{
-    if (ProjectileFired >= MaxProjectile)
-    {
-        SkillOwner->GetWorldTimerManager().ClearTimer(FireTimerHandle);
-        return;
-    }
-    if (!SkillOwner || !CurrentData) return;
-    UWorld* World = SkillOwner->GetWorld();
-    if (!World) return;
-
-    FVector Forward = SkillOwner->GetActorForwardVector();
-    FVector Right = SkillOwner->GetActorRightVector();
-    FVector Up = SkillOwner->GetActorUpVector();
-    FVector OwnerLoc = SkillOwner->GetActorLocation();
-    FRotator OwnerRot = SkillOwner->GetActorRotation();
-
-    float RandRight = FMath::FRandRange(-40.f, 40.f);
-    float RandUp = FMath::FRandRange(-40.f, 40.f);
-
-    FVector SpawnLoc = OwnerLoc + Forward * 100.f + Right * RandRight + Up * RandUp;
-
-    if (ProjectileClass)
-    {
-
-        UDEPoolSubsystem* Pool = SkillOwner->GetWorld()->GetGameInstance()->GetSubsystem<UDEPoolSubsystem>();
-        if (!Pool) return;
-
-
-        AActor* Pooled = Pool->GetPooledActor(
-            ProjectileClass,
-            SpawnLoc,
-            OwnerRot,
-            true
-        );
-
-        if (auto* Proj = Cast<ADEBloodyKnife>(Pooled))
-        {
-            // 3) ProjectileBase 스탯 초기화
-            Proj->InitializeProjectile(
-                CurrentData->Damage,
-                Proj->GetSpeed(),
-                CurrentData->Penetration,
-                Forward
-            );
-        }
-        if (FireSound)
-        {
-            UGameplayStatics::PlaySoundAtLocation(World, FireSound, SpawnLoc);
-        }
-        ProjectileFired++;
-    }
-
-}
-
-//void UDESkillBloodyKnife::FireBurst()
+//void UDESkillBloodyKnife::ActivateSkill(FDESkillData* SkillData)
 //{
-//    if (!SkillOwner) return;
-//    UWorld* World = SkillOwner->GetWorld();
-//    if (!World) return;
+////    UE_LOG(LogTemp, Warning, TEXT("%f seconds from last shot"), DeltaCheck);
+//    if (!SkillData || !SkillOwner) return;
 //
-//    FVector Forward = SkillOwner->GetActorForwardVector();
-//    FVector Right = SkillOwner->GetActorRightVector();
-//    FVector Up = SkillOwner->GetActorUpVector();
-//    FVector OwnerLoc = SkillOwner->GetActorLocation();
-//    FRotator OwnerRot = SkillOwner->GetActorRotation();
+//    CurrentData = SkillData;
+//    //UE_LOG(LogTemp, Warning, TEXT("Bloody Knife Projectile : %d by Self"), CurrentData->ProjectileCount);
+//    ProjectileFired = 0;
+//    MaxProjectile = SkillData->ProjectileCount;
 //
-//    // ProjectileCount만큼 동시에 발사
-//    for (int32 i = 0; i < CurrentSpec.ProjectileCount; i++)
-//    {
-//        float RandRight = FMath::FRandRange(-40.f, 40.f);
-//        float RandUp = FMath::FRandRange(-40.f, 40.f);
-//
-//        FVector SpawnLoc =
-//            OwnerLoc +
-//            Forward * 100.f +
-//            Right * RandRight +
-//            Up * RandUp;
-//
-//        World->SpawnActor<AActor>(
-//            CurrentSpec.SkillActorClass,
-//            SpawnLoc,
-//            OwnerRot
-//        );
-//    }
+//    /*SkillOwner->GetWorldTimerManager().SetTimer(
+//        FireTimerHandle,
+//        this,
+//        &UDESkillBloodyKnife::FireRandom,
+//        1.0f/SkillData->ProjectileCount,
+//        true
+//    );*/
+//    SkillOwner->GetWorldTimerManager().SetTimer(
+//        FireTimerHandle,
+//        this,
+//        &UDESkillBloodyKnife::FireRandom,
+//        0.1f,
+//        true
+//    );
 //}
-//void UDESkillBloodyKnife::FireBurst()
+
+
+//void UDESkillBloodyKnife::FireRandom()
 //{
+//    if (ProjectileFired >= MaxProjectile)
+//    {
+//        SkillOwner->GetWorldTimerManager().ClearTimer(FireTimerHandle);
+//        return;
+//    }
 //    if (!SkillOwner || !CurrentData) return;
 //    UWorld* World = SkillOwner->GetWorld();
 //    if (!World) return;
@@ -165,39 +85,40 @@ void UDESkillBloodyKnife::FireRandom()
 //    FVector OwnerLoc = SkillOwner->GetActorLocation();
 //    FRotator OwnerRot = SkillOwner->GetActorRotation();
 //
-//    SkillOwner->GetWorldTimerManager().SetTimer(
-//        FireTimerHandle,
-//        this,
-//        &UDESkillBloodyKnife::FireSequence,
-//        0.5f,
-//        true
-//    );
+//    float RandRight = FMath::FRandRange(-40.f, 40.f);
+//    float RandUp = FMath::FRandRange(-40.f, 40.f);
 //
-//    for (int32 i = 0; i < CurrentData->ProjectileCount; i++)
+//    FVector SpawnLoc = OwnerLoc + Forward * 100.f + Right * RandRight + Up * RandUp;
+//
+//    if (ProjectileClass)
 //    {
-//        float RandRight = FMath::FRandRange(-40.f, 40.f);
-//        float RandUp = FMath::FRandRange(-40.f, 40.f);
 //
-//        FVector SpawnLoc = OwnerLoc + Forward * 100.f + Right * RandRight + Up * RandUp;
+//        UDEPoolSubsystem* Pool = SkillOwner->GetWorld()->GetGameInstance()->GetSubsystem<UDEPoolSubsystem>();
+//        if (!Pool) return;
 //
-//        World->SpawnActor<AActor>(CurrentData->SkillActorClass, SpawnLoc, OwnerRot);
 //
-//        if (CurrentData->SkillSound)
+//        AActor* Pooled = Pool->GetPooledActor(
+//            ProjectileClass,
+//            SpawnLoc,
+//            OwnerRot,
+//            true
+//        );
+//
+//        if (auto* Proj = Cast<ADEBloodyKnife>(Pooled))
 //        {
-//            UGameplayStatics::PlaySoundAtLocation(World, CurrentData->SkillSound, SpawnLoc);
+//            // 3) ProjectileBase 스탯 초기화
+//            Proj->InitializeProjectile(
+//                CurrentData->Damage,
+//                Proj->GetSpeed(),
+//                CurrentData->Penetration,
+//                Forward
+//            );
 //        }
-//    }
-//}
-//
-//void UDESkillBloodyKnife::FireSequence()
-//{
-//    UE_LOG(LogTemp, Warning, TEXT("Fire Sequence"));
-//    if (ShotsFired >= MaxShots)
-//    {
-//        SkillOwner->GetWorldTimerManager().ClearTimer(FireTimerHandle);
-//        return;
+//        if (FireSound)
+//        {
+//            UGameplayStatics::PlaySoundAtLocation(World, FireSound, SpawnLoc);
+//        }
+//        ProjectileFired++;
 //    }
 //
-//    FireBurst();
-//    ShotsFired++;
 //}

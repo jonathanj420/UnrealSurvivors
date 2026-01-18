@@ -1,0 +1,53 @@
+#pragma once
+
+#include "CoreMinimal.h"
+#include "DESkillContext.generated.h"
+
+class AActor;
+struct FDESkillData;
+
+/**
+ * 스킬 실행 시 전달되는 실행 컨텍스트
+ */
+USTRUCT()
+struct FDESkillContext
+{
+	GENERATED_BODY()
+
+public:
+	// --- [1. 필수 참조 데이터] ---
+	// GC가 건드리지 못하게 UPROPERTY() 필수
+	UPROPERTY(Transient)
+	AActor* Instigator = nullptr;
+
+	UPROPERTY(Transient)
+	TArray<AActor*> Targets;
+
+	UPROPERTY(Transient)
+	TSubclassOf<AActor> ProjectileClass;
+
+	// --- [2. 메이저 스탯 (Raw C++ Type)] ---
+	// 일반 변수는 UPROPERTY 없어도 되지만, TMap 직렬화/초기화를 위해 남김
+	// (필요 없으면 float는 그냥 float로 써도 됩니다. 여기선 통일성을 위해 둠)
+
+	float Damage = 0.f;
+	int32 ProjectileCount = 1;
+	int32 Penetration = 0;
+	float Speed = 1000.f;
+	float KnockbackForce = 600.0f;
+
+	// --- [3. 확장 데이터] ---
+	UPROPERTY(Transient)
+	TMap<FName, float> CustomValues;
+
+	// 헬퍼 함수
+	float GetValue(FName Key, float DefaultValue = 0.f) const
+	{
+		if (const float* Val = CustomValues.Find(Key))
+		{
+			return *Val;
+		}
+		return DefaultValue;
+	}
+
+};

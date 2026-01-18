@@ -16,6 +16,7 @@ class DARKEDENSURVIVORS_API UDESkillBloodySpear : public UDEAutoSkillBase
 	
 	UDESkillBloodySpear();
 
-	virtual void ActivateSkill(FDESkillData* SkillData) override;
+	//virtual void ActivateSkill(FDESkillData* SkillData) override;
+	virtual void InitBehaviors() override;
 	class ADEMonsterBase* FindBestTarget();
 };

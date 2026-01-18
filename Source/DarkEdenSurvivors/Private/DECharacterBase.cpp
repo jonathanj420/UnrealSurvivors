@@ -66,7 +66,7 @@ void ADECharacterBase::BeginPlay()
     //StatComponent->OnLevelUp.AddDynamic(this, &ADEPlayerController::ShowLevelUpUI);
     SetControlMode(EControlMode::FIXEDTPS);
     ActiveSkill = NewObject<UDESkillBloodDrain>(this);
-    ActiveSkill->SetOwner(this);
+    ActiveSkill->InitSkill(this);
 }
 
 // Called every frame

@@ -18,7 +18,7 @@ struct FActiveSkill
 	UPROPERTY()
 	UDEAutoSkillBase* SkillObject = nullptr;
 
-	FDESkillData* RowData = nullptr;   // 데이터 테이블 Row
+	const FDESkillData* RowData = nullptr;   // 데이터 테이블 Row
 	UPROPERTY()
 	int32 SkillID = 0; // SkillID만 가지고 있으면 됨
 
@@ -65,8 +65,6 @@ protected:
 	float DeltaCheck = 0.0f;
 	
 public:
-	UFUNCTION()
-	void AddSkill(int32 SkillID);
 	UFUNCTION()
 	void LevelUpSkill(int32 SkillID);
 		

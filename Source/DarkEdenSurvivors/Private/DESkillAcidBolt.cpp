@@ -4,8 +4,9 @@
 #include "DESkillAcidBolt.h"
 #include "DEAcidBolt.h"
 #include "Kismet/GameplayStatics.h"
-#include "DEPoolSubsystem.h"
-
+#include "DEBehavior_FireProjectileRadial.h"
+#include "DEBehavior_SelectNearestTarget.h"
+//#include "DEPoolSubsystem.h"
 UDESkillAcidBolt::UDESkillAcidBolt()
 {
     ProjectileClass = ADEAcidBolt::StaticClass();
@@ -19,47 +20,53 @@ UDESkillAcidBolt::UDESkillAcidBolt()
     }
 }
 
-void UDESkillAcidBolt::ActivateSkill(FDESkillData* SkillData)
+void UDESkillAcidBolt::InitBehaviors()
 {
-    if (!SkillOwner || !SkillData || !ProjectileClass)
-        return;
+    Super::InitBehaviors();
 
-    int32 Count = SkillData->ProjectileCount;
-    FVector Origin = SkillOwner->GetActorLocation();
-    FRotator BaseRot = SkillOwner->GetActorRotation();
-
-    // 발사음
-    if (FireSound)
-        UGameplayStatics::PlaySoundAtLocation(SkillOwner, FireSound, Origin);
-
-    float AngleStep = 360.f / Count;
-
-    UDEPoolSubsystem* Pool = SkillOwner->GetWorld()->GetGameInstance()->GetSubsystem<UDEPoolSubsystem>();
-    if (!Pool) return;
-
-    for (int32 i = 0; i < Count; i++)
-    {
-        float Yaw = AngleStep * i;
-        FRotator SpawnRot = BaseRot;
-        SpawnRot.Yaw += Yaw;
-
-        FVector Dir = SpawnRot.Vector();
-
-        AActor* Pooled = Pool->GetPooledActor(
-            ProjectileClass,
-            Origin,
-            SpawnRot,
-            true
-        );
-
-        if (auto* Proj = Cast<ADEAcidBolt>(Pooled))
-        {
-            Proj->InitializeProjectile(
-                SkillData->Damage,
-                Proj->GetSpeed(),
-                1,
-                Dir
-            );
-        }
-    }
 }
+
+//void UDESkillAcidBolt::ActivateSkill(FDESkillData* SkillData)
+//{
+//    if (!SkillOwner || !SkillData || !ProjectileClass)
+//        return;
+//
+//    int32 Count = SkillData->ProjectileCount;
+//    FVector Origin = SkillOwner->GetActorLocation();
+//    FRotator BaseRot = SkillOwner->GetActorRotation();
+//
+//    // 발사음
+//    if (FireSound)
+//        UGameplayStatics::PlaySoundAtLocation(SkillOwner, FireSound, Origin);
+//
+//    float AngleStep = 360.f / Count;
+//
+//    UDEPoolSubsystem* Pool = SkillOwner->GetWorld()->GetGameInstance()->GetSubsystem<UDEPoolSubsystem>();
+//    if (!Pool) return;
+//
+//    for (int32 i = 0; i < Count; i++)
+//    {
+//        float Yaw = AngleStep * i;
+//        FRotator SpawnRot = BaseRot;
+//        SpawnRot.Yaw += Yaw;
+//
+//        FVector Dir = SpawnRot.Vector();
+//
+//        AActor* Pooled = Pool->GetPooledActor(
+//            ProjectileClass,
+//            Origin,
+//            SpawnRot,
+//            true
+//        );
+//
+//        if (auto* Proj = Cast<ADEAcidBolt>(Pooled))
+//        {
+//            Proj->InitializeProjectile(
+//                SkillData->Damage,
+//                Proj->GetSpeed(),
+//                1,
+//                Dir
+//            );
+//        }
+//    }
+//}

@@ -6,29 +6,29 @@
 #include "Engine/DataTable.h"
 #include "DESkillData.generated.h"
 
-USTRUCT(BlueprintType)
-struct FSkillSpec
-{
-    GENERATED_BODY()
-
-public:
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int32 Level = 1;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int32 ProjectileCount = 1;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float Damage = 5.f;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int32 Penetration = 1;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float Cooldown = 2.f;
-
-};
+//USTRUCT(BlueprintType)
+//struct FSkillSpec
+//{
+//    GENERATED_BODY()
+//
+//public:
+//
+//    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+//    int32 Level = 1;
+//
+//    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+//    int32 ProjectileCount = 1;
+//
+//    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+//    float Damage = 5.f;
+//
+//    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+//    int32 Penetration = 1;
+//
+//    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+//    float Cooldown = 2.f;
+//
+//};
 
 USTRUCT(BlueprintType)
 struct FDESkillData : public FTableRowBase
@@ -46,7 +46,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FString SkillName;
 
-    // ¿øº» ½ºÆå
+    //stats
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float Damage;
 
@@ -64,6 +64,12 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float KnockbackForce;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float ProjectileSpeed;
+    // stun, bleed... or smth
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    TMap<FName, float> OptionValues;
 
 };
 
