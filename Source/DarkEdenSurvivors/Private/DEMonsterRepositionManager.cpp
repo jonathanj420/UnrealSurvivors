@@ -23,7 +23,27 @@ void ADEMonsterRepositionManager::BeginPlay()
 
     Player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
     GameMode=Player->GetWorld()->GetAuthGameMode<ADEGameMode>();
-    MonsterSpawnManager = GameMode->GetMonsterSpawnManager();
+    // 1. 게임모드한테 먼저 물어봄
+    if (GameMode)
+    {
+        MonsterSpawnManager = GameMode->GetMonsterSpawnManager();
+        UE_LOG(LogTemp, Warning, TEXT("Monster Manager Found Successfully"));
+    }
+
+    // 2. [핵심] 만약 게임모드가 "모르는데?(nullptr)"라고 하면, 직접 월드를 뒤져서 찾음
+    if (!MonsterSpawnManager)
+    {
+        AActor* FoundActor = UGameplayStatics::GetActorOfClass(GetWorld(), ADEMonsterSpawnManager::StaticClass());
+        MonsterSpawnManager = Cast<ADEMonsterSpawnManager>(FoundActor);
+        UE_LOG(LogTemp, Warning, TEXT("Monster Manager Found Forced"));
+    }
+
+    // 3. 그래도 없으면 진짜 문제임. (크래시 대신 로그 띄우고 리턴)
+    if (!MonsterSpawnManager)
+    {
+        UE_LOG(LogTemp, Error, TEXT("RepositionManager: CRITICAL ERROR - Cannot find MonsterSpawnManager!"));
+        return;
+    }
 
     check(Player);
     check(MonsterSpawnManager);

@@ -56,7 +56,15 @@ void ADESimpleProjectileBase::InitializeProjectile(float InDamage, float InSpeed
 	ResetState();
 
 	Damage = InDamage;
-	Speed = InSpeed;
+	if (InSpeed == 0.0f)
+	{
+		Speed = 1200.0f;
+
+	}
+	else
+	{
+		Speed = InSpeed;
+	}
 	Penetration = InPenetration;
 
 	MovementComponent->Velocity = Direction * Speed;

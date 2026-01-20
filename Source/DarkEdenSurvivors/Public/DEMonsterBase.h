@@ -52,6 +52,9 @@ protected:
 	class UDEStatComponent* StatComp;
 	UPROPERTY(EditAnywhere, Category = "EXP")
 	TSubclassOf<class ADEEXPCrystal> EXPCrystal;
+public:
+	UPROPERTY(VisibleAnywhere)
+	class UDEStatusEffectComponent* StatusEffectComponent;
 
 protected:
 
@@ -94,10 +97,10 @@ public:
 	float GetCollisionRadius() const;
 	float GetCapsuleHalfHeight() const;
 	float GetMoveSpeed() const;
-	float GetDamage();
+	float GetDamage() const;
 	float GetAttackDamage() const { return AttackDamage; }
-	float GetCurrentHP();
-	float GetMaxHP();
+	float GetCurrentHP() const;
+	float GetMaxHP() const;
 	FOnMonsterDeath OnMonsterDeath;
 	void DropExp();
 	void ResetMonster(const struct FDEMonsterData* Data);

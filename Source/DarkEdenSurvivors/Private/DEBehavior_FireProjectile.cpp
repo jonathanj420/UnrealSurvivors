@@ -9,7 +9,7 @@
 
 void UDEBehavior_FireProjectile::Execute(FDESkillContext& Context)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Behavior : FireProjectile Excuted"));
+	//UE_LOG(LogTemp, Warning, TEXT("Behavior : FireProjectile Excuted"));
 	if (!Context.Instigator) return;
 
 	int32 Count = FMath::Max(1, Context.ProjectileCount);
@@ -31,7 +31,7 @@ void UDEBehavior_FireProjectile::Execute(FDESkillContext& Context)
 	// 타이머는 나중에 실행되므로 Context를 백업해둬야 함!
 	CachedContext = Context;
 	RemainingShots = Count;
-	UE_LOG(LogTemp, Warning, TEXT("Fire Projectile : Remaining Shots : %d"), RemainingShots);
+	//UE_LOG(LogTemp, Warning, TEXT("Fire Projectile : Remaining Shots : %d"), RemainingShots);
 	UWorld* World = Context.Instigator->GetWorld();
 	if (World)
 	{
@@ -41,7 +41,7 @@ void UDEBehavior_FireProjectile::Execute(FDESkillContext& Context)
 
 		if (RemainingShots > 0)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Remaining Shots Left: %d, BURST ACTIVATED"), RemainingShots);
+			//UE_LOG(LogTemp, Warning, TEXT("Remaining Shots Left: %d, BURST ACTIVATED"), RemainingShots);
 			// 나머지는 타이머로
 			World->GetTimerManager().SetTimer(
 				BurstTimerHandle,

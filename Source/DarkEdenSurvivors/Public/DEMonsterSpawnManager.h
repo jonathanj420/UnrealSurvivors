@@ -37,6 +37,15 @@ public:
     UPROPERTY(EditAnywhere, Category = "Pooling")
     TArray<class ADEMonsterBase*> MonsterPool;
 
+    // 활성화되어 필드에 있는 몬스터 목록
+    UPROPERTY(VisibleInstanceOnly, Category = "Pooling")
+    TArray<ADEMonsterBase*> ActiveMonsters;
+
+
+    // 죽어서 대기 중인(꺼져있는) 몬스터 목록 (기존 MonsterPool 대체)
+    UPROPERTY(VisibleInstanceOnly, Category = "Pooling")
+    TArray<ADEMonsterBase*> InactiveMonsters;
+
     ADEMonsterBase* SpawnFromPool(FVector& Location, const struct FDEMonsterData* DataToApply);
     UFUNCTION()
     void ReturnMonsterToPool(class ADEMonsterBase* Monster);
@@ -72,8 +81,6 @@ public:
 
     //************* Monster Wave***********
     // Spawn Rate(Interval)
-    UPROPERTY(EditAnywhere, Category = "Wave")
-    TArray<class ADEMonsterBase*> ActiveMonsters;
     UPROPERTY(EditAnywhere, Category = "Wave")
     float SpawnInterval = 0.5f;
 

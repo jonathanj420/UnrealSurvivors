@@ -20,7 +20,7 @@ public:
 public:
 	// 탐색 범위 (Context에 "Range" 값이 있으면 그걸 쓰고, 없으면 이 값을 씀)
 	UPROPERTY(EditAnywhere)
-	float DefaultSearchRadius = 1000.f;
+	float DefaultSearchRadius = 2000.0f;
 
 	// 적 태그 (예: "Enemy", "Monster")
 	UPROPERTY(EditAnywhere)

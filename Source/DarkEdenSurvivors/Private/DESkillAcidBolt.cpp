@@ -22,8 +22,20 @@ UDESkillAcidBolt::UDESkillAcidBolt()
 
 void UDESkillAcidBolt::InitBehaviors()
 {
-    Super::InitBehaviors();
+	Super::InitBehaviors();
 
+	// 1. [탐색 행동] 가장 가까운 적을 찾아라
+	UDEBehavior_SelectNearestTarget* Targeting = NewObject<UDEBehavior_SelectNearestTarget>(this);
+	Targeting->DefaultSearchRadius = 800.f; // 2000 = mob auto repos rad
+	Targeting->EnemyTag = TEXT("Enemy");    // 
+	Behaviors.Add(Targeting);
+
+	// 2. [발사 행동] 찾은 적 방향을 기준으로 퍼지게 쏴라
+	UDEBehavior_FireProjectileRadial* RadialFire = NewObject<UDEBehavior_FireProjectileRadial>(this);
+	RadialFire->ProjectileClass = this->ProjectileClass;
+	RadialFire->FireSound = this->FireSound;
+	RadialFire->ArcAngle = 360.f; // 360도
+	Behaviors.Add(RadialFire);
 }
 
 //void UDESkillAcidBolt::ActivateSkill(FDESkillData* SkillData)

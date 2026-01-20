@@ -41,6 +41,7 @@ void ADEMonsterSpawnManager::BeginPlay()
         GameMode->RegisterMonsterSpawnManager(this);
     }
     
+
     APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 
     if (PlayerController)
@@ -357,6 +358,7 @@ bool ADEMonsterSpawnManager::SpawnBoss(const FDEStageWaveData& WaveData)
 
 ADEMonsterBase* ADEMonsterSpawnManager::SpawnFromPool(FVector& Location, const FDEMonsterData* DataToApply)
 {
+    // MK 1 
     //const ADEMonsterBase* CDO = MonsterClass.GetDefaultObject();
 
     //Location.Z = CDO->GetCapsuleHalfHeight();
@@ -394,54 +396,93 @@ ADEMonsterBase* ADEMonsterSpawnManager::SpawnFromPool(FVector& Location, const F
 
     ////UE_LOG(LogTemp, Warning, TEXT("Spawned new monster: %s"), *NewMonster->GetName());
     //return NewMonster;
-
-    // 1. 어떤 클래스로 만들지 결정 (Decision)
+    // 
+    // 
+    // --------------------------------------------------------
+    // 1. [Class 결정] 기본 몹이냐? 데이터에 적힌 특수 몹(보스)이냐?
+    // --------------------------------------------------------
     TSubclassOf<ADEMonsterBase> ClassToSpawn = MonsterBase; // 기본값
 
-    // 데이터에 "나는 특별한 클래스 쓸거야"라고 적혀있다면?
     if (DataToApply && !DataToApply->OverrideClass.IsNull())
     {
-        // 동기 로딩 (보스는 한 마리니까 괜찮음)
         ClassToSpawn = DataToApply->OverrideClass.LoadSynchronous();
     }
 
     if (!ClassToSpawn) return nullptr;
 
-    // 2. 풀링 or 생성 (이제 ClassToSpawn을 사용)
-    // 주의: 보스처럼 특수 클래스는 풀링을 안 하고 그냥 매번 생성/파괴하는 게 관리하기 편할 수 있습니다.
-    // 여기서는 간단하게 그냥 생성한다고 가정 (풀링 로직은 일반몹 위주로)
-
-    UWorld* World = GetWorld();
-    ADEMonsterBase* SpawnedMonster = nullptr;
-
-    // (일반 몹인 경우 풀 뒤지기 로직 유지...)
-    // (보스인 경우 or 풀에 없으면 새로 생성)
+    // --------------------------------------------------------
+    // 2. [높이 보정] CDO를 사용해 "자동으로" 땅에 안 박히게 만들기
+    // --------------------------------------------------------
+    // CDO(Class Default Object): 블루프린트의 기본 세팅값을 읽어옴
+    const ADEMonsterBase* CDO = ClassToSpawn.GetDefaultObject();
+    if (CDO)
     {
+        // 땅바닥 위치(Location.Z) + 캡슐 절반 높이 = 발바닥이 땅에 닿음
+        float HalfHeight = CDO->GetCapsuleHalfHeight();
+        Location.Z += HalfHeight;
+    }
+
+    // --------------------------------------------------------
+    // 3. [Pooling] 풀 뒤지기 (클래스 타입 검사 필수!)
+    // --------------------------------------------------------
+    ADEMonsterBase* SpawnedMonster = nullptr;
+    UE_LOG(LogTemp, Warning, TEXT("Try Spawn From Pool First"));
+    // *InactiveMonsters: 죽어서 대기 중인 몬스터 목록이라고 가정
+    for (int32 i = 0; i < InactiveMonsters.Num(); i++)
+    {
+        ADEMonsterBase* Candidate = InactiveMonsters[i];
+
+        // ★ [핵심 보완] 
+        // 1. 유효한가?
+        // 2. 내가 찾는 클래스(ClassToSpawn)와 같은 종류인가? (좀비 찾는데 스켈레톤 꺼내면 안됨)
+        if (Candidate && Candidate->GetClass() == ClassToSpawn)
+        {
+            SpawnedMonster = Candidate;
+            InactiveMonsters.RemoveAt(i); // 대기열에서 제외
+            UE_LOG(LogTemp, Warning, TEXT("Monster ReSpawned From Pool"));
+            break;
+        }
+    }
+
+    // --------------------------------------------------------
+    // 4. [Spawn] 풀에 없으면 새로 생성
+    // --------------------------------------------------------
+    if (!SpawnedMonster)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Monster Spawned New"));
         FActorSpawnParameters Params;
         Params.Owner = this;
         Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-        SpawnedMonster = World->SpawnActor<ADEMonsterBase>(
-            ClassToSpawn, // <--- 결정된 클래스로 스폰!
+        SpawnedMonster = GetWorld()->SpawnActor<ADEMonsterBase>(
+            ClassToSpawn,
             Location,
             FRotator::ZeroRotator,
             Params
         );
-    }
 
-    // 3. 데이터 주입 (보스도 체력, 공격력 등은 테이블 데이터 따라감)
-    if (SpawnedMonster && DataToApply)
-    {
-        // 보스 클래스 내부에서 ResetMonster를 오버라이드해서 
-        // 고유 패턴 등을 초기화하면 됨
-        SpawnedMonster->ResetMonster(DataToApply);
+        if (!SpawnedMonster) return nullptr;
 
-        ActiveMonsters.Add(SpawnedMonster);
+        // 신규 생성된 녀석은 사망 시 델리게이트 연결 필요
         SpawnedMonster->OnMonsterDeath.AddUObject(this, &ADEMonsterSpawnManager::OnMonsterDied);
     }
 
-    return SpawnedMonster;
+    // --------------------------------------------------------
+    // 5. [Init] 공통 초기화 (재사용/신규 모두 적용)
+    // --------------------------------------------------------
+    // 위치 이동 (재사용된 놈은 엉뚱한 곳에 있을 테니까)
+    SpawnedMonster->SetActorLocation(Location);
+    SpawnedMonster->SetActorRotation(FRotator::ZeroRotator);
 
+    // 몬스터 내부 상태 리셋 (HP, 메쉬 등) -> 아까 만든 InitializeMonster 함수 활용
+    //SpawnedMonster->InitializeMonster(DataToApply);
+    SpawnedMonster->ResetMonster(DataToApply);
+
+
+    // 활성 목록에 등록
+    ActiveMonsters.Add(SpawnedMonster);
+
+    return SpawnedMonster;
 }
 
 void ADEMonsterSpawnManager::ReturnMonsterToPool(ADEMonsterBase* Monster)
@@ -479,11 +520,17 @@ void ADEMonsterSpawnManager::OnMonsterDied(ADEMonsterBase* Monster)
     if (!Monster)
         return;
 
+    // 1. 활성 목록에서 제거
+    ActiveMonsters.RemoveSwap(Monster);
 
+    // 2. 비활성(풀) 목록으로 이동
+    InactiveMonsters.Add(Monster);
 
-    ActiveMonsters.Remove(Monster);
-    UE_LOG(LogTemp, Warning, TEXT("Monster Died, Instantly Removed // TO FIX"));
+    //UE_LOG(LogTemp, Warning, TEXT("Monster Died, Instantly Removed // TO FIX"));
     ReturnMonsterToPool(Monster);
+
+    UE_LOG(LogTemp, Warning, TEXT("Monster Died -> Active: %d, Inactive: %d"), ActiveMonsters.Num(), InactiveMonsters.Num());
+
     if (Player)
     {
         Player->AddBloodDrainGauge(Player->GetBloodDrainGainPerKill());

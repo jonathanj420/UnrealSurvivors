@@ -10,6 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "DEEXPCrystal.h"
 #include "DEStatComponent.h"
+#include "DEStatusEffectComponent.h"
 #include "Data/DEMonsterData.h"
 
 // Sets default values
@@ -42,6 +43,7 @@ ADEMonsterBase::ADEMonsterBase()
 
 	EXPCrystal = ADEEXPCrystal::StaticClass();
 	StatComp = CreateDefaultSubobject<UDEStatComponent>(TEXT("StatComponent"));
+	StatusEffectComponent = CreateDefaultSubobject<UDEStatusEffectComponent>(TEXT("StatusEffectComponent"));
 	StatComp->SetMaxHP(10.0f);
 
 }
@@ -118,9 +120,9 @@ void ADEMonsterBase::MoveToPlayer(float DeltaTime)
 
 float ADEMonsterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Monster : %s Took : %f Damage from %s (Before Stat Calc)"), *GetName(), DamageAmount, *DamageCauser->GetName());
+	//UE_LOG(LogTemp, Warning, TEXT("Monster : %s Took : %f Damage from %s (Before Stat Calc)"), *GetName(), DamageAmount, *DamageCauser->GetName());
 	StatComp->TakeDamage(DamageAmount, DamageCauser);
-	UE_LOG(LogTemp, Warning, TEXT("Monster : %s Took : %f Damage from %s , HP: %f (After Stat Calc)"),*GetName(), DamageAmount, *DamageCauser->GetName(), StatComp->GetCurrentHP());
+	//UE_LOG(LogTemp, Warning, TEXT("Monster : %s Took : %f Damage from %s , HP: %f (After Stat Calc)"),*GetName(), DamageAmount, *DamageCauser->GetName(), StatComp->GetCurrentHP());
 
 	if (StatComp->GetCurrentHP() <= 0.f)
 	{
@@ -194,17 +196,17 @@ float ADEMonsterBase::GetMoveSpeed() const
 	return MoveSpeed;
 }
 
-float ADEMonsterBase::GetDamage()
+float ADEMonsterBase::GetDamage() const
 {
 	return StatComp->GetDamage();
 }
 
-float ADEMonsterBase::GetCurrentHP()
+float ADEMonsterBase::GetCurrentHP() const
 {
 	return StatComp->GetCurrentHP();
 }
 
-float ADEMonsterBase::GetMaxHP()
+float ADEMonsterBase::GetMaxHP() const
 {
 	return StatComp->GetMaxHP();
 }
