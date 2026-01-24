@@ -34,6 +34,7 @@ public:
 	int32 ProjectileCount = 1;
 	int32 Penetration = 0;
 	float Speed = 1000.f;
+	float Radius = 100.0f;
 	float KnockbackForce = 600.0f;
 
 	// --- [3. 확장 데이터] ---

@@ -23,3 +23,5 @@ DECLARE_LOG_CATEGORY_EXTERN(LogDarkEdenSurvivors, Log, All);
 #define ABCHECK(Expr, ...) {if(!(Expr)) {ABLOG(Error, TEXT("ASSERTION : %s"), TEXT("'"#Expr"'")); return __VA_ARGS__;}}
 #define LOG_CALL() UE_LOG(LogTemp, Warning, TEXT("[CALL] %s | %s:%d | %s"), \
     ANSI_TO_TCHAR(__FUNCTION__), ANSI_TO_TCHAR(__FILE__), __LINE__, *GetNameSafe(this))
+
+#define ECC_MonsterChannel ECC_GameTraceChannel5

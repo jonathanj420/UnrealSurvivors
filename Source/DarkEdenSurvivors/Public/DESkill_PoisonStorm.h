@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "DEAutoSkillBase.h"
-#include "DESkillPoisonStorm.generated.h"
+#include "DESkill_PoisonStorm.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DARKEDENSURVIVORS_API UDESkillPoisonStorm : public UDEAutoSkillBase
+class DARKEDENSURVIVORS_API UDESkill_PoisonStorm : public UDEAutoSkillBase
 {
 	GENERATED_BODY()
 	

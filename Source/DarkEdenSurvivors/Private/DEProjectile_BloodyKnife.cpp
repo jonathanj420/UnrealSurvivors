@@ -1,0 +1,112 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "DEProjectile_BloodyKnife.h"
+#include "Components/SphereComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "DEMonsterBase.h"
+
+// Sets default values
+ADEProjectile_BloodyKnife::ADEProjectile_BloodyKnife()
+{
+ //	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	//PrimaryActorTick.bCanEverTick = true;
+ //   // Collision
+ //   CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
+ //   RootComponent = CollisionComponent;
+ //   CollisionComponent->InitSphereRadius(30.0f);
+ //   CollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+ //   CollisionComponent->SetCollisionProfileName(TEXT("Projectile"));
+ //   CollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ADEProjectile_BloodyKnife::OnOverlap);
+ //   
+ //   // Mesh
+ //   Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+ //   
+ //   ConstructorHelpers::FObjectFinder<UStaticMesh>SM_BKNIFE(TEXT("/Game/DarkEden/Data/Skill/BloodyKnife/SM_BloodyKnife.SM_BloodyKnife"));
+ //   if (SM_BKNIFE.Succeeded())
+ //   {
+ //       Mesh->SetStaticMesh(SM_BKNIFE.Object);
+ //   }
+ //   Mesh->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, 0.0f), FRotator(0.0f, 90.0f, 0.0f));
+ //   Mesh->SetSimulatePhysics(false);
+ //   Mesh->SetEnableGravity(false);
+ //   Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+ //   Mesh->SetupAttachment(RootComponent);
+ //   MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("MovementComponent"));
+ //   MovementComponent->InitialSpeed = 1200.f;
+ //   MovementComponent->MaxSpeed = 1200.f;
+ //   MovementComponent->bRotationFollowsVelocity = true;
+ //   MovementComponent->ProjectileGravityScale = 0.f;
+ //   MovementComponent->SetVelocityInLocalSpace(GetActorForwardVector() * MovementComponent->InitialSpeed);
+ //   //Combat
+ //   Damage = 1.0f;
+ //   Penetration = 10;
+ //   KnockbackForce = 1600.0f;
+ //   LifeTime = 3.0f;
+ //   Speed = 1200.0f;
+ //   Size = 30.0f;
+ //   CritChance = 0.5f;
+ //   bCanCrit = false;
+ //   bIsCrit = false;
+
+    // 1. [전용 메시 로드]
+    // 부모가 만든 Mesh 컴포넌트를 가져다 씁니다.
+    static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_BKNIFE(TEXT("/Game/DarkEden/Data/Skill/BloodyKnife/SM_BloodyKnife.SM_BloodyKnife"));
+    if (SM_BKNIFE.Succeeded())
+    {
+        Mesh->SetStaticMesh(SM_BKNIFE.Object);
+        // 단검 전용 회전값 (눕혀져 있으면 세우기 등)
+        Mesh->SetRelativeRotation(FRotator(0.0f, 90.0f, 0.0f));
+    }
+
+    // 2. [전용 스펙 설정]
+    // 부모가 만든 컴포넌트의 수치만 조정합니다.
+    if (MovementComponent)
+    {
+        MovementComponent->InitialSpeed = 1200.0f;
+        MovementComponent->MaxSpeed = 1200.0f;
+    }
+
+    CollisionComponent->InitSphereRadius(30.0f); // 기본값
+    // 스탯 오버라이드
+    Damage = 1.0f;
+    Penetration = 10; // 님 설정대로
+    KnockbackForce = 1600.0f;
+    LifeTime = 3.0f;
+
+    // *주의: 델리게이트 연결(AddDynamic)은 부모가 했으니 또 하면 안 됩니다!
+
+    
+}
+
+// Called when the game starts or when spawned
+void ADEProjectile_BloodyKnife::BeginPlay()
+{
+	Super::BeginPlay();
+	
+}
+
+// Called every frame
+void ADEProjectile_BloodyKnife::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+}
+
+
+void ADEProjectile_BloodyKnife::InitializeProjectile(float InDamage, float InSpeed, int32 InPenetration, const FVector& Direction)
+{
+    Super::InitializeProjectile(InDamage, InSpeed, InPenetration, Direction);
+
+}
+
+void ADEProjectile_BloodyKnife::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+    UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+    bool bFromSweep, const FHitResult& SweepResult)
+{
+
+    Super::OnOverlap(OverlappedComp,OtherActor,
+        OtherComp,OtherBodyIndex,
+        bFromSweep,SweepResult);
+}

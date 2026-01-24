@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "DEAutoSkillBase.h"
-#include "DESkillBloodyNail.generated.h"
+#include "DESkill_BloodyNail.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DARKEDENSURVIVORS_API UDESkillBloodyNail : public UDEAutoSkillBase
+class DARKEDENSURVIVORS_API UDESkill_BloodyNail : public UDEAutoSkillBase
 {
 	GENERATED_BODY()
-    UDESkillBloodyNail();
+    UDESkill_BloodyNail();
 	//virtual void ActivateSkill(FDESkillData* SkillData) override;
     virtual void InitBehaviors() override;
 

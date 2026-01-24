@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "DESkillBloodDrain.h"
+#include "DESkill_BloodDrain.h"
 
 #include "DECharacterBase.h"
 #include "DEMonsterBase.h"
@@ -16,7 +16,7 @@
 #include "DrawDebugHelpers.h"
 #include "TimerManager.h"
 
-UDESkillBloodDrain::UDESkillBloodDrain()
+UDESkill_BloodDrain::UDESkill_BloodDrain()
 {
     static ConstructorHelpers::FObjectFinder<UNiagaraSystem>
         NS_BloodDrain(TEXT("/Game/DarkEden/Data/Niagara/NS_BloodDrainCustom.NS_BloodDrainCustom"));
@@ -36,7 +36,7 @@ UDESkillBloodDrain::UDESkillBloodDrain()
     }
 }
 
-void UDESkillBloodDrain::ActivateSkill()
+void UDESkill_BloodDrain::ActivateSkill()
 {
     ADECharacterBase* Player = Cast<ADECharacterBase>(SkillOwner);
     if (!Player)
@@ -70,14 +70,14 @@ void UDESkillBloodDrain::ActivateSkill()
     GetWorld()->GetTimerManager().SetTimer(
         BloodDrainTimerHandle,
         this,
-        &UDESkillBloodDrain::FinishBloodDrain,
+        &UDESkill_BloodDrain::FinishBloodDrain,
         StunDuration,
         false
     );
 }
 
 
-void UDESkillBloodDrain::StartBloodDrain(ADECharacterBase* Player)
+void UDESkill_BloodDrain::StartBloodDrain(ADECharacterBase* Player)
 {
     CachedTargets.Empty();
 
@@ -117,7 +117,7 @@ void UDESkillBloodDrain::StartBloodDrain(ADECharacterBase* Player)
     SpawnBloodDrainNiagara(Player, MonsterPositions);
 }
 
-void UDESkillBloodDrain::FinishBloodDrain()
+void UDESkill_BloodDrain::FinishBloodDrain()
 {
     ADECharacterBase* Player = Cast<ADECharacterBase>(SkillOwner);
     if (!Player)
@@ -144,7 +144,7 @@ void UDESkillBloodDrain::FinishBloodDrain()
     CachedTargets.Empty();
 }
 
-void UDESkillBloodDrain::CollectTargets(
+void UDESkill_BloodDrain::CollectTargets(
     TArray<ADEMonsterBase*>& OutTargets) const
 {
     const ADECharacterBase* Player = Cast<ADECharacterBase>(SkillOwner);
@@ -183,7 +183,7 @@ void UDESkillBloodDrain::CollectTargets(
     }
 }
 
-void UDESkillBloodDrain::SpawnBloodDrainNiagara(
+void UDESkill_BloodDrain::SpawnBloodDrainNiagara(
     ADECharacterBase* Player,
     const TArray<FVector>& MonsterPositions
 ) const
@@ -225,7 +225,7 @@ void UDESkillBloodDrain::SpawnBloodDrainNiagara(
 
 }
 
-//void UDESkillBloodDrain::ApplyDrainEffect(
+//void UDESkill_BloodDrain::ApplyDrainEffect(
 //    ADEMonsterBase* Monster,
 //    ADECharacterBase* Player
 //) const
@@ -252,7 +252,7 @@ void UDESkillBloodDrain::SpawnBloodDrainNiagara(
 //
 //}
 
-void UDESkillBloodDrain::ApplyFinishDamage(
+void UDESkill_BloodDrain::ApplyFinishDamage(
     ADEMonsterBase* Monster,
     ADECharacterBase* Player
 ) const

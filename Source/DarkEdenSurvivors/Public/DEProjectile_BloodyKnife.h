@@ -4,20 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "DESimpleProjectileBase.h"
-#include "DEBloodyKnife.generated.h"
+#include "DEProjectile_BloodyKnife.generated.h"
 
 
 class USphereComponent;
 class UProjectileMovementComponent;
 
 UCLASS()
-class DARKEDENSURVIVORS_API ADEBloodyKnife : public ADESimpleProjectileBase
+class DARKEDENSURVIVORS_API ADEProjectile_BloodyKnife : public ADESimpleProjectileBase
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ADEBloodyKnife();
+	ADEProjectile_BloodyKnife();
 
 protected:
 	// Called when the game starts or when spawned
@@ -28,12 +28,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-    // BloodyKnife를 초기화하는 함수 (스킬이 스폰할 때 호출)
-    void Initialize(const FVector Direction);
-
-protected:
-    UPROPERTY(Transient)
-    TArray<AActor*> HitActors;
    
 public:
 	virtual void InitializeProjectile(float InDamage, float InSpeed, int32 InPenetration, const FVector& Direction) override;

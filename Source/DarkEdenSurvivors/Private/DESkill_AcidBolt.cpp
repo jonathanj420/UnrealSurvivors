@@ -1,15 +1,15 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "DESkillAcidBolt.h"
-#include "DEAcidBolt.h"
+#include "DESkill_AcidBolt.h"
+#include "DEProjectile_AcidBolt.h"
 #include "Kismet/GameplayStatics.h"
 #include "DEBehavior_FireProjectileRadial.h"
 #include "DEBehavior_SelectNearestTarget.h"
 //#include "DEPoolSubsystem.h"
-UDESkillAcidBolt::UDESkillAcidBolt()
+UDESkill_AcidBolt::UDESkill_AcidBolt()
 {
-    ProjectileClass = ADEAcidBolt::StaticClass();
+    ProjectileClass = ADEProjectile_AcidBolt::StaticClass();
     static ConstructorHelpers::FObjectFinder<USoundBase> SoundObj(
         TEXT("/Game/DarkEden/Data/Sound/SkillSoundEffect/Custom/AcidBolt1.AcidBolt1")
     );
@@ -20,7 +20,7 @@ UDESkillAcidBolt::UDESkillAcidBolt()
     }
 }
 
-void UDESkillAcidBolt::InitBehaviors()
+void UDESkill_AcidBolt::InitBehaviors()
 {
 	Super::InitBehaviors();
 
@@ -38,7 +38,7 @@ void UDESkillAcidBolt::InitBehaviors()
 	Behaviors.Add(RadialFire);
 }
 
-//void UDESkillAcidBolt::ActivateSkill(FDESkillData* SkillData)
+//void UDESkill_AcidBolt::ActivateSkill(FDESkillData* SkillData)
 //{
 //    if (!SkillOwner || !SkillData || !ProjectileClass)
 //        return;
@@ -71,7 +71,7 @@ void UDESkillAcidBolt::InitBehaviors()
 //            true
 //        );
 //
-//        if (auto* Proj = Cast<ADEAcidBolt>(Pooled))
+//        if (auto* Proj = Cast<ADEProjectile_AcidBolt>(Pooled))
 //        {
 //            Proj->InitializeProjectile(
 //                SkillData->Damage,

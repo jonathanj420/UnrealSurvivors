@@ -5,7 +5,7 @@
 #include "DESkillManagerComponent.h"
 #include "DEPlayerController.h"
 #include "DEActiveSkillBase.h"
-#include "DESkillBloodDrain.h"
+#include "DESkill_BloodDrain.h"
 #include "DEStatComponent.h"
 
 // Sets default values
@@ -65,7 +65,7 @@ void ADECharacterBase::BeginPlay()
     }
     //StatComponent->OnLevelUp.AddDynamic(this, &ADEPlayerController::ShowLevelUpUI);
     SetControlMode(EControlMode::FIXEDTPS);
-    ActiveSkill = NewObject<UDESkillBloodDrain>(this);
+    ActiveSkill = NewObject<UDESkill_BloodDrain>(this);
     ActiveSkill->InitSkill(this);
 }
 

@@ -41,6 +41,7 @@ void UDEAutoSkillBase::BuildContext(FDESkillContext& OutContext)
 		OutContext.Penetration = SkillData->Penetration;
 		OutContext.Speed = SkillData->ProjectileSpeed;
 		OutContext.KnockbackForce = SkillData->KnockbackForce;
+		OutContext.Radius = SkillData->Radius;
 
 		// 2. 맵 데이터(옵션) 통째로 복사
 		OutContext.CustomValues = SkillData->OptionValues;

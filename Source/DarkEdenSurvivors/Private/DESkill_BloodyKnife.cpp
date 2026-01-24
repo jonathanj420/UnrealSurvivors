@@ -1,17 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "DESkillBloodyKnife.h"
-#include "DEBloodyKnife.h"
+#include "DESkill_BloodyKnife.h"
+#include "DEProjectile_BloodyKnife.h"
 #include "Kismet/GameplayStatics.h"
 //#include "DEPoolSubsystem.h"
 #include "DEBehavior_FireProjectile.h"
 
 
 
-UDESkillBloodyKnife::UDESkillBloodyKnife()
+UDESkill_BloodyKnife::UDESkill_BloodyKnife()
 {
-    ProjectileClass = ADEBloodyKnife::StaticClass();
+    ProjectileClass = ADEProjectile_BloodyKnife::StaticClass();
     static ConstructorHelpers::FObjectFinder<USoundBase> SoundObj(
         TEXT("/Game/DarkEden/Data/Sound/SkillSoundEffect/Vampire_BloodyKnife.Vampire_BloodyKnife")
     );
@@ -22,7 +22,7 @@ UDESkillBloodyKnife::UDESkillBloodyKnife()
     }
 }
 
-void UDESkillBloodyKnife::InitBehaviors()
+void UDESkill_BloodyKnife::InitBehaviors()
 {
     Super::InitBehaviors();
     // 나중에 여기에 각 스킬에 맞는 Behavior 추가하면 됨
@@ -41,7 +41,7 @@ void UDESkillBloodyKnife::InitBehaviors()
     Behaviors.Add(FireAction);
 }
 
-//void UDESkillBloodyKnife::ActivateSkill(FDESkillData* SkillData)
+//void UDESkill_BloodyKnife::ActivateSkill(FDESkillData* SkillData)
 //{
 ////    UE_LOG(LogTemp, Warning, TEXT("%f seconds from last shot"), DeltaCheck);
 //    if (!SkillData || !SkillOwner) return;
@@ -54,21 +54,21 @@ void UDESkillBloodyKnife::InitBehaviors()
 //    /*SkillOwner->GetWorldTimerManager().SetTimer(
 //        FireTimerHandle,
 //        this,
-//        &UDESkillBloodyKnife::FireRandom,
+//        &UDESkill_BloodyKnife::FireRandom,
 //        1.0f/SkillData->ProjectileCount,
 //        true
 //    );*/
 //    SkillOwner->GetWorldTimerManager().SetTimer(
 //        FireTimerHandle,
 //        this,
-//        &UDESkillBloodyKnife::FireRandom,
+//        &UDESkill_BloodyKnife::FireRandom,
 //        0.1f,
 //        true
 //    );
 //}
 
 
-//void UDESkillBloodyKnife::FireRandom()
+//void UDESkill_BloodyKnife::FireRandom()
 //{
 //    if (ProjectileFired >= MaxProjectile)
 //    {
@@ -104,7 +104,7 @@ void UDESkillBloodyKnife::InitBehaviors()
 //            true
 //        );
 //
-//        if (auto* Proj = Cast<ADEBloodyKnife>(Pooled))
+//        if (auto* Proj = Cast<ADEProjectile_BloodyKnife>(Pooled))
 //        {
 //            // 3) ProjectileBase 스탯 초기화
 //            Proj->InitializeProjectile(

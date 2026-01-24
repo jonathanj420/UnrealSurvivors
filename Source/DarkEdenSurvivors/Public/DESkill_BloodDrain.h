@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "DEActiveSkillBase.h"
-#include "DESkillBloodDrain.generated.h"
+#include "DESkill_BloodDrain.generated.h"
 
 
 class ADEMonsterBase;
@@ -16,11 +16,11 @@ class UNiagaraSystem;
  * 
  */
 UCLASS()
-class DARKEDENSURVIVORS_API UDESkillBloodDrain : public UDEActiveSkillBase
+class DARKEDENSURVIVORS_API UDESkill_BloodDrain : public UDEActiveSkillBase
 {
 	GENERATED_BODY()
 public:
-    UDESkillBloodDrain();
+    UDESkill_BloodDrain();
     virtual void ActivateSkill() override;
         
 protected:

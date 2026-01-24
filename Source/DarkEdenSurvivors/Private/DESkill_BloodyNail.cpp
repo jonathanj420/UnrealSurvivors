@@ -1,13 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "DESkillBloodyNail.h"
+#include "DESkill_BloodyNail.h"
 #include "DEBloodyNail.h"
 #include "Engine/World.h"
 #include "DEPoolSubsystem.h"
 
 
-UDESkillBloodyNail::UDESkillBloodyNail()
+UDESkill_BloodyNail::UDESkill_BloodyNail()
 {
 	AttackClass = ADEBloodyNail::StaticClass();
     static ConstructorHelpers::FObjectFinder<USoundBase> SoundObj(
@@ -20,13 +20,13 @@ UDESkillBloodyNail::UDESkillBloodyNail()
     }
 }
 
-void UDESkillBloodyNail::InitBehaviors()
+void UDESkill_BloodyNail::InitBehaviors()
 {
     Super::InitBehaviors();
 
 }
 
-//void UDESkillBloodyNail::ActivateSkill(FDESkillData* SkillData)
+//void UDESkill_BloodyNail::ActivateSkill(FDESkillData* SkillData)
 //{
 //    if (!SkillData || !SkillOwner || !AttackClass) return;
 //
@@ -73,6 +73,6 @@ void UDESkillBloodyNail::InitBehaviors()
 //    
 //}
 
-void UDESkillBloodyNail::PerformConeSweep()
+void UDESkill_BloodyNail::PerformConeSweep()
 {
 }

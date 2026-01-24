@@ -7,6 +7,8 @@
 #include "DESimpleProjectileBase.generated.h"
 
 struct FDESkillContext;
+class UNiagaraComponent;
+
 
 
 UCLASS()
@@ -70,6 +72,17 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
     bool bIsCrit;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+    float EffectRadius;
+
+    // protected 컴포넌트 섹션에 추가
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    TObjectPtr<UNiagaraComponent> NiagaraComponent;
+
+    // 초당 속도 변화량 (양수면 가속, 음수면 감속)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+    float Acceleration = 0.0f;
+
 
     // 스킬 스펙으로 초기화
     
@@ -101,6 +114,7 @@ public:
     float GetCritChance() { return CritChance; }
     bool CanCrit() { return bCanCrit; }
     bool IsCrit() { return bIsCrit; }
+    float GetEffectRadius() { return EffectRadius; }
 
 
     //************** SET ************
@@ -108,13 +122,13 @@ public:
     void SetPenetration(int32 v) { Penetration = v; }
     void SetKnockbackForce(float v) { KnockbackForce = v; }
     void SetLifeTime(float v) { LifeTime = v; }
-    void SetSpeed(float v) { Speed = v; }
-    void SetSize(float v) { Size = v; }
+    void SetSpeed(float NewSpeed);
+    void SetSize(float NewSize);
     void SetCritChance(float v) { CritChance = v; }
     void SetCanCrit(bool v) { bCanCrit = v; }
     void SetIsCrit(bool v) { bIsCrit = v; }
-
-
+    void SetEffectRadius(float v) { EffectRadius = v; }
+    void SetAcceleration(float InAcceleration) { Acceleration = InAcceleration; }
 
 
 

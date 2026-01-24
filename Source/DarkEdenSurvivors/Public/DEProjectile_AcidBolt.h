@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "DESimpleProjectileBase.h"
-#include "DEAcidBolt.generated.h"
+#include "DEProjectile_AcidBolt.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DARKEDENSURVIVORS_API ADEAcidBolt : public ADESimpleProjectileBase
+class DARKEDENSURVIVORS_API ADEProjectile_AcidBolt : public ADESimpleProjectileBase
 {
 	GENERATED_BODY()
 public:
 	// Sets default values for this actor's properties
-	ADEAcidBolt();
+	ADEProjectile_AcidBolt();
 
 protected:
 	// Called when the game starts or when spawned
@@ -30,9 +30,6 @@ public:
 	void Initialize(const FVector Direction);
 
 protected:
-	UPROPERTY(Transient)
-	TArray<AActor*> HitActors;
-
 	UPROPERTY(EditAnywhere, Category = "Damage")
 	float ExplosionDamage = 60.f;
 
@@ -48,4 +45,5 @@ public:
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 		bool bFromSweep, const FHitResult& SweepResult) override;
 	void Explode();
+	virtual void OnLifeTimeExpired() override;
 };

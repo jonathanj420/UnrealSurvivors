@@ -4,19 +4,26 @@
 
 #include "CoreMinimal.h"
 #include "DEAutoSkillBase.h"
-#include "DESkillBloodySpear.generated.h"
+#include "DESkill_AcidBolt.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DARKEDENSURVIVORS_API UDESkillBloodySpear : public UDEAutoSkillBase
+class DARKEDENSURVIVORS_API UDESkill_AcidBolt : public UDEAutoSkillBase
 {
 	GENERATED_BODY()
-	
-	UDESkillBloodySpear();
 
+public:
+	UDESkill_AcidBolt();
 	//virtual void ActivateSkill(FDESkillData* SkillData) override;
 	virtual void InitBehaviors() override;
-	class ADEMonsterBase* FindBestTarget();
+
+
+private:
+	FDESkillData* CurrentData = nullptr;
+
+	TSubclassOf<AActor> ProjectileClass;
+	USoundBase* FireSound;
+	
 };

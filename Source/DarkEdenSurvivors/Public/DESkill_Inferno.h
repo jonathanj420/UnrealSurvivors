@@ -4,26 +4,23 @@
 
 #include "CoreMinimal.h"
 #include "DEAutoSkillBase.h"
-#include "DESkillAcidBolt.generated.h"
+#include "DESkill_Inferno.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DARKEDENSURVIVORS_API UDESkillAcidBolt : public UDEAutoSkillBase
+class DARKEDENSURVIVORS_API UDESkill_Inferno : public UDEAutoSkillBase
 {
 	GENERATED_BODY()
 
 public:
-	UDESkillAcidBolt();
-	//virtual void ActivateSkill(FDESkillData* SkillData) override;
+	UDESkill_Inferno();
 	virtual void InitBehaviors() override;
 
-
 private:
-	FDESkillData* CurrentData = nullptr;
-
 	TSubclassOf<AActor> ProjectileClass;
 	USoundBase* FireSound;
+
 	
 };

@@ -14,7 +14,7 @@ ADEMonsterRepositionManager::ADEMonsterRepositionManager()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+    PrimaryActorTick.TickInterval = 0.5f;
 }
 
 void ADEMonsterRepositionManager::BeginPlay()
@@ -53,21 +53,33 @@ void ADEMonsterRepositionManager::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    const TArray<ADEMonsterBase*>& Monsters =
-        MonsterSpawnManager->GetActiveMonsters();
+    // 1. 매니저가 유효한지 체크 (안전장치)
+    if (!MonsterSpawnManager || !Player) return;
+
+    // 2. 몬스터 리스트 가져오기 (참조로 가져옴)
+    const TArray<ADEMonsterBase*>& Monsters = MonsterSpawnManager->GetActiveMonsters();
 
     const FVector PlayerLoc = Player->GetActorLocation();
     const float MaxDistSq = MaxDistanceFromPlayer * MaxDistanceFromPlayer;
 
-
-    for (ADEMonsterBase* Monster : Monsters)
+    // 3. [핵심 수정] 역순으로 순회 (뒤에서 앞으로)
+    // 이렇게 하면 중간에 몬스터가 사라져도 인덱스가 꼬이지 않습니다.
+    for (int32 i = Monsters.Num() - 1; i >= 0; --i)
     {
-        if (!Monster->IsAlive())
+        // 4. 유효성 체크
+        // (배열의 i번째 요소를 가져옴)
+        ADEMonsterBase* Monster = Monsters[i];
+
+        // 몬스터가 실제로 존재하는지, 죽진 않았는지 체크
+        if (!IsValid(Monster) || !Monster->IsAlive())
+        {
             continue;
+        }
 
-        const float DistSq =
-            FVector::DistSquared(Monster->GetActorLocation(), PlayerLoc);
+        // 5. 거리 계산
+        const float DistSq = FVector::DistSquared(Monster->GetActorLocation(), PlayerLoc);
 
+        // 6. 너무 멀어지면 재배치
         if (DistSq > MaxDistSq)
         {
             RepositionMonster(Monster);

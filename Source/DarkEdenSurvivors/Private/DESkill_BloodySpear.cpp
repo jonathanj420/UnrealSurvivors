@@ -1,17 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "DESkillBloodySpear.h"
+#include "DESkill_BloodySpear.h"
 #include "DEMonsterBase.h"
 #include "DEGameMode.h"
 #include "DEMonsterSpawnManager.h"
 
-UDESkillBloodySpear::UDESkillBloodySpear()
+UDESkill_BloodySpear::UDESkill_BloodySpear()
 {
 
 }
 
-//void UDESkillBloodySpear::ActivateSkill(FDESkillData* SkillData)
+//void UDESkill_BloodySpear::ActivateSkill(FDESkillData* SkillData)
 //{
 //    ADEMonsterBase* Target = FindBestTarget();
 //    if (!Target) return;
@@ -34,12 +34,12 @@ UDESkillBloodySpear::UDESkillBloodySpear()
 //        false*/
 //}
 
-void UDESkillBloodySpear::InitBehaviors()
+void UDESkill_BloodySpear::InitBehaviors()
 {
     Super::InitBehaviors();
 }
 
-ADEMonsterBase* UDESkillBloodySpear::FindBestTarget()
+ADEMonsterBase* UDESkill_BloodySpear::FindBestTarget()
 {
     ADEMonsterBase* Best = nullptr;
     float BestScore = -1.f;

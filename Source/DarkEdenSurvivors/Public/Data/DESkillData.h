@@ -60,7 +60,7 @@ public:
     float Cooldown;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float SweepRadius;
+    float Radius;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float KnockbackForce;
