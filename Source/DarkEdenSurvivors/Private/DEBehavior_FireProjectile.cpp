@@ -87,9 +87,11 @@ void UDEBehavior_FireProjectile::FireOneShot()
 
 	// 2. °¢µµ ·£´ý
 	FRotator SpawnRot = OwnerRot;
-	if (RandomAngleRange > 0.f)
+	if (FireConeAngle > 0.f)
 	{
-		float RandYaw = FMath::FRandRange(-RandomAngleRange, RandomAngleRange);
+		float HalfAngle = FireConeAngle * 0.5f;
+
+		float RandYaw = FMath::FRandRange(-HalfAngle, HalfAngle);
 		SpawnRot.Yaw += RandYaw;
 	}
 

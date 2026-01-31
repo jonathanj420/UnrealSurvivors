@@ -32,7 +32,7 @@ void UDEAutoSkillBase::InitBehaviors()
 void UDEAutoSkillBase::BuildContext(FDESkillContext& OutContext)
 {
 	OutContext.Instigator = SkillOwner;
-
+	OutContext.ActiveSkill = this;
 	if (SkillData)
 	{
 		// 1. 메인 변수 복사
@@ -42,7 +42,7 @@ void UDEAutoSkillBase::BuildContext(FDESkillContext& OutContext)
 		OutContext.Speed = SkillData->ProjectileSpeed;
 		OutContext.KnockbackForce = SkillData->KnockbackForce;
 		OutContext.Radius = SkillData->Radius;
-
+		OutContext.Duration = SkillData->Duration;
 		// 2. 맵 데이터(옵션) 통째로 복사
 		OutContext.CustomValues = SkillData->OptionValues;
 	}

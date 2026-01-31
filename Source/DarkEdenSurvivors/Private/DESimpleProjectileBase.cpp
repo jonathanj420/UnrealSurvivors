@@ -204,6 +204,7 @@ void ADESimpleProjectileBase::OnOverlap(UPrimitiveComponent* OverlappedComp, AAc
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult& SweepResult)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Projectile : %s OnOverlap : %s"),*GetName(),*OtherActor->GetName());
 	// 1. 이미 이 투사체에 맞았던 액터인지 확인합니다.
 	if (HitActors.Contains(OtherActor))
 	{

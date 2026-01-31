@@ -117,6 +117,8 @@ public:
 
 	UFUNCTION()
 	UDESkillManagerComponent* GetSkillManagerComponent() { return SkillManager; }
+
+	TMap<FName, TWeakObjectPtr<class ADESimpleAOEBase>> ActiveAOEMap;
 	
 protected:
 	UPROPERTY()

@@ -1,10 +1,25 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Templates/SubclassOf.h"
 #include "DESkillContext.generated.h"
 
 class AActor;
 struct FDESkillData;
+class UDEAutoSkillBase;
+
+struct FAOERequest
+{
+	FName AOEKey;
+
+	TSubclassOf<class ADESimpleAOEBase> AOEClass;
+
+	FVector SpawnLocation;
+
+	AActor* AttachTarget = nullptr;
+	bool bAttach = false;
+};
+
 
 /**
  * 스킬 실행 시 전달되는 실행 컨텍스트
@@ -23,9 +38,15 @@ public:
 	UPROPERTY(Transient)
 	TArray<AActor*> Targets;
 
-	UPROPERTY(Transient)
-	TSubclassOf<AActor> ProjectileClass;
+	TArray<FAOERequest> AOERequests;
 
+	// Spawn 결과 기록 (선택, SpawnAOE에서 사용)
+	TArray<TWeakObjectPtr<class ADESimpleAOEBase>> SpawnedAOEs;
+
+	// [중요 추가] 이 컨텍스트를 만든 스킬 인스턴스 (상태 접근용)
+	// 예: ActiveSkill->SpawnedAura 에 접근하기 위해 필수
+	UPROPERTY(Transient)
+	UDEAutoSkillBase* ActiveSkill = nullptr;
 	// --- [2. 메이저 스탯 (Raw C++ Type)] ---
 	// 일반 변수는 UPROPERTY 없어도 되지만, TMap 직렬화/초기화를 위해 남김
 	// (필요 없으면 float는 그냥 float로 써도 됩니다. 여기선 통일성을 위해 둠)
@@ -36,7 +57,7 @@ public:
 	float Speed = 1000.f;
 	float Radius = 100.0f;
 	float KnockbackForce = 600.0f;
-
+	float Duration = 0.f;
 	// --- [3. 확장 데이터] ---
 	UPROPERTY(Transient)
 	TMap<FName, float> CustomValues;
@@ -54,3 +75,4 @@ public:
 	UPROPERTY(Transient)
 	TArray<FVector> CustomLocations; // 다중 좌표 저장용
 };
+

@@ -27,7 +27,7 @@ void UDESkill_Inferno::InitBehaviors()
     FireAction->ProjectileClass = this->ProjectileClass;
     FireAction->FireSound = this->FireSound;
     FireAction->BurstInterval = 0.04f;
-    FireAction->RandomAngleRange = 60.0f;
+    FireAction->FireConeAngle = 60.0f;
 
     Behaviors.Add(FireAction);
 

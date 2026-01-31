@@ -63,6 +63,9 @@ public:
     float Radius;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float Duration;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float KnockbackForce;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)

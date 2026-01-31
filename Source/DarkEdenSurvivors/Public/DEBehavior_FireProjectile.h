@@ -35,7 +35,7 @@ public:
 
 	// random angle,,, 0=zero
 	UPROPERTY()
-	float RandomAngleRange = 0.f;
+	float FireConeAngle = 0.f;
 
 	// burst delay,,, 0=zero
 	UPROPERTY()

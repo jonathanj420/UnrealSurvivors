@@ -36,33 +36,6 @@ void UDESkillManagerComponent::ApplyCharacterDamageMultiplier(float Multiplier)
 // Called every frame
 void UDESkillManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-    //DeltaCheck += DeltaTime;
-    //Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-    //if (bAutoSkillPaused)
-    //    return;
-    //for (auto& Pair : ActiveSkills)
-    //{
-    //    FActiveSkill& Active = Pair.Value;
-
-    //    if (Active.CurrentCooldown > 0.f)
-    //    {
-    //        Active.CurrentCooldown -= DeltaTime;
-    //        continue;
-    //    }
-
-    //    if (Active.SkillObject && Active.RowData)
-    //    {
-    //        //UE_LOG(LogTemp, Warning, TEXT("%f seconds from last shot"), DeltaCheck);
-    //        Active.SkillObject->ActivateSkill(Active.RowData);
-    //        //UE_LOG(LogTemp, Warning, TEXT("%s : %d by Manager"), *Active.RowData->SkillName,Active.RowData->Level);
-    //        Active.CurrentCooldown = Active.RowData->Cooldown; // 기본 쿨타임
-    //        DeltaCheck = 0.0f;
-    //    }
-    //}
-
-    //////
-
-
     DeltaCheck += DeltaTime;
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
@@ -92,6 +65,31 @@ void UDESkillManagerComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
             DeltaCheck = 0.0f;
         }
     }
+    //DeltaCheck += DeltaTime;
+   //Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+   //if (bAutoSkillPaused)
+   //    return;
+   //for (auto& Pair : ActiveSkills)
+   //{
+   //    FActiveSkill& Active = Pair.Value;
+
+   //    if (Active.CurrentCooldown > 0.f)
+   //    {
+   //        Active.CurrentCooldown -= DeltaTime;
+   //        continue;
+   //    }
+
+   //    if (Active.SkillObject && Active.RowData)
+   //    {
+   //        //UE_LOG(LogTemp, Warning, TEXT("%f seconds from last shot"), DeltaCheck);
+   //        Active.SkillObject->ActivateSkill(Active.RowData);
+   //        //UE_LOG(LogTemp, Warning, TEXT("%s : %d by Manager"), *Active.RowData->SkillName,Active.RowData->Level);
+   //        Active.CurrentCooldown = Active.RowData->Cooldown; // 기본 쿨타임
+   //        DeltaCheck = 0.0f;
+   //    }
+   //}
+
+   //////
 
 }
 
