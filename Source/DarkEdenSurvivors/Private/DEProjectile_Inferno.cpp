@@ -19,7 +19,7 @@ ADEProjectile_Inferno::ADEProjectile_Inferno()
 		NiagaraComponent->SetAsset(NS_Fire.Object);
 		// 이펙트 위치 미세 조정 (충돌체 중앙에 오게)
 		NiagaraComponent->SetRelativeLocation(FVector::ZeroVector);
-		UE_LOG(LogTemp, Warning, TEXT("Inferno niagara set"));
+		//UE_LOG(LogTemp, Warning, TEXT("Inferno niagara set"));
 	}
 	SetLifeTime(1.0f);
 	SetKnockbackForce(100.0f);

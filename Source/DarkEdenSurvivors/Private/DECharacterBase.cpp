@@ -7,6 +7,8 @@
 #include "DEActiveSkillBase.h"
 #include "DESkill_BloodDrain.h"
 #include "DEStatComponent.h"
+#include "DEInventoryComponent.h"
+
 
 // Sets default values
 ADECharacterBase::ADECharacterBase()
@@ -18,6 +20,8 @@ ADECharacterBase::ADECharacterBase()
     StatComponent->SetCurrentHP(200.0f);
     StatComponent->SetPlayer(true);
     SkillManager = CreateDefaultSubobject<UDESkillManagerComponent>(TEXT("SkillManager"));
+    Inventory = CreateDefaultSubobject<UDEInventoryComponent>(TEXT("Inventory"));
+
 
     SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));
     SpringArm->SetupAttachment(GetRootComponent());

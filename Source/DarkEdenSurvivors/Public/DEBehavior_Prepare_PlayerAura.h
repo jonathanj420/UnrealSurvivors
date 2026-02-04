@@ -17,7 +17,7 @@ class DARKEDENSURVIVORS_API UDEBehavior_Prepare_PlayerAura : public UDESkillBeha
 public:
     virtual void Execute(FDESkillContext& Context) override;
 
-protected:
+public:
     // 실제 갈릭 오라 AOE 클래스
     UPROPERTY(EditDefaultsOnly, Category = "AOE")
     TSubclassOf<class ADESimpleAOEBase> AuraAOEClass;

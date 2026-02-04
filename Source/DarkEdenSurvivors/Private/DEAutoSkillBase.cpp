@@ -37,9 +37,9 @@ void UDEAutoSkillBase::BuildContext(FDESkillContext& OutContext)
 	{
 		// 1. 메인 변수 복사
 		OutContext.Damage = SkillData->Damage;
-		OutContext.ProjectileCount = SkillData->ProjectileCount;
+		OutContext.Amount = SkillData->Amount;
 		OutContext.Penetration = SkillData->Penetration;
-		OutContext.Speed = SkillData->ProjectileSpeed;
+		OutContext.Speed = SkillData->Speed;
 		OutContext.KnockbackForce = SkillData->KnockbackForce;
 		OutContext.Radius = SkillData->Radius;
 		OutContext.Duration = SkillData->Duration;

@@ -53,8 +53,6 @@ private:
     /** Actor È°¼ºÈ­ */
     void ActivateActor(
         AActor* Actor,
-        const FVector& Location,
-        const FRotator& Rotation,
         bool bAutoActivate
     );
 

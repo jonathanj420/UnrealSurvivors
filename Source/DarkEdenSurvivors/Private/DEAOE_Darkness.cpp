@@ -2,11 +2,21 @@
 
 
 #include "DEAOE_Darkness.h"
+#include "NiagaraSystem.h"
+#include "NiagaraComponent.h"
+
 
 ADEAOE_Darkness::ADEAOE_Darkness()
 {
+	static ConstructorHelpers::FObjectFinder<UNiagaraSystem>NiagaraRef(TEXT("/Game/DarkEden/Data/Niagara/NS_Darkness.NS_Darkness"));
+	if (NiagaraRef.Succeeded())
+	{
+		NiagaraComp->SetAsset(NiagaraRef.Object);
+
+	}
 	// Darkness는 기본적으로 무한 지속 Aura
 	bInfiniteDuration = true;
+
 }
 
 void ADEAOE_Darkness::OnHitTarget(AActor* Target)
@@ -43,5 +53,5 @@ void ADEAOE_Darkness::ApplyDarknessEffects(AActor* Target)
 
 	//FreezeResist = FMath::Max(FreezeResist - FreezeResistReduction, 0.f);
 	//Monster->SetFreezeResistance(FreezeResist);
-	UE_LOG(LogTemp, Warning, TEXT("Hit By Darkness"));
+	UE_LOG(LogTemp, Warning, TEXT("%s Hit By %s"), *GetNameSafe(Target), *GetNameSafe(this));
 }

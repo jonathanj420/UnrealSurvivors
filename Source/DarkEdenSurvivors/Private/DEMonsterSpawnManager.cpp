@@ -170,12 +170,35 @@ void ADEMonsterSpawnManager::ProcessWave(float DeltaTime)
     // 누적 시간 업데이트
     WaveElapsedTime += DeltaTime;
 
-    // Duration이 0이면 무한(또는 단발 보스만)으로 간주 — Duration > 0 이면 그 기간까지만 Interval 스폰
-    if (CurRow->Duration > 0.0f && WaveElapsedTime >= CurRow->Duration)
+    //// Duration이 0이면 무한(또는 단발 보스만)으로 간주 — Duration > 0 이면 그 기간까지만 Interval 스폰
+    //if (CurRow->Duration > 0.0f && WaveElapsedTime >= CurRow->Duration)
+    //{
+    //    // 웨이브 시간 끝 — 다음 웨이브는 StartTime 기준으로 대기
+    //    return;
+    //}
+    // =================================================================
+    // [수정] Duration 규칙 적용
+    // =================================================================
+
+    // 1. Duration이 0이다? -> "단발성(One-Shot)" 웨이브.
+    //    StartWave에서 MinimumCount만큼 이미 뽑았으므로, 추가 스폰(Interval)은 절대 하지 않음.
+    if (FMath::IsNearlyZero(CurRow->Duration))
     {
-        // 웨이브 시간 끝 — 다음 웨이브는 StartTime 기준으로 대기
         return;
     }
+
+    // 2. Duration이 양수(>0)다? -> "시간제한(Timed)" 웨이브. 
+    //    시간이 다 되면 스폰을 멈춤 (다음 웨이브 대기 상태로 진입).
+    if (CurRow->Duration > 0.0f && WaveElapsedTime >= CurRow->Duration)
+    {
+        return;
+    }
+
+    // 3. Duration이 음수(-1)다? -> "무한(Infinite)" 웨이브.
+    //    위의 조건들에 걸리지 않으므로 계속 아래로 내려가서 스폰함.
+
+    // =================================================================
+
 
     // SpawnInterval 기준으로 주기 스폰
     // NextSpawnTime은 절대 시간(게임 전체 경과 기준)
@@ -251,7 +274,17 @@ void ADEMonsterSpawnManager::StartWave(int32 WaveIndex)
     }
 
     // 다음 스폰 시간 초기화
-    NextSpawnTime = GameMode ? GameMode->GetElapsedTime() : 0.0f;
+    // [수정 전] 지금 당장 또 뽑아라 (X)
+    // NextSpawnTime = GameMode ? GameMode->GetElapsedTime() : 0.0f;
+
+    // [수정 후] "인터벌 시간 뒤"에 첫 주기적 스폰을 시작해라 (O)
+    float CurrentTime = GameMode ? GameMode->GetElapsedTime() : 0.0f;
+
+    // WaveData의 SpawnInterval만큼 뒤로 미룸
+    // (Interval이 0이면 0.01f라도 더해서 즉시 실행 방지)
+    float FirstDelay = FMath::Max(0.01f, WaveData->SpawnInterval);
+
+    NextSpawnTime = CurrentTime + FirstDelay;
     
 }
 
@@ -438,7 +471,9 @@ ADEMonsterBase* ADEMonsterSpawnManager::SpawnFromPool(FVector& Location, const F
         if (Candidate && Candidate->GetClass() == ClassToSpawn)
         {
             SpawnedMonster = Candidate;
-            InactiveMonsters.RemoveAt(i); // 대기열에서 제외
+            //InactiveMonsters.RemoveAt(i); // 대기열에서 제외
+            // RemoveAt 대신 RemoveAtSwap 사용 (O(N) -> O(1))
+            InactiveMonsters.RemoveAtSwap(i);
             UE_LOG(LogTemp, Warning, TEXT("Monster ReSpawned From Pool"));
             break;
         }

@@ -20,11 +20,12 @@ public:
 	virtual void InitBehaviors() override;
 
 private:
-	UPROPERTY(Transient)
+	/*UPROPERTY(Transient)
 	TObjectPtr<UNiagaraSystem> CastEffectAsset;
 
 	UPROPERTY(Transient)
-	TObjectPtr<UNiagaraSystem> HitEffectAsset;
+	TObjectPtr<UNiagaraSystem> HitEffectAsset;*/
 
+	TSubclassOf<AActor> AOEClass;
 
 };

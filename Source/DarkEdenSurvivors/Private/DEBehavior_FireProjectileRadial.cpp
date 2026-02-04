@@ -37,7 +37,7 @@ void UDEBehavior_FireProjectileRadial::Execute(FDESkillContext& Context)
 	}
 
 	// 4. 각도 계산
-	int32 Count = FMath::Max(1, Context.ProjectileCount);
+	int32 Count = FMath::Max(1, Context.Amount);
 
 	// 전체 각도(ArcAngle)를 개수로 나눔 (예: 360 / 3 = 120도)
 	float AngleStep = (Count > 0) ? (ArcAngle / (float)Count) : 0.f;

@@ -32,6 +32,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	class UDESkillManagerComponent* SkillManager;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	class UDEInventoryComponent* Inventory;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	class UDEStatComponent* StatComponent; // 포워드 선언된 UStatsComponent 포인터
 	//***CAMERA***
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")

@@ -25,8 +25,8 @@ protected:
 
 public:
 
-    void ApplyContext(const FDESkillContext& Context);
-
+    virtual void ApplyContext(const FDESkillContext& Context);
+    void ActivateAOE(bool bIsNewSpawn);
     // 풀에서 꺼낼 때 호출하는 초기화 함수
     void InitializeAOE(
         float InDamage,
@@ -37,7 +37,7 @@ public:
     // [추가] 컨텍스트 기반 초기화 (프로젝타일과 통일성 유지)
     virtual void InitializeFromContext(const FDESkillContext& Context);
     // 풀로 반환
-    void ReturnToPool();
+    virtual void ReturnToPool();
 
 protected:
     // 들어오자마자 즉시 반응하기 위한 이벤트 (반응성 핵심)
@@ -76,4 +76,8 @@ protected:
 
     // 개별 타격 쿨타임 기록 [Key: 적, Value: 다음 타격 가능 시간]
     TMap<AActor*, double> HitCooldownMap;
+    // [추가] 타겟별 피격 횟수 기록 (관통력 제한 구현용)
+    // Key: 맞은 놈, Value: 몇 대 맞았는지
+    UPROPERTY()
+    TMap<AActor*, int32> HitCountMap;
 };

@@ -4,6 +4,7 @@
 #include "DESkillManagerComponent.h"
 #include "DEAutoSkillBase.h"
 #include "DECharacterBase.h"
+#include "DEInventoryComponent.h"
 #include "Engine/World.h"
 
 // Sets default values for this component's properties
@@ -244,6 +245,27 @@ void UDESkillManagerComponent::LevelUpSkill(int32 SkillID)
     //UE_LOG(LogTemp, Warning, TEXT("[Skill] LEVEL UP → %d → Lv%d"), SkillID, NewLevel);
 
     // 1. 데이터 테이블 유효성 검사 (기존 유지)
+    UDEInventoryComponent* Inventory =
+        GetOwner()->FindComponentByClass<UDEInventoryComponent>();
+
+    if (!Inventory) return;
+
+    // 신규 스킬인데 슬롯이 꽉 찼으면 컷
+    const bool bHasSkill = Inventory->HasSkill(SkillID);
+    if (!bHasSkill && Inventory->IsSkillFull())
+    {
+        UE_LOG(LogTemp, Warning,
+            TEXT("[Skill] Cannot acquire Skill %d: Skill slots full"),
+            SkillID);
+        return;
+    }
+
+    // 신규 스킬이면 Inventory에 먼저 등록
+    if (!bHasSkill)
+    {
+        Inventory->TryAddSkill(SkillID);
+    }
+
     if (!SkillRowMap.Contains(SkillID))
     {
         UE_LOG(LogTemp, Error, TEXT("[Skill] LevelUpSkill: SkillRowMap missing SkillID %d"), SkillID);

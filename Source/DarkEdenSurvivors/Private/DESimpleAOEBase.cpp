@@ -48,7 +48,7 @@ void ADESimpleAOEBase::ApplyContext(const FDESkillContext& Context)
     //타격 간격 (확장 가능)
     const float FinalHitCooldown =
         Context.GetValue(TEXT("HitInterval"), 0.5f);
-
+    OwnerActor = Context.Instigator;
     //내부 상태 초기화 + 반영
     InitializeAOE(
         FinalDamage,
@@ -67,6 +67,55 @@ void ADESimpleAOEBase::ApplyContext(const FDESkillContext& Context)
     }
 }
 
+void ADESimpleAOEBase::ActivateAOE(bool bIsNewSpawn)
+{
+    // 1. 하드웨어 세팅 (이건 새것이든 헌것이든 무조건 켜져야 함)
+    SetActorHiddenInGame(false);
+    SetActorTickEnabled(true);
+    if (Collision)
+    {
+        Collision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+    }
+
+    // 2. [핵심] 소프트웨어 리셋 (조건부 초기화)
+    if (bIsNewSpawn)
+    {
+        // 진짜 새로 태어난 놈만 기억 소거
+        HitCooldownMap.Empty();
+
+        // 이펙트도 아예 처음부터 다시 터트림
+        if (NiagaraComp) NiagaraComp->Activate(true);
+    }
+    else
+    {
+        // [예외 처리] 영구 지속(Persistent) 스킬이 재사용된 경우
+        // 1. 쿨타임 맵(HitCooldownMap)을 비우지 않음 -> 방금 때린 놈 또 때리는 '따닥' 방지
+        // 2. 이펙트는 굳이 껐다 켜지 않고 유지 (자연스럽게)
+
+        // (선택사항) 만약 레벨업 효과를 주고 싶다면 여기서 스케일이나 컬러만 살짝 변경
+    }
+
+    //// 1. 엔진 기능 켜기 (PoolSubsystem이 해주는 거랑 비슷함)
+    //SetActorHiddenInGame(false);
+    //SetActorTickEnabled(true);
+    //Collision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
+    //// ---------------------------------------------
+    //// [중요] PoolSubsystem은 절대 모르는 "내 전용 로직" 리셋
+    //// ---------------------------------------------
+
+    //// 2. 이펙트 다시 재생 (필수!)
+    //if (NiagaraComp)
+    //{
+    //    NiagaraComp->Activate(true);
+    //}
+
+    //// 3. 내부 상태 리셋 (필수!)
+    //// InitializeFromContext에서 하긴 하지만, 확실하게 여기서 한 번 더 비워주는 게 안전함
+    //HitCooldownMap.Empty();
+    //HitCountMap.Empty();
+}
+
 void ADESimpleAOEBase::InitializeAOE(float InDamage, float InRadius, float InHitCooldown, float InLifeTime)
 {
     Damage = InDamage;
@@ -83,7 +132,7 @@ void ADESimpleAOEBase::InitializeAOE(float InDamage, float InRadius, float InHit
     // NiagaraComp->SetRelativeScale3D(FVector(EffectScale));
 
     // 맵 초기화 (재사용 시 필수)
-    HitCooldownMap.Empty();
+    //HitCooldownMap.Empty();
 
     // 수명 설정 (0보다 크면 시간 뒤 자동 삭제/반환)
     if (!bInfiniteDuration)
@@ -139,7 +188,11 @@ void ADESimpleAOEBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActo
 {
     // 나 자신이나 주인은 무시
     if (!OtherActor || OtherActor == this || OtherActor == OwnerActor.Get()) return;
-
+    // 3. [핵심] 몬스터의 "핵심 부위(Root)"가 아니면 무시! (팔, 다리, 메쉬 충돌 방지)
+    if (OtherComp != OtherActor->GetRootComponent())
+    {
+        return;
+    }
     // 들어오자마자 쿨타임 체크 후 즉시 타격 (반응성 UP)
     if (CanHitTarget(OtherActor))
     {

@@ -52,7 +52,7 @@ public:
 	// (필요 없으면 float는 그냥 float로 써도 됩니다. 여기선 통일성을 위해 둠)
 
 	float Damage = 0.f;
-	int32 ProjectileCount = 1;
+	int32 Amount = 1;
 	int32 Penetration = 0;
 	float Speed = 1000.f;
 	float Radius = 100.0f;

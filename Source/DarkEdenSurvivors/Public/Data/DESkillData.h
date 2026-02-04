@@ -51,7 +51,7 @@ public:
     float Damage;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int32 ProjectileCount;
+    int32 Amount;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int32 Penetration;
@@ -63,14 +63,14 @@ public:
     float Radius;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float Duration;
-
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float KnockbackForce;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float ProjectileSpeed;
-    // stun, bleed... or smth
+    float Duration;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float Speed;
+    // hitinterval, bleed... or smth
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TMap<FName, float> OptionValues;
 

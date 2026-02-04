@@ -12,7 +12,7 @@ void UDEBehavior_FireProjectile::Execute(FDESkillContext& Context)
 	//UE_LOG(LogTemp, Warning, TEXT("Behavior : FireProjectile Excuted"));
 	if (!Context.Instigator) return;
 
-	int32 Count = FMath::Max(1, Context.ProjectileCount);
+	int32 Count = FMath::Max(1, Context.Amount);
 
 	// [Case A: 동시 발사 (기존)]
 	if (BurstInterval <= 0.f)
