@@ -42,6 +42,11 @@ bool UDEInventoryComponent::IsAccessoryFull() const
     return OwnedAccessoryIDs.Num() >= MaxAccessorySlots;
 }
 
+const TArray<int32>& UDEInventoryComponent::GetOwnedSkillIDs() const
+{
+    return OwnedSkillIDs;
+}
+
 /* ================= Ãß°¡ ================= */
 
 bool UDEInventoryComponent::TryAddSkill(int32 SkillID)

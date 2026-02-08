@@ -90,4 +90,7 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     FText SkillName;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    UTexture2D* SkillIcon;
 };

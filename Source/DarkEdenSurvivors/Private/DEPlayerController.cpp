@@ -7,6 +7,7 @@
 #include "DELevelUpWidget.h"
 #include "DECharacterBase.h"
 #include "DESkillManagerComponent.h"
+#include "DESkillInventoryWidget.h"
 #include "Kismet/GameplayStatics.h"
 
 ADEPlayerController::ADEPlayerController()
@@ -14,11 +15,17 @@ ADEPlayerController::ADEPlayerController()
     static ConstructorHelpers::FClassFinder<UDEGameHUDWidget> UI_GameHUDWidget_C(TEXT("/Game/DarkEden/UI/UI_GameHUD.UI_GameHUD_C"));
     if (UI_GameHUDWidget_C.Succeeded())
     {
-        UE_LOG(LogTemp, Warning, TEXT("UI CLASS SUCKSEX"));
+        UE_LOG(LogTemp, Warning, TEXT("UI CLASS Succeeded"));
         GameHUDWidgetClass = UI_GameHUDWidget_C.Class;
 
     }
+    static ConstructorHelpers::FClassFinder<UDESkillInventoryWidget> UI_SkillInventoryWidget_C(TEXT("/Game/DarkEden/UI/WBP_SkillInventoryWidget.WBP_SkillInventoryWidget_C"));
+    if (UI_GameHUDWidget_C.Succeeded())
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Inventory UI Succeeded"));
+        SkillInventoryWidgetClass = UI_SkillInventoryWidget_C.Class;
 
+    }
     static ConstructorHelpers::FClassFinder<UDELevelUpWidget> UI_LevelUpWidget_C(TEXT("/Game/DarkEden/UI/UI_SelectSkill.UI_SelectSkill_C"));
     if (UI_LevelUpWidget_C.Succeeded())
     {
@@ -38,13 +45,26 @@ void ADEPlayerController::BeginPlay()
         if (GameHUDWidget)
         {
             GameHUDWidget->AddToViewport();
-            UE_LOG(LogTemp, Warning, TEXT("Time UI SUCKSEX"));
+            UE_LOG(LogTemp, Warning, TEXT("Time UI Succeeded"));
         }
     }
     else
     {
         UE_LOG(LogTemp, Warning, TEXT("NO TIME UI"));
     }
+    if (SkillInventoryWidgetClass)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("There IS Inventory UI"));
+        UDESkillInventoryWidget* Widget =
+            CreateWidget<UDESkillInventoryWidget>(this, SkillInventoryWidgetClass);
+
+        Widget->AddToViewport();
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("NO Inventory UI"));
+    }
+    
 }
 
 void ADEPlayerController::PostInitializeComponents()

@@ -260,11 +260,7 @@ void UDESkillManagerComponent::LevelUpSkill(int32 SkillID)
         return;
     }
 
-    // 신규 스킬이면 Inventory에 먼저 등록
-    if (!bHasSkill)
-    {
-        Inventory->TryAddSkill(SkillID);
-    }
+  
 
     if (!SkillRowMap.Contains(SkillID))
     {
@@ -328,6 +324,14 @@ void UDESkillManagerComponent::LevelUpSkill(int32 SkillID)
         SkillLevels.Add(SkillID, 1);
 
         UE_LOG(LogTemp, Warning, TEXT("[Skill] NEW SKILL ACQUIRED: %d -> Lv1"), SkillID);
+
+        // 신규 스킬이면 Inventory에 먼저 등록
+        if (!bHasSkill)
+        {
+            Inventory->TryAddSkill(SkillID);
+            //OnSkillUpdated.Broadcast(SkillID);
+        }
+
         return;
     }
 
@@ -347,6 +351,7 @@ void UDESkillManagerComponent::LevelUpSkill(int32 SkillID)
         // 지금은 데이터만 바뀌므로 호출 안 해도 됩니다.
     }
 
+    OnSkillUpdated.Broadcast(SkillID);
     UE_LOG(LogTemp, Warning, TEXT("[Skill] LEVEL UP -> %d -> Lv%d"), SkillID, NewLevel);
 
 }
@@ -380,6 +385,12 @@ TArray<int32> UDESkillManagerComponent::GetUpgradeableSkills() const
     }
 
     return Result;
+}
+
+FDESkillRow* UDESkillManagerComponent::GetSkillRow(int32 SkillID)
+{
+    return SkillRowMap.Find(SkillID);
+
 }
 
 TArray<FDESkillData*> UDESkillManagerComponent::GetRandomSkillChoices(int32 Count)

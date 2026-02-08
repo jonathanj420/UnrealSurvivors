@@ -36,6 +36,11 @@ private:
 	UPROPERTY()
 	class UDEGameHUDWidget* GameHUDWidget;
 
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<class UDESkillInventoryWidget> SkillInventoryWidgetClass;
+	UPROPERTY()
+	class UDESkillInventoryWidget* SkillInventoryWidget;
+
 public:
 	UFUNCTION()
 	void ResumeGame();

@@ -56,6 +56,8 @@ public:
     bool IsSkillFull() const;
     bool IsAccessoryFull() const;
 
+    const TArray<int32>& GetOwnedSkillIDs() const;
+
     /* ================= 추가 / 제거 ================= */
 
     bool TryAddSkill(int32 SkillID);

@@ -7,6 +7,10 @@
 #include "Data/DESkillData.h"
 #include "DESkillManagerComponent.generated.h"
 
+
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnSkillUpdated, int32 /*SkillID*/);
+
 class UDEAutoSkillBase;
 
 
@@ -88,6 +92,7 @@ public:
 	// 후보 스킬 목록 (현재 스킬의 다음 레벨만)
 	TArray<int32> GetUpgradeableSkills() const;
 
+	FDESkillRow* GetSkillRow(int32 SkillID);
 public:
 
 	TArray<FDESkillData*> GetRandomSkillChoices(int32 Count = 3);
@@ -102,6 +107,6 @@ public:
 	void PauseAutoSkills();
 	void ResumeAutoSkills();
 	bool IsAutoSkillPaused() const { return bAutoSkillPaused; }
-
+	FOnSkillUpdated OnSkillUpdated;
 
 };
