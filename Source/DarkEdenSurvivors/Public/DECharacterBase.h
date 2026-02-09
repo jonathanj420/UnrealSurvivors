@@ -153,4 +153,9 @@ public:
 
 
 
+
+	public:
+		void MyDebugCheat();
+		UFUNCTION(Exec)
+		void ForceLevelUp();
 };

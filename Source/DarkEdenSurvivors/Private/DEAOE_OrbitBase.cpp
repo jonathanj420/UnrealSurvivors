@@ -101,11 +101,11 @@ void ADEAOE_OrbitBase::ApplyContext(const FDESkillContext& Context)
     Super::ApplyContext(Context);
 
     // 2. 공전(Orbit) 전용 스탯만 추가로 읽어옴
-    float BaseRadius = Context.GetValue(TEXT("BaseRadius"), 150.0f);
+    float OrbitRadius = Context.GetValue(TEXT("OrbitRadius"), 150.0f);
     float AreaMult = Context.GetValue(TEXT("AreaMultiplier"), 1.0f);
 
     // 범위가 커지면 더 멀리서 돔 (최대 거리 제한)
-    CurrentOrbitRadius = FMath::Min(BaseRadius * AreaMult, MaxRadius);
+    CurrentOrbitRadius = FMath::Min(OrbitRadius * AreaMult, MaxRadius);
 
     // 속도 배율
     float SpeedMult = Context.GetValue(TEXT("SpeedMultiplier"), 1.0f);

@@ -143,6 +143,7 @@ void ADECharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
     PlayerInputComponent->BindAction("BloodDrain", IE_Pressed, this, &ADECharacterBase::BloodDrain);
     PlayerInputComponent->BindAction("ActiveSkill", IE_Pressed, this, &ADECharacterBase::OnActiveSkillInput);
+    PlayerInputComponent->BindAction("DebugCheat", IE_Pressed, this, &ADECharacterBase::MyDebugCheat);
 
 
 }
@@ -423,4 +424,20 @@ void ADECharacterBase::OnActiveSkillInput()
 float ADECharacterBase::GetCapsuleHalfRadius()
 {
     return GetCapsuleComponent()->GetScaledCapsuleRadius();
+}
+
+void ADECharacterBase::MyDebugCheat()
+{
+    //put every action i want to do, and press E to go EZ :)
+    SkillManager->LevelUpSkill(BaseSkillID);
+    //테스트 용도
+    if (GEngine)
+    {
+        GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("MyDebugCheat"));
+    }
+}
+
+void ADECharacterBase::ForceLevelUp()
+{
+    StatComponent->LevelUp();
 }

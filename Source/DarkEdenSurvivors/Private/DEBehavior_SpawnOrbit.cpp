@@ -42,15 +42,20 @@ void UDEBehavior_SpawnOrbit::Execute(FDESkillContext& Context)
     for (int32 i = 0; i < TotalAmount; ++i)
     {
         const float StartAngle = i * AngleStep;
+        //Radius만큼의 Vector를 FRotator(각도)만큼.RorateVector()함 
+        FVector OwnerLoc = Instigator->GetActorLocation();
+        FVector Offset = FRotator(0.f, StartAngle, 0.f).RotateVector(FVector(Context.GetValue(TEXT("OrbitRadius"), 150.0f), 0.f, 0.f));
+        FVector SpawnLocation = OwnerLoc + Offset;
 
-        // 풀에서 Orbit AOE 꺼내기
+        // 풀에서 Orbit AOE 꺼내기 > 수정 : 원점(플레이어)에서 스폰하면 스폰하자마자 플레이어랑 겹친놈 때림
+        //위에서 계산한 context radius(반지름),startangle을 기준으로 SpawnLocation 스폰 
         AActor* RawActor = Pool->GetPooledActor(
             OrbitAOEClass,
-            Instigator->GetActorLocation(),
+            SpawnLocation,
             FRotator::ZeroRotator,
             false
         );
-
+        //UE_LOG(LogTemp, Warning, TEXT("%s SpawnOrbit for Instigator Location"), *RawActor->GetName());
         if (!RawActor) continue;
 
         ADEAOE_OrbitBase* OrbitActor = Cast<ADEAOE_OrbitBase>(RawActor);
@@ -74,7 +79,7 @@ void UDEBehavior_SpawnOrbit::Execute(FDESkillContext& Context)
 
         // 활성화 (틱, 충돌 등)
         OrbitActor->ActivateAOE(true);
-
+        //UE_LOG(LogTemp, Warning, TEXT("%s Orbit Activated AOE"), *GetName());
         // 스킬 컨텍스트 관리 목록에 등록
         Context.SpawnedAOEs.Add(OrbitActor);
     }

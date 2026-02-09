@@ -139,6 +139,14 @@ void UDEPoolSubsystem::ActivateActor(
         Root->SetCollisionEnabled(
             bAutoActivate ? ECollisionEnabled::QueryOnly : ECollisionEnabled::NoCollision
         );
+        if (bAutoActivate)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("%s Activated for True"), *Actor->GetName());
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("%s Activated for False"), *Actor->GetName());
+        }
     }
 
     // 3. 만약 인터페이스를 쓴다면 여기서 호출 (위치 인자 없이)
@@ -170,6 +178,7 @@ void UDEPoolSubsystem::DeactivateActor(AActor* Actor)
     if (UPrimitiveComponent* Root = Cast<UPrimitiveComponent>(Actor->GetRootComponent()))
     {
         Root->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+        UE_LOG(LogTemp, Warning, TEXT("%s OnOverlapBegin"), *Actor->GetName());
     }
 }
 
@@ -259,7 +268,7 @@ AActor* UDEPoolSubsystem::GetPooledActor(
     {
         // 맨 뒤에 있는 놈 하나 꺼냄 (가장 빠름)
         SelectedActor = InactivePool.Pop();
-
+        //UE_LOG(LogTemp, Warning, TEXT("%s got Popped Out from Pool"), *SelectedActor->GetName());
         // 꺼냈는데 그 사이에 죽었거나(Destroy) 유효하지 않으면 버리고 다시 반복
         if (IsValid(SelectedActor))
         {
@@ -275,6 +284,7 @@ AActor* UDEPoolSubsystem::GetPooledActor(
     if (!SelectedActor)
     {
         SelectedActor = CreateNewPooledActor(ActorClass, World);
+        UE_LOG(LogTemp, Warning, TEXT("%s New for Pool"), *SelectedActor->GetName());
     }
 
     // C. 공통 활성화 처리
@@ -283,7 +293,7 @@ AActor* UDEPoolSubsystem::GetPooledActor(
         // 1. [먼저] 위치와 회전을 확실하게 잡아준다. (텔레포트)
         // Teleport flag를 true로 줘서 물리 엔진 꼬임 방지
         SelectedActor->SetActorLocationAndRotation(Location, Rotation, false, nullptr, ETeleportType::TeleportPhysics);
-
+        UE_LOG(LogTemp, Warning, TEXT("%s SetLocAndRotFromPool"), *SelectedActor->GetName());
         // 2. [나중] 이제 깨운다. (충돌 ON)
         ActivateActor(SelectedActor, bAutoActivate);
     }
