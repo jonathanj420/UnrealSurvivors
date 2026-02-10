@@ -69,13 +69,13 @@ void ADESimpleAOEBase::ApplyContext(const FDESkillContext& Context)
 
 void ADESimpleAOEBase::ActivateAOE(bool bIsNewSpawn)
 {
-    UE_LOG(LogTemp, Warning, TEXT("%s Starting Activation . . ."), *GetName());
+    //UE_LOG(LogTemp, Warning, TEXT("%s Starting Activation . . ."), *GetName());
     // 1. 하드웨어 세팅 (이건 새것이든 헌것이든 무조건 켜져야 함)
     SetActorHiddenInGame(false);
     SetActorTickEnabled(true);
     if (Collision)
     {
-        UE_LOG(LogTemp, Warning, TEXT("%s Setting Collision : QueryOnly"), *GetName());
+        //UE_LOG(LogTemp, Warning, TEXT("%s Setting Collision : QueryOnly"), *GetName());
         Collision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
         
     }
@@ -89,7 +89,7 @@ void ADESimpleAOEBase::ActivateAOE(bool bIsNewSpawn)
         //UE_LOG(LogTemp, Warning, TEXT("%s has got hitcooldown map cleared"),*GetName());
         //// 이펙트도 아예 처음부터 다시 터트림
         //if (NiagaraComp) NiagaraComp->Activate(true);
-        UE_LOG(LogTemp, Warning, TEXT("%s is NEWBORN"), *GetName());
+        //UE_LOG(LogTemp, Warning, TEXT("%s is NEWBORN"), *GetName());
     }
     else
     {
@@ -199,7 +199,7 @@ void ADESimpleAOEBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActo
     {
         return;
     }
-    UE_LOG(LogTemp, Warning, TEXT("%s OnOverlapBegin"), *GetName());
+    //UE_LOG(LogTemp, Warning, TEXT("%s OnOverlapBegin"), *GetName());
     // 들어오자마자 쿨타임 체크 후 즉시 타격 (반응성 UP)
     if (CanHitTarget(OtherActor))
     {
@@ -248,19 +248,19 @@ bool ADESimpleAOEBase::CanHitTarget(AActor* Target) const
     // 맵에 기록이 있다면, 시간 체크
     if (const double* NextHitTime = HitCooldownMap.Find(Target))
     {
-        UE_LOG(LogTemp, Warning, TEXT("%s CHECKED CanHitTarget, Target already exist"),*GetName());
+        //UE_LOG(LogTemp, Warning, TEXT("%s CHECKED CanHitTarget, Target already exist"),*GetName());
         return CurrentTime >= *NextHitTime;
     }
 
     // 기록이 없으면(처음 만남) 즉시 타격 가능
-    UE_LOG(LogTemp, Warning, TEXT("%s CHECKED CanHitTarget, New Target Hit immediately"), *GetName());
+    //UE_LOG(LogTemp, Warning, TEXT("%s CHECKED CanHitTarget, New Target Hit immediately"), *GetName());
     return true;
 }
 
 void ADESimpleAOEBase::OnHitTarget(AActor* Target)
 {
     DealDamage(Target);
-    UE_LOG(LogTemp, Warning, TEXT("%s got hit by : %s"), *Target->GetName(), *GetName());
+    //UE_LOG(LogTemp, Warning, TEXT("%s got hit by : %s"), *Target->GetName(), *GetName());
     // [확장 포인트]
     // 여기서 넉백(Knockback)이나 상태이상(ApplyStatus) 로직을 추가하면 됩니다.
     // 예: ApplyKnockback(Target);
@@ -308,7 +308,7 @@ void ADESimpleAOEBase::ReturnToPool()
     // 수명 초기화 (SetLifeSpan(0) 안 하면 풀에 가서도 죽음)
     SetLifeSpan(0);
     HitCooldownMap.Reset();
-    UE_LOG(LogTemp, Warning, TEXT("%s Returned To Pool, hitcooldownmap cleared"), *GetName());
+    //UE_LOG(LogTemp, Warning, TEXT("%s Returned To Pool, hitcooldownmap cleared"), *GetName());
     if (UWorld* World = GetWorld())
     {
         if (UGameInstance* GI = World->GetGameInstance())
