@@ -29,7 +29,8 @@ protected:
     class UTextBlock* DamageText;
 
     UPROPERTY(Transient, meta = (BindWidgetAnim))
-    class UWidgetAnimation* PopAnim;
+    //class UWidgetAnimation* PopAnim;
+    class UWidgetAnimation* PopAnimMk2;
 
     UFUNCTION()
     void HandleAnimFinished();

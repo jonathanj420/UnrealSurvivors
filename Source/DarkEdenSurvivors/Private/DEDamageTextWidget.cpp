@@ -8,10 +8,10 @@ void UDEDamageTextWidget::NativeConstruct()
 {
     Super::NativeConstruct();
     SetVisibility(ESlateVisibility::Collapsed);
-    SetAlignmentInViewport(FVector2D(0.5f, 0.5f));
-    SetRenderTransformPivot(FVector2D(0.5f, 0.5f));
+    //SetAlignmentInViewport(FVector2D(0.5f, 0.5f));
+    //SetRenderTransformPivot(FVector2D(0.5f, 0.5f));
     // [이동] 여기서 딱 한 번만 연결하세요!
-    if (PopAnim)
+    if (PopAnimMk2)
     {
         // [수정된 부분]
         // 1. 델리게이트 변수를 하나 만듭니다.
@@ -21,7 +21,7 @@ void UDEDamageTextWidget::NativeConstruct()
         AnimFinishedDelegate.BindDynamic(this, &UDEDamageTextWidget::HandleAnimFinished);
 
         // 3. 연결된 델리게이트를 등록합니다.
-        BindToAnimationFinished(PopAnim, AnimFinishedDelegate);
+        BindToAnimationFinished(PopAnimMk2, AnimFinishedDelegate);
     }
 }
 
@@ -38,9 +38,9 @@ void UDEDamageTextWidget::Activate(const FDamageVisualInfo& Info)
     //SetAlignmentInViewport(FVector2D(0.5f, 0.5f));
     SetVisibility(ESlateVisibility::HitTestInvisible);
 
-    if (PopAnim)
+    if (PopAnimMk2)
     {
-        PlayAnimation(PopAnim);
+        PlayAnimation(PopAnimMk2);
 
 
     }

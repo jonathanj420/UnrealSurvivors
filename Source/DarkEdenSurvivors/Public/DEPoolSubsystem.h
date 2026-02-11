@@ -24,7 +24,7 @@ public:
         TSubclassOf<AActor> ActorClass,
         const FVector& Location,
         const FRotator& Rotation,
-        bool bAutoActivate = true
+        bool bAutoActivate = false
     );
 
     /** 액터를 풀로 돌려보내는 함수 */

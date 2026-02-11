@@ -96,11 +96,12 @@ void UDEBehavior_FireProjectile::FireOneShot()
 	}
 
 	// 3. 스폰
-	AActor* PooledActor = Pool->GetPooledActor(ProjectileClass, SpawnLoc, SpawnRot, true);
+	AActor* PooledActor = Pool->GetPooledActor(ProjectileClass, SpawnLoc, SpawnRot, false);
 	if (auto* Proj = Cast<ADESimpleProjectileBase>(PooledActor))
 	{
 		FVector FireDir = SpawnRot.Vector();
 		Proj->InitializeFromContext(CachedContext, FireDir);
+		//UE_LOG(LogTemp, Warning, TEXT("Shot Fired, Damage : %f"), CachedContext.Damage);
 	}
 
 	// 4. 사운드

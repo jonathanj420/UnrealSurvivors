@@ -84,7 +84,7 @@ UDEDamageTextWidget* UDEDamageTextSubsystem::AcquireWidget()
     if (NewWidget)
     {
         NewWidget->AddToViewport();
-
+        NewWidget->SetAlignmentInViewport(FVector2D(0.5f, 0.5f));
         NewWidget->SetPositionInViewport(FVector2D::ZeroVector, true);
 
         //NewWidget->SetRenderTransformPivot(FVector2D(0.5f, 0.5f));
@@ -118,7 +118,7 @@ void UDEDamageTextSubsystem::Tick(float DeltaTime)
     UWorld* World = GetWorld();
     if (!World) return;
 
-    APlayerController* PC = World->GetFirstPlayerController();
+    APlayerController* PC = GetPlayerController();
     if (!PC) return;
 
     // 1. DPI 스케일 가져오기 (필수!)
@@ -129,6 +129,11 @@ void UDEDamageTextSubsystem::Tick(float DeltaTime)
     {
         UDEDamageTextWidget* Widget = ActiveWidgets[i];
 
+        if (!Widget || !Widget->IsActive())
+        {
+            ActiveWidgets.RemoveAt(i);
+            continue;
+        }
         // ... (유효성 검사 및 비활성 제거 로직은 그대로) ...
 
         FVector2D ScreenPos;
@@ -160,130 +165,5 @@ void UDEDamageTextSubsystem::Tick(float DeltaTime)
         }
     }
 
-    //if (IsTemplate()) return;
-
-    //UWorld* World = GetWorld();
-    //if (!World) return;
-
-    //APlayerController* PC = World->GetFirstPlayerController();
-    //if (!PC) return;
-
-    //// DPI 스케일 (Slate Units <-> Screen Pixels 보정)
-    //float DPIScale = UWidgetLayoutLibrary::GetViewportScale(PC);
-    //if (DPIScale <= 0.0f)
-    //{
-    //    DPIScale = 1.0f;
-    //}
-
-    //for (int32 i = ActiveWidgets.Num() - 1; i >= 0; --i)
-    //{
-    //    UDEDamageTextWidget* Widget = ActiveWidgets[i];
-    //    if (!Widget)
-    //    {
-    //        ActiveWidgets.RemoveAt(i);
-    //        continue;
-    //    }
-
-    //    if (!Widget->IsActive())
-    //    {
-    //        Widget->RemoveFromParent();
-    //        ActiveWidgets.RemoveAt(i);
-    //        continue;
-    //    }
-
-    //    FVector2D ScreenPos;
-    //    const bool bProjected =
-    //        UGameplayStatics::ProjectWorldToScreen(
-    //            PC,
-    //            Widget->GetWorldLocation(),
-    //            ScreenPos,
-    //            false // viewport relative X (중요)
-    //        );
-
-    //    if (!bProjected)
-    //    {
-    //        Widget->SetVisibility(ESlateVisibility::Collapsed);
-    //        continue;
-    //    }
-
-    //    // 핵심: RenderTranslation은 "레이아웃 + 오프셋" 이므로
-    //    // 레이아웃 기준이 (0,0)이라는 전제 하에 사용
-    //    const FVector2D SlatePos = ScreenPos / DPIScale;
-
-    //    Widget->SetRenderTranslation(SlatePos);
-
-    //    if (Widget->GetVisibility() != ESlateVisibility::HitTestInvisible)
-    //    {
-    //        Widget->SetVisibility(ESlateVisibility::HitTestInvisible);
-    //    }
-    //}
-
-    //zis works
-    //if (IsTemplate()) return;
-    //APlayerController* PC = GetWorld()->GetFirstPlayerController();
-    //if (!PC) return;
-
-    //for (int32 i = ActiveWidgets.Num() - 1; i >= 0; --i)
-    //{
-    //    UDEDamageTextWidget* Widget = ActiveWidgets[i];
-    //    if (!Widget->IsActive())
-    //    {
-    //        ActiveWidgets.RemoveAt(i);
-    //        continue;
-    //    }
-
-    //    FVector2D ScreenPos;
-    //    bool bIsOnScreen = UGameplayStatics::ProjectWorldToScreen(
-    //        PC, Widget->GetWorldLocation(), ScreenPos);
-
-    //    if (bIsOnScreen)
-    //    {
-    //        // [수정] SetRenderTranslation 대신 이거 씁니다!
-    //        // false 파라미터: "DPI 스케일 제거할까요?" -> false (이미 스케일 된 좌표를 원함)
-    //        // 하지만 ProjectWorldToScreen 결과에 따라 동작이 달라질 수 있으니
-    //        // 일단 이 함수로 교체해서 테스트 해보는 게 가장 빠릅니다.
-    //        Widget->SetPositionInViewport(ScreenPos);
-
-    //        if (Widget->GetVisibility() != ESlateVisibility::HitTestInvisible)
-    //            Widget->SetVisibility(ESlateVisibility::HitTestInvisible);
-    //    }
-    //    else
-    //    {
-    //        Widget->SetVisibility(ESlateVisibility::Collapsed);
-    //    }
-    //}
-
-    //if (IsTemplate()) return;
-
-    //APlayerController* PC = GetPlayerController();
-    //if (!PC) return;
-
-    //// 역순 반복 (삭제 안전)
-    //for (int32 i = ActiveWidgets.Num() - 1; i >= 0; --i)
-    //{
-    //    UDEDamageTextWidget* Widget = ActiveWidgets[i];
-
-    //    if (!Widget || !Widget->IsActive())
-    //    {
-    //        ActiveWidgets.RemoveAt(i);
-    //        continue;
-    //    }
-
-    //    FVector2D ScreenPos;
-    //    if (UGameplayStatics::ProjectWorldToScreen(
-    //        PC, Widget->GetWorldLocation(), ScreenPos))
-    //    {
-    //        Widget->SetRenderTranslation(ScreenPos);
-
-    //        if (Widget->GetVisibility() != ESlateVisibility::HitTestInvisible)
-    //        {
-    //            Widget->SetVisibility(ESlateVisibility::HitTestInvisible);
-    //        }
-    //    }
-    //    else
-    //    {
-    //        // 화면 뒤/밖
-    //        Widget->SetVisibility(ESlateVisibility::Collapsed);
-    //    }
-    //}
+   
 }

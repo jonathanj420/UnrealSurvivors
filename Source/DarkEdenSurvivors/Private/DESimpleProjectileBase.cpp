@@ -101,6 +101,9 @@ void ADESimpleProjectileBase::Tick(float DeltaTime)
 
 void ADESimpleProjectileBase::ResetState()
 {
+	//zis for init only
+	SetActorTickEnabled(true);
+	SetActorHiddenInGame(false);
 	HitActors.Empty();
 	LifeTimeCounter = 0.f;
 
@@ -162,7 +165,7 @@ void ADESimpleProjectileBase::ReturnToPool()
 
 void ADESimpleProjectileBase::InitializeProjectile(float InDamage, float InSpeed, int32 InPenetration, const FVector& Direction)
 {
-	ResetState();
+	
 
 	Damage = InDamage;
 	if (InSpeed == 0.0f)
@@ -177,6 +180,8 @@ void ADESimpleProjectileBase::InitializeProjectile(float InDamage, float InSpeed
 	Penetration = InPenetration;
 
 	MovementComponent->Velocity = Direction * Speed;
+
+	ResetState();
 }
 
 void ADESimpleProjectileBase::InitializeFromContext(const FDESkillContext& Context, const FVector& Direction)
