@@ -85,6 +85,11 @@ AActor* UDEPoolSubsystem::CreateNewPooledActor(TSubclassOf<AActor> ActorClass, U
         // 이 함수가 실행될 때는 충돌이 꺼진 상태로 설정값만 바뀝니다.
         ActivateActor(NewActor, false);
 
+        // ActivateActor에서는 뺐지만, 여기서만큼은 해줘야 안전하게 풀에 들어갑니다.
+        if (UPrimitiveComponent* Root = Cast<UPrimitiveComponent>(NewActor->GetRootComponent()))
+        {
+            Root->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+        }
         // 3. [소환 완료] 이제 설정된 값(충돌 꺼짐)을 들고 세상에 등장합니다.
         // 이때 컴포넌트가 등록되는데, 이미 NoCollision이라서 오버랩이 안 터집니다.
         UGameplayStatics::FinishSpawningActor(NewActor, FTransform::Identity);

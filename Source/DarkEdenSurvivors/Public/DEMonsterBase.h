@@ -20,6 +20,8 @@ enum class EMonsterCrowdControl : uint8
 	// Fear ...
 };
 
+class UDEStatComponent;
+class UDEHealthComponent;
 
 UCLASS()
 class DARKEDENSURVIVORS_API ADEMonsterBase : public AActor
@@ -39,6 +41,13 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 //*************** COMPONENTS ******************
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UDEStatComponent* StatComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UDEHealthComponent* HealthComponent;
+
+
 protected:
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* Root;
@@ -48,8 +57,7 @@ protected:
 	class USkeletalMeshComponent* Mesh;
 	UPROPERTY(EditAnywhere, Category = "Monster Base")
 	class UStaticMeshComponent* TestMesh;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stats")
-	class UDEStatComponent* StatComp;
+
 	UPROPERTY(EditAnywhere, Category = "EXP")
 	TSubclassOf<class ADEEXPCrystal> EXPCrystal;
 public:

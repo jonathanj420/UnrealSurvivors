@@ -4,12 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "DEStatTypes.h"
 #include "DEStatComponent.generated.h"
 
 
-DECLARE_MULTICAST_DELEGATE(FOnZeroHP);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnHPChanged, float);
 DECLARE_MULTICAST_DELEGATE(FOnLevelUp);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnSpeedChanged, float /*NewSpeed*/);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnMagnetChanged, float /*NewRadius*/);
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DARKEDENSURVIVORS_API UDEStatComponent : public UActorComponent
@@ -28,71 +30,64 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-protected:
 
-	// ====== Basic Stats ======
-	UPROPERTY(EditAnywhere, Category = "Stats")
-	float MaxHP = 100.f;
-
-	UPROPERTY(VisibleAnywhere, Category = "Stats")
-	float CurrentHP = 100.f;
-
-	UPROPERTY(EditAnywhere, Category = "Stats")
-	float Damage = 10.f;
-
-	UPROPERTY(EditAnywhere, Category = "Stats")
-	int Level = 1;
-
-	UPROPERTY(EditAnywhere, Category = "Stats")
-	float CurrentEXP= 0.0f;
-
-	UPROPERTY(EditAnywhere, Category = "Stats")
-	float NextLevelEXP= 1.0f;
-
-
-	// ===== Invincibility Timer =====
-	UPROPERTY(EditAnywhere, Category = "Stats")
-	float InvincibleTime = 0.5f;
-
-	UPROPERTY(EditAnywhere, Category = "Stats")
-	bool bIsPlayer = false;
-
-	bool bInvincible = false;
-	FTimerHandle InvincibleTimerHandle;
-	bool CanBeDamaged() { return bInvincible; }
-	void EndInvincible();
+	// NEw
 public:
-	UFUNCTION(BlueprintCallable)
-	virtual float TakeDamage(float DamageAmount, AActor* DamageCauser = nullptr);
+	// =========================================================
+	// [1] Physical Stats (신체 능력)
+	// =========================================================
+
+	// 이동 속도 (기본값 600)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Physical")
+	FGameplayStat MoveSpeed;
+
+	// 자석 범위 (아이템 획득 반경)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Physical")
+	FGameplayStat MagnetRange;
+
+	// =========================================================
+	// [2] Utility Stats (유틸리티/파밍)
+	// =========================================================
+
+	// 행운 (Luck): 치명타 확률 보정, 좋은 아이템 드랍 확률 등
+	// 기본 1.0 (100%)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Utility")
+	FGameplayStat Luck;
+
+	// 탐욕 (Greed): 골드 획득량 배율
+	// 기본 1.0 (100%)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Utility")
+	FGameplayStat Greed;
+
+	// 저주 (Curse): 적의 강력함, 스폰량 증가 (리스크 앤 리턴)
+	// 기본 1.0 (100%) -> 높을수록 어려워짐
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Utility")
+	FGameplayStat Curse;
+
+	// =========================================================
+	// [3] Functions (기능)
+	// =========================================================
+
+	// 스탯이 변경되었을 때 호출하여 실제 게임에 적용 (아이템 획득 시 호출)
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+	void UpdateMovementSpeed();
+
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+	void UpdateMagnetRange();
+
+	// 풀링(Pooling)을 위한 초기화
+	void ResetStats();
+
+	// Getters (값만 필요할 때)
+	float GetMoveSpeed() const { return MoveSpeed.GetValue(); }
+	float GetMagnetRange() const { return MagnetRange.GetValue(); }
+	float GetLuck() const { return Luck.GetValue(); }
+	float GetGreed() const { return Greed.GetValue(); }
+	float GetCurse() const { return Curse.GetValue(); }
 
 public:
-	float GetDamage() const { return Damage; }
-	float GetCurrentHP() const { return CurrentHP; }
-	float GetMaxHP() const { return MaxHP; }
-	float GetCurrentEXP() const { return CurrentEXP; }
-
-public:
-	void SetDamage(float v) { Damage = v; }
-	void SetCurrentHP(float v) { CurrentHP = v; }
-	void SetMaxHP(float v) { MaxHP = v; }
-	void SetCurrentEXP(float v) { CurrentEXP = v; }
-	void SetPlayer(bool IsPlayer) { bIsPlayer = IsPlayer; }
-
-	// HP 변경 이벤트
-	FOnHPChanged OnHPChanged;
-
-	// 죽음 이벤트
-	FOnZeroHP OnZeroHP;
-
-	FOnLevelUp OnLevelUp;
-
-	// ===== Main APIs ======
-	//void ApplyDamage(float v);
-	void ResetStat();
-	void Heal(float Amount);
-	void AddEXP(float v);
-	void LevelUp();
-	//void StartIFrame();
-
+	// 변경 알림 이벤트
+	FOnSpeedChanged OnSpeedChanged;
+	FOnMagnetChanged OnMagnetChanged;
 		
 };

@@ -7,6 +7,9 @@
 #include "DESkillBase.h" // UDESkillBase 클래스 정의 포함
 #include "DECharacterBase.generated.h"
 
+class UDECombatComponent;
+class UDEStatComponent;
+class UDEHealthComponent;
 UCLASS()
 class DARKEDENSURVIVORS_API ADECharacterBase : public ACharacter
 {
@@ -35,7 +38,13 @@ protected:
 	class UDEInventoryComponent* Inventory;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	class UDEStatComponent* StatComponent; // 포워드 선언된 UStatsComponent 포인터
+	UDEHealthComponent* HealthComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UDEStatComponent* StatComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UDECombatComponent* CombatComponent;
+
+
 	//***CAMERA***
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	class USpringArmComponent* SpringArm;
@@ -148,7 +157,13 @@ public:
 
 public:
 	float GetCapsuleHalfRadius();
+	public:
+		// [4] 접근자 (Getter) - 다른 클래스에서 편하게 가져다 쓰라고 만듦
+		UFUNCTION(BlueprintCallable, Category = "Components")
+		UDEStatComponent* GetStatComponent() const { return StatComponent; }
 
+		UFUNCTION(BlueprintCallable, Category = "Components")
+		UDECombatComponent* GetCombatComponent() const { return CombatComponent; }
 
 
 

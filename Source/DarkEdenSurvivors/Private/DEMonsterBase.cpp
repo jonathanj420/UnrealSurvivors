@@ -10,6 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "DEEXPCrystal.h"
 #include "DEStatComponent.h"
+#include "DEHealthComponent.h"
 #include "DEStatusEffectComponent.h"
 #include "Data/DEMonsterData.h"
 
@@ -42,9 +43,11 @@ ADEMonsterBase::ADEMonsterBase()
 	//}
 
 	EXPCrystal = ADEEXPCrystal::StaticClass();
-	StatComp = CreateDefaultSubobject<UDEStatComponent>(TEXT("StatComponent"));
+	StatComponent = CreateDefaultSubobject<UDEStatComponent>(TEXT("StatComponent"));
 	StatusEffectComponent = CreateDefaultSubobject<UDEStatusEffectComponent>(TEXT("StatusEffectComponent"));
-	StatComp->SetMaxHP(10.0f);
+
+	HealthComponent = CreateDefaultSubobject<UDEHealthComponent>(TEXT("HealthComponent"));
+	HealthComponent->SetMaxHP(100.0f, false);
 
 }
 
@@ -52,20 +55,9 @@ ADEMonsterBase::ADEMonsterBase()
 void ADEMonsterBase::BeginPlay()
 {
 	Super::BeginPlay();
-	StatComp->ResetStat();
+	HealthComponent->ResetHealth();
 	
 	TargetPlayer = Cast<ADECharacterBase>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
-	//for (TActorIterator<ADEMonsterSpawnManager> It(GetWorld()); It; ++It)
-	//{
-	//	SpawnManager = *It;
-	//	break; // 월드에 하나만 있다고 가정
-	//}
-
-	//if (!SpawnManager)
-	//{
-	//	UE_LOG(LogTemp, Warning, TEXT("SpawnManager not found!"));
-	//}
-	//StatComp->OnZeroHP.AddUObject(this, &ADEMonsterBase::Die);
 
 }
 
@@ -120,14 +112,13 @@ void ADEMonsterBase::MoveToPlayer(float DeltaTime)
 
 float ADEMonsterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Monster : %s Took : %f Damage from %s (Before Stat Calc)"), *GetName(), DamageAmount, *DamageCauser->GetName());
-	StatComp->TakeDamage(DamageAmount, DamageCauser);
-	//UE_LOG(LogTemp, Warning, TEXT("Monster : %s Took : %f Damage from %s , HP: %f (After Stat Calc)"),*GetName(), DamageAmount, *DamageCauser->GetName(), StatComp->GetCurrentHP());
+	//StatComp->TakeDamage(DamageAmount, DamageCauser);
+	HealthComponent->ApplyDamage(DamageAmount, DamageCauser);
 
-	if (StatComp->GetCurrentHP() <= 0.f)
+	/*if (StatComp->GetCurrentHP() <= 0.f)
 	{
 		Die();
-	}
+	}*/
 
 	return DamageAmount;
 }
@@ -156,10 +147,10 @@ void ADEMonsterBase::UpdateKnockback(float DeltaTime)
 
 void ADEMonsterBase::ResetForPool()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Reset For Pool"));
+	//UE_LOG(LogTemp, Warning, TEXT("Reset For Pool"));
 
 	// Stat 초기화
-	if (StatComp) StatComp->ResetStat();
+	if (HealthComponent) HealthComponent->ResetHealth(true);
 	bIsDying = false;
 
 	// 넉백 등 상태 초기화
@@ -198,17 +189,17 @@ float ADEMonsterBase::GetMoveSpeed() const
 
 float ADEMonsterBase::GetDamage() const
 {
-	return StatComp->GetDamage();
+	return AttackDamage;
 }
 
 float ADEMonsterBase::GetCurrentHP() const
 {
-	return StatComp->GetCurrentHP();
+	return HealthComponent->GetCurrentHP();
 }
 
 float ADEMonsterBase::GetMaxHP() const
 {
-	return StatComp->GetMaxHP();
+	return HealthComponent->GetMaxHP();
 }
 
 void ADEMonsterBase::DropExp()
@@ -282,14 +273,14 @@ void ADEMonsterBase::ResetMonster(const FDEMonsterData* Data)
 
 
 	// 4. 스탯 적용 (기존과 동일)
-	StatComp->SetMaxHP(Data->MaxHP);
+	HealthComponent->SetMaxHP(Data->MaxHP,true);
 	MoveSpeed = Data->MoveSpeed;
 	AttackDamage = Data->AttackDamage;
 	AttackInterval = Data->AttackInterval;
 	KnockbackResistance = Data->KnockbackResistance;
 
 	// 5. 상태 초기화
-	StatComp->ResetStat();
+	HealthComponent->ResetHealth();
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
 	SetActorTickEnabled(true);
@@ -311,7 +302,7 @@ void ADEMonsterBase::Die()
 bool ADEMonsterBase::IsAlive()
 {
 	
-	return StatComp->GetCurrentHP() > 0.0f && bIsAlive;
+	return HealthComponent->IsAlive();
 
 
 }

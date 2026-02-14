@@ -58,6 +58,8 @@ public:
 	float Radius = 100.0f;
 	float KnockbackForce = 600.0f;
 	float Duration = 0.f;
+	float CritChance = 0.f;
+	float CritDamageMultiplier = 2.0f;
 	// --- [3. 확장 데이터] ---
 	UPROPERTY(Transient)
 	TMap<FName, float> CustomValues;

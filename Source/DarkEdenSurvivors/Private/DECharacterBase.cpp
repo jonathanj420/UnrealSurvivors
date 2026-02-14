@@ -7,6 +7,8 @@
 #include "DEActiveSkillBase.h"
 #include "DESkill_BloodDrain.h"
 #include "DEStatComponent.h"
+#include "DECombatComponent.h"
+#include "DEHealthComponent.h"
 #include "DEInventoryComponent.h"
 
 
@@ -16,11 +18,18 @@ ADECharacterBase::ADECharacterBase()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
     StatComponent = CreateDefaultSubobject<UDEStatComponent>(TEXT("StatComponent"));
-    StatComponent->SetMaxHP(200.0f);
-    StatComponent->SetCurrentHP(200.0f);
-    StatComponent->SetPlayer(true);
+    //StatComponent->SetMaxHP(200.0f);
+    //StatComponent->SetCurrentHP(200.0f);
+   // StatComponent->SetPlayer(true);
+
+    HealthComponent= CreateDefaultSubobject<UDEHealthComponent>(TEXT("DEHealthComponent"));
+
+    CombatComponent = CreateDefaultSubobject<UDECombatComponent>(TEXT("CombatComponent"));
+
     SkillManager = CreateDefaultSubobject<UDESkillManagerComponent>(TEXT("SkillManager"));
+
     Inventory = CreateDefaultSubobject<UDEInventoryComponent>(TEXT("Inventory"));
+
 
 
     SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));
@@ -61,7 +70,7 @@ void ADECharacterBase::BeginPlay()
     if (StatComponent)
     {
         //StatComponent->OnLevelUp.AddDynamic(this, &ADECharacterBase::OnCharacterLevelUp);
-        StatComponent->OnLevelUp.AddUObject(this, &ADECharacterBase::OnCharacterLevelUp);
+        //StatComponent->OnLevelUp.AddUObject(this, &ADECharacterBase::OnCharacterLevelUp);
     }
     if (SkillManager && BaseSkillID > 0)
     {
@@ -370,19 +379,26 @@ bool ADECharacterBase::CanActivateBloodDrain()
 
 float ADECharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-    StatComponent->TakeDamage(DamageAmount);
-    return DamageAmount;
+    float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+    if (HealthComponent)
+    {
+        HealthComponent->ApplyDamage(FinalDamage, DamageCauser);
+    }
+    return FinalDamage;
 }
 
 void ADECharacterBase::Heal(float Amount)
 {
-    StatComponent->Heal(Amount);
+    if (HealthComponent)
+    {
+        HealthComponent->Heal(Amount);
+    }
 
 }
 
 void ADECharacterBase::AddEXP(float v)
 {
-    StatComponent->AddEXP(v);
+    //StatComponent->AddEXP(v);
 }
 
 void ADECharacterBase::OnCharacterLevelUp()
@@ -438,5 +454,5 @@ void ADECharacterBase::MyDebugCheat()
 
 void ADECharacterBase::ForceLevelUp()
 {
-    StatComponent->LevelUp();
+    //StatComponent->LevelUp();
 }

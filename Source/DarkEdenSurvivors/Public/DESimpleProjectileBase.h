@@ -65,7 +65,10 @@ protected:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
     float CritChance;
-    
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+    float CritDamageMultiplier = 1.0f;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
     bool bCanCrit;
 
@@ -83,6 +86,13 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
     float Acceleration = 0.0f;
 
+    // 방향을 저장할 변수 추가 (단위 벡터)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+    FVector ShootDirection;
+
+    // 현재 속력 저장 (매번 Velocity.Size()로 계산하지 않게)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+    float CurrentSpeed;
 
     // 스킬 스펙으로 초기화
     

@@ -9,7 +9,8 @@
 #include "DEMonsterBase.h"
 #include "DESkillContext.h"
 #include "NiagaraComponent.h"
-
+#include "DEDamageTypes.h"
+#include "DEHealthComponent.h"
 
 // Sets default values
 ADESimpleProjectileBase::ADESimpleProjectileBase()
@@ -33,9 +34,11 @@ ADESimpleProjectileBase::ADESimpleProjectileBase()
     Mesh->SetSimulatePhysics(false);
     Mesh->SetEnableGravity(false);
 	// 3. [무브먼트 생성] (공통)
+
 	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("MovementComponent"));
 	MovementComponent->bRotationFollowsVelocity = true;
 	MovementComponent->ProjectileGravityScale = 0.0f; // 기본 무중력
+	MovementComponent->bSweepCollision = false; // [최적화 핵심] 이거 끄세요!
 
 	NiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComponent"));
 	NiagaraComponent->SetupAttachment(RootComponent); // 충돌체에 딱 달라붙어라
@@ -68,35 +71,51 @@ void ADESimpleProjectileBase::Tick(float DeltaTime)
 		return;
 	}
 
-	// 2. [가속/감속 로직]
-	if (MovementComponent && Acceleration != 0.0f) // 가속도가 0이 아닐 때만 계산 (성능 절약)
+	// [최적화] 가속도가 있을 때만 연산
+	// KINDA_SMALL_NUMBER (0.0001) 체크도 비용이다. 그냥 0.0f 비교가 더 빠를 수도 있음.
+	if (MovementComponent && Acceleration != 0.0f)
 	{
-		// 현재 속도 크기 가져오기
-		float CurrentSpeed = MovementComponent->Velocity.Size();
+		// 1. float 덧셈 (CPU가 제일 좋아하는 연산)
+		CurrentSpeed += (Acceleration * DeltaTime);
 
-		// 새 속도 계산 (현재 속도 + 가속도 * 시간)
-		float NewSpeed = CurrentSpeed + (Acceleration * DeltaTime);
+		// 2. 음수 방지 & MaxSpeed 제한
+		if (CurrentSpeed < 0.0f) CurrentSpeed = 0.0f;
+		// if (CurrentSpeed > MaxSpeed) ... (필요하면)
 
-		// [중요] 감속일 때 속도가 음수가 되면 뒤로 날아갑니다. 
-		// 멈추게 하고 싶다면 0.0f로 막아줘야 합니다.
-		if (NewSpeed < 0.0f)
-		{
-			NewSpeed = 0.0f;
-		}
-
-		// [중요] 가속일 때 MaxSpeed를 뚫고 싶다면 MaxSpeed도 같이 늘려줘야 합니다.
-		if (NewSpeed > MovementComponent->MaxSpeed)
-		{
-			MovementComponent->MaxSpeed = NewSpeed;
-		}
-
-		// 방향은 유지하고(GetSafeNormal), 속력(Speed)만 갈아끼움
-		// Velocity가 0일 때 GetSafeNormal()하면 (0,0,0) 나와서 안전함
-		if (MovementComponent->Velocity.SizeSquared() > KINDA_SMALL_NUMBER) // 움직이고 있을 때만
-		{
-			MovementComponent->Velocity = MovementComponent->Velocity.GetSafeNormal() * NewSpeed;
-		}
+		// 3. [핵심] 제곱근 연산(sqrt) 없이 단순 곱셈으로 속도 적용
+		MovementComponent->Velocity = ShootDirection * CurrentSpeed;
 	}
+
+	//zis old sqrt logic = no good :/
+	//// 2. [가속/감속 로직]
+	//if (MovementComponent && Acceleration != 0.0f) // 가속도가 0이 아닐 때만 계산 (성능 절약)
+	//{
+	//	// 현재 속도 크기 가져오기
+	//	float CurrentSpeed = MovementComponent->Velocity.Size();
+
+	//	// 새 속도 계산 (현재 속도 + 가속도 * 시간)
+	//	float NewSpeed = CurrentSpeed + (Acceleration * DeltaTime);
+
+	//	// [중요] 감속일 때 속도가 음수가 되면 뒤로 날아갑니다. 
+	//	// 멈추게 하고 싶다면 0.0f로 막아줘야 합니다.
+	//	if (NewSpeed < 0.0f)
+	//	{
+	//		NewSpeed = 0.0f;
+	//	}
+
+	//	// [중요] 가속일 때 MaxSpeed를 뚫고 싶다면 MaxSpeed도 같이 늘려줘야 합니다.
+	//	if (NewSpeed > MovementComponent->MaxSpeed)
+	//	{
+	//		MovementComponent->MaxSpeed = NewSpeed;
+	//	}
+
+	//	// 방향은 유지하고(GetSafeNormal), 속력(Speed)만 갈아끼움
+	//	// Velocity가 0일 때 GetSafeNormal()하면 (0,0,0) 나와서 안전함
+	//	if (MovementComponent->Velocity.SizeSquared() > KINDA_SMALL_NUMBER) // 움직이고 있을 때만
+	//	{
+	//		MovementComponent->Velocity = MovementComponent->Velocity.GetSafeNormal() * NewSpeed;
+	//	}
+	//}
 }
 
 void ADESimpleProjectileBase::ResetState()
@@ -168,40 +187,43 @@ void ADESimpleProjectileBase::InitializeProjectile(float InDamage, float InSpeed
 	
 
 	Damage = InDamage;
-	if (InSpeed == 0.0f)
-	{
-		Speed = 1200.0f;
-
-	}
-	else
-	{
-		Speed = InSpeed;
-	}
+	ShootDirection = Direction.GetSafeNormal(); // 처음에 딱 한 번만 정규화
+	CurrentSpeed = (InSpeed == 0.0f) ? 1200.0f : InSpeed;
 	Penetration = InPenetration;
 
-	MovementComponent->Velocity = Direction * Speed;
+	MovementComponent->Velocity = ShootDirection * CurrentSpeed;
 
 	ResetState();
 }
 
 void ADESimpleProjectileBase::InitializeFromContext(const FDESkillContext& Context, const FVector& Direction)
 {
-	// 1. 메인 스탯 적용
-	InitializeProjectile(Context.Damage, Context.Speed, Context.Penetration, Direction);
-
-	// 2. 확장 스탯 적용 (Map에서 꺼내오기)
-	// "KnockbackForce" 키가 있으면 적용, 없으면 0
-	float KForce = Context.KnockbackForce;
-	SetKnockbackForce(KForce);
+	// 1. 멤버 변수에 저장 (캐싱)
+	Damage = Context.Damage;             // ★ 중요: 곱하기 하지 마세요! 순수 데미지 저장
+	CritChance = Context.CritChance;
+	CritDamageMultiplier = Context.CritDamageMultiplier; // ★ 저장
+	KnockbackForce = Context.KnockbackForce;
+	Penetration = Context.Penetration;
+	Speed = Context.Speed;
+	LifeTime = Context.Duration;         // Duration을 LifeTime으로 매핑
 	EffectRadius = Context.Radius;
 
-	// "Radius"나 "Size" 키가 있다면?
+	// 2. 물리적 초기화
+	// (InitializeProjectile 함수 내부도 멤버 변수 쓰는 걸로 바꾸거나, 여기 있는 값을 넘김)
+	InitializeProjectile(Damage, Speed, Penetration, Direction);
+
+	// 3. 크기 조절 (옵션)
 	float NewSize = Context.GetValue(TEXT("Size"), -1.f);
 	if (NewSize > 0.f)
 	{
 		SetSize(NewSize);
 		// 여기서 실제 Mesh 스케일 조절 로직 호출
 	}
+	/*if (EffectRadius > 0.0f)
+	{
+		SetSize(EffectRadius);
+	}*/
+
 
 }
 
@@ -209,29 +231,94 @@ void ADESimpleProjectileBase::OnOverlap(UPrimitiveComponent* OverlappedComp, AAc
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Projectile : %s OnOverlap : %s"),*GetName(),*OtherActor->GetName());
-	// 1. 이미 이 투사체에 맞았던 액터인지 확인합니다.
-	if (HitActors.Contains(OtherActor))
+	// 1. [유효성 검사]
+	// - 대상이 없거나
+	// - 나 자신이거나 (투사체끼리 충돌 방지)
+	// - 나를 쏜 주인(플레이어)이거나
+	// - 이미 맞은 대상이라면 (샷건처럼 한 틱에 여러 번 맞는 것 방지)
+	if (!OtherActor || OtherActor == this || OtherActor == GetInstigator() || HitActors.Contains(OtherActor))
 	{
-		// 이미 맞은 적이 있다면, 더 이상의 판정 없이 즉시 리턴합니다.
 		return;
 	}
 
-	if (ADEMonsterBase* Monster = Cast<ADEMonsterBase>(OtherActor))
+	// 2. [대상 확인] 체력 컴포넌트가 있는가?
+	// (꼭 몬스터가 아니더라도, 파괴 가능한 오브젝트 등 HP가 있는 모든 것을 때릴 수 있음)
+	UDEHealthComponent* TargetHealth = OtherActor->FindComponentByClass<UDEHealthComponent>();
+
+	if (TargetHealth)
 	{
-		HitActors.Add(Monster);
-		
-		UGameplayStatics::ApplyDamage(Monster, Damage, GetInstigatorController(), this, UDamageType::StaticClass());
-		Monster->ApplyKnockback(Monster->GetActorLocation() - GetActorLocation(), KnockbackForce);
+		// 중복 피격 방지 목록에 등록
+		HitActors.Add(OtherActor);
+
+		// ====================================================
+		// [AAA 스타일] 1. 데미지 신청서(Request) 작성
+		// ====================================================
+		// 투사체는 계산을 하지 않습니다. "내 스펙은 이렇습니다"라고 적어서 냅니다.
+		FDEDamageRequest Req;
+		Req.Instigator = GetInstigator();     // 때린 사람 (플레이어)
+		Req.DamageCauser = this;            // 때린 도구 (투사체)
+
+		// ★ 중요: Context가 아니라 '내 멤버 변수'에 저장된 값을 사용합니다.
+		Req.BaseDamage = this->Damage;           // 기본 깡뎀
+		Req.CritChance = this->CritChance;       // 치명타 확률
+		Req.CritDamageMultiplier = this->CritDamageMultiplier; // 치명타 배율 (예: 2.0)
+
+		// ====================================================
+		// [AAA 스타일] 2. 처리 요청 및 결과 수신
+		// ====================================================
+		// "계산은 님이(HealthComponent) 하시고 결과만 알려주세요."
+		// 여기서 상대방의 방어력, 무적, 회피 등이 모두 계산됩니다.
+		FDEDamageResult Res = TargetHealth->ProcessDamage(Req);
+
+
+		// ====================================================
+		// [AAA 스타일] 3. 피드백 루프 (결과에 따른 행동)
+		// ====================================================
+
+		// 3-1. 넉백 적용 (몬스터인 경우에만)
+		// 몬스터가 '슈퍼아머' 상태라면 ApplyKnockback 내부에서 무시하도록 설계하면 됨.
+		if (ADEMonsterBase* Monster = Cast<ADEMonsterBase>(OtherActor))
+		{
+			// 방향 계산: 몬스터 위치 - 투사체 위치 = 밀려나는 방향
+			FVector KnockbackDir = Monster->GetActorLocation() - GetActorLocation();
+			//KnockbackDir.Z = 0.0f; // 공중으로 뜨지 않게 평면 고정
+			//KnockbackDir.Normalize();
+
+			// 내 멤버 변수(KnockbackForce) 사용
+			Monster->ApplyKnockback(KnockbackDir * this->KnockbackForce);
+		}
+
+		// 3-2. 흡혈 (Life Steal) 로직 예시
+		// 실제로 데미지가 들어갔을 때만 흡혈
+		if (Res.FinalDamage > 0.0f)
+		{
+			// TODO: 플레이어 스탯 컴포넌트에 회복 요청
+			// PlayerStats->Heal(Res.FinalDamage * 0.1f); 
+		}
+
+		// 3-3. 처치 시 효과 (On Kill Effect)
+		if (Res.bIsDead)
+		{
+			// TODO: 킬 스택 쌓기, 경험치 구슬 추가 드롭 등
+			// UE_LOG(LogTemp, Log, TEXT("Target Eliminated!"));
+		}
+
+		// 4. [관통 로직]
+		// Penetration이 -1이면 무한 관통
 		if (Penetration != -1)
 		{
 			--Penetration;
 			if (Penetration <= 0)
 			{
-				ReturnToPool();
+				ReturnToPool(); // 관통 횟수 소진 시 풀로 반환
 			}
 		}
-		
+	}
+	else
+	{
+		// (선택 사항) 체력이 없는 벽이나 장애물에 맞았을 때
+		// 보통 뱀서류에서는 벽에 맞으면 사라지거나 튕김
+		// ReturnToPool(); 
 	}
 }
 void ADESimpleProjectileBase::OnLifeTimeExpired()

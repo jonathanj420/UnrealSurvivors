@@ -2,20 +2,25 @@
 
 
 #include "DEStatComponent.h"
-#include "TimerManager.h"
 #include "GameFramework/Actor.h"
-#include "DEDamageTextSubsystem.h" // 서브시스템 불러오기
-#include "DEDamageTypes.h"         // 데이터 구조체 불러오기
 #include "Engine/Engine.h"
+#include "Components/SphereComponent.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values for this component's properties
 UDEStatComponent::UDEStatComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
-	// ...
+	// [기본값 설정]
+	MoveSpeed = FGameplayStat(600.0f); // 언리얼 기본 달리기 속도
+	MagnetRange = FGameplayStat(100.0f); // 기본 줍기 범위
+	Luck = FGameplayStat(1.0f);
+	Greed = FGameplayStat(1.0f);
+	Curse = FGameplayStat(1.0f);
 }
 
 
@@ -23,7 +28,10 @@ UDEStatComponent::UDEStatComponent()
 void UDEStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	CurrentHP = MaxHP;
+
+	// 게임 시작 시 초기 스탯 적용
+	UpdateMovementSpeed();
+	UpdateMagnetRange();
 	
 }
 
@@ -32,149 +40,67 @@ void UDEStatComponent::BeginPlay()
 void UDEStatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	
+}
 
-	if (bIsPlayer)
+
+void UDEStatComponent::UpdateMovementSpeed()
+{
+	// 1. 최종 값 계산
+	float FinalSpeed = MoveSpeed.GetValue();
+
+	// 2. 캐릭터 무브먼트에 적용
+	if (ACharacter* OwnerChar = Cast<ACharacter>(GetOwner()))
 	{
-		if (GEngine)
+		if (UCharacterMovementComponent* Movement = OwnerChar->GetCharacterMovement())
 		{
-			// 1. HP 정보 출력
-			FString HP_Msg = FString::Printf(
-				TEXT("[HP] %s: %.1f / %.1f"),
-				*GetOwner()->GetName(), // 몬스터 이름/플레이어 이름
-				CurrentHP,
-				MaxHP
-			);
-			GEngine->AddOnScreenDebugMessage(
-				1, // Key 1번: HP 전용 위치
-				-1.0f, // TimeToDisplay: -1.0f는 다음 프레임에 갱신될 때까지 유지 (Tick에서 사용 시 효과적)
-				FColor::Cyan,
-				HP_Msg
-			);
-
-			// 2. EXP 정보 출력 (플레이어에게만 해당된다면 조건문으로 감싸야 합니다.)
-			FString EXP_Msg = FString::Printf(
-				TEXT("[EXP] LV %d: %.0f / %.0f"),
-				Level,
-				CurrentEXP,
-				NextLevelEXP
-			);
-			GEngine->AddOnScreenDebugMessage(
-				2, // Key 2번: EXP 전용 위치 (HP 밑에 나옴)
-				-1.0f,
-				FColor::Yellow,
-				EXP_Msg
-			);
+			Movement->MaxWalkSpeed = FinalSpeed;
 		}
 	}
-	// ...
-	
-}
 
-
-void UDEStatComponent::EndInvincible()
-{
-	bInvincible = false;
-}
-
-void UDEStatComponent::ResetStat()
-{
-	CurrentHP = MaxHP;
-	bInvincible = false;
-	// 필요한 초기화들 추가
-}
-
-float UDEStatComponent::TakeDamage(float DamageAmount, AActor* DamageCauser)
-{
-	
-	if (DamageAmount <= 0.f) return 0.f;
-
-	CurrentHP = FMath::Clamp(CurrentHP - DamageAmount, 0.f, MaxHP);
-	OnHPChanged.Broadcast(CurrentHP);
-
-	// [AAA 스타일 호출] 서브시스템이 있는지 확인하고 호출
-	if (UWorld* World = GetWorld())
+	// 3. 이벤트 전파 (필요하다면)
+	if (OnSpeedChanged.IsBound())
 	{
-		// 서브시스템 가져오기 (싱글톤처럼 작동)
-		if (UDEDamageTextSubsystem* DmgSys = World->GetSubsystem<UDEDamageTextSubsystem>())
-		{
-			// 1. 택배 상자(구조체) 만들기
-			FDamageVisualInfo DmgInfo;
-			DmgInfo.Amount = DamageAmount; // 실제 입힌 데미지
+		OnSpeedChanged.Broadcast(FinalSpeed);
+	}
+}
 
-			// 2. 위치 설정 (몬스터 머리 위)
-			// GetOwner()는 이 컴포넌트를 가진 몬스터 액터
-			if (GetOwner())
+void UDEStatComponent::UpdateMagnetRange()
+{
+	float FinalRange = MagnetRange.GetValue();
+
+	// 플레이어 캐릭터에 자석용 SphereComponent가 있다고 가정하고 찾아서 적용
+	// (Tag를 "Magnet"으로 해두거나, 캐릭터 클래스에서 바인딩해서 처리)
+	if (AActor* Owner = GetOwner())
+	{
+		// 방법 A: 태그로 찾아서 크기 조절 (느슨한 결합)
+		TArray<UActorComponent*> Comps = Owner->GetComponentsByTag(USphereComponent::StaticClass(), TEXT("Magnet"));
+		if (Comps.Num() > 0)
+		{
+			if (USphereComponent* MagnetSphere = Cast<USphereComponent>(Comps[0]))
 			{
-				DmgInfo.WorldLocation = GetOwner()->GetActorLocation() + FVector(0.0f, 0.0f, 100.0f);
-				// Z축 +100.0f 해서 머리 쯤에 띄우기
+				MagnetSphere->SetSphereRadius(FinalRange);
 			}
-
-			// 3. 크리티컬 여부 (만약 로직이 있다면)
-			// DmgInfo.bIsCritical = bIsCritical; 
-
-			// 4. 발사!
-			DmgSys->ShowDamage(DmgInfo);
 		}
 	}
 
-	// 플레이어만 무적 시간 적용
-	if (bIsPlayer && !bInvincible)
+	// 방법 B: 그냥 알리기만 하고 캐릭터가 알아서 하게 함 (추천)
+	if (OnMagnetChanged.IsBound())
 	{
-		bInvincible = true;
-		GetWorld()->GetTimerManager().SetTimer(
-			InvincibleTimerHandle, this, &UDEStatComponent::EndInvincible, InvincibleTime, false
-		);
-	}
-
-	if (CurrentHP <= 0.f)
-	{
-		//UE_LOG(LogTemp, Warning, TEXT("%s Took Damage to Death"),*GetOwner()->GetName());
-		CurrentHP = 0.f;
-		OnZeroHP.Broadcast(); // Monster/Player에서 바인딩
-	}
-
-	return DamageAmount;
-}
-
-void UDEStatComponent::Heal(float Amount)
-{
-	if (Amount <= 0.f) return;
-
-	// HP 증가, MaxHP를 넘어가지 않도록 클램프
-	CurrentHP = FMath::Clamp(CurrentHP + Amount, 0.f, MaxHP);
-
-	// HP 변경 이벤트 브로드캐스트
-	OnHPChanged.Broadcast(CurrentHP);
-
-	if (GEngine)
-	{
-		GEngine->AddOnScreenDebugMessage(
-			-1,
-			1.0f,
-			FColor::Green,
-			FString::Printf(TEXT("%s Healed: %.1f, CurrentHP: %.1f"), *GetOwner()->GetName(), Amount, CurrentHP)
-		);
-	}
-
-}
-
-void UDEStatComponent::AddEXP(float v)
-{
-	CurrentEXP += v;
-	while (CurrentEXP >= NextLevelEXP)
-	{
-		CurrentEXP -= NextLevelEXP;  // 남은 경험치
-		LevelUp();                      // 레벨업 처리
+		OnMagnetChanged.Broadcast(FinalRange);
 	}
 }
 
-void UDEStatComponent::LevelUp()
+void UDEStatComponent::ResetStats()
 {
-	Level++;
-	CurrentEXP = 0.f;
-	NextLevelEXP *= 1.3f;  // 필요하면 조절/
-	//NextLevelEXP += 9999.0f;
-	UE_LOG(LogTemp, Warning, TEXT("LEVEL UP! New Level: %d"), Level);
+	// 모든 Modifier(버프/디버프) 제거 후 초기화
+	MoveSpeed.ResetModifiers();
+	MagnetRange.ResetModifiers();
+	Luck.ResetModifiers();
+	Greed.ResetModifiers();
+	Curse.ResetModifiers();
 
-	OnLevelUp.Broadcast();
+	// 적용
+	UpdateMovementSpeed();
+	UpdateMagnetRange();
 }

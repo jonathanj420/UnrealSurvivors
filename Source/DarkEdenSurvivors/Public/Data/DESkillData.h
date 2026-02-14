@@ -70,6 +70,14 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float Speed;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float CritChance = 0.0f;
+
+    // (선택) 치명타 배율도 스킬마다 다르게 하고 싶다면?
+    // 0.0f면 플레이어 기본 배율(1.5) 따름
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float CritDamageMultiplier = 0.0f;
     // hitinterval, bleed... or smth
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     TMap<FName, float> OptionValues;

@@ -2,6 +2,7 @@
 
 
 #include "DEAutoSkillBase.h"
+#include "DECombatComponent.h"
 #include "DESkillBehavior.h"
 
 void UDEAutoSkillBase::Activate()
@@ -31,19 +32,109 @@ void UDEAutoSkillBase::InitBehaviors()
 
 void UDEAutoSkillBase::BuildContext(FDESkillContext& OutContext)
 {
-	OutContext.Instigator = SkillOwner;
-	OutContext.ActiveSkill = this;
-	if (SkillData)
-	{
-		// 1. 메인 변수 복사
-		OutContext.Damage = SkillData->Damage;
-		OutContext.Amount = SkillData->Amount;
-		OutContext.Penetration = SkillData->Penetration;
-		OutContext.Speed = SkillData->Speed;
-		OutContext.KnockbackForce = SkillData->KnockbackForce;
-		OutContext.Radius = SkillData->Radius;
-		OutContext.Duration = SkillData->Duration;
-		// 2. 맵 데이터(옵션) 통째로 복사
-		OutContext.CustomValues = SkillData->OptionValues;
-	}
+    // 1. 필수 참조 연결
+    OutContext.Instigator = SkillOwner;
+    OutContext.ActiveSkill = this;
+
+    // 데이터가 없으면 중단
+    if (!SkillData) return;
+
+    // 2. 컴포넌트 가져오기 (캐싱)
+    UDECombatComponent* Combat = nullptr;
+    if (SkillOwner)
+    {
+        Combat = SkillOwner->FindComponentByClass<UDECombatComponent>();
+    }
+
+    // =========================================================
+    // [3. 초기값 설정: 데이터테이블(Raw Data)]
+    // =========================================================
+    float FinalDamage = SkillData->Damage;
+    int32 FinalAmount = SkillData->Amount;
+    float FinalSpeed = SkillData->Speed;
+    float FinalDuration = SkillData->Duration;
+    float FinalRadius = SkillData->Radius;
+    float FinalKnockback = SkillData->KnockbackForce;
+    int32 FinalPenetration = SkillData->Penetration;
+
+    // 치명타 관련 (기본값 설정)
+    float FinalCritChance = SkillData->CritChance;
+    float FinalCritDmgMultiplier = 2.0f; // 안전장치: 컴포넌트 없을 때의 기본 배율
+
+    // =========================================================
+    // [4. 컴포넌트 보정값 적용 (Modifiers via Snapshot)]
+    // =========================================================
+    if (Combat)
+    {
+        // ★ 핵심: CombatComponent에서 정제된 스냅샷을 가져옵니다.
+        // (쿨타임 캡, 소수점 처리 등이 이미 완료된 상태)
+        FCombatSnapshot PlayerStat = Combat->GetCombatSnapshot();
+
+        // 1. 데미지 공식: (기본뎀) * 데미지배율
+        // ※ 추후 '고정 공격력(Atk)'이 생긴다면: (FinalDamage + PlayerStat.AttackPower) * PlayerStat.FinalDamageMultiplier;
+        FinalDamage = FinalDamage * PlayerStat.FinalDamageMultiplier;
+
+        // 2. 투사체 개수: 기본 + 보너스 개수
+        FinalAmount += PlayerStat.BonusAmount;
+
+        // 3. 유틸리티 스탯 (속도, 지속시간, 범위 등): 기본 * 배율
+        FinalSpeed *= PlayerStat.ProjectileSpeedMultiplier;
+        FinalDuration *= PlayerStat.DurationMultiplier;
+        FinalRadius *= PlayerStat.EffectSizeMultiplier;
+
+        // (참고: 넉백이나 관통도 필요하다면 여기서 PlayerStat을 이용해 보정 가능)
+
+        // 4. 치명타 로직 (AAA 스타일 합산 방식)
+        // -1.0f는 "치명타 절대 발동 안 함"을 의미 (도트딜, 장판 등)
+        if (FinalCritChance >= 0.0f)
+        {
+            // [A] 확률: 단순 합연산 (5% + 10% = 15%)
+            FinalCritChance += PlayerStat.CritChance;
+
+            // [B] 데미지 배율: "아이템 보너스만 추출해서 합산"
+            // 공식: 스킬고유배율 + (플레이어현재 - 플레이어기본(2.0))
+
+            // 데이터테이블에 설정된 스킬 고유 배율 (예: 저격 = 5.0)
+            float SkillBaseCrit = SkillData->CritDamageMultiplier; // FDESkillData에 이 변수가 있어야 함
+
+            if (SkillBaseCrit > 0.0f)
+            {
+                // 특수 스킬(저격 등): 스킬 배율(5.0) + 아이템성장치(0.8) = 5.8
+                // 2.0f는 시스템 기본 치명타 배율
+                FinalCritDmgMultiplier = SkillBaseCrit + (PlayerStat.CritDamageMultiplier - 2.0f);
+            }
+            else
+            {
+                // 일반 스킬: 그냥 플레이어 스탯을 그대로 사용 (예: 2.8)
+                FinalCritDmgMultiplier = PlayerStat.CritDamageMultiplier;
+            }
+        }
+        else
+        {
+            // 치명타 불가 스킬
+            FinalCritChance = 0.0f;
+            FinalCritDmgMultiplier = 1.0f; // 배율 1.0 (노크리)
+        }
+    }
+
+    // =========================================================
+    // [5. 최종 결과 저장 (Final Snapshot)]
+    // =========================================================
+
+    // 이제 Context에는 "모든 계산이 끝난 최종값"이 들어갑니다.
+    OutContext.Damage = FinalDamage;
+    OutContext.Amount = FinalAmount;
+    OutContext.Penetration = FinalPenetration;
+    OutContext.Speed = FinalSpeed;
+    OutContext.KnockbackForce = FinalKnockback;
+    OutContext.Radius = FinalRadius;
+    OutContext.Duration = FinalDuration;
+
+    // [중요] 치명타 정보 스냅샷
+    OutContext.CritChance = FinalCritChance;
+    OutContext.CritDamageMultiplier = FinalCritDmgMultiplier;
+
+    // 6. 맵 데이터(옵션) 통째로 복사
+    // (특수 기믹을 위한 커스텀 데이터)
+    OutContext.CustomValues = SkillData->OptionValues;
 }
