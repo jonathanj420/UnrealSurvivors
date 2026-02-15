@@ -10,6 +10,8 @@
 class UDECombatComponent;
 class UDEStatComponent;
 class UDEHealthComponent;
+class UDEProgressionComponent;
+
 UCLASS()
 class DARKEDENSURVIVORS_API ADECharacterBase : public ACharacter
 {
@@ -43,7 +45,8 @@ protected:
 	UDEStatComponent* StatComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UDECombatComponent* CombatComponent;
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UDEProgressionComponent* ProgressionComponent;
 
 	//***CAMERA***
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
@@ -125,7 +128,7 @@ public:
 	int32 BaseSkillID = -1;
 
 	UFUNCTION()
-	void OnCharacterLevelUp();
+	void OnCharacterLevelUp(int32 NewLevel);
 
 	UFUNCTION()
 	UDESkillManagerComponent* GetSkillManagerComponent() { return SkillManager; }

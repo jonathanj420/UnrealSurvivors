@@ -18,7 +18,7 @@ void UDEBehavior_FireProjectileRadial::Execute(FDESkillContext& Context)
 	UWorld* World = Context.Instigator->GetWorld();
 	if (!World) return;
 
-	UDEPoolSubsystem* Pool = World->GetGameInstance()->GetSubsystem<UDEPoolSubsystem>();
+	UDEPoolSubsystem* Pool = World->GetSubsystem<UDEPoolSubsystem>();
 	if (!Pool) return;
 
 	// 2. 발사 원점 설정

@@ -9,6 +9,7 @@
 #include "DECharacterBase.h"
 #include "DEGameInstance.h"
 #include "DEGameMode.h"
+#include "DEPickupManager.h"
 
 ADEMonsterSpawnManager::ADEMonsterSpawnManager()
 {
@@ -555,6 +556,24 @@ void ADEMonsterSpawnManager::OnMonsterDied(ADEMonsterBase* Monster)
     if (!Monster)
         return;
 
+    // 1. 아이템 드랍 처리 (여기서 매니저 부르면 됨!)
+     // SpawnManager는 이미 World나 GameMode를 잘 알고 있으니까요.
+    if (UDEPickupManager* PickupMgr = GetWorld()->GetSubsystem<UDEPickupManager>())
+    {
+        // 몬스터 데이터에서 경험치량 가져오기
+        float EXPToDrop = Monster->GetEXPDrop(); // 예시
+
+        // 드랍 확률 계산 등도 여기서 중앙 제어 가능
+        PickupMgr->SpawnPickup(Monster->GetActorLocation(), EXPToDrop);
+    }
+
+    UE_LOG(LogTemp, Warning, TEXT("Monster Died -> Active: %d, Inactive: %d"), ActiveMonsters.Num(), InactiveMonsters.Num());
+
+    if (Player)
+    {
+        Player->AddBloodDrainGauge(Player->GetBloodDrainGainPerKill());
+    }
+    KillCount++;
     // 1. 활성 목록에서 제거
     ActiveMonsters.RemoveSwap(Monster);
 
@@ -563,13 +582,6 @@ void ADEMonsterSpawnManager::OnMonsterDied(ADEMonsterBase* Monster)
 
     //UE_LOG(LogTemp, Warning, TEXT("Monster Died, Instantly Removed // TO FIX"));
     ReturnMonsterToPool(Monster);
-
-    UE_LOG(LogTemp, Warning, TEXT("Monster Died -> Active: %d, Inactive: %d"), ActiveMonsters.Num(), InactiveMonsters.Num());
-
-    if (Player)
-    {
-        Player->AddBloodDrainGauge(Player->GetBloodDrainGainPerKill());
-    }
 
 }
 

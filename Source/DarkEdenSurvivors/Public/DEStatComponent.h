@@ -8,7 +8,7 @@
 #include "DEStatComponent.generated.h"
 
 
-DECLARE_MULTICAST_DELEGATE(FOnLevelUp);
+//DECLARE_MULTICAST_DELEGATE(FOnLevelUp);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnSpeedChanged, float /*NewSpeed*/);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnMagnetChanged, float /*NewRadius*/);
 
@@ -59,6 +59,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Utility")
 	FGameplayStat Greed;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Utility")
+	FGameplayStat Growth;
+
 	// 저주 (Curse): 적의 강력함, 스폰량 증가 (리스크 앤 리턴)
 	// 기본 1.0 (100%) -> 높을수록 어려워짐
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Utility")
@@ -84,6 +87,7 @@ public:
 	float GetLuck() const { return Luck.GetValue(); }
 	float GetGreed() const { return Greed.GetValue(); }
 	float GetCurse() const { return Curse.GetValue(); }
+	float GetGrowth() const { return Growth.GetValue(); }
 
 public:
 	// 변경 알림 이벤트

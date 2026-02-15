@@ -12,7 +12,7 @@ void UDEPoolSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
     if (bEnableAutoShrink)
     {
-        GetWorldSafe()->GetTimerManager().SetTimer(
+        GetWorld()->GetTimerManager().SetTimer(
             ShrinkTimerHandle,
             this,
             &UDEPoolSubsystem::ShrinkPools,
@@ -41,11 +41,11 @@ void UDEPoolSubsystem::Deinitialize()
     Super::Deinitialize();
 }
 
-UWorld* UDEPoolSubsystem::GetWorldSafe() const
-{
-    if (!GetGameInstance()) return nullptr;
-    return GetGameInstance()->GetWorld();
-}
+//UWorld* UDEPoolSubsystem::GetWorldSafe() const
+//{
+//    if (!GetGameInstance()) return nullptr;
+//    return GetGameInstance()->GetWorld();
+//}
 
 bool UDEPoolSubsystem::IsActorInactive(AActor* Actor) const
 {
@@ -190,8 +190,7 @@ void UDEPoolSubsystem::DeactivateActor(AActor* Actor)
 void UDEPoolSubsystem::ShrinkPools()
 {
 
-    // UE_LOG(LogTemp, Warning, TEXT("Shrink Check...")); // 로그 너무 자주 뜨면 성능 저하되니 주석 추천
-
+    UE_LOG(LogTemp, Warning, TEXT("Shrink Check...")); // 로그 너무 자주 뜨면 성능 저하되니 주석 추천
     for (auto It = PoolMap.CreateIterator(); It; ++It)
     {
         TArray<AActor*>& InactivePool = It.Value();
@@ -215,7 +214,7 @@ void UDEPoolSubsystem::ShrinkPools()
                 }
             }
         }
-        // UE_LOG(LogTemp, Warning, TEXT("Shrinked %d actors"), NumToRemove);
+        UE_LOG(LogTemp, Warning, TEXT("Shrinked %d actors"), NumToRemove);
     }
 
     //UE_LOG(LogTemp, Warning, TEXT("Try Shrink Pool"));
@@ -261,7 +260,7 @@ AActor* UDEPoolSubsystem::GetPooledActor(
 {
     if (!ActorClass) return nullptr;
 
-    UWorld* World = GetWorldSafe();
+    UWorld* World = GetWorld();
     if (!World) return nullptr;
 
     TArray<AActor*>& InactivePool = PoolMap.FindOrAdd(ActorClass);

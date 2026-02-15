@@ -75,6 +75,8 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Monster Stats")
 	float EXPDrop = 10.0f;
 	UPROPERTY(EditAnywhere, Category = "Monster Stats")
+	float DropChance = 1.0f;
+	UPROPERTY(EditAnywhere, Category = "Monster Stats")
 	float KnockbackResistance = 6.0f;
 	UPROPERTY(EditAnywhere, Category = "Monster Stats")
 	bool bIsDying = false;
@@ -109,6 +111,7 @@ public:
 	float GetAttackDamage() const { return AttackDamage; }
 	float GetCurrentHP() const;
 	float GetMaxHP() const;
+	float GetEXPDrop() const { return EXPDrop; }
 	FOnMonsterDeath OnMonsterDeath;
 	void DropExp();
 	void ResetMonster(const struct FDEMonsterData* Data);

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Subsystems/GameInstanceSubsystem.h"
+#include "Subsystems/WorldSubsystem.h" // changed from GameInstanceSubsystem.h
 #include "DEPoolSubsystem.generated.h"
 
 /**
@@ -11,7 +11,7 @@
  */
 
 UCLASS()
-class DARKEDENSURVIVORS_API UDEPoolSubsystem : public UGameInstanceSubsystem
+class DARKEDENSURVIVORS_API UDEPoolSubsystem : public UWorldSubsystem // changed from  GameInstanceSubsystem.h
 {
     GENERATED_BODY()
 
@@ -63,7 +63,7 @@ private:
     void ShrinkPools();
 
     /** 월드 가져오기 */
-    UWorld* GetWorldSafe() const;
+    //UWorld* GetWorldSafe() const;
 
     /** 클래스별 최대 풀 크기 (기본 50) */
     UPROPERTY(EditAnywhere, Category = "Pooling")

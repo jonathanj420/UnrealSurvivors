@@ -173,7 +173,7 @@ void ADESimpleProjectileBase::ReturnToPool()
 	{
 		if (UGameInstance* GI = World->GetGameInstance())
 		{
-			if (auto* Pool = GI->GetSubsystem<UDEPoolSubsystem>())
+			if (auto* Pool = World->GetSubsystem<UDEPoolSubsystem>())
 			{
 				//ResetState();
 				Pool->ReturnActorToPool(this);

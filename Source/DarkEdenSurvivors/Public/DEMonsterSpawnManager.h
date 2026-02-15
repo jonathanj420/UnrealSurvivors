@@ -77,7 +77,7 @@ public:
     void StartWave(int32 WaveIndex);
     bool TrySpawnMonster(const FDEStageWaveData& WaveData);
     bool SpawnBoss(const FDEStageWaveData& WaveData);
-
+    int KillCount = 0;
 
     //************* Monster Wave***********
     // Spawn Rate(Interval)

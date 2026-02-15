@@ -55,7 +55,13 @@ ADEMonsterBase::ADEMonsterBase()
 void ADEMonsterBase::BeginPlay()
 {
 	Super::BeginPlay();
-	HealthComponent->ResetHealth();
+	if (HealthComponent)
+	{
+		HealthComponent->ResetHealth();
+		HealthComponent->OnDeath.AddUObject(this, &ADEMonsterBase::Die);
+
+	}
+	
 	
 	TargetPlayer = Cast<ADECharacterBase>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 
@@ -278,7 +284,8 @@ void ADEMonsterBase::ResetMonster(const FDEMonsterData* Data)
 	AttackDamage = Data->AttackDamage;
 	AttackInterval = Data->AttackInterval;
 	KnockbackResistance = Data->KnockbackResistance;
-
+	EXPDrop = Data->EXPDrop;
+	DropChance = Data->DropChance;
 	// 5. 상태 초기화
 	HealthComponent->ResetHealth();
 	SetActorHiddenInGame(false);
@@ -294,7 +301,7 @@ void ADEMonsterBase::Die()
 	bIsDying = true;
 	bIsAlive = false;
 
-	DropExp();
+	//DropExp();
 
 	OnMonsterDeath.Broadcast(this);
 }

@@ -37,7 +37,7 @@ void UDEBehavior_SpawnAOE::Execute(FDESkillContext& Context)
         return;
     }
 
-    UDEPoolSubsystem* Pool = GI->GetSubsystem<UDEPoolSubsystem>();
+    UDEPoolSubsystem* Pool = World->GetSubsystem<UDEPoolSubsystem>();
     if (!Pool)
     {
         return;

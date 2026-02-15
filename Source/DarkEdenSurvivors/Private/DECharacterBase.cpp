@@ -10,6 +10,7 @@
 #include "DECombatComponent.h"
 #include "DEHealthComponent.h"
 #include "DEInventoryComponent.h"
+#include "DEProgressionComponent.h"
 
 
 // Sets default values
@@ -25,6 +26,8 @@ ADECharacterBase::ADECharacterBase()
     HealthComponent= CreateDefaultSubobject<UDEHealthComponent>(TEXT("DEHealthComponent"));
 
     CombatComponent = CreateDefaultSubobject<UDECombatComponent>(TEXT("CombatComponent"));
+
+    ProgressionComponent = CreateDefaultSubobject<UDEProgressionComponent>(TEXT("ProgressionComponent"));
 
     SkillManager = CreateDefaultSubobject<UDESkillManagerComponent>(TEXT("SkillManager"));
 
@@ -71,6 +74,12 @@ void ADECharacterBase::BeginPlay()
     {
         //StatComponent->OnLevelUp.AddDynamic(this, &ADECharacterBase::OnCharacterLevelUp);
         //StatComponent->OnLevelUp.AddUObject(this, &ADECharacterBase::OnCharacterLevelUp);
+    }
+
+    if (ProgressionComponent)
+    {
+        // "야, 레벨업 하면 내 함수(OnLevelUp) 좀 실행해줘"
+        ProgressionComponent->OnLevelUp.AddDynamic(this, &ADECharacterBase::OnCharacterLevelUp);
     }
     if (SkillManager && BaseSkillID > 0)
     {
@@ -399,10 +408,13 @@ void ADECharacterBase::Heal(float Amount)
 void ADECharacterBase::AddEXP(float v)
 {
     //StatComponent->AddEXP(v);
+    ProgressionComponent->AddEXP(v);
+
 }
 
-void ADECharacterBase::OnCharacterLevelUp()
+void ADECharacterBase::OnCharacterLevelUp(int32 NewLevel)
 {
+
     if (DEPlayerController)
     {
         DEPlayerController->ShowLevelUpUI(); // 인자 없는 버전이면 바로 호출
@@ -454,5 +466,7 @@ void ADECharacterBase::MyDebugCheat()
 
 void ADECharacterBase::ForceLevelUp()
 {
-    //StatComponent->LevelUp();
+    UE_LOG(LogTemp, Warning, TEXT("Force level up"));
+    ProgressionComponent->LevelUp();
+
 }

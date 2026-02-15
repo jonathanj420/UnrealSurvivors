@@ -52,6 +52,8 @@ public:
 	float KnockbackResistance = 5.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 	float EXPDrop = 10.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	float DropChance = 1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "System")
 	TSoftClassPtr<class ADEMonsterBase> OverrideClass;

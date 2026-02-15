@@ -70,7 +70,7 @@ void UDEBehavior_FireProjectile::FireOneShot()
 	UWorld* World = CachedContext.Instigator->GetWorld();
 	if (!World) return;
 
-	UDEPoolSubsystem* Pool = World->GetGameInstance()->GetSubsystem<UDEPoolSubsystem>();
+	UDEPoolSubsystem* Pool = World->GetSubsystem<UDEPoolSubsystem>();
 	if (!Pool) return;
 
 	// --- 발사 로직 (동일) ---

@@ -35,4 +35,5 @@ protected:
     float RotationSpeed = 180.0f;
     float CurrentAngle = 0.0f;
     float MaxRadius = 400.0f;
+    float KnockbackForce = 600.0f;
 };

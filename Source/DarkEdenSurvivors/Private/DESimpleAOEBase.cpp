@@ -8,6 +8,8 @@
 #include "TimerManager.h"
 #include "DEPoolSubsystem.h"
 #include "DESkillContext.h"
+#include "DEDamageTypes.h"
+#include "DEHealthComponent.h"
 
 ADESimpleAOEBase::ADESimpleAOEBase()
 {
@@ -313,7 +315,7 @@ void ADESimpleAOEBase::ReturnToPool()
     {
         if (UGameInstance* GI = World->GetGameInstance())
         {
-            if (auto* Pool = GI->GetSubsystem<UDEPoolSubsystem>())
+            if (auto* Pool = World->GetSubsystem<UDEPoolSubsystem>())
             {
                 Pool->ReturnActorToPool(this);
             }

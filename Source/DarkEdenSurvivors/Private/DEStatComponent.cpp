@@ -21,6 +21,7 @@ UDEStatComponent::UDEStatComponent()
 	Luck = FGameplayStat(1.0f);
 	Greed = FGameplayStat(1.0f);
 	Curse = FGameplayStat(1.0f);
+	Growth = FGameplayStat(1.0f);
 }
 
 
@@ -99,7 +100,7 @@ void UDEStatComponent::ResetStats()
 	Luck.ResetModifiers();
 	Greed.ResetModifiers();
 	Curse.ResetModifiers();
-
+	Growth.ResetModifiers();
 	// Àû¿ë
 	UpdateMovementSpeed();
 	UpdateMagnetRange();

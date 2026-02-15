@@ -94,7 +94,7 @@ void ADESimpleMeleeBase::ReturnToPool()
 	{
 		if (UGameInstance* GI = World->GetGameInstance())
 		{
-			if (auto* Pool = GI->GetSubsystem<UDEPoolSubsystem>())
+			if (auto* Pool = World->GetSubsystem<UDEPoolSubsystem>())
 			{
 				Pool->ReturnActorToPool(this);
 			}

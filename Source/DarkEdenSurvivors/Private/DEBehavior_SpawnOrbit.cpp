@@ -27,7 +27,7 @@ void UDEBehavior_SpawnOrbit::Execute(FDESkillContext& Context)
     UGameInstance* GI = World->GetGameInstance();
     if (!GI) return;
 
-    UDEPoolSubsystem* Pool = GI->GetSubsystem<UDEPoolSubsystem>();
+    UDEPoolSubsystem* Pool = World->GetSubsystem<UDEPoolSubsystem>();
     if (!Pool) return;
 
     // --------------------------------------------------
