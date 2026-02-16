@@ -23,6 +23,11 @@ struct FDEDamageRequest
 	UPROPERTY(BlueprintReadWrite)
 	AActor* DamageCauser = nullptr;
 
+	// [추가] 물리적인 액터는 아니지만, 데미지의 원인이 된 스킬/아이템 객체
+	// (이게 있어야 킬로그에서 스킬 아이콘을 보여줄 수 있음)
+	UPROPERTY(BlueprintReadWrite)
+	UObject* SourceObject = nullptr;
+
 	// 기본 데미지 (아직 치명타/방어력 적용 전)
 	UPROPERTY(BlueprintReadWrite)
 	float BaseDamage = 0.0f;

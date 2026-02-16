@@ -25,7 +25,7 @@ void ADEPickupEXPGem::ApplyEffect(AActor* TargetActor)
     // 3. 컴포넌트가 있을 때만 경험치 지급 (없는데 쓰면 크래시!)
     if (Prog)
     {
-        Prog->AddEXP(Value);
+        Prog->AddExp(Value);
     }
 
     // 4. ★ 부모 호출 (여기서 DeactivatePickup이 실행되어 풀로 돌아감)

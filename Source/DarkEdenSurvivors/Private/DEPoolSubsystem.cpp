@@ -190,7 +190,7 @@ void UDEPoolSubsystem::DeactivateActor(AActor* Actor)
 void UDEPoolSubsystem::ShrinkPools()
 {
 
-    UE_LOG(LogTemp, Warning, TEXT("Shrink Check...")); // 로그 너무 자주 뜨면 성능 저하되니 주석 추천
+    //UE_LOG(LogTemp, Warning, TEXT("Shrink Check...")); // 로그 너무 자주 뜨면 성능 저하되니 주석 추천
     for (auto It = PoolMap.CreateIterator(); It; ++It)
     {
         TArray<AActor*>& InactivePool = It.Value();
@@ -214,7 +214,7 @@ void UDEPoolSubsystem::ShrinkPools()
                 }
             }
         }
-        UE_LOG(LogTemp, Warning, TEXT("Shrinked %d actors"), NumToRemove);
+        //UE_LOG(LogTemp, Warning, TEXT("Shrinked %d actors"), NumToRemove);
     }
 
     //UE_LOG(LogTemp, Warning, TEXT("Try Shrink Pool"));

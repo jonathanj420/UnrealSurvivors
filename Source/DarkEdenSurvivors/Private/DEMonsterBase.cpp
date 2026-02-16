@@ -13,6 +13,8 @@
 #include "DEHealthComponent.h"
 #include "DEStatusEffectComponent.h"
 #include "Data/DEMonsterData.h"
+#include "DEDamageTypes.h"
+
 
 // Sets default values
 ADEMonsterBase::ADEMonsterBase()
@@ -23,7 +25,6 @@ ADEMonsterBase::ADEMonsterBase()
 	Capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
 	Capsule->InitCapsuleSize(42.0f, 96.0f); // 반지름, 높이
 	Capsule->SetCollisionProfileName(TEXT("Monster"));
-	Capsule->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	RootComponent = Capsule;
 
 
@@ -94,7 +95,7 @@ void ADEMonsterBase::MoveToPlayer(float DeltaTime)
 	Dir.Z = 0.0f;             // Fix Z
 	FVector MoveDelta = Dir.GetSafeNormal();
 	FVector FinalMove = (MoveDelta * MoveSpeed + KnockbackVelocity) * DeltaTime;
-	AddActorWorldOffset(FinalMove, false);
+	AddActorWorldOffset(FinalMove, true);
 	//FHitResult Hit;
 	//AddActorWorldOffset(FinalMove, false, &Hit);
 	//
@@ -118,15 +119,54 @@ void ADEMonsterBase::MoveToPlayer(float DeltaTime)
 
 float ADEMonsterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	//StatComp->TakeDamage(DamageAmount, DamageCauser);
-	HealthComponent->ApplyDamage(DamageAmount, DamageCauser);
 
-	/*if (StatComp->GetCurrentHP() <= 0.f)
+	// 1. 부모 클래스 로직 실행 (중요)
+	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	// 2. 체력 컴포넌트가 있다면 '우리의 시스템'으로 진입
+	if (HealthComponent)
 	{
-		Die();
-	}*/
+		// [AAA 스타일] 요청서(Request) 작성
+		FDEDamageRequest Req;
 
-	return DamageAmount;
+		// 2-1. 값 채우기
+		Req.BaseDamage = ActualDamage;
+		Req.DamageCauser = DamageCauser; // 때린 무기(투사체 or 칼)
+
+		// ★ 중요: 언리얼 기본 함수는 Controller를 줍니다. 우린 Pawn(캐릭터)이 필요합니다.
+		if (EventInstigator)
+		{
+			Req.Instigator = EventInstigator->GetPawn();
+		}
+		else
+		{
+			Req.Instigator = DamageCauser; // 컨트롤러가 없으면 그냥 때린 놈을 주범으로
+		}
+
+		// 2-2. 크리티컬 등 추가 정보 (기본 피격은 보통 크리 0%)
+		Req.CritChance = 0.0f;
+		Req.CritDamageMultiplier = 1.0f;
+
+		// 3. 결재 올리기 (여기서 방어력 계산 등이 수행됨)
+		FDEDamageResult Res = HealthComponent->ProcessDamage(Req);
+
+		// 4. 실제로 들어간 데미지를 리턴 (언리얼 규칙 준수)
+		return Res.FinalDamage;
+	}
+
+	return 0.0f;
+
+
+	//old ahhh shiii
+	////StatComp->TakeDamage(DamageAmount, DamageCauser);
+	//HealthComponent->ApplyDamage(DamageAmount, DamageCauser);
+
+	///*if (StatComp->GetCurrentHP() <= 0.f)
+	//{
+	//	Die();
+	//}*/
+
+	//return DamageAmount;
 }
 
 void ADEMonsterBase::ApplyKnockback(const FVector& Direction, float Strength)
@@ -338,4 +378,85 @@ void ADEMonsterBase::UpdateCrowdControl(float CurrentTime)
 		CCState = EMonsterCrowdControl::None;
 		CCEndTime = 0.f;
 	}
+}
+
+void ADEMonsterBase::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+
+	Super::NotifyActorBeginOverlap(OtherActor);
+
+	if (OtherActor->IsA(ADECharacterBase::StaticClass()))
+	{
+		bIsTouchingPlayer = true;
+		OverlappingPlayer = Cast<ADECharacterBase>(OtherActor);
+	}
+
+	//Super::NotifyActorBeginOverlap(OtherActor);
+	//// 1. 플레이어인지 확인
+	//if (ADECharacterBase* Player = Cast<ADECharacterBase>(OtherActor))
+	//{
+	//	OverlappingPlayer = Player;
+	//	bIsTouchingPlayer = true;
+	//	// 2. 닿자마자 한 대 때림 (즉발)
+	//	AttackPlayer();
+
+	//	// 3. 계속 닿아있으면 0.5초마다 때리라고 타이머 켜기
+	//	GetWorld()->GetTimerManager().SetTimer(
+	//		AttackTimerHandle,
+	//		this,
+	//		&ADEMonsterBase::AttackPlayer,
+	//		AttackInterval,
+	//		true // 반복(Loop)
+	//	);
+	//} timer heavi
+}
+
+void ADEMonsterBase::NotifyActorEndOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorEndOverlap(OtherActor);
+
+	if (OtherActor == OverlappingPlayer)
+	{
+		bIsTouchingPlayer = false;
+		OverlappingPlayer = nullptr;
+	}
+
+	//Super::NotifyActorEndOverlap(OtherActor);
+
+	//// 1. 플레이어가 나갔는지 확인
+	//if (OtherActor == OverlappingPlayer)
+	//{
+	//	// 2. 타이머 끄기 (더 이상 안 때림)
+	//	GetWorld()->GetTimerManager().ClearTimer(AttackTimerHandle);
+	//	OverlappingPlayer = nullptr;
+	//}
+}
+
+void ADEMonsterBase::ExecuteAttackLogic(double CurrentTime)
+{
+	// 1. [검사] 닿아있지 않거나, 대상이 없으면 리턴
+	if (!bIsTouchingPlayer || !OverlappingPlayer) return;
+
+	// 2. [검사] 대상이 죽었으면 리턴 (중요)
+	if (OverlappingPlayer->IsDead()) return;
+
+	// 3. [검사] 쿨타임 체크 (가장 중요)
+	// (현재시간 - 마지막공격시간)이 0.5초보다 작으면 "아직 쿨타임 중"
+	if (CurrentTime - LastAttackTime < AttackInterval)
+		return;
+
+	// --- [실행] 알맹이는 그대로 사용! ---
+	UGameplayStatics::ApplyDamage(
+		OverlappingPlayer,
+		AttackDamage,
+		nullptr,
+		this,
+		UDamageType::StaticClass()
+	);
+
+	// 4. [기록] "나 방금 때렸음" 도장 찍기
+	LastAttackTime = CurrentTime;
+
+	// (선택 사항) 공격 애니메이션 재생?
+	// PlayAttackMontage();
 }

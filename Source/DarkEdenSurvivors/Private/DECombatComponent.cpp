@@ -10,8 +10,8 @@ UDECombatComponent::UDECombatComponent()
 
 	// [기본값 설정] - 기획서에 따라 조정
 	DamageMultiplier = FGameplayStat(1.0f);    // 기본 1배
-	CritChance = FGameplayStat(0.05f);         // 기본 5%
-	CritDamageMultiplier = FGameplayStat(2.0f);          // 기본 150%
+	CritChance = FGameplayStat(0.0f);         // 기본 0%
+	CritDamageMultiplier = FGameplayStat(2.0f);          // 기본 200%
 	CooldownReduction = FGameplayStat(0.0f);   // 쿨감 0%
 	AreaSize = FGameplayStat(1.0f);            // 크기 1배
 	Duration = FGameplayStat(1.0f);            // 지속 1배

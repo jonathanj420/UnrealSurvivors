@@ -8,7 +8,7 @@
 #include "TimerManager.h"
 #include "DECharacterBase.h"
 #include "DEGameInstance.h"
-#include "DEGameMode.h"
+#include "DEGameMode_Stage.h"
 #include "DEPickupManager.h"
 
 ADEMonsterSpawnManager::ADEMonsterSpawnManager()
@@ -35,7 +35,7 @@ void ADEMonsterSpawnManager::BeginPlay()
         UE_LOG(LogTemp, Error, TEXT("MonsterSpawnManager: Failed to cache GameInstance!"));
     }
 
-    GameMode = Cast<ADEGameMode>(UGameplayStatics::GetGameMode(this));
+    GameMode = Cast<ADEGameMode_Stage>(UGameplayStatics::GetGameMode(this));
     if (GameMode)
     {
         UE_LOG(LogTemp, Warning, TEXT("Game Mode CHECKED"));
@@ -94,7 +94,9 @@ void ADEMonsterSpawnManager::Tick(float DeltaTime)
 {
     //control all monsters' logic here
     Super::Tick(DeltaTime);
-    const float Now = GetWorld()->GetTimeSeconds();
+
+    // 현재 월드 시간 (한 번만 가져와서 1000마리한테 돌려씀 -> 최적화)
+    double CurrentWorldTime = GetWorld()->GetTimeSeconds();
 
     if (!Player) return;
     ProcessWave(DeltaTime);
@@ -106,12 +108,13 @@ void ADEMonsterSpawnManager::Tick(float DeltaTime)
         if (!Mob) continue;
 
 
-        Mob->UpdateCrowdControl(Now);
+        //Mob->UpdateCrowdControl(Now);
         Mob->UpdateKnockback(DeltaTime);
 
         if (Mob->IsStunned())
             continue;
         Mob->MoveToPlayer(DeltaTime);
+        Mob->ExecuteAttackLogic(CurrentWorldTime);
         ResolvePlayerPush(Mob);
         
     }
@@ -741,8 +744,13 @@ void ADEMonsterSpawnManager::ResolvePlayerPush(ADEMonsterBase* Mob)
     float Dist = FMath::Sqrt(DistSq);
     FVector PushDir = Delta / Dist;
 
-    float Penetration = MinDist - Dist;
+    // [핵심 수정]
+    // 완벽하게(MinDist) 밀어내지 말고, 아주 조금(1.0f)은 겹쳐있게 놔둡니다.
+    // 그래야 물리 엔진이 "아, 둘이 닿아있구나!" 하고 Overlap 이벤트를 쏩니다.
+    float Buffer = 2.0f; // 2유닛 정도 여유를 줌
+    float Penetration = (MinDist - Dist) - Buffer;
+    //float Penetration = MinDist - Dist;
 
     // 몬스터만 밀린다
-    Mob->AddActorWorldOffset(PushDir * Penetration, false);
+    Mob->AddActorWorldOffset(PushDir * Penetration, true);
 }

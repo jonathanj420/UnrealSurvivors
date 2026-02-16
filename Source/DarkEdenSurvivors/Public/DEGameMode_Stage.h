@@ -2,20 +2,20 @@
 
 #pragma once
 
-#include "DarkEdenSurvivors.h"
-#include "GameFramework/GameModeBase.h"
-#include "DEGameMode.generated.h"
+#include "CoreMinimal.h"
+#include "DEGameModeBase.h"
+#include "DEGameMode_Stage.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DARKEDENSURVIVORS_API ADEGameMode : public AGameModeBase
+class DARKEDENSURVIVORS_API ADEGameMode_Stage : public ADEGameModeBase
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 
 public:
-    ADEGameMode();
+    ADEGameMode_Stage();
     virtual void Tick(float DeltaTime) override;
     virtual void BeginPlay() override;
 
@@ -36,8 +36,13 @@ protected:
     class ADEMonsterSpawnManager* MonsterSpawnManager = nullptr;
 
 
+    UFUNCTION()
+    void GameOver();
+
+    // 결과창 위젯 클래스 (에디터에서 할당)
+    UPROPERTY(EditDefaultsOnly, Category = "UI")
+    TSubclassOf<class UUserWidget> ResultWidgetClass;
 
 
     // ... 나머지 매니저 포인터도 선언
-  
 };

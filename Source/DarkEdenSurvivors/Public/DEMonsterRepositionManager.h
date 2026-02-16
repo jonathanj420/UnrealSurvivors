@@ -33,7 +33,7 @@ private:
     /* ===== Reference ===== */
 
     UPROPERTY()
-    class ADEGameMode* GameMode;
+    class ADEGameMode_Stage* GameMode;
 
     UPROPERTY()
     ADEMonsterSpawnManager* MonsterSpawnManager;

@@ -29,7 +29,7 @@ public:
     // Damage / Heal API
     // =====================
 
-    void ApplyDamage(float DamageAmount, AActor* DamageCauser = nullptr);
+    //void ApplyDamage(float DamageAmount, AActor* DamageCauser = nullptr);
     void Heal(float HealAmount);
     void ResetHealth(bool bHealToFull = true); //for pooling
 

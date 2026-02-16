@@ -70,7 +70,7 @@ void ADEEXPCrystal::OnOverlap(
 	ADEFemaleVampire* Char = Cast<ADEFemaleVampire>(OtherActor);
 	if (Char)
 	{
-		Char->AddEXP(EXPAmount);
+		Char->AddExp(EXPAmount);
 		Destroy();
 	}
 }

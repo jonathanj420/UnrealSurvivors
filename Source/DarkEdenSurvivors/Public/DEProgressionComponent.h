@@ -6,13 +6,11 @@
 #include "Components/ActorComponent.h"
 #include "DEProgressionComponent.generated.h"
 
-
 // [델리게이트]
 // 경험치 변경 알림 (UI 갱신용: 0.0~1.0 퍼센트, 현재값, 최대값)
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnEXPChanged, float, Percent, float, CurrentExp, float, MaxExp);
-
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnExpChanged, float, float);
 // 레벨업 알림 (스킬 선택창 팝업용)
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLevelUp, int32, NewLevel);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnLevelUp, int32);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DARKEDENSURVIVORS_API UDEProgressionComponent : public UActorComponent
@@ -30,23 +28,24 @@ protected:
 public:
 	// 경험치 획득 (외부에서 호출: 보석 먹었을 때)
 	UFUNCTION(BlueprintCallable, Category = "Progression")
-	void AddEXP(float Amount);
+	void AddExp(float Amount);
 
 	// 현재 레벨 확인
 	UFUNCTION(BlueprintPure, Category = "Progression")
 	int32 GetLevel() const { return CurrentLevel; }
+	float GetMaxExp() const { return MaxExp; }
+	float GetCurrentExp() const { return CurrentExp; }
+
 
 public:
 	// UI 바인딩용 델리게이트
-	UPROPERTY(BlueprintAssignable, Category = "Events")
-	FOnEXPChanged OnEXPChanged;
+	FOnExpChanged OnExpChanged;
 
-	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FOnLevelUp OnLevelUp;
 
 protected:
 	// 경험치통 계산 로직
-	void CalculateNextLevelEXP();
+	void CalculateNextLevelExp();
 
 private:
 	// 내부 변수들
@@ -54,10 +53,10 @@ private:
 	int32 CurrentLevel = 1;
 
 	UPROPERTY(VisibleAnywhere, Category = "Progression")
-	float CurrentEXP = 0.0f;
+	float CurrentExp = 0.0f;
 
 	UPROPERTY(VisibleAnywhere, Category = "Progression")
-	float MaxEXP = 100.0f;
+	float MaxExp = 100.0f;
 
 
 	//maybe later use?

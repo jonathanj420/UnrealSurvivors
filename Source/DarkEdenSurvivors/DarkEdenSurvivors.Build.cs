@@ -22,7 +22,9 @@ public class DarkEdenSurvivors : ModuleRules
 			"NavigationSystem",
 			"Slate",
 			"GameplayTasks",
-            "Niagara"
+            "Niagara",
+			"Json",
+            "JsonUtilities"
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {"DarkEdenSurvivorsSetting" });

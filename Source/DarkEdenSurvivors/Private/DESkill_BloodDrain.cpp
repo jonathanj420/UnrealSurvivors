@@ -7,7 +7,7 @@
 #include "DEMonsterBase.h"
 #include "DEMonsterSpawnManager.h"
 
-#include "DEGameMode.h"
+#include "DEGameMode_Stage.h"
 
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
@@ -154,7 +154,7 @@ void UDESkill_BloodDrain::CollectTargets(
     const FVector PlayerLocation = Player->GetActorLocation();
     const float RadiusSq = DrainRadius * DrainRadius;
 
-    ADEGameMode* GameMode = Player->GetWorld()->GetAuthGameMode<ADEGameMode>();
+    ADEGameMode_Stage* GameMode = Player->GetWorld()->GetAuthGameMode<ADEGameMode_Stage>();
     if (!GameMode)
         return;
 

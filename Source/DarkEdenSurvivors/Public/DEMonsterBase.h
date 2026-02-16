@@ -27,8 +27,8 @@ UCLASS()
 class DARKEDENSURVIVORS_API ADEMonsterBase : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	// Sets default values for this actor's properties
 	ADEMonsterBase();
 
@@ -36,11 +36,11 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-//*************** COMPONENTS ******************
+	//*************** COMPONENTS ******************
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UDEStatComponent* StatComponent;
 
@@ -89,7 +89,7 @@ public:
 	FVector KnockbackVelocity;
 
 
-	
+
 
 
 public:
@@ -122,7 +122,7 @@ public:
 protected:
 	UPROPERTY(EditAnywhere, Category = "Monster Stats")
 	bool bIsAlive = false;
-	
+
 
 public:
 	// ===== CC =====
@@ -137,16 +137,31 @@ private:
 	// CC 종료 시간 (World Time)
 	float CCEndTime = 0.f;
 
-	
+
 
 protected:
 	void Die();
 
 
+protected:
+	// 겹침 시작/끝 감지 (엔진 기본 함수)
+	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+	virtual void NotifyActorEndOverlap(AActor* OtherActor) override;
+
+	// 실제 데미지 주는 함수
+	bool bIsTouchingPlayer = false;
+	double LastAttackTime = 0.0;
+
+public:
+	// 매니저가 부를 함수
+	void ExecuteAttackLogic(double CurrentTime);
+
 	//***************** AI ****************
 protected:
 	UPROPERTY(EditAnywhere, Category = "AI")
 	class ADECharacterBase* TargetPlayer;
+	UPROPERTY()
+	class ADECharacterBase* OverlappingPlayer = nullptr;
 
 
 };

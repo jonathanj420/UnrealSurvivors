@@ -7,6 +7,8 @@
 #include "DESkillBase.h" // UDESkillBase 클래스 정의 포함
 #include "DECharacterBase.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnPlayerDiedDelegate);
+
 class UDECombatComponent;
 class UDEStatComponent;
 class UDEHealthComponent;
@@ -85,7 +87,7 @@ protected:
 	bool bMoveCamera;
 	float IFrame = 0.5;
 protected:
-	
+
 
 private:
 	UFUNCTION()
@@ -121,7 +123,7 @@ public:
 public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 	void Heal(float Amount);
-	void AddEXP(float v);
+	void AddExp(float v);
 public:
 	// 캐릭터가 기본적으로 가지고 태어나는 스킬 ID
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill")
@@ -134,7 +136,7 @@ public:
 	UDESkillManagerComponent* GetSkillManagerComponent() { return SkillManager; }
 
 	TMap<FName, TWeakObjectPtr<class ADESimpleAOEBase>> ActiveAOEMap;
-	
+
 protected:
 	UPROPERTY()
 	class UDEActiveSkillBase* ActiveSkill;
@@ -157,23 +159,35 @@ public:
 	void ConsumeBloodDrainGauge();
 	bool CanActivateBloodDrain();
 	float GetBloodDrainGainPerKill();
+	bool IsDead() const;
+	void ForceKill() { Die(); }
+protected:
+	UFUNCTION()
+	virtual void Die();
 
 public:
 	float GetCapsuleHalfRadius();
-	public:
-		// [4] 접근자 (Getter) - 다른 클래스에서 편하게 가져다 쓰라고 만듦
-		UFUNCTION(BlueprintCallable, Category = "Components")
-		UDEStatComponent* GetStatComponent() const { return StatComponent; }
+public:
+	// [4] 접근자 (Getter) - 다른 클래스에서 편하게 가져다 쓰라고 만듦
+	UFUNCTION(BlueprintCallable, Category = "Components")
+	UDEStatComponent* GetStatComponent() const { return StatComponent; }
 
-		UFUNCTION(BlueprintCallable, Category = "Components")
-		UDECombatComponent* GetCombatComponent() const { return CombatComponent; }
+	UFUNCTION(BlueprintCallable, Category = "Components")
+	UDECombatComponent* GetCombatComponent() const { return CombatComponent; }
+
+	UFUNCTION(BlueprintCallable, Category = "Components")
+	UDEHealthComponent* GetHealthComponent() const { return HealthComponent; }
+
+	UFUNCTION(BlueprintCallable, Category = "Components")
+	UDEProgressionComponent* GetProgressionComponent() const { return ProgressionComponent; }
 
 
+public:
 
+	FOnPlayerDiedDelegate OnPlayerDied;
 
-
-	public:
-		void MyDebugCheat();
-		UFUNCTION(Exec)
-		void ForceLevelUp();
+public:
+	void MyDebugCheat();
+	UFUNCTION(Exec)
+	void ForceLevelUp();
 };

@@ -2,7 +2,7 @@
 
 
 #include "DEPlayerController.h"
-#include "DEGameMode.h"
+#include "DEGameMode_Stage.h"
 #include "DEGameHUDWidget.h"
 #include "DELevelUpWidget.h"
 #include "DECharacterBase.h"
@@ -20,7 +20,7 @@ ADEPlayerController::ADEPlayerController()
 
     }
     static ConstructorHelpers::FClassFinder<UDESkillInventoryWidget> UI_SkillInventoryWidget_C(TEXT("/Game/DarkEden/UI/WBP_SkillInventoryWidget.WBP_SkillInventoryWidget_C"));
-    if (UI_GameHUDWidget_C.Succeeded())
+    if (UI_SkillInventoryWidget_C.Succeeded())
     {
         UE_LOG(LogTemp, Warning, TEXT("Inventory UI Succeeded"));
         SkillInventoryWidgetClass = UI_SkillInventoryWidget_C.Class;
@@ -85,7 +85,7 @@ void ADEPlayerController::Tick(float DeltaSeconds)
 
     if (GameHUDWidget)
     {
-        float Time = GetWorld()->GetAuthGameMode<ADEGameMode>()->GetElapsedTime();
+        float Time = GetWorld()->GetAuthGameMode<ADEGameMode_Stage>()->GetElapsedTime();
         GameHUDWidget->UpdateTime(Time);
     }
 

@@ -20,8 +20,8 @@ ADESimpleAOEBase::ADESimpleAOEBase()
     RootComponent = Collision;
 
     // [중요] 충돌을 켜야 감지가 됩니다. 'OverlapAllDynamic' 추천 (Pawn, Enemy 등 감지)
-    Collision->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
-    Collision->SetGenerateOverlapEvents(true); // 이벤트 발생 필수
+    Collision->SetCollisionProfileName(TEXT("Projectile"));
+    //Collision->SetGenerateOverlapEvents(true); // 이벤트 발생 필수
 
     NiagaraComp = CreateDefaultSubobject<UNiagaraComponent>(TEXT("Niagara"));
     NiagaraComp->SetupAttachment(RootComponent);

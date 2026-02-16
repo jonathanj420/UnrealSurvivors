@@ -20,18 +20,18 @@ void UDEProgressionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	CurrentLevel = 1;
-	CurrentEXP = 0.0f;
-	CalculateNextLevelEXP();
+	CurrentExp = 0.0f;
+	CalculateNextLevelExp();
 
 	// 시작 시 UI 초기화
-	OnEXPChanged.Broadcast(0.0f, CurrentEXP, MaxEXP);
+	OnExpChanged.Broadcast(CurrentExp, MaxExp);
 	// ...
 	
 }
 
 
 
-void UDEProgressionComponent::CalculateNextLevelEXP()
+void UDEProgressionComponent::CalculateNextLevelExp()
 {
 	int32 RequiredVal = 0;
 
@@ -58,7 +58,7 @@ void UDEProgressionComponent::CalculateNextLevelEXP()
 	if (CurrentLevel == 20) RequiredVal += WallXP_Lv20;
 	if (CurrentLevel == 40) RequiredVal += WallXP_Lv40;
 
-	MaxEXP = (float)RequiredVal;
+	MaxExp = (float)RequiredVal;
 
 
 	//older
@@ -66,22 +66,22 @@ void UDEProgressionComponent::CalculateNextLevelEXP()
 	//// 기획에 따라 엑셀 데이터 테이블을 읽어오는 방식 등으로 변경 가능
 	//if (CurrentLevel == 1)
 	//{
-	//	MaxEXP = BaseEXPRequirement;
+	//	MaxExp = BaseExpRequirement;
 	//}
 	//else
 	//{
-	//	MaxEXP = MaxEXP * EXPGrowthFactor;
+	//	MaxExp = MaxExp * ExpGrowthFactor;
 	//}
 }
 
 void UDEProgressionComponent::LevelUp()
 {
-	if (MaxEXP > CurrentEXP)
+	if (MaxExp > CurrentExp)
 	{
-		AddEXP(MaxEXP - CurrentEXP);
+		AddExp(MaxExp - CurrentExp);
 	}
 }
-void UDEProgressionComponent::AddEXP(float Amount)
+void UDEProgressionComponent::AddExp(float Amount)
 {
 	// [성장 벽 버프] 20, 40레벨일 때 획득량 2배 (지루함 방지)
 	if (CurrentLevel == 20 || CurrentLevel == 40)
@@ -89,7 +89,7 @@ void UDEProgressionComponent::AddEXP(float Amount)
 		Amount *= 2.0f;
 	}
 
-	float FinalEXP = Amount;
+	float FinalExp = Amount;
 
 	// [StatComponent 연동] (님이 짜신 코드 유지! 아주 좋습니다)
 	if (AActor* Owner = GetOwner())
@@ -98,21 +98,21 @@ void UDEProgressionComponent::AddEXP(float Amount)
 		{
 			// StatComponent에 GetGrowth() 함수가 있다고 가정
 			// (없으면 StatComp->GrowthStat.GetValue() 등으로 수정하세요)
-			 FinalEXP *= StatComp->GetGrowth(); 
+			 FinalExp *= StatComp->GetGrowth(); 
 		}
 	}
 
 	// 경험치 적용
-	CurrentEXP += FinalEXP;
+	CurrentExp += FinalExp;
 
 	// [레벨업 루프] 한 번에 여러 레벨업 가능하게 처리
-	while (CurrentEXP >= MaxEXP)
+	while (CurrentExp >= MaxExp)
 	{
-		CurrentEXP -= MaxEXP; // 남은 경험치 이월
+		CurrentExp -= MaxExp; // 남은 경험치 이월
 		CurrentLevel++;
 
 		// 레벨업 했으니 다음 통 계산
-		CalculateNextLevelEXP();
+		CalculateNextLevelExp();
 
 		// 알림
 		OnLevelUp.Broadcast(CurrentLevel);
@@ -120,6 +120,6 @@ void UDEProgressionComponent::AddEXP(float Amount)
 	}
 
 	// UI 갱신 (Safety Check 추가)
-	float Percent = (MaxEXP > KINDA_SMALL_NUMBER) ? FMath::Clamp(CurrentEXP / MaxEXP, 0.0f, 1.0f) : 0.0f;
-	OnEXPChanged.Broadcast(Percent, CurrentEXP, MaxEXP);
+	float Percent = (MaxExp > KINDA_SMALL_NUMBER) ? FMath::Clamp(CurrentExp / MaxExp, 0.0f, 1.0f) : 0.0f;
+	OnExpChanged.Broadcast(CurrentExp, MaxExp);
 }

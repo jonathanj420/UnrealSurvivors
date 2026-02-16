@@ -11,7 +11,8 @@
 #include "DEHealthComponent.h"
 #include "DEInventoryComponent.h"
 #include "DEProgressionComponent.h"
-
+#include "DEGameInstance.h"
+#include "DEDamageTypes.h"
 
 // Sets default values
 ADECharacterBase::ADECharacterBase()
@@ -51,7 +52,7 @@ ADECharacterBase::ADECharacterBase()
     GetCharacterMovement()->MaxWalkSpeed = 200.0f;
 
     SetControlMode(EControlMode::FREETPS);
-    GetCapsuleComponent()->SetCollisionProfileName(TEXT("TestCharacter"));
+    GetCapsuleComponent()->SetCollisionProfileName(TEXT("DECharacter"));
 
     BloodDrainGauge=0.0f;
     BloodDrainGaugeMax=10.0f;
@@ -75,11 +76,14 @@ void ADECharacterBase::BeginPlay()
         //StatComponent->OnLevelUp.AddDynamic(this, &ADECharacterBase::OnCharacterLevelUp);
         //StatComponent->OnLevelUp.AddUObject(this, &ADECharacterBase::OnCharacterLevelUp);
     }
-
+    if (HealthComponent)
+    {
+        HealthComponent->OnDeath.AddUObject(this, &ADECharacterBase::Die);
+    }
     if (ProgressionComponent)
     {
         // "야, 레벨업 하면 내 함수(OnLevelUp) 좀 실행해줘"
-        ProgressionComponent->OnLevelUp.AddDynamic(this, &ADECharacterBase::OnCharacterLevelUp);
+        ProgressionComponent->OnLevelUp.AddUObject(this, &ADECharacterBase::OnCharacterLevelUp);
     }
     if (SkillManager && BaseSkillID > 0)
     {
@@ -388,12 +392,22 @@ bool ADECharacterBase::CanActivateBloodDrain()
 
 float ADECharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-    float FinalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+    float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
     if (HealthComponent)
     {
-        HealthComponent->ApplyDamage(FinalDamage, DamageCauser);
+        // 1. 단순 데미지도 구조체(Request)로 포장해서 처리 요청
+        // 그래야 HealthComponent 안의 크리티컬/방어력 로직을 통과함
+        FDEDamageRequest DmgRequest;
+        DmgRequest.BaseDamage = ActualDamage;
+        DmgRequest.DamageCauser = DamageCauser;
+        DmgRequest.CritChance = 0.0f; // 일반 피격은 크리티컬 확률 0 (필요 시 수정)
+
+        // 2. 통합된 처리 함수 호출
+        HealthComponent->ProcessDamage(DmgRequest);
     }
-    return FinalDamage;
+
+    return ActualDamage;
 }
 
 void ADECharacterBase::Heal(float Amount)
@@ -405,10 +419,48 @@ void ADECharacterBase::Heal(float Amount)
 
 }
 
-void ADECharacterBase::AddEXP(float v)
+void ADECharacterBase::Die()
 {
-    //StatComponent->AddEXP(v);
-    ProgressionComponent->AddEXP(v);
+    // 1. 컨트롤러 입력 막기 (더 이상 움직이면 안 됨)
+    if (DEPlayerController)
+    {
+        DisableInput(DEPlayerController);
+    }
+
+    // 2. 충돌 끄기 (몬스터가 시체 그만 때리게)
+    GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+    // 3. 사망 애니메이션 재생
+    //if (DeathMontage)
+    //{
+    //    PlayAnimMontage(DeathMontage);
+    //}
+    //else
+    //{
+    //    // 몽타주 없으면 그냥 래그돌(시체 물리) 처리
+    //    // GetMesh()->SetSimulatePhysics(true);
+    //}
+
+    // 4. 게임모드에 "나 죽었어, 게임 끝내줘"라고 알리기
+    // (직접 GameMode를 부르거나, 델리게이트를 쏨)
+    if (OnPlayerDied.IsBound())
+    {
+        OnPlayerDied.Broadcast();
+    }
+
+    // 로그 확인
+    UE_LOG(LogTemp, Warning, TEXT("Player Died!"));
+}
+
+bool ADECharacterBase::IsDead() const
+{
+    return HealthComponent->IsDead();
+}
+
+void ADECharacterBase::AddExp(float v)
+{
+    //StatComponent->AddExp(v);
+    ProgressionComponent->AddExp(v);
 
 }
 
@@ -457,10 +509,17 @@ float ADECharacterBase::GetCapsuleHalfRadius()
 void ADECharacterBase::MyDebugCheat()
 {
     //put every action i want to do, and press E to go EZ :)
-    SkillManager->LevelUpSkill(BaseSkillID);
+    //SkillManager->LevelUpSkill(BaseSkillID);
+   // CombatComponent->BonusAmount.Additive += 1.0f;
+    UDEGameInstance* GI = Cast<UDEGameInstance>(GetGameInstance());
+    if (GI)
+    {
+        GI->AddGold(1000);
+        GI->SaveGame();
+    }
     if (GEngine)
     {
-        GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("MyDebugCheat"));
+        GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("Cheat Activated"));
     }
 }
 

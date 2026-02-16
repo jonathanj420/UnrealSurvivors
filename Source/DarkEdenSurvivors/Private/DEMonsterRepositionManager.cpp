@@ -2,10 +2,9 @@
 
 
 #include "DEMonsterRepositionManager.h"
-#include "DEGameMode.h"
 #include "DEMonsterSpawnManager.h"
 #include "DEMonsterBase.h"
-
+#include "DEGameMode_Stage.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Character.h"
 #include "EngineUtils.h"
@@ -22,7 +21,7 @@ void ADEMonsterRepositionManager::BeginPlay()
     Super::BeginPlay();
 
     Player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
-    GameMode=Player->GetWorld()->GetAuthGameMode<ADEGameMode>();
+    GameMode=Player->GetWorld()->GetAuthGameMode<ADEGameMode_Stage>();
     // 1. 게임모드한테 먼저 물어봄
     if (GameMode)
     {

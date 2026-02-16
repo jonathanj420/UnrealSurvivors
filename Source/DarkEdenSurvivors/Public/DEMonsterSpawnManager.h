@@ -9,7 +9,7 @@
 #include "Data/DEMonsterData.h"
 #include "DEMonsterSpawnManager.generated.h"
 
-class ADEGameMode;
+class ADEGameMode_Stage;
 class ADEMonsterBase;
 class UDEGameInstance;
 
@@ -71,7 +71,7 @@ public:
     float NextSpawnTime;
 
     UPROPERTY()
-    ADEGameMode* GameMode;
+    ADEGameMode_Stage* GameMode;
 
     void ProcessWave(float DeltaTime);
     void StartWave(int32 WaveIndex);
