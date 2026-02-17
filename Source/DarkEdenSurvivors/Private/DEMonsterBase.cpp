@@ -171,6 +171,7 @@ float ADEMonsterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 
 void ADEMonsterBase::ApplyKnockback(const FVector& Direction, float Strength)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Knockback : %f Applied"), Strength);
 	FVector Dir = Direction;
 	Dir.Z = 0.0f;
 	Dir = Dir.GetSafeNormal();
@@ -190,26 +191,6 @@ void ADEMonsterBase::UpdateKnockback(float DeltaTime)
 		KnockbackVelocity = FVector::ZeroVector;
 	}
 }
-
-void ADEMonsterBase::ResetForPool()
-{
-	//UE_LOG(LogTemp, Warning, TEXT("Reset For Pool"));
-
-	// Stat 초기화
-	if (HealthComponent) HealthComponent->ResetHealth(true);
-	bIsDying = false;
-
-	// 넉백 등 상태 초기화
-	KnockbackVelocity = FVector::ZeroVector;
-
-
-
-	// 비활성화: 숨기고 타이밍/충돌 끔
-	SetActorHiddenInGame(true);
-	SetActorEnableCollision(false);
-	SetActorTickEnabled(false);
-}
-
 
 void ADEMonsterBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -332,6 +313,26 @@ void ADEMonsterBase::ResetMonster(const FDEMonsterData* Data)
 	SetActorEnableCollision(true);
 	SetActorTickEnabled(true);
 	bIsAlive = true;
+	bIsDying = false;
+	if (HealthComponent) HealthComponent->ResetHealth(true);
+}
+void ADEMonsterBase::ResetForPool()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Reset For Pool"));
+
+	// Stat 초기화
+	//if (HealthComponent) HealthComponent->ResetHealth(true);
+	//bIsDying = false;
+
+	// 넉백 등 상태 초기화
+	KnockbackVelocity = FVector::ZeroVector;
+
+
+
+	// 비활성화: 숨기고 타이밍/충돌 끔
+	SetActorHiddenInGame(true);
+	SetActorEnableCollision(false);
+	SetActorTickEnabled(false);
 }
 
 void ADEMonsterBase::Die()

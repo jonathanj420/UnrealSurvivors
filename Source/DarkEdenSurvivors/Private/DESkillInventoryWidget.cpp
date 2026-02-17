@@ -11,28 +11,55 @@ void UDESkillInventoryWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    APawn* Pawn = GetOwningPlayerPawn();
-    if (!Pawn) return;
+    //APawn* Pawn = GetOwningPlayerPawn();
+    //if (!Pawn) return;
 
-    Inventory = Pawn->FindComponentByClass<UDEInventoryComponent>();
-    SkillManager = Pawn->FindComponentByClass<UDESkillManagerComponent>();
-    check(SkillSlotWidgetClass);
-    check(Inventory);
-    check(SkillManager);
+    //Inventory = Pawn->FindComponentByClass<UDEInventoryComponent>();
+    //SkillManager = Pawn->FindComponentByClass<UDESkillManagerComponent>();
+    //check(SkillSlotWidgetClass);
+    //check(Inventory);
+    //check(SkillManager);
 
+    //if (SkillManager)
+    //{
+    //    SkillManager->OnSkillUpdated.AddUObject(
+    //        this,
+    //        &UDESkillInventoryWidget::OnSkillUpdated
+    //    );
+    //}
+    ////Inventory 변경 이벤트 구독
+    //Inventory->OnInventoryChanged.AddUObject(
+    //    this,
+    //    &UDESkillInventoryWidget::Refresh
+    //);
+
+    //Refresh();
+}
+
+void UDESkillInventoryWidget::InitializeSkillWidget(APawn* NewPawn)
+{
+    if (!NewPawn) return;
+
+    // 기존 연결 끊기 (혹시 재연결일 수 있으니)
+    if (SkillManager) SkillManager->OnSkillUpdated.RemoveAll(this);
+    if (Inventory) Inventory->OnInventoryChanged.RemoveAll(this);
+
+    // 컴포넌트 찾기
+    Inventory = NewPawn->FindComponentByClass<UDEInventoryComponent>();
+    SkillManager = NewPawn->FindComponentByClass<UDESkillManagerComponent>();
+
+    // check는 게임을 터뜨리니 if로 방어
     if (SkillManager)
     {
-        SkillManager->OnSkillUpdated.AddUObject(
-            this,
-            &UDESkillInventoryWidget::OnSkillUpdated
-        );
+        SkillManager->OnSkillUpdated.AddUObject(this, &UDESkillInventoryWidget::OnSkillUpdated);
     }
-    //Inventory 변경 이벤트 구독
-    Inventory->OnInventoryChanged.AddUObject(
-        this,
-        &UDESkillInventoryWidget::Refresh
-    );
 
+    if (Inventory)
+    {
+        Inventory->OnInventoryChanged.AddUObject(this, &UDESkillInventoryWidget::Refresh);
+    }
+
+    // 바로 갱신
     Refresh();
 }
 

@@ -7,6 +7,52 @@
 #include "DEStatTypes.generated.h"
 
 /**
+ * 게임 내 모든 수치 변경을 관장하는 통합 타입
+ * (악세서리, 패시브, 버프, 기본 스탯 등 모두 사용)
+ */
+UENUM(BlueprintType)
+enum class EDEStatType : uint8
+{
+    // ==========================================
+    // [Combat] 전투 관련 (공격, 방어)
+    // ==========================================
+    Damage          UMETA(DisplayName = "Damage Multiplier"),    // 공격력 %
+    CritChance      UMETA(DisplayName = "Crit Chance"),          // 치명타 확률 +
+    CritDamage      UMETA(DisplayName = "Crit Damage Multiplier"),          // 치명타 피해 %
+    Cooldown        UMETA(DisplayName = "Cooldown Reduction"),   // 쿨타임 감소 %
+    Area            UMETA(DisplayName = "Area Size"),            // 범위 %
+    Duration        UMETA(DisplayName = "Duration"),             // 지속시간 %
+    ProjectileSpeed UMETA(DisplayName = "Projectile Speed"),     // 투사체 속도 %
+    Amount          UMETA(DisplayName = "Projectile Amount"),    // 투사체 개수 +
+    Knockback       UMETA(DisplayName = "Knockback Force"),      // 넉백 파워 %
+    LifeStealChance UMETA(DisplayName = "Life Steal Chance"),      // 피흡 확률 %
+    LifeStealMultiplier UMETA(DisplayName = "Life Steal Multiplier"),      // 피흡 증가? %
+
+    // ==========================================
+    // [Survival] 생존 및 신체 능력
+    // ==========================================
+    MaxHP           UMETA(DisplayName = "Max HP"),               // 최대 체력 %
+    MoveSpeed       UMETA(DisplayName = "Move Speed"),           // 이동 속도 %
+    Armor           UMETA(DisplayName = "Armor"),                // 방어력 (데미지 감소)
+    Regeneration        UMETA(DisplayName = "HP Regeneration"),          // 체력 재생 (초당)
+
+    // ==========================================
+    // [Utility] 유틸리티 (파밍, 성장)
+    // ==========================================
+    Magnet          UMETA(DisplayName = "Magnet Range"),         // 자석 범위 %
+    Luck            UMETA(DisplayName = "Luck"),                 // 행운 (아이템 드랍 등)
+    Greed           UMETA(DisplayName = "Greed (Gold)"),         // 골드 획득량 %
+    Growth          UMETA(DisplayName = "Growth (EXP)"),         // 경험치 획득량 %
+    Curse           UMETA(DisplayName = "Curse (Enemy Buff)"),   // 저주 (적 강화)
+    Revival         UMETA(DisplayName = "Revival Count"),        // 부활 횟수 +
+
+    // ==========================================
+    // [Max] 반복문용 (항상 마지막에)
+    // ==========================================
+    Max             UMETA(Hidden)
+};
+
+/**
  * 
  */
 USTRUCT(BlueprintType)
@@ -57,4 +103,5 @@ struct FCombatSnapshot
 	float DurationMultiplier;    // 지속 시간 배율
 	int32 BonusAmount;  // 추가 투사체 개수
 	float ProjectileSpeedMultiplier; // 투사체 속도 배율
+    float LifeStealChance = 0.0f;
 };

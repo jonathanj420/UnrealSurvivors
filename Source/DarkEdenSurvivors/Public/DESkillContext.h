@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Templates/SubclassOf.h"
+#include "DEStatTypes.h"
 #include "DESkillContext.generated.h"
 
 class AActor;
@@ -34,6 +35,9 @@ public:
 	// GC가 건드리지 못하게 UPROPERTY() 필수
 	UPROPERTY(Transient)
 	AActor* Instigator = nullptr;
+
+	UPROPERTY()
+	FCombatSnapshot FinalSnapshot;
 
 	UPROPERTY(Transient)
 	TArray<AActor*> Targets;

@@ -44,6 +44,8 @@ void UDEResultWidget::SetResultData(int32 EarnedGold, int32 KillCount, float Sur
 void UDEResultWidget::OnRetryClicked()
 {
 	// 현재 레벨 다시 시작
+	UGameplayStatics::SetGamePaused(this, false);
+
 	FString CurrentLevel = UGameplayStatics::GetCurrentLevelName(this);
 	UGameplayStatics::OpenLevel(this, FName(*CurrentLevel));
 }

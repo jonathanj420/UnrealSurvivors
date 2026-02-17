@@ -28,6 +28,9 @@ struct FDEDamageRequest
 	UPROPERTY(BlueprintReadWrite)
 	UObject* SourceObject = nullptr;
 
+	UPROPERTY(BlueprintReadWrite)
+	AActor* Victim = nullptr;
+
 	// 기본 데미지 (아직 치명타/방어력 적용 전)
 	UPROPERTY(BlueprintReadWrite)
 	float BaseDamage = 0.0f;
@@ -41,6 +44,8 @@ struct FDEDamageRequest
 	float CritDamageMultiplier = 1.0f;
 
 	// (확장성) 방어 무시 여부, 속성 타입 등은 나중에 여기에 추가
+	UPROPERTY(BlueprintReadWrite)
+	float LifeStealChance = 0.0f;
 };
 
 // [결과] 맞은 놈이 계산해서 돌려주는 정보
@@ -61,6 +66,9 @@ struct FDEDamageResult
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsDead = false;
 
+	// 맞은 놈이 누군지 (처치 시 시체 위치나 이름 필요할 때 씀)
+	UPROPERTY(BlueprintReadWrite)
+	AActor* Victim = nullptr;
 	// (확장성) 회피했는지? 막았는지?
 	// bool bIsEvaded = false;
 };

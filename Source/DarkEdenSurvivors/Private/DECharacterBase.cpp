@@ -422,10 +422,10 @@ void ADECharacterBase::Heal(float Amount)
 void ADECharacterBase::Die()
 {
     // 1. 컨트롤러 입력 막기 (더 이상 움직이면 안 됨)
-    if (DEPlayerController)
-    {
-        DisableInput(DEPlayerController);
-    }
+    //if (DEPlayerController)
+    //{
+    //    DisableInput(DEPlayerController);
+    //}
 
     // 2. 충돌 끄기 (몬스터가 시체 그만 때리게)
     GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);

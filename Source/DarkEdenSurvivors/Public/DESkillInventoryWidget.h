@@ -26,6 +26,10 @@ protected:
     void Refresh();
     void OnSkillUpdated(int32 InSkillID);
 
+public:
+    // Pawn을 외부에서 넣어주는 초기화 함수
+    void InitializeSkillWidget(APawn* NewPawn);
+
 protected:
     UPROPERTY(meta = (BindWidget))
     UPanelWidget* SkillSlotPanel; // HorizontalBox / UniformGrid

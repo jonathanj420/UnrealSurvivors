@@ -69,7 +69,7 @@ void UDEAutoSkillBase::BuildContext(FDESkillContext& OutContext)
         // ★ 핵심: CombatComponent에서 정제된 스냅샷을 가져옵니다.
         // (쿨타임 캡, 소수점 처리 등이 이미 완료된 상태)
         FCombatSnapshot PlayerStat = Combat->GetCombatSnapshot();
-
+        OutContext.FinalSnapshot = PlayerStat;
         // 1. 데미지 공식: (기본뎀) * 데미지배율
         // ※ 추후 '고정 공격력(Atk)'이 생긴다면: (FinalDamage + PlayerStat.AttackPower) * PlayerStat.FinalDamageMultiplier;
         FinalDamage = FinalDamage * PlayerStat.FinalDamageMultiplier;
@@ -133,7 +133,7 @@ void UDEAutoSkillBase::BuildContext(FDESkillContext& OutContext)
     // [중요] 치명타 정보 스냅샷
     OutContext.CritChance = FinalCritChance;
     OutContext.CritDamageMultiplier = FinalCritDmgMultiplier;
-
+    
     // 6. 맵 데이터(옵션) 통째로 복사
     // (특수 기믹을 위한 커스텀 데이터)
     OutContext.CustomValues = SkillData->OptionValues;

@@ -4,11 +4,11 @@
 
 #include "DarkEdenSurvivors.h"
 #include "GameFramework/Actor.h"
+#include "DEStatTypes.h"
 #include "DESimpleProjectileBase.generated.h"
 
 struct FDESkillContext;
 class UNiagaraComponent;
-
 
 
 UCLASS()
@@ -42,6 +42,8 @@ protected:
 
     // ***************** Projectile Stats ******************
 protected:
+    FCombatSnapshot Snapshot;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite,Category="Stats")
     float Damage;
 

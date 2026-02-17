@@ -11,6 +11,8 @@
 #include "NiagaraComponent.h"
 #include "DEDamageTypes.h"
 #include "DEHealthComponent.h"
+#include "DEGameplayLibrary.h"
+#include "DEStatTypes.h"
 
 // Sets default values
 ADESimpleProjectileBase::ADESimpleProjectileBase()
@@ -199,6 +201,11 @@ void ADESimpleProjectileBase::InitializeProjectile(float InDamage, float InSpeed
 void ADESimpleProjectileBase::InitializeFromContext(const FDESkillContext& Context, const FVector& Direction)
 {
 	// 1. 멤버 변수에 저장 (캐싱)
+	if (APawn* InstigatorPawn = Cast<APawn>(Context.Instigator))
+	{
+		SetInstigator(InstigatorPawn);
+	}
+	Snapshot = Context.FinalSnapshot;
 	Damage = Context.Damage;             // ★ 중요: 곱하기 하지 마세요! 순수 데미지 저장
 	CritChance = Context.CritChance;
 	CritDamageMultiplier = Context.CritDamageMultiplier; // ★ 저장
@@ -232,94 +239,123 @@ void ADESimpleProjectileBase::OnOverlap(UPrimitiveComponent* OverlappedComp, AAc
 	bool bFromSweep, const FHitResult& SweepResult)
 {
 	// 1. [유효성 검사]
-	// - 대상이 없거나
-	// - 나 자신이거나 (투사체끼리 충돌 방지)
-	// - 나를 쏜 주인(플레이어)이거나
-	// - 이미 맞은 대상이라면 (샷건처럼 한 틱에 여러 번 맞는 것 방지)
-	if (!OtherActor || OtherActor == this || OtherActor == GetInstigator() || HitActors.Contains(OtherActor))
+	if (!OtherActor || OtherActor == this || OtherActor == GetInstigator() || HitActors.Contains(OtherActor)) return;
+
+	// 2. [라이브러리 호출]
+	// 굳이 여기서 TargetHealth를 Find할 필요도 없습니다. 라이브러리가 대신 해줄 테니까요.
+	HitActors.Add(OtherActor);
+
+	// 넉백 방향 계산
+	FVector KBDir = OtherActor->GetActorLocation() - GetActorLocation();
+
+	// ★ [핵심] 주문서(Request) 작성
+	FDEDamageRequest Req;
+	Req.Instigator = GetInstigator();
+	Req.DamageCauser = this;
+	Req.Victim = OtherActor; // 맞은 놈을 넣어줍니다.
+	Req.BaseDamage = this->Damage;
+	Req.CritChance = this->Snapshot.CritChance; // 멤버 변수로 들고 있는 Snapshot 활용
+	Req.CritDamageMultiplier = this->Snapshot.CritDamageMultiplier;
+
+	// 라이브러리에 던지기 (피흡, 넉백, 킬 처리가 한 방에 끝남)
+	UE_LOG(LogTemp, Log, TEXT("Try DEGameplayLibrary"));
+	FDEDamageResult Res = UDEGameplayLibrary::ApplyCombatDamage(Req, this->Snapshot, KBDir, this->KnockbackForce);
+
+	// 3. [관통 로직만 투사체 본연의 업무로 남김]
+	if (Res.FinalDamage > 0.0f && Penetration != -1)
 	{
-		return;
+		if (--Penetration <= 0) ReturnToPool();
 	}
 
-	// 2. [대상 확인] 체력 컴포넌트가 있는가?
-	// (꼭 몬스터가 아니더라도, 파괴 가능한 오브젝트 등 HP가 있는 모든 것을 때릴 수 있음)
-	UDEHealthComponent* TargetHealth = OtherActor->FindComponentByClass<UDEHealthComponent>();
+	//// 1. [유효성 검사]
+	//// - 대상이 없거나
+	//// - 나 자신이거나 (투사체끼리 충돌 방지)
+	//// - 나를 쏜 주인(플레이어)이거나
+	//// - 이미 맞은 대상이라면 (샷건처럼 한 틱에 여러 번 맞는 것 방지)
+	//if (!OtherActor || OtherActor == this || OtherActor == GetInstigator() || HitActors.Contains(OtherActor))
+	//{
+	//	return;
+	//}
 
-	if (TargetHealth)
-	{
-		// 중복 피격 방지 목록에 등록
-		HitActors.Add(OtherActor);
+	//// 2. [대상 확인] 체력 컴포넌트가 있는가?
+	//// (꼭 몬스터가 아니더라도, 파괴 가능한 오브젝트 등 HP가 있는 모든 것을 때릴 수 있음)
+	//UDEHealthComponent* TargetHealth = OtherActor->FindComponentByClass<UDEHealthComponent>();
 
-		// ====================================================
-		// [AAA 스타일] 1. 데미지 신청서(Request) 작성
-		// ====================================================
-		// 투사체는 계산을 하지 않습니다. "내 스펙은 이렇습니다"라고 적어서 냅니다.
-		FDEDamageRequest Req;
-		Req.Instigator = GetInstigator();     // 때린 사람 (플레이어)
-		Req.DamageCauser = this;            // 때린 도구 (투사체)
+	//if (TargetHealth)
+	//{
+	//	// 중복 피격 방지 목록에 등록
+	//	HitActors.Add(OtherActor);
 
-		// ★ 중요: Context가 아니라 '내 멤버 변수'에 저장된 값을 사용합니다.
-		Req.BaseDamage = this->Damage;           // 기본 깡뎀
-		Req.CritChance = this->CritChance;       // 치명타 확률
-		Req.CritDamageMultiplier = this->CritDamageMultiplier; // 치명타 배율 (예: 2.0)
+	//	// ====================================================
+	//	// [AAA 스타일] 1. 데미지 신청서(Request) 작성
+	//	// ====================================================
+	//	// 투사체는 계산을 하지 않습니다. "내 스펙은 이렇습니다"라고 적어서 냅니다.
+	//	FDEDamageRequest Req;
+	//	Req.Instigator = GetInstigator();     // 때린 사람 (플레이어)
+	//	Req.DamageCauser = this;            // 때린 도구 (투사체)
 
-		// ====================================================
-		// [AAA 스타일] 2. 처리 요청 및 결과 수신
-		// ====================================================
-		// "계산은 님이(HealthComponent) 하시고 결과만 알려주세요."
-		// 여기서 상대방의 방어력, 무적, 회피 등이 모두 계산됩니다.
-		FDEDamageResult Res = TargetHealth->ProcessDamage(Req);
+	//	// ★ 중요: Context가 아니라 '내 멤버 변수'에 저장된 값을 사용합니다.
+	//	Req.BaseDamage = this->Damage;           // 기본 깡뎀
+	//	Req.CritChance = this->CritChance;       // 치명타 확률
+	//	Req.CritDamageMultiplier = this->CritDamageMultiplier; // 치명타 배율 (예: 2.0)
+
+	//	// ====================================================
+	//	// [AAA 스타일] 2. 처리 요청 및 결과 수신
+	//	// ====================================================
+	//	// "계산은 님이(HealthComponent) 하시고 결과만 알려주세요."
+	//	// 여기서 상대방의 방어력, 무적, 회피 등이 모두 계산됩니다.
+	//	FDEDamageResult Res = TargetHealth->ProcessDamage(Req);
 
 
-		// ====================================================
-		// [AAA 스타일] 3. 피드백 루프 (결과에 따른 행동)
-		// ====================================================
+	//	// ====================================================
+	//	// [AAA 스타일] 3. 피드백 루프 (결과에 따른 행동)
+	//	// ====================================================
 
-		// 3-1. 넉백 적용 (몬스터인 경우에만)
-		// 몬스터가 '슈퍼아머' 상태라면 ApplyKnockback 내부에서 무시하도록 설계하면 됨.
-		if (ADEMonsterBase* Monster = Cast<ADEMonsterBase>(OtherActor))
-		{
-			// 방향 계산: 몬스터 위치 - 투사체 위치 = 밀려나는 방향
-			FVector KnockbackDir = Monster->GetActorLocation() - GetActorLocation();
-			//KnockbackDir.Z = 0.0f; // 공중으로 뜨지 않게 평면 고정
-			//KnockbackDir.Normalize();
+	//	// 3-1. 넉백 적용 (몬스터인 경우에만)
+	//	// 몬스터가 '슈퍼아머' 상태라면 ApplyKnockback 내부에서 무시하도록 설계하면 됨.
+	//	if (ADEMonsterBase* Monster = Cast<ADEMonsterBase>(OtherActor))
+	//	{
+	//		// 방향 계산: 몬스터 위치 - 투사체 위치 = 밀려나는 방향
+	//		FVector KnockbackDir = Monster->GetActorLocation() - GetActorLocation();
+	//		//KnockbackDir.Z = 0.0f; // 공중으로 뜨지 않게 평면 고정
+	//		//KnockbackDir.Normalize();
 
-			// 내 멤버 변수(KnockbackForce) 사용
-			Monster->ApplyKnockback(KnockbackDir * this->KnockbackForce);
-		}
+	//		// 내 멤버 변수(KnockbackForce) 사용
+	//		Monster->ApplyKnockback(KnockbackDir,this->KnockbackForce);
+	//	}
 
-		// 3-2. 흡혈 (Life Steal) 로직 예시
-		// 실제로 데미지가 들어갔을 때만 흡혈
-		if (Res.FinalDamage > 0.0f)
-		{
-			// TODO: 플레이어 스탯 컴포넌트에 회복 요청
-			// PlayerStats->Heal(Res.FinalDamage * 0.1f); 
-		}
+	//	// 3-2. 흡혈 (Life Steal) 로직 예시
+	//	// 실제로 데미지가 들어갔을 때만 흡혈
+	//	if (Res.FinalDamage > 0.0f)
+	//	{
+	//		// TODO: 플레이어 스탯 컴포넌트에 회복 요청
+	//		// PlayerStats->Heal(Res.FinalDamage * 0.1f); 
+	//	}
 
-		// 3-3. 처치 시 효과 (On Kill Effect)
-		if (Res.bIsDead)
-		{
-			// TODO: 킬 스택 쌓기, 경험치 구슬 추가 드롭 등
-			// UE_LOG(LogTemp, Log, TEXT("Target Eliminated!"));
-		}
+	//	// 3-3. 처치 시 효과 (On Kill Effect)
+	//	if (Res.bIsDead)
+	//	{
+	//		// TODO: 킬 스택 쌓기, 경험치 구슬 추가 드롭 등
+	//		// UE_LOG(LogTemp, Log, TEXT("Target Eliminated!"));
+	//	}
 
-		// 4. [관통 로직]
-		// Penetration이 -1이면 무한 관통
-		if (Penetration != -1)
-		{
-			--Penetration;
-			if (Penetration <= 0)
-			{
-				ReturnToPool(); // 관통 횟수 소진 시 풀로 반환
-			}
-		}
-	}
-	else
-	{
-		// (선택 사항) 체력이 없는 벽이나 장애물에 맞았을 때
-		// 보통 뱀서류에서는 벽에 맞으면 사라지거나 튕김
-		// ReturnToPool(); 
-	}
+	//	// 4. [관통 로직]
+	//	// Penetration이 -1이면 무한 관통
+	//	if (Penetration != -1)
+	//	{
+	//		--Penetration;
+	//		if (Penetration <= 0)
+	//		{
+	//			ReturnToPool(); // 관통 횟수 소진 시 풀로 반환
+	//		}
+	//	}
+	//}
+	//else
+	//{
+	//	// (선택 사항) 체력이 없는 벽이나 장애물에 맞았을 때
+	//	// 보통 뱀서류에서는 벽에 맞으면 사라지거나 튕김
+	//	// ReturnToPool(); 
+	//}
 }
 void ADESimpleProjectileBase::OnLifeTimeExpired()
 {

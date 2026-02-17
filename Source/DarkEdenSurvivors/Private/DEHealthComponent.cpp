@@ -78,7 +78,7 @@ void UDEHealthComponent::ResetHealth(bool bHealToFull)
 {
     // 1. 사망 플래그 초기화 (가장 중요!)
     bIsDead = false;
-
+    UE_LOG(LogTemp, Error, TEXT("HP Reset, bisdead NO FUCK"));
     //// 2. 무적 상태 및 타이머 초기화
     //bIsInvincible = false;
     //if (GetWorld())
@@ -161,7 +161,7 @@ void UDEHealthComponent::HandleDeath(AActor* DamageCauser)
 
     OnHPChanged.Broadcast(CurrentHP, MaxHP);
     OnDeath.Broadcast();
-
+    UE_LOG(LogTemp, Error, TEXT("Actually Died"));
     // 여기서는 Destroy / 애니메이션 처리 안 함
     // 소유 Actor(Character/Monster)가 책임지게 함 (AAA 스타일)
 }
@@ -207,7 +207,15 @@ FDEDamageResult UDEHealthComponent::ProcessDamage(const FDEDamageRequest& Reques
 
     // 6. 결과 갱신 (죽었는지 확인)
     Result.bIsDead = bIsDead;
-
+    Result.Victim = Request.Victim;
+    if (Result.bIsDead)
+    {
+        UE_LOG(LogTemp, Error, TEXT("Really Died :D"));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Not really Died :/"));
+    }
     return Result;
 }
 

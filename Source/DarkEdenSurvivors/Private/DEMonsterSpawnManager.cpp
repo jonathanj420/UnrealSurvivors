@@ -295,7 +295,7 @@ void ADEMonsterSpawnManager::StartWave(int32 WaveIndex)
 bool ADEMonsterSpawnManager::TrySpawnMonster(const FDEStageWaveData& WaveData)
 {
 
-    UE_LOG(LogTemp, Error, TEXT("Try to Spawn Monster"));
+   // UE_LOG(LogTemp, Error, TEXT("Try to Spawn Monster"));
     // A. 스폰 제한 체크
     const int32 CurrentActiveCount = ActiveMonsters.Num();
     const int32 SpawnLimit = GameMode ? GameMode->GetSpawnLimit() : 500;
@@ -463,7 +463,7 @@ ADEMonsterBase* ADEMonsterSpawnManager::SpawnFromPool(FVector& Location, const F
     // 3. [Pooling] 풀 뒤지기 (클래스 타입 검사 필수!)
     // --------------------------------------------------------
     ADEMonsterBase* SpawnedMonster = nullptr;
-    UE_LOG(LogTemp, Warning, TEXT("Try Spawn From Pool First"));
+   // UE_LOG(LogTemp, Warning, TEXT("Try Spawn From Pool First"));
     // *InactiveMonsters: 죽어서 대기 중인 몬스터 목록이라고 가정
     for (int32 i = 0; i < InactiveMonsters.Num(); i++)
     {
@@ -478,7 +478,7 @@ ADEMonsterBase* ADEMonsterSpawnManager::SpawnFromPool(FVector& Location, const F
             //InactiveMonsters.RemoveAt(i); // 대기열에서 제외
             // RemoveAt 대신 RemoveAtSwap 사용 (O(N) -> O(1))
             InactiveMonsters.RemoveAtSwap(i);
-            UE_LOG(LogTemp, Warning, TEXT("Monster ReSpawned From Pool"));
+          //  UE_LOG(LogTemp, Warning, TEXT("Monster ReSpawned From Pool"));
             break;
         }
     }
@@ -488,7 +488,7 @@ ADEMonsterBase* ADEMonsterSpawnManager::SpawnFromPool(FVector& Location, const F
     // --------------------------------------------------------
     if (!SpawnedMonster)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Monster Spawned New"));
+      //  UE_LOG(LogTemp, Warning, TEXT("Monster Spawned New"));
         FActorSpawnParameters Params;
         Params.Owner = this;
         Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
@@ -531,7 +531,7 @@ void ADEMonsterSpawnManager::ReturnMonsterToPool(ADEMonsterBase* Monster)
     Monster->ResetForPool();
 
     Monster->SetActorLocation(FVector::ZeroVector);
-    UE_LOG(LogTemp, Warning, TEXT("%s Returned to Pool"),*Monster->GetName());
+ //   UE_LOG(LogTemp, Warning, TEXT("%s Returned to Pool"),*Monster->GetName());
 }
 
 
@@ -570,7 +570,7 @@ void ADEMonsterSpawnManager::OnMonsterDied(ADEMonsterBase* Monster)
         PickupMgr->SpawnPickup(Monster->GetActorLocation(), EXPToDrop);
     }
 
-    UE_LOG(LogTemp, Warning, TEXT("Monster Died -> Active: %d, Inactive: %d"), ActiveMonsters.Num(), InactiveMonsters.Num());
+   // UE_LOG(LogTemp, Warning, TEXT("Monster Died -> Active: %d, Inactive: %d"), ActiveMonsters.Num(), InactiveMonsters.Num());
 
     if (Player)
     {

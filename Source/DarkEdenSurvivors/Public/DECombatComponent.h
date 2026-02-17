@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "DEStatTypes.h"
+#include "DEDamageTypes.h"
 #include "DECombatComponent.generated.h"
 
 
@@ -72,4 +73,22 @@ public:
 	FCombatSnapshot GetCombatSnapshot() const;
 
 		
+public:
+	/**
+	 * 전투 결과 처리 (Post-Process)
+	 * 스킬이나 투사체가 데미지를 입힌 직후에 호출합니다.
+	 * @param Result : 피해자(HealthComponent)가 리턴한 데미지 결과
+	 * @param Snapshot : 공격 당시의 내 스탯 (피흡 확률 등 포함)
+	 */
+	void HandleDamageDealt(const FDEDamageResult& Result, const FCombatSnapshot& Snapshot);
+
+protected:
+	// 내부 로직 분리 (protected나 private 권장)
+
+	// 생명력 흡수 처리
+	void ProcessLifeSteal(const FCombatSnapshot& Snapshot);
+
+	// 처치 시 효과 처리 (킬 카운트, 쿨감, 폭발 등)
+	void ProcessOnKillEffect(AActor* Victim);
+
 };
