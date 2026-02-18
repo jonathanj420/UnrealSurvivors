@@ -2,6 +2,9 @@
 
 
 #include "DECombatComponent.h"
+#include "DEStatComponent.h"
+#include "DEAccessoryComponent.h"
+#include "DEHealthComponent.h"
 #include "DECharacterBase.h"
 
 // Sets default values for this component's properties
@@ -9,54 +12,59 @@ UDECombatComponent::UDECombatComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false; // 스탯 컴포넌트는 틱 필요 없음 (최적화)
 
-	// [기본값 설정] - 기획서에 따라 조정
-	DamageMultiplier = FGameplayStat(1.0f);    // 기본 1배
-	CritChance = FGameplayStat(0.0f);         // 기본 0%
-	CritDamageMultiplier = FGameplayStat(2.0f);          // 기본 200%
-	CooldownReduction = FGameplayStat(0.0f);   // 쿨감 0%
-	AreaSize = FGameplayStat(1.0f);            // 크기 1배
-	Duration = FGameplayStat(1.0f);            // 지속 1배
-	Speed = FGameplayStat(1.0f);     // 속도 1배
-	BonusAmount = FGameplayStat(0.0f);// 추가 투사체 0개
 }
 
 void UDECombatComponent::BeginPlay()
 {
 	Super::BeginPlay();
+    CachedStatComp = GetOwner()->FindComponentByClass<UDEStatComponent>();
+    CachedAccessoryComp = GetOwner()->FindComponentByClass<UDEAccessoryComponent>();
 }
 
 FCombatSnapshot UDECombatComponent::GetCombatSnapshot() const
 {
-	FCombatSnapshot Snapshot;
+    FCombatSnapshot Snapshot;
 
-	// 현재 계산된 최종 값들을 구조체에 담습니다.
-	Snapshot.FinalDamageMultiplier = DamageMultiplier.GetValue();
-	Snapshot.CritChance = CritChance.GetValue();
-	Snapshot.CritDamageMultiplier = CritDamageMultiplier.GetValue();
+    // 1. StatComponent가 없으면 깡통 리턴 (방어 코드)
+    if (!CachedStatComp)
+    {
+        return Snapshot;
+    }
 
-	// 쿨감은 보통 상한선(Cap)이 있습니다. (예: 최대 80%)
-	Snapshot.CooldownReduction = FMath::Min(CooldownReduction.GetValue(), 0.8f);
+    // 2. StatComponent에서 기본 스탯 읽어오기 (패시브, 아이템 적용됨)
+    Snapshot.FinalDamageMultiplier = CachedStatComp->DamageMultiplier.GetValue();
+    Snapshot.CritChance = CachedStatComp->CritChance.GetValue();
+    Snapshot.CritDamageMultiplier = CachedStatComp->CritDamageMultiplier.GetValue();
+    Snapshot.CooldownReduction = CachedStatComp->CooldownReduction.GetValue();
+    Snapshot.EffectSizeMultiplier = CachedStatComp->AreaSize.GetValue();
+    Snapshot.DurationMultiplier = CachedStatComp->Duration.GetValue();
+    Snapshot.ProjectileSpeedMultiplier = CachedStatComp->ProjectileSpeed.GetValue();
+    Snapshot.BonusAmount = FMath::FloorToInt(CachedStatComp->BonusAmount.GetValue());
 
-	Snapshot.EffectSizeMultiplier = AreaSize.GetValue();
-	Snapshot.DurationMultiplier = Duration.GetValue();
-	Snapshot.ProjectileSpeedMultiplier = Speed.GetValue();
+    // 피흡이나 넉백 같은 것도 StatComponent에 있다면 여기서 가져옴
+    // Snapshot.LifeStealChance = CachedStatComp->LifeStealChance.GetValue(); 
 
-	// 투사체 개수는 소수점 버림 (2.5개 -> 2개)
-	Snapshot.BonusAmount = FMath::FloorToInt(BonusAmount.GetValue());
+    // 3. AccessoryComponent에서 '조건부 스택' 합산하기 (예: 처치 시 공격력 증가)
+    if (CachedAccessoryComp)
+    {
+        // 스택형 데미지 증가 (StackDamagePercent)
+        float StackBonus = CachedAccessoryComp->GetTotalStackValue(EEffectType::StackDamagePercent);
+        Snapshot.FinalDamageMultiplier += StackBonus;
+    }
 
-	return Snapshot;
+    return Snapshot;
 }
 
 void UDECombatComponent::HandleDamageDealt(const FDEDamageResult& Result, const FCombatSnapshot& Snapshot)
 {
-    UE_LOG(LogTemp, Error, TEXT("Try Handle Damage Dealt"));
+    //UE_LOG(LogTemp, Error, TEXT("Try Handle Damage Dealt"));
     // 1. 유효성 체크
     // 데미지가 0이거나, 때린 대상이 없으면 처리 안 함
     if (Result.FinalDamage <= 0.0f || !Result.Victim)
     {
         return;
     }
-    UE_LOG(LogTemp, Error, TEXT("HDD Dmg, Victim Passed"));
+    //UE_LOG(LogTemp, Error, TEXT("HDD Dmg, Victim Passed"));
     // 2. 주인님(Character) 확인
     // 컴포넌트의 주인은 캐릭터여야 힐을 주든 말든 함
     ADECharacterBase* OwnerCharacter = Cast<ADECharacterBase>(GetOwner());
@@ -64,7 +72,7 @@ void UDECombatComponent::HandleDamageDealt(const FDEDamageResult& Result, const 
     {
         return;
     }
-    UE_LOG(LogTemp, Error, TEXT("HDD Owner Passed"));
+   // UE_LOG(LogTemp, Error, TEXT("HDD Owner Passed"));
     // ====================================================
     // [로직 1] 타격 시 발동 효과 (On Hit)
     // ====================================================

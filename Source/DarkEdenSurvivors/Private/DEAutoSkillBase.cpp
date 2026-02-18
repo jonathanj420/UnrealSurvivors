@@ -11,7 +11,7 @@ void UDEAutoSkillBase::Activate()
 
 	FDESkillContext Context;
 	BuildContext(Context);
-
+    UE_LOG(LogTemp, Warning, TEXT("[Skill] %s : Executed"), *Context.ActiveSkill->GetName());
 	for (UDESkillBehavior* Behavior : Behaviors)
 	{
 		if (Behavior) Behavior->Execute(Context);

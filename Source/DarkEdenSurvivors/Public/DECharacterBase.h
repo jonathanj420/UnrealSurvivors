@@ -13,6 +13,8 @@ class UDECombatComponent;
 class UDEStatComponent;
 class UDEHealthComponent;
 class UDEProgressionComponent;
+class UDEAccessoryComponent;
+class UDELevelUpManagerComponent;
 
 UCLASS()
 class DARKEDENSURVIVORS_API ADECharacterBase : public ACharacter
@@ -49,6 +51,10 @@ protected:
 	UDECombatComponent* CombatComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UDEProgressionComponent* ProgressionComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UDEAccessoryComponent* AccessoryComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UDELevelUpManagerComponent* LevelUpManagerComponent;
 
 	//***CAMERA***
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
@@ -180,6 +186,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Components")
 	UDEProgressionComponent* GetProgressionComponent() const { return ProgressionComponent; }
+
+	UFUNCTION(BlueprintCallable, Category = "Components")
+	UDELevelUpManagerComponent* GetLevelUpManagerComponent() const { return LevelUpManagerComponent; }
 
 
 public:

@@ -171,7 +171,7 @@ float ADEMonsterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 
 void ADEMonsterBase::ApplyKnockback(const FVector& Direction, float Strength)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Knockback : %f Applied"), Strength);
+	//UE_LOG(LogTemp, Warning, TEXT("Knockback : %f Applied"), Strength);
 	FVector Dir = Direction;
 	Dir.Z = 0.0f;
 	Dir = Dir.GetSafeNormal();
@@ -318,7 +318,7 @@ void ADEMonsterBase::ResetMonster(const FDEMonsterData* Data)
 }
 void ADEMonsterBase::ResetForPool()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Reset For Pool"));
+	//UE_LOG(LogTemp, Warning, TEXT("Reset For Pool"));
 
 	// Stat 초기화
 	//if (HealthComponent) HealthComponent->ResetHealth(true);

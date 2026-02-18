@@ -6,7 +6,7 @@
 #include "DEGameHUDWidget.h"
 #include "DELevelUpWidget.h"
 #include "DECharacterBase.h"
-#include "DESkillManagerComponent.h"
+#include "DELevelUpManagerComponent.h"
 #include "DESkillInventoryWidget.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -26,7 +26,7 @@ ADEPlayerController::ADEPlayerController()
     //    SkillInventoryWidgetClass = UI_SkillInventoryWidget_C.Class;
 
     //}
-    static ConstructorHelpers::FClassFinder<UDELevelUpWidget> UI_LevelUpWidget_C(TEXT("/Game/DarkEden/UI/UI_SelectSkill.UI_SelectSkill_C"));
+    static ConstructorHelpers::FClassFinder<UDELevelUpWidget> UI_LevelUpWidget_C(TEXT("/Game/DarkEden/UI/WBP_LevelUpWidget.WBP_LevelUpWidget_C"));
     if (UI_LevelUpWidget_C.Succeeded())
     {
         LevelUpWidgetClass = UI_LevelUpWidget_C.Class;
@@ -124,15 +124,15 @@ void ADEPlayerController::ShowLevelUpUI()
     if (!MyPawn) return;
     UE_LOG(LogTemp, Warning, TEXT("GetPawn Passed"));
     ADECharacterBase* MyChar = Cast<ADECharacterBase>(MyPawn);
-    UDESkillManagerComponent* SkillManager = MyChar->GetSkillManagerComponent();
-    if (!MyChar || !SkillManager) return;
+    UDELevelUpManagerComponent* LevelUpManager = MyChar->GetLevelUpManagerComponent();
+    if (!MyChar || !LevelUpManager) return;
     UE_LOG(LogTemp, Warning, TEXT("MyChar, SkillManager Passed"));
-    if (!LevelUpWidgetClass || !SkillManager) return;
+    if (!LevelUpWidgetClass || !LevelUpManager) return;
     UE_LOG(LogTemp, Warning, TEXT("WidgetClass Passed"));
     UDELevelUpWidget* Widget = CreateWidget<UDELevelUpWidget>(this, LevelUpWidgetClass);
     if (!Widget) return;
     UE_LOG(LogTemp, Warning, TEXT("Created Widget"));
-    Widget->InitWidget(SkillManager);
+    Widget->InitWidget(LevelUpManager);
     Widget->AddToViewport();
 
     SetPause(true);

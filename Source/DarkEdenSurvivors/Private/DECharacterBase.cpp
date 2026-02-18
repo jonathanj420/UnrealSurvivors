@@ -11,8 +11,11 @@
 #include "DEHealthComponent.h"
 #include "DEInventoryComponent.h"
 #include "DEProgressionComponent.h"
+#include "DEAccessoryComponent.h"
+#include "DELevelUpManagerComponent.h"
 #include "DEGameInstance.h"
 #include "DEDamageTypes.h"
+
 
 // Sets default values
 ADECharacterBase::ADECharacterBase()
@@ -34,7 +37,9 @@ ADECharacterBase::ADECharacterBase()
 
     Inventory = CreateDefaultSubobject<UDEInventoryComponent>(TEXT("Inventory"));
 
+    AccessoryComponent = CreateDefaultSubobject<UDEAccessoryComponent>(TEXT("AccessoryComponent"));
 
+    LevelUpManagerComponent= CreateDefaultSubobject<UDELevelUpManagerComponent>(TEXT("LevelUpManagerComponent"));
 
     SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));
     SpringArm->SetupAttachment(GetRootComponent());
@@ -100,7 +105,7 @@ void ADECharacterBase::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    if (GEngine)
+  /*  if (GEngine)
     {
         GEngine->AddOnScreenDebugMessage(
             -1,
@@ -111,7 +116,7 @@ void ADECharacterBase::Tick(float DeltaTime)
 
         );
 
-    }
+    }*/
     if (bMoveCamera)
     {
         SpringArm->TargetArmLength = FMath::FInterpTo(SpringArm->TargetArmLength, ArmLengthTo, DeltaTime, ArmLengthSpeed);

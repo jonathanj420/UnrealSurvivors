@@ -37,7 +37,7 @@ void UDESkillManagerComponent::ApplyCharacterDamageMultiplier(float Multiplier)
 // Called every frame
 void UDESkillManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-    DeltaCheck += DeltaTime;
+    //DeltaCheck += DeltaTime;
     Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
     if (bAutoSkillPaused)
@@ -63,34 +63,10 @@ void UDESkillManagerComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 
             // 쿨타임 갱신
             Active.CurrentCooldown = Active.RowData->Cooldown;
-            DeltaCheck = 0.0f;
+            //DeltaCheck = 0.0f;
         }
     }
-    //DeltaCheck += DeltaTime;
-   //Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-   //if (bAutoSkillPaused)
-   //    return;
-   //for (auto& Pair : ActiveSkills)
-   //{
-   //    FActiveSkill& Active = Pair.Value;
 
-   //    if (Active.CurrentCooldown > 0.f)
-   //    {
-   //        Active.CurrentCooldown -= DeltaTime;
-   //        continue;
-   //    }
-
-   //    if (Active.SkillObject && Active.RowData)
-   //    {
-   //        //UE_LOG(LogTemp, Warning, TEXT("%f seconds from last shot"), DeltaCheck);
-   //        Active.SkillObject->ActivateSkill(Active.RowData);
-   //        //UE_LOG(LogTemp, Warning, TEXT("%s : %d by Manager"), *Active.RowData->SkillName,Active.RowData->Level);
-   //        Active.CurrentCooldown = Active.RowData->Cooldown; // 기본 쿨타임
-   //        DeltaCheck = 0.0f;
-   //    }
-   //}
-
-   //////
 
 }
 
@@ -162,9 +138,10 @@ void UDESkillManagerComponent::InitSkills()
 
     for (auto& RowName : RowNames)
     {
-        FDESkillData* Row = SkillDataTable->FindRow<FDESkillData>(RowName, Context);
-        UE_LOG(LogTemp, Warning, TEXT("Row %s_%d Found"), *Row->SkillName,Row->Level);
+        FDESkillData* Row = SkillDataTable->FindRow<FDESkillData>(RowName, Context); \
         if (!Row) continue;
+        UE_LOG(LogTemp, Warning, TEXT("Row %s_%d Found"), *Row->SkillName, Row->Level);
+
 
         int32 SkillID = Row->SkillID;   // RowName 사용 안 하는 방식
         int32 Level = Row->Level;
@@ -180,69 +157,6 @@ void UDESkillManagerComponent::InitSkills()
 
 void UDESkillManagerComponent::LevelUpSkill(int32 SkillID)
 {
-    //if (!SkillRowMap.Contains(SkillID))
-    //{
-    //    UE_LOG(LogTemp, Error, TEXT("[Skill] LevelUpSkill: SkillRowMap missing SkillID %d"), SkillID);
-    //    return;
-    //}
-
-    //const FDESkillRow& RowInfo = SkillRowMap[SkillID];
-
-    //// 2) InitializedSkills 안에 이 SkillID가 있는지 확인
-    //if (!InitializedSkills.Contains(SkillID))
-    //{
-    //    UE_LOG(LogTemp, Error, TEXT("[Skill] LevelUpSkill: InitializedSkills missing SkillID %d"), SkillID);
-    //    return;
-    //}
-
-    //// 3) 현재 레벨 가져오기
-    //int32 CurrentLevel = SkillLevels.Contains(SkillID) ? SkillLevels[SkillID] : 0;
-    //int32 NewLevel = CurrentLevel + 1;
-
-    //// 4) 다음 레벨 데이터가 존재하는지 확인
-    //if (!InitializedSkills[SkillID].Contains(NewLevel))
-    //{
-    //    UE_LOG(LogTemp, Warning, TEXT("[Skill] NO MORE LEVEL → Skill %d L%d"), SkillID, CurrentLevel);
-    //    return;
-    //}
-
-    //// 5) 새로운 레벨 데이터 가져오기
-    //const FDESkillData& NewData = InitializedSkills[SkillID][NewLevel];
-
-    //// 6) 신규 스킬이면 ActiveSkills 생성
-    //if (!ActiveSkills.Contains(SkillID))
-    //{
-    //    FActiveSkill NewSkill;
-    //    NewSkill.SkillID = SkillID;
-    //    NewSkill.RowData = &InitializedSkills[SkillID][NewLevel];
-    //    NewSkill.CurrentCooldown = 0.f;
-
-    //    // 스킬 오브젝트 생성
-    //    if (RowInfo.SkillClass)
-    //    {
-    //        NewSkill.SkillObject = NewObject<UDEAutoSkillBase>(this, RowInfo.SkillClass);
-    //        NewSkill.SkillObject->SetOwner(GetOwner());
-    //    }
-    //    else
-    //    {
-    //        UE_LOG(LogTemp, Error, TEXT("[Skill] SkillRowMap has NO SkillClass for ID %d"), SkillID);
-    //    }
-
-    //    ActiveSkills.Add(SkillID, NewSkill);
-    //    SkillLevels.Add(SkillID, 1);
-
-    //    UE_LOG(LogTemp, Warning, TEXT("[Skill] NEW SKILL ACQUIRED: %d → Lv1"), SkillID);
-    //    return;
-    //}
-
-    //// 7) 기존 스킬이면 → 레벨업
-    //FActiveSkill& Active = ActiveSkills[SkillID];
-    //Active.RowData = &InitializedSkills[SkillID][NewLevel];
-
-
-    //SkillLevels[SkillID] = NewLevel;
-
-    //UE_LOG(LogTemp, Warning, TEXT("[Skill] LEVEL UP → %d → Lv%d"), SkillID, NewLevel);
 
     // 1. 데이터 테이블 유효성 검사 (기존 유지)
     UDEInventoryComponent* Inventory =
@@ -385,6 +299,34 @@ TArray<int32> UDESkillManagerComponent::GetUpgradeableSkills() const
     }
 
     return Result;
+}
+
+const FDESkillRow* UDESkillManagerComponent::GetRandomSkillRow()
+{
+    // 1. 아직 최대 레벨이 아닌 스킬 후보 수집
+    TArray<int32> Candidates;
+
+    for (auto& Pair : InitializedSkills)
+    {
+        int32 SkillID = Pair.Key;
+        int32 CurrentLevel = GetSkillLevel(SkillID);
+        int32 NextLevel = CurrentLevel + 1;
+
+        if (HasSkillData(SkillID, NextLevel))
+        {
+            Candidates.Add(SkillID);
+        }
+    }
+
+    if (Candidates.Num() == 0)
+        return nullptr;
+
+    // 2. 랜덤 선택
+    int32 Index = FMath::RandRange(0, Candidates.Num() - 1);
+    int32 SelectedSkillID = Candidates[Index];
+
+    // 3. 정체(Row) 반환
+    return GetSkillRow(SelectedSkillID);
 }
 
 FDESkillRow* UDESkillManagerComponent::GetSkillRow(int32 SkillID)

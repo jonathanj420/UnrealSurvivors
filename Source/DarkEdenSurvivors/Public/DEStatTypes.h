@@ -52,6 +52,27 @@ enum class EDEStatType : uint8
     Max             UMETA(Hidden)
 };
 
+USTRUCT(BlueprintType)
+struct FDEStatModifier
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere)
+    EDEStatType StatType;
+
+    UPROPERTY(EditAnywhere)
+    float Additive = 0.f;
+
+    UPROPERTY(EditAnywhere)
+    float Multiplier = 1.f;
+
+
+    FDEStatModifier() {}
+    FDEStatModifier(EDEStatType InType, float InAdd, float InMult)
+        : StatType(InType), Additive(InAdd), Multiplier(InMult) {
+    }
+};
+
 /**
  * 
  */
@@ -72,6 +93,18 @@ public:
 
 	FGameplayStat() : BaseValue(0.f), Additive(0.f), Multiplier(1.f) {}
 	FGameplayStat(float InBase) : BaseValue(InBase), Additive(0.f), Multiplier(1.f) {}
+
+    void ApplyModifier(const FDEStatModifier& Mod)
+    {
+        Additive += Mod.Additive;
+        Multiplier *= Mod.Multiplier;
+    }
+
+    void RemoveModifier(const FDEStatModifier& Mod)
+    {
+        Additive -= Mod.Additive;
+        Multiplier /= Mod.Multiplier;
+    }
 
 	float GetValue() const
 	{

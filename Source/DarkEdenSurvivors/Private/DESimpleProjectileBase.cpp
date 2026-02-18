@@ -253,12 +253,12 @@ void ADESimpleProjectileBase::OnOverlap(UPrimitiveComponent* OverlappedComp, AAc
 	Req.Instigator = GetInstigator();
 	Req.DamageCauser = this;
 	Req.Victim = OtherActor; // 맞은 놈을 넣어줍니다.
-	Req.BaseDamage = this->Damage;
-	Req.CritChance = this->Snapshot.CritChance; // 멤버 변수로 들고 있는 Snapshot 활용
-	Req.CritDamageMultiplier = this->Snapshot.CritDamageMultiplier;
+	Req.BaseDamage = Damage;
+	Req.CritChance = CritChance; // 멤버 변수로 들고 있는 Snapshot 활용
+	Req.CritDamageMultiplier = CritDamageMultiplier;
 
 	// 라이브러리에 던지기 (피흡, 넉백, 킬 처리가 한 방에 끝남)
-	UE_LOG(LogTemp, Log, TEXT("Try DEGameplayLibrary"));
+	//UE_LOG(LogTemp, Log, TEXT("Try DEGameplayLibrary"));
 	FDEDamageResult Res = UDEGameplayLibrary::ApplyCombatDamage(Req, this->Snapshot, KBDir, this->KnockbackForce);
 
 	// 3. [관통 로직만 투사체 본연의 업무로 남김]

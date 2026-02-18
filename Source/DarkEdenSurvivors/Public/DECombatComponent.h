@@ -8,6 +8,9 @@
 #include "DEDamageTypes.h"
 #include "DECombatComponent.generated.h"
 
+class UDEStatComponent;
+class UDEAccessoryComponent;
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DARKEDENSURVIVORS_API UDECombatComponent : public UActorComponent
@@ -23,43 +26,6 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	// =========================================================
-	// [1] 전투 스탯 (플레이어의 능력치)
-	// =========================================================
-
-	// 공격력 (퍼센트 증가용. 깡공은 SkillData에 있음)
-	// 예: Base=1.0, Item=+0.5 -> 1.5배 데미지
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat Stats")
-	FGameplayStat DamageMultiplier;
-
-	// 치명타 확률 (0.0 ~ 1.0)
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat Stats")
-	FGameplayStat CritChance;
-
-	// 치명타 피해 배율 (기본 1.5 = 150%)
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat Stats")
-	FGameplayStat CritDamageMultiplier;
-
-	// 쿨타임 감소 (최대 0.8 등으로 제한 필요)
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat Stats")
-	FGameplayStat CooldownReduction;
-
-	// 범위 크기 (Area)
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat Stats")
-	FGameplayStat AreaSize;
-
-	// 지속 시간 (Duration)
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat Stats")
-	FGameplayStat Duration;
-
-	// 투사체 속도 (Speed)
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat Stats")
-	FGameplayStat Speed;
-
-	// 추가 투사체 개수 (Amount) - 이건 보통 정수지만 계산을 위해 float로 관리 후 내림
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat Stats")
-	FGameplayStat BonusAmount;
-
 
 	// =========================================================
 	// [2] 핵심 기능 (API)
@@ -91,4 +57,10 @@ protected:
 	// 처치 시 효과 처리 (킬 카운트, 쿨감, 폭발 등)
 	void ProcessOnKillEffect(AActor* Victim);
 
+	// 컴포넌트 캐싱 (매번 FindComponent 안 하려고)
+	UPROPERTY()
+	UDEStatComponent* CachedStatComp;
+
+	UPROPERTY()
+	UDEAccessoryComponent* CachedAccessoryComp;
 };

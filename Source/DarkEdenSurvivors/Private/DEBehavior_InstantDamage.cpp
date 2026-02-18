@@ -6,6 +6,7 @@
 #include "DEHealthComponent.h"
 #include "DEDamageTypes.h"
 #include "DEAutoSkillBase.h"
+#include "DEGameplayLibrary.h"
 #include "Kismet/GameplayStatics.h"
 
 void UDEBehavior_InstantDamage::Execute(FDESkillContext& Context)
@@ -30,26 +31,15 @@ void UDEBehavior_InstantDamage::Execute(FDESkillContext& Context)
             Req.Instigator = Context.Instigator;        // 시전한 사람
             Req.DamageCauser = Context.Instigator;      // 스킬 주인 (혹은 투사체)
             Req.SourceObject = Context.ActiveSkill;     // skill itself
-
+            Req.Victim = Target;
             // Context에 있는 정보 활용 (스킬마다 크확/크뎀이 다를 수 있음)
             Req.BaseDamage = FinalDamage;
             Req.CritChance = Context.CritChance;             // 스킬 컨텍스트에 크리티컬 확률이 있다고 가정
             Req.CritDamageMultiplier = Context.CritDamageMultiplier; // 스킬 컨텍스트에 크리티컬 배율이 있다고 가정
 
-            // 5. 처리 요청 및 결과 수신
-            FDEDamageResult Res = TargetHealth->ProcessDamage(Req);
-
-            // 6. 결과에 따른 피드백 (선택 사항)
-            if (Res.FinalDamage > 0.0f)
-            {
-                // 예: 타격 성공 이펙트 재생?
-                // 예: 흡혈 스킬이라면 Context.Instigator에게 힐?
-            }
-
-            if (Res.bIsDead)
-            {
-                // 예: 킬 카운트 증가?
-            }
+            // 라이브러리에 던지기 (피흡, 넉백, 킬 처리가 한 방에 끝남)
+            //UE_LOG(LogTemp, Log, TEXT("Try DEGameplayLibrary"));
+            FDEDamageResult Res = UDEGameplayLibrary::ApplyCombatDamage(Req, Context.FinalSnapshot, FVector::ZeroVector, 0.0f);
         }
         else
         {
@@ -59,23 +49,23 @@ void UDEBehavior_InstantDamage::Execute(FDESkillContext& Context)
         }
     }
 
-	//// Context에서 기본 데미지 가져오기
-	//float BaseDamage = Context.Damage;
-	//float FinalDamage = BaseDamage * DamageMultiplier;
+    //// Context에서 기본 데미지 가져오기
+    //float BaseDamage = Context.Damage;
+    //float FinalDamage = BaseDamage * DamageMultiplier;
 
-	//// 타겟 목록 순회하며 데미지
-	//for (AActor* Target : Context.Targets)
-	//{
-	//	if (Target && !Target->IsPendingKillPending())
-	//	{
-	//		UGameplayStatics::ApplyDamage(
-	//			Target,
-	//			FinalDamage,
-	//			Context.Instigator->GetInstigatorController(),
-	//			Context.Instigator,
-	//			UDamageType::StaticClass()
-	//		);
-	//	}
-	//}
+    //// 타겟 목록 순회하며 데미지
+    //for (AActor* Target : Context.Targets)
+    //{
+    //	if (Target && !Target->IsPendingKillPending())
+    //	{
+    //		UGameplayStatics::ApplyDamage(
+    //			Target,
+    //			FinalDamage,
+    //			Context.Instigator->GetInstigatorController(),
+    //			Context.Instigator,
+    //			UDamageType::StaticClass()
+    //		);
+    //	}
+    //}
 
 }

@@ -18,70 +18,105 @@ class DARKEDENSURVIVORS_API UDEStatComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
-	// Sets default values for this component's properties
+public:
 	UDEStatComponent();
 
 protected:
-	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-
-	// NEw
 public:
 	// =========================================================
-	// [1] Physical Stats (신체 능력)
+	// [1] Combat Stats (전투 능력 - CombatComponent에서 이사옴)
 	// =========================================================
 
-	// 이동 속도 (기본값 600)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Combat")
+	FGameplayStat DamageMultiplier; // 공격력 %
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Combat")
+	FGameplayStat CritChance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Combat")
+	FGameplayStat CritDamageMultiplier;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Combat")
+	FGameplayStat CooldownReduction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Combat")
+	FGameplayStat AreaSize;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Combat")
+	FGameplayStat Duration;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Combat")
+	FGameplayStat ProjectileSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Combat")
+	FGameplayStat BonusAmount; // BonusAmount
+
+	// =========================================================
+	// [2] Physical Stats (신체 능력)
+	// =========================================================
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Physical")
 	FGameplayStat MoveSpeed;
 
-	// 자석 범위 (아이템 획득 반경)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Physical")
 	FGameplayStat MagnetRange;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Physical")
+	FGameplayStat MaxHP; // 체력통 크기
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Physical")
+	FGameplayStat Regeneration; // 초당 회복량
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Physical")
+	FGameplayStat Armor; // 방어력
+
 	// =========================================================
-	// [2] Utility Stats (유틸리티/파밍)
+	// [3] Utility Stats (유틸리티/파밍)
 	// =========================================================
 
-	// 행운 (Luck): 치명타 확률 보정, 좋은 아이템 드랍 확률 등
-	// 기본 1.0 (100%)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Utility")
 	FGameplayStat Luck;
 
-	// 탐욕 (Greed): 골드 획득량 배율
-	// 기본 1.0 (100%)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Utility")
 	FGameplayStat Greed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Utility")
 	FGameplayStat Growth;
 
-	// 저주 (Curse): 적의 강력함, 스폰량 증가 (리스크 앤 리턴)
-	// 기본 1.0 (100%) -> 높을수록 어려워짐
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Utility")
 	FGameplayStat Curse;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Utility")
+	FGameplayStat Revival; // 부활 횟수
+
 	// =========================================================
-	// [3] Functions (기능)
+	// [4] Core API (핵심 기능)
 	// =========================================================
 
-	// 스탯이 변경되었을 때 호출하여 실제 게임에 적용 (아이템 획득 시 호출)
+	// 통합 수정자 적용 함수 (어떤 스탯이든 다 받음)
 	UFUNCTION(BlueprintCallable, Category = "Stats")
-	void UpdateMovementSpeed();
+	void ApplyModifier(const FDEStatModifier& Mod);
 
-	UFUNCTION(BlueprintCallable, Category = "Stats")
-	void UpdateMagnetRange();
-
-	// 풀링(Pooling)을 위한 초기화
+	// 풀링 초기화
 	void ResetStats();
 
-	// Getters (값만 필요할 때)
+	// 사이드 이펙트 처리 (이속 변경 등)
+	void RefreshDerivedStats(EDEStatType StatType);
+
+public:
+	// 이벤트
+	FOnSpeedChanged OnSpeedChanged;
+	FOnMagnetChanged OnMagnetChanged;
+
+private:
+	// ★ 핵심: Enum과 변수 주소를 연결하는 맵 (Switch문 제거용)
+	TMap<EDEStatType, FGameplayStat*> StatRegistry;
+
+public:
 	float GetMoveSpeed() const { return MoveSpeed.GetValue(); }
 	float GetMagnetRange() const { return MagnetRange.GetValue(); }
 	float GetLuck() const { return Luck.GetValue(); }
@@ -89,9 +124,4 @@ public:
 	float GetCurse() const { return Curse.GetValue(); }
 	float GetGrowth() const { return Growth.GetValue(); }
 
-public:
-	// 변경 알림 이벤트
-	FOnSpeedChanged OnSpeedChanged;
-	FOnMagnetChanged OnMagnetChanged;
-		
 };
