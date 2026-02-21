@@ -130,6 +130,7 @@ public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 	void Heal(float Amount);
 	void AddExp(float v);
+	void SetMaxHP(float NewMaxHP);
 public:
 	// 캐릭터가 기본적으로 가지고 태어나는 스킬 ID
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill")
@@ -197,6 +198,13 @@ public:
 
 public:
 	void MyDebugCheat();
+	void MyAnotherDebugCheat();
 	UFUNCTION(Exec)
 	void ForceLevelUp();
+
+	public:
+		// ★ 디버그용 악세서리 장착 슬롯
+		UPROPERTY(EditAnywhere, Category = "Debug|Cheat")
+		class UDEAccessoryData* DebugAccessoryToEquip;
+
 };

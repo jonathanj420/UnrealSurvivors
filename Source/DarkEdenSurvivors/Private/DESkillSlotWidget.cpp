@@ -11,10 +11,6 @@ void UDESkillSlotWidget::SetSkill(const FText& InSkillName, int32 InSkillLevel, 
     // --------------------
     // 텍스트 위젯 설정
     // --------------------
-    if (SkillNameText)
-    {
-        //SkillNameText->SetText(InSkillName);
-    }
 
     if (SkillLevelText)
     {

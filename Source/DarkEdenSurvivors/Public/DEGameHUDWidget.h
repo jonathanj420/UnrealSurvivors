@@ -42,5 +42,7 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	class UDESkillInventoryWidget* WBP_SkillInventoryWidget;
+	UPROPERTY(meta = (BindWidget))
+	class UDEAccInventoryWidget* WBP_AccInventoryWidget;
 
 };

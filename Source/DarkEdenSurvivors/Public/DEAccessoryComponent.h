@@ -9,6 +9,9 @@
 #include "DEAccessoryComponent.generated.h"
 
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnAccUpdated, const class UDEAccessoryData* /*AccessoryData*/);
+
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DARKEDENSURVIVORS_API UDEAccessoryComponent : public UActorComponent
 {
@@ -73,5 +76,9 @@ private:
 	// [상태] 스택형 효과의 현재 누적 값 합계 (Key: EffectType)
 	TMap<EEffectType, float> CurrentStackValues;
 
-		
+public:
+	// UI에서 장착 목록을 그릴 수 있도록 배열 반환 (읽기 전용)
+	const TArray<const UDEAccessoryData*>& GetEquippedAccessories() const { return EquippedAccessories; }
+
+	FOnAccUpdated OnAccUpdated;
 };

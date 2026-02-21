@@ -15,7 +15,7 @@
 #include "DELevelUpManagerComponent.h"
 #include "DEGameInstance.h"
 #include "DEDamageTypes.h"
-
+#include "DEAccessoryData.h"
 
 // Sets default values
 ADECharacterBase::ADECharacterBase()
@@ -63,6 +63,13 @@ ADECharacterBase::ADECharacterBase()
     BloodDrainGaugeMax=10.0f;
     BloodDrainGainPerKill=5.0f;
 
+    static ConstructorHelpers::FObjectFinder<UDEAccessoryData> AccessoryAsset(TEXT("/Game/DarkEden/Data/Accessories/DEAccessory_Daeg.DEAccessory_Daeg"));
+    // 에셋을 성공적으로 찾았다면?
+    if (AccessoryAsset.Succeeded())
+    {
+        // 변수에 쏙 넣어줍니다.
+        DebugAccessoryToEquip = AccessoryAsset.Object;
+    }
 
 }
 
@@ -78,6 +85,8 @@ void ADECharacterBase::BeginPlay()
 
     if (StatComponent)
     {
+        StatComponent->InitAsPlayer(this);
+
         //StatComponent->OnLevelUp.AddDynamic(this, &ADECharacterBase::OnCharacterLevelUp);
         //StatComponent->OnLevelUp.AddUObject(this, &ADECharacterBase::OnCharacterLevelUp);
     }
@@ -171,6 +180,7 @@ void ADECharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
     PlayerInputComponent->BindAction("BloodDrain", IE_Pressed, this, &ADECharacterBase::BloodDrain);
     PlayerInputComponent->BindAction("ActiveSkill", IE_Pressed, this, &ADECharacterBase::OnActiveSkillInput);
     PlayerInputComponent->BindAction("DebugCheat", IE_Pressed, this, &ADECharacterBase::MyDebugCheat);
+    PlayerInputComponent->BindAction("AnotherDebugCheat", IE_Pressed, this, &ADECharacterBase::MyAnotherDebugCheat);
 
 
 }
@@ -469,6 +479,12 @@ void ADECharacterBase::AddExp(float v)
 
 }
 
+void ADECharacterBase::SetMaxHP(float NewMaxHP)
+{
+    HealthComponent->SetMaxHP(NewMaxHP, false);
+
+}
+
 void ADECharacterBase::OnCharacterLevelUp(int32 NewLevel)
 {
 
@@ -522,10 +538,71 @@ void ADECharacterBase::MyDebugCheat()
         GI->AddGold(1000);
         GI->SaveGame();
     }
+    if (StatComponent)
+    {
+        // 1. 수정자(Modifier) 만들기: 데미지(Damage), 깡수치(+2), 배율(변화없음 1.0)
+        FDEStatModifier DamageCheatMod(EDEStatType::Damage, 0.5f, 0.0f);
+
+        // 2. 스탯 컴포넌트에 던져주기
+        StatComponent->ApplyModifier(DamageCheatMod);
+
+
+        FDEStatModifier MaxHPCheatMode(EDEStatType::MaxHP, 50.0f, 0.0f);
+        StatComponent->ApplyModifier(MaxHPCheatMode);
+
+
+        // (선택) 치트 적용 확인용 로그
+        if (GEngine)
+        {
+            // 현재 적용된 데미지 값을 가져와서 화면에 출력
+            float CurrentDamage = StatComponent->DamageMultiplier.GetValue();
+            FString Msg = FString::Printf(TEXT("Damage Cheat! Current Damage: %f"), CurrentDamage);
+            GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, Msg);
+        }
+    }
     if (GEngine)
     {
         GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("Cheat Activated"));
     }
+}
+
+void ADECharacterBase::MyAnotherDebugCheat()
+{
+    if (AccessoryComponent && DebugAccessoryToEquip)
+    {
+        // 인벤토리에 강제로 꽂아버리기!
+        AccessoryComponent->AddAccessory(DebugAccessoryToEquip);
+
+        if (GEngine)
+        {
+            FString Msg = FString::Printf(TEXT("Forced Acc: %s"), *DebugAccessoryToEquip->Name.ToString());
+            GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, Msg);
+        }
+
+        // (선택) UI 갱신 함수가 캐릭터 쪽에 연결되어 있다면 여기서 한 번 불러주면 좋습니다.
+        // UpdateAccessoryUI(); 
+    }
+
+    //if (StatComponent)
+    //{
+    //    // 1. 수정자(Modifier) 만들기: 데미지(Damage), 깡수치(+2), 배율(변화없음 1.0)
+    //    FDEStatModifier DamageCheatMod(EDEStatType::Damage, 0.0f, 1.0f);
+
+    //    // 2. 스탯 컴포넌트에 던져주기
+    //    StatComponent->ApplyModifier(DamageCheatMod);
+
+    //    FDEStatModifier MaxHPCheatMode(EDEStatType::MaxHP, 0.0f, 1.0f);
+    //    StatComponent->ApplyModifier(MaxHPCheatMode);
+
+    //    // (선택) 치트 적용 확인용 로그
+    //    if (GEngine)
+    //    {
+    //        // 현재 적용된 데미지 값을 가져와서 화면에 출력
+    //        float CurrentDamage = StatComponent->DamageMultiplier.GetValue();
+    //        FString Msg = FString::Printf(TEXT("Damage Cheat! Current Damage: %f"), CurrentDamage);
+    //        GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, Msg);
+    //    }
+    //}
 }
 
 void ADECharacterBase::ForceLevelUp()

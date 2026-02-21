@@ -5,6 +5,7 @@
 #include "GameFramework/Actor.h"
 #include "Engine/Engine.h"
 #include "Components/SphereComponent.h"
+#include "DECharacterBase.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -58,7 +59,6 @@ UDEStatComponent::UDEStatComponent()
 void UDEStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
 	//  1. 레지스트리 등록 (Enum -> 변수 포인터 매핑)
 	// 이렇게 해두면 나중에 반복문이나 검색으로 바로 접근 가능!
 	StatRegistry.Add(EDEStatType::Damage, &DamageMultiplier);
@@ -116,9 +116,9 @@ void UDEStatComponent::RefreshDerivedStats(EDEStatType StatType)
 	switch (StatType)
 	{
 	case EDEStatType::MoveSpeed:
-		if (ACharacter* OwnerChar = Cast<ACharacter>(GetOwner()))
+		if (OwnedChar!=nullptr)
 		{
-			if (auto* MoveComp = OwnerChar->GetCharacterMovement())
+			if (auto* MoveComp = OwnedChar->GetCharacterMovement())
 			{
 				MoveComp->MaxWalkSpeed = MoveSpeed.GetValue();
 				OnSpeedChanged.Broadcast(MoveComp->MaxWalkSpeed);
@@ -130,8 +130,27 @@ void UDEStatComponent::RefreshDerivedStats(EDEStatType StatType)
 		OnMagnetChanged.Broadcast(MagnetRange.GetValue());
 		break;
 
-		// MaxHP 변경 시 현재 체력 비율 유지 로직 등은 HealthComponent와 연동 필요
+	case EDEStatType::MaxHP:
+		UE_LOG(LogTemp, Warning, TEXT("HP CHEATED"));
+		if (OwnedChar!=nullptr)
+		{
+			OwnedChar->SetMaxHP(MaxHP.GetValue());
+			UE_LOG(LogTemp, Warning, TEXT("HP CHEATED"));
+
+		}
+		break;
 	}
+
+		// MaxHP 변경 시 현재 체력 비율 유지 로직 등은 HealthComponent와 연동 필요
+
+}
+
+void UDEStatComponent::InitAsPlayer(ADECharacterBase* InPlayer)
+{
+	OwnedChar = InPlayer;
+	RefreshDerivedStats(EDEStatType::MoveSpeed); // 200 -> 600으로 덮어씌움!
+	RefreshDerivedStats(EDEStatType::MaxHP);     // 체력도 혹시 모르니 덮어씌움!
+	RefreshDerivedStats(EDEStatType::Magnet);    // 자석 범위 초기화
 }
 
 void UDEStatComponent::ResetStats()

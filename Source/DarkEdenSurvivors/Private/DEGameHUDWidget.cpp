@@ -8,6 +8,8 @@
 #include "DEHealthComponent.h"
 #include "DEProgressionComponent.h"
 #include "DESkillInventoryWidget.h"
+#include "DEAccInventoryWidget.h"
+
 
 void UDEGameHUDWidget::NativeConstruct()
 {
@@ -62,6 +64,11 @@ void UDEGameHUDWidget::BindCharacterStat(ADECharacterBase* Character)
         WBP_SkillInventoryWidget->InitializeSkillWidget(Character);
     }
 
+    if (WBP_AccInventoryWidget)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Try Acc Inv"));
+        WBP_AccInventoryWidget->InitializeAccessoryWidget(Character);
+    }
     UE_LOG(LogTemp, Warning, TEXT("Stat Bound successfully"));
 
 }

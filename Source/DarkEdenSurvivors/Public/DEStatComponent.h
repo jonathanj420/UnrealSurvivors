@@ -26,6 +26,9 @@ protected:
 
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	class ADECharacterBase* OwnedChar = nullptr;
+
+
 public:
 	// =========================================================
 	// [1] Combat Stats (전투 능력 - CombatComponent에서 이사옴)
@@ -115,6 +118,9 @@ public:
 private:
 	// ★ 핵심: Enum과 변수 주소를 연결하는 맵 (Switch문 제거용)
 	TMap<EDEStatType, FGameplayStat*> StatRegistry;
+
+public:
+	void InitAsPlayer(ADECharacterBase* InPlayer);
 
 public:
 	float GetMoveSpeed() const { return MoveSpeed.GetValue(); }

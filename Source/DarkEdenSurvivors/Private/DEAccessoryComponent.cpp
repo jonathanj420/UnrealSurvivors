@@ -31,6 +31,8 @@ void UDEAccessoryComponent::AddAccessory(const UDEAccessoryData* InData)
 
 	// 2. 동적 효과(OnKill 등) 캐싱
 	RebuildEffectCache();
+	OnAccUpdated.Broadcast(InData);
+	UE_LOG(LogTemp, Error, TEXT("Acc Added"));
 }
 
 void UDEAccessoryComponent::RemoveAccessory(const UDEAccessoryData* InData)
@@ -76,6 +78,7 @@ void UDEAccessoryComponent::ApplyStaticStats(const UDEAccessoryData* InData)
 		for (const FDEStatModifier& Mod : InData->StatModifiers)
 		{
 			StatComp->ApplyModifier(Mod);
+			UE_LOG(LogTemp, Error, TEXT("Acc Stat Added"));
 		}
 	}
 }

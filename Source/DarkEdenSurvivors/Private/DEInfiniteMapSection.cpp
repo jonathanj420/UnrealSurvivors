@@ -39,13 +39,13 @@ void ADEInfiniteMapSection::BeginPlay()
 		// 정사각형 타일이라고 가정하고 X축 길이를 기준으로 잡습니다.
 		MapSize = MeshExtent.X * 2.0f;
 
-		UE_LOG(LogTemp, Warning, TEXT("MapSection Initialized. Auto-Calculated MapSize: %f"), MapSize);
+		//UE_LOG(LogTemp, Warning, TEXT("MapSection Initialized. Auto-Calculated MapSize: %f"), MapSize);
 	}
 	else
 	{
 		// 혹시라도 메쉬 로드 실패 시 기본값 (안전장치)
 		MapSize = 2000.0f;
-		UE_LOG(LogTemp, Error, TEXT("MapSection Mesh Missing! Defaulting MapSize to 2000.0f"));
+		//UE_LOG(LogTemp, Error, TEXT("MapSection Mesh Missing! Defaulting MapSize to 2000.0f"));
 	}
 
 }

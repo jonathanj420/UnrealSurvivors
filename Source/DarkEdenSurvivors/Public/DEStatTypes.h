@@ -97,13 +97,13 @@ public:
     void ApplyModifier(const FDEStatModifier& Mod)
     {
         Additive += Mod.Additive;
-        Multiplier *= Mod.Multiplier;
+        Multiplier += Mod.Multiplier;
     }
 
     void RemoveModifier(const FDEStatModifier& Mod)
     {
         Additive -= Mod.Additive;
-        Multiplier /= Mod.Multiplier;
+        Multiplier -= Mod.Multiplier;
     }
 
 	float GetValue() const
@@ -128,13 +128,13 @@ struct FCombatSnapshot
 {
 	GENERATED_BODY()
 
-	float FinalDamageMultiplier; // 최종 데미지 배율 (플레이어 공격력 등)
-	float CritChance;            // 치명타 확률
-	float CritDamageMultiplier;  // 치명타 피해량
-	float CooldownReduction;     // 쿨타임 감소 (0.0 ~ 1.0)
-	float EffectSizeMultiplier;  // 범위 크기 배율
-	float DurationMultiplier;    // 지속 시간 배율
-	int32 BonusAmount;  // 추가 투사체 개수
-	float ProjectileSpeedMultiplier; // 투사체 속도 배율
+    float FinalDamageMultiplier = 1.0f; // 기본 배율은 1.0
+    float CritChance = 0.0f;            // 치명타 확률 기본 0
+    float CritDamageMultiplier = 2.0f;  // 치명타 피해량 기본 150%
+    float CooldownReduction = 0.0f;     // 쿨감 기본 0
+    float EffectSizeMultiplier = 1.0f;  // 범위 기본 100%
+    float DurationMultiplier = 1.0f;    // 지속시간 기본 100%
+    int32 BonusAmount = 0;              // 추가 투사체 기본 0개
+    float ProjectileSpeedMultiplier = 1.0f; // 속도 기본 100%
     float LifeStealChance = 0.0f;
 };
