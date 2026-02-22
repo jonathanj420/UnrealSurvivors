@@ -30,6 +30,7 @@ ADEPlayerController::ADEPlayerController()
     if (UI_LevelUpWidget_C.Succeeded())
     {
         LevelUpWidgetClass = UI_LevelUpWidget_C.Class;
+        UE_LOG(LogTemp, Warning, TEXT("Level Up Widget Succeeded"));
 
     }
 }

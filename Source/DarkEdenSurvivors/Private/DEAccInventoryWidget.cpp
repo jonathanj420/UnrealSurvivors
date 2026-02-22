@@ -36,19 +36,19 @@ void UDEAccInventoryWidget::Refresh()
     //if (!AccessoryComp || !AccSlotPanel || !AccSlotWidgetClass) return;
     if (!AccessoryComp)
     {
-        UE_LOG(LogTemp, Warning, TEXT("NO ACcComp GOD DAMN"));
+        UE_LOG(LogTemp, Warning, TEXT("NO ACcComp"));
         return;
 
     }
     if (!AccSlotPanel)
     {
-        UE_LOG(LogTemp, Warning, TEXT("NO AccSlotPanel GOD DAMN"));
+        UE_LOG(LogTemp, Warning, TEXT("NO AccSlotPanel"));
         return;
 
     }
     if (!AccSlotWidgetClass)
     {
-        UE_LOG(LogTemp, Warning, TEXT("NO AccSlotWidgetClass GOD DAMN"));
+        UE_LOG(LogTemp, Warning, TEXT("NO AccSlotWidgetClass"));
         return;
 
     }
@@ -56,24 +56,17 @@ void UDEAccInventoryWidget::Refresh()
     AccSlotPanel->ClearChildren();
 
     // 2. 장착된 악세서리 목록 가져오기 
-    // ★ 주의: DEAccessoryComponent.h 에 GetEquippedAccessories() Getter 함수가 필요합니다! (아래 설명 참고)
-    const TArray<const UDEAccessoryData*>& EquippedList = AccessoryComp->GetEquippedAccessories();
-    UE_LOG(LogTemp, Warning, TEXT("Triple PASSED WTF?"));
-    for (const UDEAccessoryData* Data : EquippedList)
+    const TMap<const UDEAccessoryData*, int32>& EquippedMap = AccessoryComp->GetEquippedAccessories();
+    for (const auto& Pair : EquippedMap)
     {
-        if (!Data) continue;
-
-        // 3. 비어있는 새 슬롯(WBP_AccSlotWidget) 생성
         UDEAccSlotWidget* NewSlot = CreateWidget<UDEAccSlotWidget>(GetWorld(), AccSlotWidgetClass);
         if (NewSlot)
         {
-            // 4. 슬롯에 데이터 밀어넣기 (뱀서는 보통 악세서리 만렙을 데이터에 넣거나 기본 1렙으로 처리)
-            // 임시로 레벨은 1로 하드코딩했습니다. 나중에 데이터 구조에 따라 수정하시면 됩니다.
-            NewSlot->SetAccessory(Data->Name, 1, Data->Icon);
+            // Pair.Key = UDEAccessoryData* (데이터)
+            // Pair.Value = int32 (현재 레벨)
+            NewSlot->SetAccessory(Pair.Key->Name, Pair.Value, Pair.Key->Icon);
 
-            // 5. 패널(HorizontalBox 등)에 자식으로 쏙 추가!
             AccSlotPanel->AddChild(NewSlot);
-            UE_LOG(LogTemp, Error, TEXT("REFRESHED, CURRENT SKILL : %s, LEVEL :%d"), *Data->Name.ToString(), 1);
         }
     }
 }

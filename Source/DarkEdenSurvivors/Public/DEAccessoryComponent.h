@@ -30,6 +30,9 @@ public:
 
 	// 악세서리 추가 (인벤토리에서 호출)
 	UFUNCTION(BlueprintCallable, Category = "Accessory")
+	void LevelUpAccessory(const UDEAccessoryData* InData);
+
+	UFUNCTION(BlueprintCallable, Category = "Accessory")
 	void AddAccessory(const UDEAccessoryData* InData);
 
 	// 악세서리 제거 (필요 시)
@@ -62,9 +65,10 @@ protected:
 	void RemoveStaticStats(const UDEAccessoryData* InData);
 
 private:
-	// 장착된 악세서리 목록
+private:
+	// [변경] TArray -> TMap (Key: 데이터 에셋, Value: 현재 레벨)
 	UPROPERTY(VisibleAnywhere, Category = "Accessory")
-	TArray<const UDEAccessoryData*> EquippedAccessories;
+	TMap<const UDEAccessoryData*, int32> EquippedAccessories;
 
 	// [캐시] 트리거별 효과 목록 (전투 중 빠른 검색용)
 	// Key: OnKill, OnHit... / Value: 효과 리스트
@@ -77,8 +81,8 @@ private:
 	TMap<EEffectType, float> CurrentStackValues;
 
 public:
-	// UI에서 장착 목록을 그릴 수 있도록 배열 반환 (읽기 전용)
-	const TArray<const UDEAccessoryData*>& GetEquippedAccessories() const { return EquippedAccessories; }
+	// UI가 가져다 쓸 수 있도록 TMap 반환
+	const TMap<const UDEAccessoryData*, int32>& GetEquippedAccessories() const { return EquippedAccessories; }
 
 	FOnAccUpdated OnAccUpdated;
 };

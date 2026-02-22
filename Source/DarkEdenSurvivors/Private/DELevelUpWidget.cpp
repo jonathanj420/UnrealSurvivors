@@ -5,7 +5,7 @@
 #include "DELevelUpManagerComponent.h"
 #include "DELevelUpChoiceSlotWidget.h" // 슬롯 헤더 포함
 #include "DELevelUpChoiceBase.h"
-#include "Components/HorizontalBox.h"
+#include "Components/VerticalBox.h"
 #include "DEPlayerController.h"
 
 void UDELevelUpWidget::InitWidget(UDELevelUpManagerComponent* InLevelUpManager)
@@ -64,37 +64,3 @@ void UDELevelUpWidget::OnOptionSelected()
 	RemoveFromParent();
 }
 
-//
-//void UDELevelUpWidget::OnSelect1()
-//{
-//    LevelUpManager->ApplyChoice(SelectedChoices[0]);
-//
-//    if (auto PC = Cast<ADEPlayerController>(GetOwningPlayer()))
-//    {
-//        PC->ResumeGame();
-//    }
-//
-//    RemoveFromParent();
-//}
-//void UDELevelUpWidget::OnSelect2()
-//{
-//    LevelUpManager->ApplyChoice(SelectedChoices[1]);
-//
-//    if (auto PC = Cast<ADEPlayerController>(GetOwningPlayer()))
-//    {
-//        PC->ResumeGame();
-//    }
-//
-//    RemoveFromParent();
-//}
-//void UDELevelUpWidget::OnSelect3()
-//{
-//    LevelUpManager->ApplyChoice(SelectedChoices[2]);
-//
-//    if (auto PC = Cast<ADEPlayerController>(GetOwningPlayer()))
-//    {
-//        PC->ResumeGame();
-//    }
-//
-//    RemoveFromParent();
-//}

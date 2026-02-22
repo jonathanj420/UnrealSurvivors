@@ -63,7 +63,7 @@ ADECharacterBase::ADECharacterBase()
     BloodDrainGaugeMax=10.0f;
     BloodDrainGainPerKill=5.0f;
 
-    static ConstructorHelpers::FObjectFinder<UDEAccessoryData> AccessoryAsset(TEXT("/Game/DarkEden/Data/Accessories/DEAccessory_Daeg.DEAccessory_Daeg"));
+    static ConstructorHelpers::FObjectFinder<UDEAccessoryData> AccessoryAsset(TEXT("/Game/DarkEden/Data/Accessories/DEAccessory_SeongsBless.DEAccessory_SeongsBless"));
     // 에셋을 성공적으로 찾았다면?
     if (AccessoryAsset.Succeeded())
     {
@@ -571,7 +571,9 @@ void ADECharacterBase::MyAnotherDebugCheat()
     if (AccessoryComponent && DebugAccessoryToEquip)
     {
         // 인벤토리에 강제로 꽂아버리기!
-        AccessoryComponent->AddAccessory(DebugAccessoryToEquip);
+        //AccessoryComponent->AddAccessory(DebugAccessoryToEquip);
+        AccessoryComponent->LevelUpAccessory(DebugAccessoryToEquip);
+
 
         if (GEngine)
         {
