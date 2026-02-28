@@ -2,10 +2,29 @@
 
 
 #include "DEGameMode_Lobby.h"
-#include "DEFemaleVampire.h"
-#include "DEPlayerController.h"
 #include "Kismet/GameplayStatics.h"
-#include "DEMonsterSpawnManager.h"
-#include "DEResultWidget.h" // 아까 만든 위젯 헤더
+#include "DEPlayerController_Lobby.h"
 #include "DEGameInstance.h"
 
+ADEGameMode_Lobby::ADEGameMode_Lobby()
+{
+    PrimaryActorTick.bCanEverTick = false;
+
+    DefaultPawnClass = nullptr;
+    PlayerControllerClass = ADEPlayerController_Lobby::StaticClass();
+
+
+}
+
+void ADEGameMode_Lobby::BeginPlay()
+{
+    Super::BeginPlay();
+
+    //if (MainMenuWidgetClass)
+    //{
+    //    UUserWidget* Widget = CreateWidget<UUserWidget>(
+    //        GetWorld(), MainMenuWidgetClass);
+    //    if (Widget)
+    //        Widget->AddToViewport();
+    //}
+}

@@ -63,10 +63,25 @@ void ADEAOE_OrbitBase::Tick(float DeltaTime)
     NewLoc.Y = OwnerLoc.Y + FMath::Sin(Rad) * CurrentOrbitRadius;
     NewLoc.Z = OwnerLoc.Z; // 높이는 주인 따라가기
 
-    SetActorLocation(NewLoc);
+    //SetActorLocation(NewLoc);
 
-    // 5. 회전 (항상 바깥 보기, 혹은 진행방향 보기)
-    SetActorRotation(FRotator(0.0f, CurrentAngle, 0.0f)); // +- 90 
+    //// 5. 회전 (항상 바깥 보기, 혹은 진행방향 보기)
+    //SetActorRotation(FRotator(0.0f, CurrentAngle, 0.0f)); // +- 90 
+
+    // 3. 회전 방향 설정
+    // bFaceDirection이라는 bool 변수를 헤더에 하나 파두고 입맛대로 골라 쓰시는 걸 추천합니다!
+    FRotator NewRot;
+    //if (true /* 진행 방향을 보게 할 경우 */)
+    //{
+    //    NewRot = FRotator(0.0f, CurrentAngle + 90.0f, 0.0f); // 상황에 따라 -90.0f 일 수도 있음
+    //}
+    //else /* 플레이어 바깥쪽을 보게 할 경우 (기존 방식) */
+    //{
+    //    NewRot = FRotator(0.0f, CurrentAngle, 0.0f);
+    //}
+    NewRot = FRotator(0.0f, CurrentAngle, 0.0f);
+
+    SetActorLocationAndRotation(NewLoc, NewRot);
 
     //Super::Tick(DeltaTime);
 

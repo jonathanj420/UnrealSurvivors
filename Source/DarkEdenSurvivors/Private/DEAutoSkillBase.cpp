@@ -11,11 +11,20 @@ void UDEAutoSkillBase::Activate()
 
 	FDESkillContext Context;
 	BuildContext(Context);
-    //UE_LOG(LogTemp, Warning, TEXT("[Skill] %s : Executed"), *Context.ActiveSkill->GetName());
-	for (UDESkillBehavior* Behavior : Behaviors)
-	{
-		if (Behavior) Behavior->Execute(Context);
-	}
+
+    // Context를 만들었으니, 실행 로직으로 던져줍니다.
+    ExecuteWithContext(Context);
+}
+
+void UDEAutoSkillBase::ExecuteWithContext(FDESkillContext& Context)
+{
+    // 기본 역할: Behavior들 실행
+    for (UDESkillBehavior* Behavior : Behaviors)
+    {
+        if (Behavior) Behavior->Execute(Context);
+    }
+    UE_LOG(LogTemp, Warning, TEXT("[Skill] %s : Executed with Context"), *Context.ActiveSkill->GetName());
+
 }
 
 void UDEAutoSkillBase::SetSkillData(const FDESkillData* NewData)
@@ -39,12 +48,12 @@ void UDEAutoSkillBase::BuildContext(FDESkillContext& OutContext)
     // 데이터가 없으면 중단
     if (!SkillData) return;
 
-    // 2. 컴포넌트 가져오기 (캐싱)
-    UDECombatComponent* Combat = nullptr;
-    if (SkillOwner)
-    {
-        Combat = SkillOwner->FindComponentByClass<UDECombatComponent>();
-    }
+    //// 2. 컴포넌트 가져오기 (캐싱)
+    //UDECombatComponent* Combat = nullptr;
+    //if (SkillOwner)
+    //{
+    //    Combat = SkillOwner->FindComponentByClass<UDECombatComponent>();
+    //}
 
     // =========================================================
     // [3. 초기값 설정: 데이터테이블(Raw Data)]
@@ -64,11 +73,11 @@ void UDEAutoSkillBase::BuildContext(FDESkillContext& OutContext)
     // =========================================================
     // [4. 컴포넌트 보정값 적용 (Modifiers via Snapshot)]
     // =========================================================
-    if (Combat)
+    if (CachedCombatComp)
     {
         // ★ 핵심: CombatComponent에서 정제된 스냅샷을 가져옵니다.
         // (쿨타임 캡, 소수점 처리 등이 이미 완료된 상태)
-        FCombatSnapshot PlayerStat = Combat->GetCombatSnapshot();
+        FCombatSnapshot PlayerStat = CachedCombatComp->GetCombatSnapshot();
         OutContext.FinalSnapshot = PlayerStat;
         // 1. 데미지 공식: (기본뎀) * 데미지배율
         // ※ 추후 '고정 공격력(Atk)'이 생긴다면: (FinalDamage + PlayerStat.AttackPower) * PlayerStat.FinalDamageMultiplier;

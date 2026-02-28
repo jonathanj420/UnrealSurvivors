@@ -13,5 +13,13 @@ UCLASS()
 class DARKEDENSURVIVORS_API ADEGameMode_Lobby : public ADEGameModeBase
 {
 	GENERATED_BODY()
+
+	ADEGameMode_Lobby();
+
+protected:
+	virtual void BeginPlay() override;
+
+
+
 	
 };

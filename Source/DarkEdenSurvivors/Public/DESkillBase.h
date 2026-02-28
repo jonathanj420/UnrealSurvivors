@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "Data/DESkillData.h"
 #include "DESkillBase.generated.h"
 
 /**
@@ -22,9 +21,13 @@ public:
 
 	virtual void InitSkill(AActor* InOwner);
 
-public:
+protected:
 	UPROPERTY()
 	AActor* SkillOwner = nullptr;
+
+	UPROPERTY()
+	class UDECombatComponent* CachedCombatComp;
+
 
 	int32 CurrentLevel = 0;
    

@@ -107,7 +107,6 @@ protected:
 public:
     virtual void InitializeProjectile(float InDamage, float InSpeed, int32 InPenetration, const FVector& Direction);
     virtual void InitializeFromContext(const FDESkillContext& Context, const FVector& Direction);
-    float LifeTimer = 0.f;
     virtual void OnLifeTimeExpired();
 
     UFUNCTION()

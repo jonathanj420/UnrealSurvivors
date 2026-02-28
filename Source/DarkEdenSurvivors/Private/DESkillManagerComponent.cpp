@@ -140,7 +140,7 @@ void UDESkillManagerComponent::InitSkills()
     {
         FDESkillData* Row = SkillDataTable->FindRow<FDESkillData>(RowName, Context); \
         if (!Row) continue;
-        //UE_LOG(LogTemp, Warning, TEXT("Row %s_%d Found"), *Row->SkillName, Row->Level);
+        UE_LOG(LogTemp, Warning, TEXT("Row %s_%d Found"), *Row->SkillName, Row->Level);
 
 
         int32 SkillID = Row->SkillID;   // RowName 사용 안 하는 방식

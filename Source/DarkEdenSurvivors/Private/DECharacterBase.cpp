@@ -114,18 +114,6 @@ void ADECharacterBase::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-  /*  if (GEngine)
-    {
-        GEngine->AddOnScreenDebugMessage(
-            -1,
-            0.0f,
-            FColor::Green,
-            FString::Printf(TEXT("Max Blood Drain Gauge: %.1f, Current: %.1f"), BloodDrainGaugeMax, BloodDrainGauge)
-
-
-        );
-
-    }*/
     if (bMoveCamera)
     {
         SpringArm->TargetArmLength = FMath::FInterpTo(SpringArm->TargetArmLength, ArmLengthTo, DeltaTime, ArmLengthSpeed);
@@ -152,7 +140,6 @@ void ADECharacterBase::Tick(float DeltaTime)
             SpringArm->TargetArmLength = ArmLengthTo;
             SpringArm->SetRelativeRotation(ArmRotationTo);
             bMoveCamera = false;
-            ABLOG(Warning, TEXT("Interp Done"));
         }
     }
 
@@ -529,61 +516,71 @@ float ADECharacterBase::GetCapsuleHalfRadius()
 
 void ADECharacterBase::MyDebugCheat()
 {
+
     //put every action i want to do, and press E to go EZ :)
-    //SkillManager->LevelUpSkill(BaseSkillID);
-   // CombatComponent->BonusAmount.Additive += 1.0f;
-    UDEGameInstance* GI = Cast<UDEGameInstance>(GetGameInstance());
-    if (GI)
-    {
-        GI->AddGold(1000);
-        GI->SaveGame();
-    }
-    if (StatComponent)
-    {
-        // 1. 수정자(Modifier) 만들기: 데미지(Damage), 깡수치(+2), 배율(변화없음 1.0)
-        FDEStatModifier DamageCheatMod(EDEStatType::Damage, 0.5f, 0.0f);
 
-        // 2. 스탯 컴포넌트에 던져주기
-        StatComponent->ApplyModifier(DamageCheatMod);
-
-
-        FDEStatModifier MaxHPCheatMode(EDEStatType::MaxHP, 50.0f, 0.0f);
-        StatComponent->ApplyModifier(MaxHPCheatMode);
-
-
-        // (선택) 치트 적용 확인용 로그
-        if (GEngine)
-        {
-            // 현재 적용된 데미지 값을 가져와서 화면에 출력
-            float CurrentDamage = StatComponent->DamageMultiplier.GetValue();
-            FString Msg = FString::Printf(TEXT("Damage Cheat! Current Damage: %f"), CurrentDamage);
-            GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, Msg);
-        }
-    }
     if (GEngine)
     {
         GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("Cheat Activated"));
     }
+    SkillManager->LevelUpSkill(BaseSkillID);
+
+
+    //UDEGameInstance* GI = Cast<UDEGameInstance>(GetGameInstance());
+    //if (GI)
+    //{
+    //    GI->AddGold(1000);
+    //    GI->SaveGame();
+    //}
+    //if (StatComponent)
+    //{
+    //    // 1. 수정자(Modifier) 만들기: 데미지(Damage), 깡수치(+2), 배율(변화없음 1.0)
+    //    FDEStatModifier DamageCheatMod(EDEStatType::Damage, 0.5f, 0.0f);
+
+    //    // 2. 스탯 컴포넌트에 던져주기
+    //    StatComponent->ApplyModifier(DamageCheatMod);
+
+
+    //    FDEStatModifier MaxHPCheatMode(EDEStatType::MaxHP, 50.0f, 0.0f);
+    //    StatComponent->ApplyModifier(MaxHPCheatMode);
+
+
+    //    // (선택) 치트 적용 확인용 로그
+    //    if (GEngine)
+    //    {
+    //        // 현재 적용된 데미지 값을 가져와서 화면에 출력
+    //        float CurrentDamage = StatComponent->DamageMultiplier.GetValue();
+    //        FString Msg = FString::Printf(TEXT("Damage Cheat! Current Damage: %f"), CurrentDamage);
+    //        GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, Msg);
+    //    }
+    //}
+    
 }
 
 void ADECharacterBase::MyAnotherDebugCheat()
 {
-    if (AccessoryComponent && DebugAccessoryToEquip)
-    {
-        // 인벤토리에 강제로 꽂아버리기!
-        //AccessoryComponent->AddAccessory(DebugAccessoryToEquip);
-        AccessoryComponent->LevelUpAccessory(DebugAccessoryToEquip);
+    FDEStatModifier AmountCheat(EDEStatType::Amount, 1.0f, 0.0f);
+
+    // 2. 스탯 컴포넌트에 던져주기
+    StatComponent->ApplyModifier(AmountCheat);
+ 
+ 
+    //if (AccessoryComponent && DebugAccessoryToEquip)
+    //{
+    //    // 인벤토리에 강제로 꽂아버리기!
+    //    //AccessoryComponent->AddAccessory(DebugAccessoryToEquip);
+    //    AccessoryComponent->LevelUpAccessory(DebugAccessoryToEquip);
 
 
-        if (GEngine)
-        {
-            FString Msg = FString::Printf(TEXT("Forced Acc: %s"), *DebugAccessoryToEquip->Name.ToString());
-            GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, Msg);
-        }
+    //    if (GEngine)
+    //    {
+    //        FString Msg = FString::Printf(TEXT("Forced Acc: %s"), *DebugAccessoryToEquip->Name.ToString());
+    //        GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, Msg);
+    //    }
 
-        // (선택) UI 갱신 함수가 캐릭터 쪽에 연결되어 있다면 여기서 한 번 불러주면 좋습니다.
-        // UpdateAccessoryUI(); 
-    }
+    //    // (선택) UI 갱신 함수가 캐릭터 쪽에 연결되어 있다면 여기서 한 번 불러주면 좋습니다.
+    //    // UpdateAccessoryUI(); 
+    //}
 
     //if (StatComponent)
     //{

@@ -21,7 +21,11 @@ public:
 	// 외부(매니저)에서 호출하는 실행 함수
 	virtual void Activate();
 
-	// 데이터 주입 (레벨업 시 호출)
+protected:
+	// ★ 새로 만든 가상 함수! 자식들이 오버라이드하기 딱 좋게 Context를 던져줍니다.
+	virtual void ExecuteWithContext(FDESkillContext& Context);
+
+public:	// 데이터 주입 (레벨업 시 호출)
 	void SetSkillData(const FDESkillData* NewData);
 
 	// 자식 클래스에서 Behavior 조립

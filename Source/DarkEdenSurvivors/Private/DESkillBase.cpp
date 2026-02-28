@@ -1,4 +1,5 @@
 ﻿#include "DESkillBase.h"
+#include "DECombatComponent.h"
 #include "GameFramework/Actor.h" // AActor 사용을 위해 필수
 
 UDESkillBase::UDESkillBase()
@@ -31,4 +32,8 @@ UWorld* UDESkillBase::GetWorld() const
 void UDESkillBase::InitSkill(AActor* InOwner)
 {
 	SkillOwner = InOwner;
+	if (SkillOwner)
+	{
+		CachedCombatComp = SkillOwner->FindComponentByClass<UDECombatComponent>();
+	}
 }
