@@ -241,33 +241,62 @@ void ADESimpleProjectileBase::OnOverlap(UPrimitiveComponent* OverlappedComp, AAc
 	// 1. [유효성 검사]
 	if (!OtherActor || OtherActor == this || OtherActor == GetInstigator() || HitActors.Contains(OtherActor)) return;
 
-	// 2. [라이브러리 호출]
-	// 굳이 여기서 TargetHealth를 Find할 필요도 없습니다. 라이브러리가 대신 해줄 테니까요.
+	// 2. 타격 기록
 	HitActors.Add(OtherActor);
 
-	// 넉백 방향 계산
-	FVector KBDir = OtherActor->GetActorLocation() - GetActorLocation();
+	// 3. ★ 갓-벽하게 압축된 데미지 로직 & 관통 처리 ★
+	if (TryDealDamage(OtherActor))
+	{
+		if (Penetration != -1 && --Penetration <= 0)
+		{
+			ReturnToPool();
+		}
+	}
 
-	// ★ [핵심] 주문서(Request) 작성
+	//// 넉백 방향 계산
+	//FVector KBDir = OtherActor->GetActorLocation() - GetActorLocation();
+
+	//// ★ [핵심] 주문서(Request) 작성
+	//FDEDamageRequest Req;
+	//Req.Instigator = GetInstigator();
+	//Req.DamageCauser = this;
+	//Req.Victim = OtherActor; // 맞은 놈을 넣어줍니다.
+	//Req.BaseDamage = Damage;
+	//Req.CritChance = CritChance; // 멤버 변수로 들고 있는 Snapshot 활용
+	//Req.CritDamageMultiplier = CritDamageMultiplier;
+
+	//// 라이브러리에 던지기 (피흡, 넉백, 킬 처리가 한 방에 끝남)
+	////UE_LOG(LogTemp, Log, TEXT("Try DEGameplayLibrary"));
+	//FDEDamageResult Res = UDEGameplayLibrary::ApplyCombatDamage(Req, this->Snapshot, KBDir, this->KnockbackForce);
+
+	//// 3. [관통 로직만 투사체 본연의 업무로 남김]
+	//if (Res.FinalDamage > 0.0f && Penetration != -1)
+	//{
+	//	if (--Penetration <= 0) ReturnToPool();
+	//}
+
+
+	//
+}
+bool ADESimpleProjectileBase::TryDealDamage(AActor* Victim)
+{
+	if (!Victim) return false;
+
+	FVector KBDir = Victim->GetActorLocation() - GetActorLocation();
+
 	FDEDamageRequest Req;
 	Req.Instigator = GetInstigator();
 	Req.DamageCauser = this;
-	Req.Victim = OtherActor; // 맞은 놈을 넣어줍니다.
+	Req.Victim = Victim;
 	Req.BaseDamage = Damage;
-	Req.CritChance = CritChance; // 멤버 변수로 들고 있는 Snapshot 활용
+	Req.CritChance = CritChance;
 	Req.CritDamageMultiplier = CritDamageMultiplier;
 
-	// 라이브러리에 던지기 (피흡, 넉백, 킬 처리가 한 방에 끝남)
-	//UE_LOG(LogTemp, Log, TEXT("Try DEGameplayLibrary"));
+	// 라이브러리 호출
 	FDEDamageResult Res = UDEGameplayLibrary::ApplyCombatDamage(Req, this->Snapshot, KBDir, this->KnockbackForce);
 
-	// 3. [관통 로직만 투사체 본연의 업무로 남김]
-	if (Res.FinalDamage > 0.0f && Penetration != -1)
-	{
-		if (--Penetration <= 0) ReturnToPool();
-	}
-
-	
+	// 데미지가 성공적으로 들어갔는지 반환
+	return Res.FinalDamage > 0.0f;
 }
 void ADESimpleProjectileBase::OnLifeTimeExpired()
 {

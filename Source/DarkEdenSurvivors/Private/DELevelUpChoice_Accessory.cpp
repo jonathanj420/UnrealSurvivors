@@ -43,6 +43,6 @@ void UDELevelUpChoice_Accessory::Apply(AActor* PlayerActor)
     if (UDEAccessoryComponent* AccComp =
         PlayerActor->FindComponentByClass<UDEAccessoryComponent>())
     {
-        AccComp->AddAccessory(AccessoryData);
+        AccComp->LevelUpAccessory(AccessoryData);
     }
 }

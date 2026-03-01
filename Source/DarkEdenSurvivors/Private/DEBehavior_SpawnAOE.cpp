@@ -45,7 +45,7 @@ void UDEBehavior_SpawnAOE::Execute(FDESkillContext& Context)
 
     // Player 기준 Persistent 관리
     ADECharacterBase* Player = Cast<ADECharacterBase>(Instigator);
-    UE_LOG(LogTemp, Warning, TEXT("Try Spawn AOE"));
+    //UE_LOG(LogTemp, Warning, TEXT("Try Spawn AOE"));
     // --------------------------------------------------
     // 1. AOE 요청 처리
     // --------------------------------------------------
@@ -62,15 +62,16 @@ void UDEBehavior_SpawnAOE::Execute(FDESkillContext& Context)
         // ----------------------------------------------
         // 1-A. Persistent AOE 재사용 시도
         // ----------------------------------------------
-        if (bHasKey && Player)
+        UDEAutoSkillBase* ActiveSkill = Context.ActiveSkill;
+        if (bHasKey && ActiveSkill)
         {
             if (TWeakObjectPtr<ADESimpleAOEBase>* Found =
-                Player->ActiveAOEMap.Find(Request.AOEKey))
+                ActiveSkill->OwnedAOEMap.Find(Request.AOEKey))
             {
                 if (Found->IsValid())
                 {
                     AOE = Found->Get();
-                    UE_LOG(LogTemp, Warning, TEXT("Persistent AOE"));
+                    //UE_LOG(LogTemp, Warning, TEXT("Persistent AOE"));
                 }
             }
         }
@@ -97,9 +98,9 @@ void UDEBehavior_SpawnAOE::Execute(FDESkillContext& Context)
             AOE->SetOwner(Instigator);
             bIsNewSpawn = true;
             // Persistent 등록
-            if (bHasKey && Player)
+            if (bHasKey && ActiveSkill)
             {
-                Player->ActiveAOEMap.Add(Request.AOEKey, AOE);
+                ActiveSkill->OwnedAOEMap.Add(Request.AOEKey, AOE);
             }
         }
         else
@@ -117,7 +118,7 @@ void UDEBehavior_SpawnAOE::Execute(FDESkillContext& Context)
         // 1-C. 핵심: Context 재적용
         // ----------------------------------------------
         AOE->ApplyContext(Context);
-        UE_LOG(LogTemp, Error, TEXT("AOE Context Applied, Damage : %f, Radius %f, Tick : %f"), Context.Damage, Context.Radius, Context.GetValue(TEXT("HitInterval"), 0.5f));
+        //UE_LOG(LogTemp, Error, TEXT("AOE Context Applied, Damage : %f, Radius %f, Tick : %f"), Context.Damage, Context.Radius, Context.GetValue(TEXT("HitInterval"), 0.5f));
         AOE->ActivateAOE(bIsNewSpawn);
         // ----------------------------------------------
         // 1-D. 결과 기록

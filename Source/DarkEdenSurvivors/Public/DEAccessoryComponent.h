@@ -85,4 +85,11 @@ public:
 	const TMap<const UDEAccessoryData*, int32>& GetEquippedAccessories() const { return EquippedAccessories; }
 
 	FOnAccUpdated OnAccUpdated;
+
+protected:
+	class UDEInventoryComponent* CachedInventoryComp;
+
+public:
+	void SetInventoryComp(class UDEInventoryComponent* InInventory) { CachedInventoryComp = InInventory; }
+
 };

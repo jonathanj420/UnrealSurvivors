@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "DEStatTypes.h"
 #include "DESimpleAOEBase.generated.h"
+
 
 struct FDESkillContext;
 class USphereComponent;
@@ -53,8 +55,8 @@ protected:
     virtual void OnHitTarget(AActor* Target);
 
     // 데미지 적용
-    void DealDamage(AActor* Target);
 
+    bool TryDealDamage(AActor* Victim);
     virtual void LifeSpanExpired() override;
 
 protected:
@@ -67,7 +69,37 @@ protected:
     UNiagaraComponent* NiagaraComp;
 
     // --- 스탯 변수 ---
+    struct FCombatSnapshot Snapshot;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
     float Damage;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+    int32 Penetration;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+    float KnockbackForce;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+    float Speed;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+    float Size;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+    float CritChance;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+    float CritDamageMultiplier = 1.0f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+    bool bCanCrit;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+    bool bIsCrit;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+    float EffectRadius;
     float HitCooldown; // 개별 쿨타임 (Tick 간격)
     float LifeTime;
     bool bInfiniteDuration;

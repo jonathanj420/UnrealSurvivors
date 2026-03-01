@@ -25,7 +25,6 @@ FDEDamageResult UDEGameplayLibrary::ApplyCombatDamage(
 
 	// 2. 피해자에게 데미지 처리 요청 (전달받은 Request 그대로 사용)
 	Result = TargetHealth->ProcessDamage(Request);
-
 	// 3. 가해자에게 후처리(피흡, 킬) 요청
 	if (UDECombatComponent* CombatComp = Request.Instigator->FindComponentByClass<UDECombatComponent>())
 	{

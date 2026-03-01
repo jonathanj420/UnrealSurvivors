@@ -99,3 +99,13 @@ void ADEPickupBase::ApplyEffect(AActor* TargetActor)
 	// 효과 적용 후 사라짐
 	DeactivatePickup();
 }
+
+void ADEPickupBase::SetTriggerRadius(float InSize)
+{
+	if (Trigger)
+	{
+		Trigger->SetSphereRadius(InSize);
+	}
+	
+
+}

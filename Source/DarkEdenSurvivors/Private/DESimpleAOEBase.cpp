@@ -9,6 +9,7 @@
 #include "DEPoolSubsystem.h"
 #include "DESkillContext.h"
 #include "DEDamageTypes.h"
+#include "DEGameplayLibrary.h"
 #include "DEHealthComponent.h"
 
 ADESimpleAOEBase::ADESimpleAOEBase()
@@ -46,7 +47,10 @@ void ADESimpleAOEBase::ApplyContext(const FDESkillContext& Context)
     const float FinalDamage = Context.Damage;
     const float FinalRadius = Context.Radius;
     const float FinalDuration = Context.Duration;
-
+    CritChance = Context.CritChance;
+    CritDamageMultiplier = Context.CritDamageMultiplier;
+    KnockbackForce = Context.KnockbackForce;
+    Snapshot = Context.FinalSnapshot;
     //타격 간격 (확장 가능)
     const float FinalHitCooldown =
         Context.GetValue(TEXT("HitInterval"), 0.5f);
@@ -201,7 +205,7 @@ void ADESimpleAOEBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActo
     {
         return;
     }
-    //UE_LOG(LogTemp, Warning, TEXT("%s OnOverlapBegin"), *GetName());
+    UE_LOG(LogTemp, Warning, TEXT("%s OnOverlapBegin"), *GetName());
     // 들어오자마자 쿨타임 체크 후 즉시 타격 (반응성 UP)
     if (CanHitTarget(OtherActor))
     {
@@ -261,36 +265,36 @@ bool ADESimpleAOEBase::CanHitTarget(AActor* Target) const
 
 void ADESimpleAOEBase::OnHitTarget(AActor* Target)
 {
-    DealDamage(Target);
+    TryDealDamage(Target);
     //UE_LOG(LogTemp, Warning, TEXT("%s got hit by : %s"), *Target->GetName(), *GetName());
     // [확장 포인트]
     // 여기서 넉백(Knockback)이나 상태이상(ApplyStatus) 로직을 추가하면 됩니다.
     // 예: ApplyKnockback(Target);
 }
 
-void ADESimpleAOEBase::DealDamage(AActor* Target)
+
+bool ADESimpleAOEBase::TryDealDamage(AActor* Victim)
 {
-    if (!Target) return;
+    if (!Victim) return false;
+    // 1. 장판(AOE) 특유의 넉백 방향 계산
+    // 장판 중심(또는 플레이어)에서 바깥으로 밀어냅니다.
+    FVector KBDir = Victim->GetActorLocation() - GetActorLocation();
 
-    AActor* InstigatorActor = DamageInstigator.Get();
+    // (선택 디테일) 장판 넉백은 보통 공중으로 안 뜨게 Z축을 무시합니다.
+    KBDir.Z = 0.0f;
+    KBDir.Normalize();
 
-    UGameplayStatics::ApplyDamage(
-        Target,
-        Damage,
-        InstigatorActor
-        ? InstigatorActor->GetInstigatorController()
-        : nullptr,
-        InstigatorActor,
-        UDamageType::StaticClass()
-    );
-
-    /*UGameplayStatics::ApplyDamage(
-        Target,
-        Damage,
-        OwnerActor.IsValid() ? OwnerActor->GetInstigatorController() : nullptr,
-        OwnerActor.Get(),
-        UDamageType::StaticClass()
-    );*/
+    // 2. 주문서(Request) 작성
+    FDEDamageRequest Req;
+    Req.Instigator = DamageInstigator.Get();
+    Req.DamageCauser = this;
+    Req.Victim = Victim;
+    Req.BaseDamage = Damage;
+    Req.CritChance = CritChance;
+    Req.CritDamageMultiplier = CritDamageMultiplier;
+    // 3. 순수한 계산기(Library)에 던지기
+    FDEDamageResult Res = UDEGameplayLibrary::ApplyCombatDamage(Req, this->Snapshot, KBDir, this->KnockbackForce);
+    return Res.FinalDamage > 0.0f;
 }
 
 void ADESimpleAOEBase::LifeSpanExpired()

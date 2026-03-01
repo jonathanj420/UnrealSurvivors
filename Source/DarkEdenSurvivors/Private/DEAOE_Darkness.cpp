@@ -21,14 +21,12 @@ ADEAOE_Darkness::ADEAOE_Darkness()
 
 void ADEAOE_Darkness::OnHitTarget(AActor* Target)
 {
-	if (!Target) return;
-
-	// 1. 기본 데미지
-	DealDamage(Target);
+	Super::OnHitTarget(Target);
 
 	// 2. 갈릭 전용 효과
 	ApplyDarknessEffects(Target);
 }
+
 
 void ADEAOE_Darkness::ApplyDarknessEffects(AActor* Target)
 {

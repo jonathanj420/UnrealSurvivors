@@ -73,8 +73,11 @@ void UDEBehavior_FireProjectile::FireOneShot()
 	UDEPoolSubsystem* Pool = World->GetSubsystem<UDEPoolSubsystem>();
 	if (!Pool) return;
 
+	FVector CurrentForward = CachedContext.Instigator->GetActorForwardVector();
+	FVector BaseDir = CurrentForward.RotateAngleAxis(AngleOffset, FVector::UpVector);
+
 	// --- 발사 로직 (동일) ---
-	FVector Forward = CachedContext.Instigator->GetActorForwardVector();
+	FRotator FireRot = BaseDir.Rotation();
 	FVector Right = CachedContext.Instigator->GetActorRightVector();
 	FVector Up = CachedContext.Instigator->GetActorUpVector();
 	FVector OwnerLoc = CachedContext.Instigator->GetActorLocation();
@@ -83,10 +86,10 @@ void UDEBehavior_FireProjectile::FireOneShot()
 	// 1. 위치 랜덤
 	float RandRight = FMath::FRandRange(-RandomPositionRange, RandomPositionRange);
 	float RandUp = FMath::FRandRange(-RandomPositionRange, RandomPositionRange);
-	FVector SpawnLoc = OwnerLoc + (Forward * 100.f) + (Right * RandRight) + (Up * RandUp);
+	FVector SpawnLoc = OwnerLoc /*+ (Forward * 100.f)*/ + (Right * RandRight) + (Up * RandUp);
 
 	// 2. 각도 랜덤
-	FRotator SpawnRot = OwnerRot;
+	FRotator SpawnRot = FireRot;//OwnerRot;
 	if (FireConeAngle > 0.f)
 	{
 		float HalfAngle = FireConeAngle * 0.5f;
@@ -99,8 +102,8 @@ void UDEBehavior_FireProjectile::FireOneShot()
 	AActor* PooledActor = Pool->GetPooledActor(ProjectileClass, SpawnLoc, SpawnRot, false);
 	if (auto* Proj = Cast<ADESimpleProjectileBase>(PooledActor))
 	{
-		FVector FireDir = SpawnRot.Vector();
-		Proj->InitializeFromContext(CachedContext, FireDir);
+		FVector FinalDir = SpawnRot.Vector();
+		Proj->InitializeFromContext(CachedContext, FinalDir);
 		//UE_LOG(LogTemp, Warning, TEXT("Shot Fired, Damage : %f"), CachedContext.Damage);
 	}
 

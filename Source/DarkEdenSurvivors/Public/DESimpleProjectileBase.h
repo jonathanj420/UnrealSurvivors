@@ -114,6 +114,10 @@ public:
         UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
         bool bFromSweep, const FHitResult& SweepResult);
 
+protected:
+    bool TryDealDamage(AActor* Victim);
+
+
     TSet<AActor*> HitActors;
     //*********** GET ***************
     float GetDamage() { return Damage; }

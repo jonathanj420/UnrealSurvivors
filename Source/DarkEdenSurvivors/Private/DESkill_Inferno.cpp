@@ -8,7 +8,6 @@
 
 UDESkill_Inferno::UDESkill_Inferno()
 {
-	//ProjectileClass=
     ProjectileClass = ADEProjectile_Inferno::StaticClass();
     static ConstructorHelpers::FObjectFinder<USoundBase> SoundObj(
         TEXT("/Game/DarkEden/Data/Sound/SkillSoundEffect/Custom/Inferno.Inferno")

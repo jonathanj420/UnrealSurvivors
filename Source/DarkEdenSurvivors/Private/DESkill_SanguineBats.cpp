@@ -10,7 +10,7 @@ UDESkill_SanguineBats::UDESkill_SanguineBats()
 {
     ProjectileClass = ADEProjectile_SanguineBat::StaticClass();
     static ConstructorHelpers::FObjectFinder<USoundBase> SoundObj(
-        TEXT("/Game/DarkEden/Data/Sound/SkillSoundEffect/Vampire_BloodyKnife.Vampire_BloodyKnife")
+        TEXT("/Game/DarkEden/Data/Sound/SkillSoundEffect/Bat_wing.Bat_wing")
     );
 
     if (SoundObj.Succeeded())

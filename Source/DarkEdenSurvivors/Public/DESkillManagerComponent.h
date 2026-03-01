@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Data/DESkillData.h"
+#include "Data/DEEvolutionData.h"
 #include "DESkillManagerComponent.generated.h"
 
 
@@ -12,7 +13,7 @@
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnSkillUpdated, int32 /*SkillID*/);
 
 class UDEAutoSkillBase;
-
+class UDEInventoryComponent;
 
 USTRUCT()
 struct FActiveSkill
@@ -99,6 +100,14 @@ public:
 	const FDESkillRow* GetRandomSkillRow();
 	UFUNCTION(BlueprintCallable)
 	void ApplySkillChoice(int32 SkillID);
+protected:
+	UDataTable* EvolutionDataTable;
+	void LoadEvolutionDataTable();
+public:
+
+	bool CheckEvolution(int32& OutBaseSkillID, int32& OutResultSkillID);
+	void EvolveSkill(int32 BaseSkillID, int32 ResultSkillID);
+
 
 protected:
 	bool bAutoSkillPaused = false;
@@ -109,4 +118,15 @@ public:
 	bool IsAutoSkillPaused() const { return bAutoSkillPaused; }
 	FOnSkillUpdated OnSkillUpdated;
 
+protected:
+	UPROPERTY()
+	class UDEStatComponent* CachedStatComp;
+	UPROPERTY()
+	class UDEInventoryComponent* CachedInventoryComp;
+
+public:
+	void InitStatComp(class UDEStatComponent* InStatComp) { CachedStatComp = InStatComp; }
+	void InitInventoryComp(class UDEInventoryComponent* InInventoryComp) { CachedInventoryComp = InInventoryComp; }
+
+		
 };

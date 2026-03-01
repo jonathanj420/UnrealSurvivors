@@ -41,6 +41,9 @@ public:
 	UPROPERTY()
 	float BurstInterval = 0.f;
 
+	UPROPERTY()
+	float AngleOffset = 0.0f;
+
 private:
 	// 연사 처리를 위한 임시 저장소
 	UPROPERTY()

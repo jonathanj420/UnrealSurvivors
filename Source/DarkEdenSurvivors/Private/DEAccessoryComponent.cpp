@@ -3,6 +3,7 @@
 
 #include "DEAccessoryComponent.h"
 #include "DEStatComponent.h"
+#include "DEInventoryComponent.h"
 #include "GameFramework/Actor.h"
 
 UDEAccessoryComponent::UDEAccessoryComponent()
@@ -62,6 +63,7 @@ void UDEAccessoryComponent::AddAccessory(const UDEAccessoryData* InData)
 
 	// 2. 동적 효과(OnKill 등) 캐싱
 	RebuildEffectCache();
+	CachedInventoryComp->TryAddAccessory(InData->ID);
 	OnAccUpdated.Broadcast(InData);
 	UE_LOG(LogTemp, Error, TEXT("Acc Added"));
 }

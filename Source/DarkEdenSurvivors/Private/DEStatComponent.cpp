@@ -153,6 +153,18 @@ void UDEStatComponent::InitAsPlayer(ADECharacterBase* InPlayer)
 	RefreshDerivedStats(EDEStatType::Magnet);    // 자석 범위 초기화
 }
 
+float UDEStatComponent::GetStatValue(EDEStatType StatType) const
+{
+	// 레지스트리에서 스탯 포인터를 찾아서 GetValue() 반환
+	if (const FGameplayStat* const* FoundStat = StatRegistry.Find(StatType))
+	{
+		return (*FoundStat)->GetValue();
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("GetStatValue: StatType %d not found!"), (int32)StatType);
+	return 0.0f;
+}
+
 void UDEStatComponent::ResetStats()
 {
 	for (auto& Pair : StatRegistry)

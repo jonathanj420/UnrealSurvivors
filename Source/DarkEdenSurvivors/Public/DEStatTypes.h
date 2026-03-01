@@ -97,13 +97,13 @@ public:
     void ApplyModifier(const FDEStatModifier& Mod)
     {
         Additive += Mod.Additive;
-        Multiplier += Mod.Multiplier;
+        Multiplier *= Mod.Multiplier;
     }
 
     void RemoveModifier(const FDEStatModifier& Mod)
     {
         Additive -= Mod.Additive;
-        Multiplier -= Mod.Multiplier;
+        Multiplier /= Mod.Multiplier;
     }
 
 	float GetValue() const

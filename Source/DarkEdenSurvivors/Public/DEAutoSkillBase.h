@@ -40,4 +40,11 @@ protected:
 
 	// 현재 스킬 스펙 (포인터만 참조)
 	const FDESkillData* SkillData = nullptr;
+
+public:
+	UPROPERTY()
+	TMap<FName, TWeakObjectPtr<class ADESimpleAOEBase>> OwnedAOEMap;
+public:
+	virtual void EndSkill();
+
 };

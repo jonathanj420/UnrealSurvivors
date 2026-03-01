@@ -86,9 +86,28 @@ void ADECharacterBase::BeginPlay()
     if (StatComponent)
     {
         StatComponent->InitAsPlayer(this);
-
+        if (SkillManager)
+        {
+            SkillManager->InitStatComp(StatComponent);
+        }
         //StatComponent->OnLevelUp.AddDynamic(this, &ADECharacterBase::OnCharacterLevelUp);
         //StatComponent->OnLevelUp.AddUObject(this, &ADECharacterBase::OnCharacterLevelUp);
+    }
+    if (Inventory)
+    {
+        // (만약 인벤토리 컴포넌트 자체 초기화 함수가 있다면 여기서 호출)
+        // InventoryComponent->InitInventory(...);
+
+        if (SkillManager)
+        {
+            // 스킬 매니저에게 인벤토리 주머니를 쥐여줍니다.
+            SkillManager->InitInventoryComp(Inventory);
+        }
+        if (AccessoryComponent)
+        {
+            AccessoryComponent->SetInventoryComp(Inventory);
+
+        }
     }
     if (HealthComponent)
     {
@@ -101,6 +120,7 @@ void ADECharacterBase::BeginPlay()
     }
     if (SkillManager && BaseSkillID > 0)
     {
+        UE_LOG(LogTemp, Warning, TEXT("WTF IS GOIN ON"));
         SkillManager->LevelUpSkill(BaseSkillID);  // 추가할 함수 구현해줄 것
     }
     //StatComponent->OnLevelUp.AddDynamic(this, &ADEPlayerController::ShowLevelUpUI);
@@ -559,10 +579,32 @@ void ADECharacterBase::MyDebugCheat()
 
 void ADECharacterBase::MyAnotherDebugCheat()
 {
-    FDEStatModifier AmountCheat(EDEStatType::Amount, 1.0f, 0.0f);
+    if (GEngine)
+    {
+        GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("Cheat Activated"));
+    }
+    int32 BaseID = -1;
+    int32 ResultID = -1;
+
+    // 1. 진화 조건을 만족하는 무기가 있는지 검사!
+    if (SkillManager->CheckEvolution(BaseID, ResultID))
+    {
+        UE_LOG(LogTemp, Warning, TEXT("[Cheat] 진화 조건 달성! %d번 무기를 %d번으로 진화시킵니다!"), BaseID, ResultID);
+
+        // 2. 조건 맞으면 바로 진화 폭탄 투하!
+        SkillManager->EvolveSkill(BaseID, ResultID);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("[Cheat] 꽝! 진화 조건을 만족하는 무기가 없습니다. (만렙 무기나 악세서리가 있는지 확인하세요)"));
+    }
+
+    //FDEStatModifier Cheat(EDEStatType::Amount, 1.0f, 0.0f);
+   // FDEStatModifier Cheat(EDEStatType::Cooldown, 0.1f, 0.0f);
+    
 
     // 2. 스탯 컴포넌트에 던져주기
-    StatComponent->ApplyModifier(AmountCheat);
+    //StatComponent->ApplyModifier(Cheat);
  
  
     //if (AccessoryComponent && DebugAccessoryToEquip)

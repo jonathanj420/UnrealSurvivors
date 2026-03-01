@@ -123,6 +123,10 @@ public:
 	void InitAsPlayer(ADECharacterBase* InPlayer);
 
 public:
+		// 외부에서 특정 스탯의 최종(계산된) 값을 쉽게 가져오는 함수
+		UFUNCTION(BlueprintCallable, Category = "Stats")
+		float GetStatValue(EDEStatType StatType) const;
+
 	float GetMoveSpeed() const { return MoveSpeed.GetValue(); }
 	float GetMagnetRange() const { return MagnetRange.GetValue(); }
 	float GetLuck() const { return Luck.GetValue(); }

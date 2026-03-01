@@ -4,11 +4,12 @@
 #include "DEAutoSkillBase.h"
 #include "DECombatComponent.h"
 #include "DESkillBehavior.h"
+#include "DESimpleAOEBase.h"
 
 void UDEAutoSkillBase::Activate()
 {
 	if (!SkillOwner) return;
-
+    //UE_LOG(LogTemp, Warning, TEXT("%s Activated"), *GetNameSafe(this));
 	FDESkillContext Context;
 	BuildContext(Context);
 
@@ -23,7 +24,6 @@ void UDEAutoSkillBase::ExecuteWithContext(FDESkillContext& Context)
     {
         if (Behavior) Behavior->Execute(Context);
     }
-    UE_LOG(LogTemp, Warning, TEXT("[Skill] %s : Executed with Context"), *Context.ActiveSkill->GetName());
 
 }
 
@@ -146,4 +146,15 @@ void UDEAutoSkillBase::BuildContext(FDESkillContext& OutContext)
     // 6. 맵 데이터(옵션) 통째로 복사
     // (특수 기믹을 위한 커스텀 데이터)
     OutContext.CustomValues = SkillData->OptionValues;
+}
+
+void UDEAutoSkillBase::EndSkill()
+{
+    // AOE 정리
+    for (auto& Pair : OwnedAOEMap)
+    {
+        if (Pair.Value.IsValid())
+            Pair.Value->ReturnToPool();
+    }
+    OwnedAOEMap.Empty();
 }

@@ -76,6 +76,6 @@ public:
 
 	// 자식들이 쓸 공용 데이터 (경험치 양, 회복량 등)
 	float Value = 0.0f;
-
+	void SetTriggerRadius(float InSize);
 
 };
