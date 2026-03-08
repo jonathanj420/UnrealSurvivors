@@ -23,6 +23,7 @@ public:
     float GetElapsedTime() const { return ElapsedTime; }
     void RegisterMonsterSpawnManager(class ADEMonsterSpawnManager* InManager);
     class ADEMonsterSpawnManager* GetMonsterSpawnManager() { return MonsterSpawnManager; }
+    const TArray<class ADEMonsterBase*>& GetActiveMonsters() const;
 
 
     int32 GetSpawnLimit() const { return SpawnLimit; }

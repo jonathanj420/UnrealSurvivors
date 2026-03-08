@@ -551,3 +551,53 @@ void UDESkillManagerComponent::ResumeAutoSkills()
 {
     bAutoSkillPaused = false;
 }
+
+// 1. 즉시 초기화
+void UDESkillManagerComponent::ResetCooldownInstant(int32 SkillID)
+{
+    if (FActiveSkill* FoundSkill = ActiveSkills.Find(SkillID))
+    {
+        FoundSkill->CurrentCooldown = 0.0f; // 0으로 밀어버림!
+    }
+}
+
+// 2. 지정한 시간만큼 감소
+void UDESkillManagerComponent::ReduceCooldown(int32 SkillID, float Amount, ECooldownReduceType ReduceType)
+{
+    if (FActiveSkill* FoundSkill = ActiveSkills.Find(SkillID))
+    {
+        // 스킬 데이터가 없으면 리턴
+        if (!FoundSkill->RowData) return;
+
+        float ReduceValue = 0.0f;
+
+        // 1. 타입에 따른 감소량(초) 계산
+        switch (ReduceType)
+        {
+        case ECooldownReduceType::Flat:
+            // 고정 시간 (예: Amount가 1.5면 1.5초 감소)
+            ReduceValue = Amount;
+            break;
+
+        case ECooldownReduceType::Percentage:
+            // 퍼센트 (예: Amount가 0.2면 최대 쿨타임의 20% 감소)
+            // BaseCooldown을 기준으로 깎아야 기획 의도에 맞음!
+            float BaseCooldown = FoundSkill->RowData->Cooldown;
+            ReduceValue = BaseCooldown * Amount;
+            break;
+        }
+
+        // 2. 남은 쿨타임에서 차감 (0 이하로 내려가지 않게 방어)
+        FoundSkill->CurrentCooldown = FMath::Max(0.0f, FoundSkill->CurrentCooldown - ReduceValue);
+    }
+}
+
+// 3. 전체 쿨타임 감소
+void UDESkillManagerComponent::ReduceAllCooldowns(float ReduceAmount)
+{
+    for (auto& Pair : ActiveSkills)
+    {
+        FActiveSkill& Active = Pair.Value;
+        Active.CurrentCooldown = FMath::Max(0.0f, Active.CurrentCooldown - ReduceAmount);
+    }
+}

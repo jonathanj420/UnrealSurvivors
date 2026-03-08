@@ -93,7 +93,7 @@ public:
 
 
 public:
-	void MoveToPlayer(float DeltaTime);
+	void MoveToPlayer(float DeltaTime, const FVector& PlayerLocation);
 	//void ApplyDamage(float value);
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
 		AController* EventInstigator, AActor* DamageCauser) override;

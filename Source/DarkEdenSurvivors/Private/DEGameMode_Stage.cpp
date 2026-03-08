@@ -75,6 +75,11 @@ void ADEGameMode_Stage::RegisterMonsterSpawnManager(ADEMonsterSpawnManager* InMa
 
 }
 
+const TArray<class ADEMonsterBase*>& ADEGameMode_Stage::GetActiveMonsters() const
+{
+    return MonsterSpawnManager->GetActiveMonsters();
+}
+
 void ADEGameMode_Stage::GameOver()
 {
     UE_LOG(LogTemp, Warning, TEXT("=== GAME OVER ==="));

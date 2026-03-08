@@ -72,6 +72,8 @@ void UDECombatComponent::HandleDamageDealt(const FDEDamageResult& Result, const 
     {
         return;
     }
+    TotalDamageDealt += Result.FinalDamage;
+
    // UE_LOG(LogTemp, Error, TEXT("HDD Owner Passed"));
     // ====================================================
     // [로직 1] 타격 시 발동 효과 (On Hit)
@@ -86,7 +88,10 @@ void UDECombatComponent::HandleDamageDealt(const FDEDamageResult& Result, const 
     // ====================================================
     if (Result.bIsDead)
     {
+        ++TotalKillCount;
         ProcessOnKillEffect(Result.Victim);
+        
+        
     }
 }
 
@@ -126,7 +131,7 @@ void UDECombatComponent::ProcessOnKillEffect(AActor* Victim)
     ADECharacterBase* OwnerCharacter = Cast<ADECharacterBase>(GetOwner());
     if (!OwnerCharacter) return;
 
-    UE_LOG(LogTemp, Log, TEXT("On Kill Effect Test"));
+    UE_LOG(LogTemp, Log, TEXT("Total Kill Count : %d"),TotalKillCount);
     // 1. 킬 카운트 증가 (게임 모드나 캐릭터에 저장)
     // OwnerCharacter->AddKillCount(1);
 

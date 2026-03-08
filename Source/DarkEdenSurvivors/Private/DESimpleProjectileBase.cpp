@@ -88,7 +88,7 @@ void ADESimpleProjectileBase::Tick(float DeltaTime)
 		MovementComponent->Velocity = ShootDirection * CurrentSpeed;
 	}
 
-	//zis old sqrt logic = no good :/
+	//zis old sqrt logic = no good
 	//// 2. [가속/감속 로직]
 	//if (MovementComponent && Acceleration != 0.0f) // 가속도가 0이 아닐 때만 계산 (성능 절약)
 	//{

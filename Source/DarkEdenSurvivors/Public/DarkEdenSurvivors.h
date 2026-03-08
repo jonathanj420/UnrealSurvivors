@@ -21,4 +21,4 @@ DECLARE_LOG_CATEGORY_EXTERN(LogDarkEdenSurvivors, Log, All);
 #define LOG_CALL() UE_LOG(LogTemp, Warning, TEXT("[CALL] %s | %s:%d | %s"), \
     ANSI_TO_TCHAR(__FUNCTION__), ANSI_TO_TCHAR(__FILE__), __LINE__, *GetNameSafe(this))
 
-#define ECC_MonsterChannel ECC_GameTraceChannel5
+#define ECC_Monster     ECC_GameTraceChannel2

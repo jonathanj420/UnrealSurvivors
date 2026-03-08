@@ -4,8 +4,9 @@
 #include "DEGameplayLibrary.h"
 #include "DEHealthComponent.h"
 #include "DECombatComponent.h"
+#include "DEGameMode_Stage.h"
 #include "DEMonsterBase.h"
-
+#include "Engine/OverlapResult.h"
 
 FDEDamageResult UDEGameplayLibrary::ApplyCombatDamage(
 	const FDEDamageRequest& Request,
@@ -15,13 +16,21 @@ FDEDamageResult UDEGameplayLibrary::ApplyCombatDamage(
 {
 	FDEDamageResult Result;
 
-	if (!Request.Instigator) UE_LOG(LogTemp, Error, TEXT("ApplyCombatDamage Error: Instigator is NULL!"));
-	if (!Request.Victim) UE_LOG(LogTemp, Error, TEXT("ApplyCombatDamage Error: Victim is NULL!"));
-
 	// 1. 유효성 검사 (때린 놈, 맞은 놈 확인)
-	if (!Request.Instigator || !Request.Victim) return Result;
+	if (!Request.Instigator || !Request.Victim)
+	{
+
+		if (!Request.Instigator) UE_LOG(LogTemp, Error, TEXT("ApplyCombatDamage Error: Instigator is NULL!"));
+		if (!Request.Victim) UE_LOG(LogTemp, Error, TEXT("ApplyCombatDamage Error: Victim is NULL!"));
+		return Result;
+	}
+	
 	UDEHealthComponent* TargetHealth = Request.Victim->FindComponentByClass<UDEHealthComponent>();
-	if (!TargetHealth) return Result;
+	if (!TargetHealth)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ApplyCombatDamage Error: No Victim HealthComponent"));
+		return Result;
+	}
 
 	// 2. 피해자에게 데미지 처리 요청 (전달받은 Request 그대로 사용)
 	Result = TargetHealth->ProcessDamage(Request);
@@ -43,60 +52,140 @@ FDEDamageResult UDEGameplayLibrary::ApplyCombatDamage(
 	return Result;
 }
 
+AActor* UDEGameplayLibrary::GetNearestTarget(AActor* Instigator, float Radius)
+{
+	if (!Instigator) return nullptr;
 
-//FDEDamageResult UDEGameplayLibrary::ApplyCombatDamage(
-//	AActor* Instigator,
-//	AActor* DamageCauser,
-//	AActor* Target,
-//	float BaseDamage,
-//	const FCombatSnapshot& Snapshot,
-//	FVector KnockbackDir,
-//	float KnockbackForce)
-//{
-//	FDEDamageResult Result; // 빈 결과 생성
-//
-//	// 1. 유효성 검사 (때린 놈, 맞은 놈, 맞은 놈 체력통 확인)
-//	if (!Instigator || !Target) return Result;
-//
-//	UDEHealthComponent* TargetHealth = Target->FindComponentByClass<UDEHealthComponent>();
-//	if (!TargetHealth) return Result;
-//
-//	// 2. 데미지 신청서(Request) 작성
-//	FDEDamageRequest Req;
-//	Req.Instigator = Instigator;
-//	Req.DamageCauser = DamageCauser;
-//	Req.BaseDamage = BaseDamage;
-//
-//	// 스냅샷에서 전투 정보 가져오기
-//	Req.CritChance = Snapshot.CritChance;
-//	Req.CritDamageMultiplier = Snapshot.CritDamageMultiplier;
-//	Req.LifeStealChance = Snapshot.LifeStealChance;
-//	// (참고: LifeStealChance는 Request에 안 담고 아래 4번 단계에서 Snapshot을 직접 써도 됩니다. 
-//	//  다만 Request에 담으면 HealthComponent가 로그 찍을 때 편합니다.)
-//
-//	// 3. 피해자에게 데미지 처리 요청 (실제 체력 차감)
-//	// 피해자는 "나 맞았어" 처리만 하고, 결과(Result)를 리턴함
-//	Result = TargetHealth->ProcessDamage(Req);
-//
-//	// 4. ★ [핵심] 가해자에게 "너 때렸어"라고 알려줌 (후처리)
-//	// 가해자의 CombatComponent를 찾아서 피흡, 킬 보너스 등을 처리
-//	if (Instigator)
-//	{
-//		if (UDECombatComponent* CombatComp = Instigator->FindComponentByClass<UDECombatComponent>())
-//		{
-//			CombatComp->HandleDamageDealt(Result, Snapshot);
-//		}
-//	}
-//
-//	// 5. 넉백 처리 (데미지가 조금이라도 박혔고, 넉백 힘이 있을 때만)
-//	if (Result.FinalDamage > 0.0f && KnockbackForce > 0.0f)
-//	{
-//		// 몬스터라면 밀어내기
-//		if (ADEMonsterBase* Monster = Cast<ADEMonsterBase>(Target))
-//		{
-//			Monster->ApplyKnockback(KnockbackDir, KnockbackForce);
-//		}
-//	}
-//
-//	return Result;
-//}
+	UWorld* World = Instigator->GetWorld();
+	if (!World) return nullptr;
+
+	FVector MyLoc = Instigator->GetActorLocation();
+	AActor* Nearest = nullptr;
+	float MinDistSq = FLT_MAX;
+
+	if (FMath::IsNearlyEqual(Radius, -1.0f))
+	{
+		auto* GM = Cast<ADEGameMode_Stage>(World->GetAuthGameMode());
+		if (GM)
+		{
+			const TArray<ADEMonsterBase*>& ActiveMonsters = GM->GetActiveMonsters();
+			for (ADEMonsterBase* Monster : ActiveMonsters)
+			{
+				if (!Monster->IsAlive()) continue;
+				float DistSq = FVector::DistSquared(MyLoc, Monster->GetActorLocation());
+				if (DistSq < MinDistSq)
+				{
+					MinDistSq = DistSq;
+					Nearest = Monster;
+				}
+			}
+
+		}
+
+		return Nearest;
+	}
+	
+
+	FCollisionObjectQueryParams ObjectParams;
+	ObjectParams.AddObjectTypesToQuery(ECC_Monster);
+
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(Instigator);
+
+	TArray<FOverlapResult> Overlaps;
+	World->OverlapMultiByObjectType(
+		Overlaps, MyLoc, FQuat::Identity,
+		ObjectParams,
+		FCollisionShape::MakeSphere(Radius),
+		QueryParams
+	);
+
+	
+
+	for (const FOverlapResult& Res : Overlaps)
+	{
+		AActor* Actor = Res.GetActor();
+		if (!Actor || !Actor->IsA(ADEMonsterBase::StaticClass())) continue;
+
+		float DistSq = FVector::DistSquared(MyLoc, Actor->GetActorLocation());
+		if (DistSq < MinDistSq)
+		{
+			MinDistSq = DistSq;
+			Nearest = Actor;
+		}
+	}
+
+	return Nearest;
+}
+
+TArray<AActor*> UDEGameplayLibrary::GetRandomTargets(AActor* Instigator, float Radius, int32 Count)
+{
+	TArray<AActor*> Result;
+	if (!Instigator || Count <= 0) return Result;
+
+	UWorld* World = Instigator->GetWorld();
+	if (!World) return Result;
+
+	TArray<AActor*> Candidates;
+
+	// --- 1. 후보군(Candidates) 채우기 ---
+	if (FMath::IsNearlyEqual(Radius, -1.0f))
+	{
+		// [전체 범위 모드] GameMode에서 바로 가져오기
+		auto* GM = Cast<ADEGameMode_Stage>(World->GetAuthGameMode());
+		if (GM)
+		{
+			for (ADEMonsterBase* Monster : GM->GetActiveMonsters())
+			{
+				if (Monster) Candidates.Add(Monster);
+			}
+		}
+	}
+	else
+	{
+		// [반경 탐색 모드] OverlapMulti 사용
+		FVector MyLoc = Instigator->GetActorLocation();
+		FCollisionObjectQueryParams ObjectParams;
+		ObjectParams.AddObjectTypesToQuery(ECC_Monster);
+
+		FCollisionQueryParams QueryParams;
+		QueryParams.AddIgnoredActor(Instigator);
+
+		TArray<FOverlapResult> Overlaps;
+		World->OverlapMultiByObjectType(
+			Overlaps, MyLoc, FQuat::Identity,
+			ObjectParams,
+			FCollisionShape::MakeSphere(Radius),
+			QueryParams
+		);
+
+		for (const FOverlapResult& Res : Overlaps)
+		{
+			AActor* Actor = Res.GetActor();
+			if (Actor && Actor->IsA(ADEMonsterBase::StaticClass()))
+			{
+				Candidates.Add(Actor);
+			}
+		}
+	}
+
+	// --- 2. 공통 로직: 셔플 및 추출 ---
+	if (Candidates.Num() == 0) return Result;
+
+	// Fisher-Yates 셔플
+	for (int32 i = Candidates.Num() - 1; i > 0; i--)
+	{
+		int32 j = FMath::RandRange(0, i);
+		Candidates.Swap(i, j);
+	}
+
+	// 앞에서 Count개 뽑기 (셔플 덕분에 랜덤하게 뽑힘)
+	int32 FinalCount = FMath::Min(Count, Candidates.Num());
+	for (int32 i = 0; i < FinalCount; i++)
+	{
+		Result.Add(Candidates[i]);
+	}
+
+	return Result;
+}
+

@@ -75,9 +75,10 @@ void ADEMonsterBase::Tick(float DeltaTime)
 	
 }
 
-void ADEMonsterBase::MoveToPlayer(float DeltaTime)
+void ADEMonsterBase::MoveToPlayer(float DeltaTime, const FVector& PlayerLocation)
 {
-	if (!TargetPlayer) return;
+	// if (!TargetPlayer) return; <--- 매니저가 이미 널 체크 했으므로 지워도 됨! 최적화 +1
+
 	if (KnockbackVelocity != FVector::ZeroVector)
 	{
 		KnockbackVelocity = FMath::VInterpTo(
@@ -91,29 +92,15 @@ void ADEMonsterBase::MoveToPlayer(float DeltaTime)
 			KnockbackVelocity = FVector::ZeroVector;
 		}
 	}
-	FVector Dir = TargetPlayer->GetActorLocation() - GetActorLocation();
-	Dir.Z = 0.0f;             // Fix Z
+
+	// ★ 여기가 핵심! 직접 구하지 않고, 배달받은 PlayerLocation을 바로 쓴다!
+	FVector Dir = PlayerLocation - GetActorLocation();
+	Dir.Z = 0.0f; // Fix Z
+
 	FVector MoveDelta = Dir.GetSafeNormal();
 	FVector FinalMove = (MoveDelta * MoveSpeed + KnockbackVelocity) * DeltaTime;
-	AddActorWorldOffset(FinalMove, true);
-	//FHitResult Hit;
-	//AddActorWorldOffset(FinalMove, false, &Hit);
-	//
-	//if (Hit.bBlockingHit)
-	//{
-	//	ADEMonsterBase* OtherMonster = Cast<ADEMonsterBase>(Hit.GetActor());
-	//	if (OtherMonster)
-	//	{
-	//		// 넉백 힘 계산: 밀려나는 힘의 크기와 방향을 사용
-	//		// 현재 몬스터(A)가 밀리던 속도(KnockbackVelocity)를 힘으로 사용합니다.
 
-	//		// 부딪힌 몬스터(B)에게 넉백을 적용합니다.
-	//		FVector ChainKnockbackDir = OtherMonster->GetActorLocation() - GetActorLocation();
-
-	//		OtherMonster->ApplyKnockback(ChainKnockbackDir,KnockbackVelocity.Size()*0.5f); // 50%의 힘만 전달
-	//	}
-	//}
-
+	AddActorWorldOffset(FinalMove, false);
 }
 
 

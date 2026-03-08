@@ -30,6 +30,13 @@ struct FActiveSkill
 	float CurrentCooldown = 0.f;
 };
 
+UENUM(BlueprintType)
+enum class ECooldownReduceType : uint8
+{
+	Flat        UMETA(DisplayName = "고정 시간 감소 (초)"),
+	Percentage  UMETA(DisplayName = "최대 쿨타임 비례 감소 (%)")
+};
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DARKEDENSURVIVORS_API UDESkillManagerComponent : public UActorComponent
 {
@@ -127,6 +134,20 @@ protected:
 public:
 	void InitStatComp(class UDEStatComponent* InStatComp) { CachedStatComp = InStatComp; }
 	void InitInventoryComp(class UDEInventoryComponent* InInventoryComp) { CachedInventoryComp = InInventoryComp; }
+
+
+public:
+	// 1. 특정 스킬 쿨타임 즉시 초기화 (부메랑 회수, 특정 조건 달성 시)
+	UFUNCTION(BlueprintCallable, Category = "Skill|Cooldown")
+	void ResetCooldownInstant(int32 SkillID);
+
+	// 2. 특정 스킬 쿨타임 N초 감소 (평타 타격 시 특정 스킬 쿨감 효과 등)
+	UFUNCTION(BlueprintCallable, Category = "Skill|Cooldown")
+	void ReduceCooldown(int32 SkillID, float Amount, ECooldownReduceType ReduceType = ECooldownReduceType::Flat);
+
+	// 3. 모든 스킬 쿨타임 N초 감소 (광역 쿨감 아이템 획득, 특수 버프 등)
+	UFUNCTION(BlueprintCallable, Category = "Skill|Cooldown")
+	void ReduceAllCooldowns(float ReduceAmount);
 
 		
 };

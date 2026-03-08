@@ -28,14 +28,16 @@ void UDEBehavior_SelectNearestTarget::Execute(FDESkillContext& Context)
 	TArray<FOverlapResult> Overlaps;
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(Context.Instigator); // 나 자신 제외
+	FCollisionObjectQueryParams ObjectParams;
+	ObjectParams.AddObjectTypesToQuery(ECC_GameTraceChannel5);
 
 	// Enemy 채널이나 Pawn 채널로 검사 (프로젝트 설정에 따라 수정 필요)
 	// 여기서는 ECC_Pawn으로 검사하고 태그를 확인하는 범용 방식을 씀
-	bool bHit = World->OverlapMultiByChannel(
+	bool bHit = World->OverlapMultiByObjectType(
 		Overlaps,
 		MyLoc,
 		FQuat::Identity,
-		ECollisionChannel::ECC_WorldDynamic,
+		ObjectParams,
 		FCollisionShape::MakeSphere(Radius),
 		QueryParams
 	);
@@ -44,20 +46,18 @@ void UDEBehavior_SelectNearestTarget::Execute(FDESkillContext& Context)
 	float MinDistSq = FLT_MAX;
 
 	// 4. 가장 가까운 놈 찾기
-	if (bHit)
+	if (Overlaps.Num()>0)
 	{
 		for (const FOverlapResult& Res : Overlaps)
 		{
 			AActor* Actor = Res.GetActor();
-			// 살아있고 + 적 태그가 있는지 확인
-			if (Actor && Actor->ActorHasTag(EnemyTag))
+			if (!Actor || !Actor->IsA(ADEMonsterBase::StaticClass())) continue;
+
+			float DistSq = FVector::DistSquared(MyLoc, Actor->GetActorLocation());
+			if (DistSq < MinDistSq)
 			{
-				float DistSq = FVector::DistSquared(MyLoc, Actor->GetActorLocation());
-				if (DistSq < MinDistSq)
-				{
-					MinDistSq = DistSq;
-					NearestActor = Actor;
-				}
+				MinDistSq = DistSq;
+				NearestActor = Actor;
 			}
 		}
 	}

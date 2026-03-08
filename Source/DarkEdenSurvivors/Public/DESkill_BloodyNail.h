@@ -17,14 +17,10 @@ class DARKEDENSURVIVORS_API UDESkill_BloodyNail : public UDEAutoSkillBase
 	//virtual void ActivateSkill(FDESkillData* SkillData) override;
     virtual void InitBehaviors() override;
 
-    FTimerHandle FireTimerHandle;
-private:
-    FDESkillData* CurrentData = nullptr;
+protected:
+    UPROPERTY()
+    class UNiagaraSystem* NailHitEffect;
 
-    TSubclassOf<AActor> AttackClass;
-    USoundBase* AttackSound;
-
-    bool bRightSide = true;
-
-    void PerformConeSweep();
+    UPROPERTY()
+    class USoundBase* NailHitSound;
 };

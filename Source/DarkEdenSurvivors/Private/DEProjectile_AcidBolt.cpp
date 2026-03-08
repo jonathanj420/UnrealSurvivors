@@ -76,14 +76,14 @@ void ADEProjectile_AcidBolt::OnOverlap(UPrimitiveComponent* OverlappedComp, AAct
     if (ADEMonsterBase* Monster = Cast<ADEMonsterBase>(OtherActor))
     {
         UGameplayStatics::ApplyDamage(Monster, Damage, GetInstigatorController(), this, UDamageType::StaticClass());
-        UE_LOG(LogTemp, Warning, TEXT("CALLED ONOVERLAP"));
+        //UE_LOG(LogTemp, Warning, TEXT("CALLED ONOVERLAP"));
         Explode();
     }
 }
 
 void ADEProjectile_AcidBolt::Explode()
 {
-    UE_LOG(LogTemp, Warning, TEXT("CALLED EXPLODE"));
+    //UE_LOG(LogTemp, Warning, TEXT("CALLED EXPLODE"));
     UWorld* World = GetWorld();
     if (!World) return;
 
@@ -130,7 +130,7 @@ void ADEProjectile_AcidBolt::Explode()
     {
         // 중복 타격 방지용 (한 몬스터에 콜라이더가 여러 개일 수 있음)
         //TSet<AActor*> HitActors;
-
+        UE_LOG(LogTemp, Warning, TEXT("Target Hit"));
         for (const FOverlapResult& Result : OverlapResults)
         {
             AActor* TargetActor = Result.GetActor();
@@ -148,7 +148,7 @@ void ADEProjectile_AcidBolt::Explode()
                     UDamageType::StaticClass()
                 );
 
-                UE_LOG(LogTemp, Warning, TEXT("Hit %d Targets / acidbolt"), HitActors.Num());
+               // UE_LOG(LogTemp, Warning, TEXT("Hit %d Targets / acidbolt"), HitActors.Num());
 
                 // (옵션) 여기서 넉백(ApplyKnockback)도 직접 호출 가능!
                 /*
@@ -161,7 +161,7 @@ void ADEProjectile_AcidBolt::Explode()
     }
     else
     {
-        UE_LOG(LogTemp, Warning, TEXT("Exploded but no targets"));
+        //UE_LOG(LogTemp, Warning, TEXT("Exploded but no targets"));
     }
     // ---- 2) 소리 간헐 재생 ----
     static double LastExplosionSoundTime = 0.0;
@@ -175,7 +175,7 @@ void ADEProjectile_AcidBolt::Explode()
         UGameplayStatics::PlaySoundAtLocation(this, ExplosionSound, GetActorLocation());
         LastExplosionSoundTime = CurrentTime;
     }
-    UE_LOG(LogTemp, Warning, TEXT("ACIDBOLT RETURNING TO POOL"));
+   // UE_LOG(LogTemp, Warning, TEXT("ACIDBOLT RETURNING TO POOL"));
     ReturnToPool();
 }
 

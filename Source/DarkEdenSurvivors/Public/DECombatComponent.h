@@ -63,4 +63,9 @@ protected:
 
 	UPROPERTY()
 	UDEAccessoryComponent* CachedAccessoryComp;
+
+protected:
+	int32 TotalKillCount = 0;
+	float TotalDamageDealt = 0.f;
+
 };

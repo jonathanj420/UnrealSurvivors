@@ -5,7 +5,10 @@
 #include "Engine/OverlapResult.h"
 #include "DEMonsterBase.h"
 #include "DESkillContext.h"
+#include "DEGameMode_Stage.h"
 #include "DrawDebugHelpers.h"
+#include "DEMonsterSpawnManager.h"
+
 void UDEBehavior_SelectTargetsInRadius::Execute(FDESkillContext& Context)
 {
     if (!Context.Instigator) return;
@@ -45,19 +48,46 @@ void UDEBehavior_SelectTargetsInRadius::Execute(FDESkillContext& Context)
     FCollisionQueryParams Params;
     if (bIgnoreInstigator) Params.AddIgnoredActor(Context.Instigator);
     //float FinalRadius = Context.GetValue(TEXT("Radius"), Radius);
-    float FinalRadius = (Context.Radius > 0.f) ? Context.Radius : this->Radius;
-    
+    float FinalRadius = (Context.Radius != 0.f) ? Context.Radius : this->Radius;
+    //UE_LOG(LogTemp, Error, TEXT("Try Select In Radius"));
+
+    // ★ 반경이 0 미만(-1)일 때: 맵 전체 몬스터 검색
+    if (FinalRadius < 0.f)
+    {
+        //UE_LOG(LogTemp, Error, TEXT("Search Radius is -1, Targetting All Active Monsters"));
+        // 1. 게임모드를 캐스팅해서 가져옴
+        if (ADEGameMode_Stage* GameMode = Cast<ADEGameMode_Stage>(UGameplayStatics::GetGameMode(World)))
+        {
+            // 2. 게임모드가 들고 있는 스폰 매니저를 가져옴
+            if (ADEMonsterSpawnManager* SpawnManager = GameMode->GetMonsterSpawnManager())
+            {
+                // 3. 매니저가 들고 있는 활성화된 몬스터 리스트를 그대로 복사! (초고속 O(1))
+                Context.Targets.Append(SpawnManager->GetActiveMonsters());
+            }
+        }
+        return; // 광역 검색 끝났으니 리턴
+    }
+
     // 2. 루프 돌면서 검색
     for (const FVector& Center : CenterPoints)
     {
         TArray<FOverlapResult> Overlaps;
-        bool bHit = World->OverlapMultiByChannel(
-            Overlaps, Center, FQuat::Identity,
-            ECollisionChannel::ECC_GameTraceChannel2,
+        bool bHit = World->OverlapMultiByProfile(
+            Overlaps,
+            Center,
+            FQuat::Identity,
+            FName(TEXT("PlayerAttack")),
             FCollisionShape::MakeSphere(FinalRadius), Params
         );
-
-       /* DrawDebugSphere(
+        /*bool bHit = World->OverlapMultiByProfile(
+            Overlaps,
+            Center,
+            FQuat::Identity,
+            TEXT("PlayerAttack"),
+            FCollisionShape::MakeSphere(FinalRadius),
+            Params
+        );*/
+        DrawDebugSphere(
             GetWorld(),
             Center,
             FinalRadius,
@@ -65,8 +95,8 @@ void UDEBehavior_SelectTargetsInRadius::Execute(FDESkillContext& Context)
             FColor::Green,
             false,
             1.0f
-        );*/
-        if (bHit)
+        );
+        if (Overlaps.Num()>0)
         {
             for (const FOverlapResult& Res : Overlaps)
             {
@@ -75,15 +105,15 @@ void UDEBehavior_SelectTargetsInRadius::Execute(FDESkillContext& Context)
                 
                 if (HitActor && HitActor->IsA(ADEMonsterBase::StaticClass()))
                 {
-                    UE_LOG(LogTemp, Error, TEXT("Found : %s In Radius"), *HitActor->GetName());
-                    /* DrawDebugSphere(
+                    //UE_LOG(LogTemp, Error, TEXT("Found : %s In Radius"), *HitActor->GetName());
+                     DrawDebugSphere(
                     GetWorld(),
                     HitActor->GetActorLocation(),
                     100,
                     16,
                     FColor::Red,
                     false,
-                    1.0f);*/
+                    1.0f);
                     if (bAllowOverlap)
                     {
                         // ★ 옵션 켜짐: 그냥 무식하게 계속 담음 (A, A, A...)

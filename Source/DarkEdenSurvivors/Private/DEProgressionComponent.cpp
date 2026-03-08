@@ -76,10 +76,12 @@ void UDEProgressionComponent::CalculateNextLevelExp()
 
 void UDEProgressionComponent::LevelUp()
 {
-	if (MaxExp > CurrentExp)
-	{
-		AddExp(MaxExp - CurrentExp);
-	}
+	// 치트용: 경험치 시스템 무시하고 레벨만 +1
+	CurrentLevel++;
+	CurrentExp = 0.f;
+	CalculateNextLevelExp();
+	OnLevelUp.Broadcast(CurrentLevel);
+	UE_LOG(LogTemp, Warning, TEXT("Level Up! New Level: %d"), CurrentLevel);
 }
 void UDEProgressionComponent::AddExp(float Amount)
 {

@@ -4,7 +4,7 @@
 #include "DESkill_VenomCircle.h"
 #include "DEBehavior_InstantDamage.h"
 #include "DEBehavior_SelectTargetsInRadius.h"
-#include "DEBehavior_PlayNiagara.h"
+#include "DEBehavior_PlayEffect.h"
 #include "DEBehavior_ApplyStatusEffect.h"
 #include "DEBehavior_ApplyKnockback.h"
 
@@ -44,12 +44,12 @@ void UDESkill_VenomCircle::InitBehaviors()
 	// -------------------------------------------------------------------------
 
 	// Step 1. [VFX] 시전 이펙트 재생
-	auto* CastVFX = NewObject<UDEBehavior_PlayNiagara>(this, TEXT("CastVFX"));
+	auto* CastVFX = NewObject<UDEBehavior_PlayEffect>(this, TEXT("CastVFX"));
 	if (CastVFX)
 	{
-		CastVFX->SpawnLocation = EEffectSpawnLocation::Instigator; // 시전자 위치
+		CastVFX->TargetType = EEffectTargetType::Instigator; // 시전자 위치
 		CastVFX->bAttachToActor = false; // 바닥에 퍼지고 끝남 (따라오지 않음)
-		CastVFX->NiagaraAsset = CastEffectAsset; // 위에서 로드한 에셋 연결
+		CastVFX->NiagaraEffect = CastEffectAsset; // 위에서 로드한 에셋 연결
 		CastVFX->SizeVariableName = TEXT("User.CircleRadius");
 		Behaviors.Add(CastVFX);
 	}

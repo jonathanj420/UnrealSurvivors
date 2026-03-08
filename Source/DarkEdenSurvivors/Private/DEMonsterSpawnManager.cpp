@@ -113,7 +113,7 @@ void ADEMonsterSpawnManager::Tick(float DeltaTime)
 
         if (Mob->IsStunned())
             continue;
-        Mob->MoveToPlayer(DeltaTime);
+        Mob->MoveToPlayer(DeltaTime, PlayerLocation);
         Mob->ExecuteAttackLogic(CurrentWorldTime);
         ResolvePlayerPush(Mob);
         
@@ -592,6 +592,7 @@ const TArray<ADEMonsterBase*>& ADEMonsterSpawnManager::GetActiveMonsters() const
 {
     return ActiveMonsters;
 }
+
 //void ADEMonsterSpawnManager::ResolveMonsterOverlap(ADEMonsterBase* A, ADEMonsterBase* B)
 //{
 //    if (!A || !B) return;

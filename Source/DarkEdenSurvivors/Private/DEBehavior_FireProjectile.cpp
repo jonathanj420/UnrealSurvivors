@@ -3,6 +3,7 @@
 
 #include "DEBehavior_FireProjectile.h"
 #include "DEPoolSubsystem.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "DESimpleProjectileBase.h" // 투사체 헤더
 #include "Kismet/GameplayStatics.h"
 
@@ -78,6 +79,12 @@ void UDEBehavior_FireProjectile::FireOneShot()
 
 	// --- 발사 로직 (동일) ---
 	FRotator FireRot = BaseDir.Rotation();
+	if (CachedContext.Targets.Num() > 0 && CachedContext.Targets[0])
+	{
+		FVector TargetLoc = CachedContext.Targets[0]->GetActorLocation();
+		// 내 위치에서 타겟 위치를 바라보는 회전값 계산
+		FireRot = UKismetMathLibrary::FindLookAtRotation(CachedContext.Instigator->GetActorLocation(), TargetLoc);
+	}
 	FVector Right = CachedContext.Instigator->GetActorRightVector();
 	FVector Up = CachedContext.Instigator->GetActorUpVector();
 	FVector OwnerLoc = CachedContext.Instigator->GetActorLocation();
