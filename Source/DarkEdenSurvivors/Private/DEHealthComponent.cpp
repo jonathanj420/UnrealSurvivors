@@ -219,6 +219,40 @@ FDEDamageResult UDEHealthComponent::ProcessDamage(const FDEDamageRequest& Reques
     return Result;
 }
 
+void UDEHealthComponent::InstantKill(AActor* Executioner)
+{
+    // 1. 이미 죽은 놈은 두 번 죽이지 않음
+    if (bIsDead) return;
+
+    // 2. 쉴드, 방어력 계산 다 무시하고 체력을 강제로 증발시킴
+    CurrentHP = 0.0f;
+
+    // 3. UI 갱신 (체력바 즉시 0으로)
+    OnHPChanged.Broadcast(CurrentHP, MaxHP);
+
+    // 4. (연출) 서브시스템을 통한 처형 데미지 텍스트 띄우기
+    if (UWorld* World = GetWorld())
+    {
+        if (UDEDamageTextSubsystem* DmgSys = World->GetSubsystem<UDEDamageTextSubsystem>())
+        {
+            FDamageVisualInfo DmgInfo;
+            // 텍스트 연출을 위해 남은 체력이나 최대 체력만큼 띄워줌
+            DmgInfo.Amount = MaxHP;
+            DmgInfo.bIsCritical = true; // 처형이니까 크리티컬 이펙트 빌려 쓰기!
+
+            if (GetOwner())
+            {
+                DmgInfo.WorldLocation = GetOwner()->GetActorLocation() + FVector(0, 0, 100);
+            }
+            DmgSys->ShowDamage(DmgInfo);
+            UE_LOG(LogTemp, Warning, TEXT("EXECUTED ! ! !"));
+        }
+    }
+
+    // 5. 진짜 사망 처리로 넘김
+    HandleDeath(Executioner);
+}
+
 void UDEHealthComponent::ApplyFinalDamage(float InDamage, AActor* InCauser, bool bInIsCritical)
 {
     if (bIsDead) return;

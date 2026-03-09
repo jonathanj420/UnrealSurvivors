@@ -59,10 +59,20 @@ void UDEBehavior_PlayEffect::Execute(FDESkillContext& Context)
     // 2. 스폰
     for (int32 i = 0; i < SpawnLocations.Num(); i++)
     {
+        
         FVector FinalPos = SpawnLocations[i] + Offset;
         AActor* TargetForRot = Context.Targets.IsValidIndex(i) ? Context.Targets[i] : nullptr;
         FRotator SpawnRot = GetSpawnRotation(Context, FinalPos, TargetForRot);
-
+       // UE_LOG(LogTemp, Warning, TEXT("Spawn Locations : %d"), SpawnLocations.Num());
+        //if (TargetForRot != nullptr)
+        //{
+        //   // UE_LOG(LogTemp, Warning, TEXT("Target For Rot : %s"), *TargetForRot->GetName());
+        //}
+        //else
+        //{
+        //   // UE_LOG(LogTemp, Warning, TEXT("Target For Rot is Nullptr"));
+        //}
+        
         // 나이아가라
         if (NiagaraEffect)
         {

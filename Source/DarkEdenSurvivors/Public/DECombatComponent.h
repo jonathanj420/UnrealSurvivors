@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "DEStatTypes.h"
 #include "DEDamageTypes.h"
+#include "DECombatEffect.h"
 #include "DECombatComponent.generated.h"
 
 class UDEStatComponent;
@@ -38,24 +39,15 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Combat")
 	FCombatSnapshot GetCombatSnapshot() const;
 
-		
-public:
-	/**
-	 * 전투 결과 처리 (Post-Process)
-	 * 스킬이나 투사체가 데미지를 입힌 직후에 호출합니다.
-	 * @param Result : 피해자(HealthComponent)가 리턴한 데미지 결과
-	 * @param Snapshot : 공격 당시의 내 스탯 (피흡 확률 등 포함)
-	 */
-	void HandleDamageDealt(const FDEDamageResult& Result, const FCombatSnapshot& Snapshot);
 
 protected:
-	// 내부 로직 분리 (protected나 private 권장)
+	//// 내부 로직 분리 (protected나 private 권장)
 
-	// 생명력 흡수 처리
-	void ProcessLifeSteal(const FCombatSnapshot& Snapshot);
+	//// 생명력 흡수 처리
+	//void ProcessLifeSteal(const FCombatSnapshot& Snapshot);
 
-	// 처치 시 효과 처리 (킬 카운트, 쿨감, 폭발 등)
-	void ProcessOnKillEffect(AActor* Victim);
+	//// 처치 시 효과 처리 (킬 카운트, 쿨감, 폭발 등)
+	//void ProcessOnKillEffect(AActor* Victim);
 
 	// 컴포넌트 캐싱 (매번 FindComponent 안 하려고)
 	UPROPERTY()
@@ -67,5 +59,22 @@ protected:
 protected:
 	int32 TotalKillCount = 0;
 	float TotalDamageDealt = 0.f;
+
+protected:
+	// ★ 통합 레고 바구니 (Instanced 필수)
+	UPROPERTY(EditAnywhere, Instanced, Category = "Combat Effects")
+	TArray<UDECombatEffect*> ActiveCombatEffects;
+
+public:
+	// ★ 효과 추가/제거용 함수 (C++ 런타임 적용용)
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void AddCombatEffect(UDECombatEffect* NewEffect);
+
+	// ★ 동네방네 사건을 알리는 핵심 방송국 함수
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void BroadcastCombatEvent(ECombatEventTrigger TriggerType, const FCombatEventData& EventData);
+
+	// 데미지를 줬을 때 처리 (내용 수정할 거임)
+	void HandleDamageDealt(const FDEDamageResult& Result, const FCombatSnapshot& Snapshot);
 
 };

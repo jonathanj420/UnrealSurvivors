@@ -6,6 +6,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "DEMonsterBase.h"
+#include "DECombatEffect_Execution.h"
 
 // Sets default values
 ADEProjectile_BloodyKnife::ADEProjectile_BloodyKnife()
@@ -30,11 +31,12 @@ ADEProjectile_BloodyKnife::ADEProjectile_BloodyKnife()
     }
 
     CollisionComponent->InitSphereRadius(30.0f); // 기본값
-    // 스탯 오버라이드
-    Damage = 1.0f;
-    Penetration = 10; // 님 설정대로
-    KnockbackForce = 1600.0f;
-    LifeTime = 3.0f;
+  
+    UDECombatEffect_Execution* Execution =
+        CreateDefaultSubobject<UDECombatEffect_Execution>(TEXT("ExecutionEffect"));
+    Execution->Threshold = 0.1f;
+    Execution->TriggerCondition = ECombatEventTrigger::OnKill;
+    LocalEffects.Add(Execution);
 
     // *주의: 델리게이트 연결(AddDynamic)은 부모가 했으니 또 하면 안 됩니다!
 

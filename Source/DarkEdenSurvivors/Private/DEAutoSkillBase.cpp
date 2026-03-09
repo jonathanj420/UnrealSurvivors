@@ -19,11 +19,20 @@ void UDEAutoSkillBase::Activate()
 
 void UDEAutoSkillBase::ExecuteWithContext(FDESkillContext& Context)
 {
+
+    //here could be other skills' own logics
+
+
+
     // 기본 역할: Behavior들 실행
     for (UDESkillBehavior* Behavior : Behaviors)
     {
         if (Behavior) Behavior->Execute(Context);
     }
+
+
+
+    //or maybe here
 
 }
 

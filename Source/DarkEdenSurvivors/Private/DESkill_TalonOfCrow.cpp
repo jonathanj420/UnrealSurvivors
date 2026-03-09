@@ -13,7 +13,7 @@
 UDESkill_TalonOfCrow::UDESkill_TalonOfCrow()
 {
     // 1. 생성자에서 에셋 경로를 하드코딩해서 찾아옴 (우클릭 -> 레퍼런스 복사)
-    static ConstructorHelpers::FObjectFinder<UNiagaraSystem> FXAsset(TEXT("/Game/DarkEden/Data/Niagara/NS_BloodyNail.NS_BloodyNail"));
+    static ConstructorHelpers::FObjectFinder<UNiagaraSystem> FXAsset(TEXT("/Game/DarkEden/Data/Niagara/NS_TalonOfCrow.NS_TalonOfCrow"));
     if (FXAsset.Succeeded())
     {
         NailHitEffect = FXAsset.Object;
@@ -30,11 +30,7 @@ UDESkill_TalonOfCrow::UDESkill_TalonOfCrow()
 void UDESkill_TalonOfCrow::InitBehaviors()
 {
     Super::InitBehaviors();
-    UDEBehavior_CullByCone* CullCone = NewObject<UDEBehavior_CullByCone>(this);
-    //CullCone->Radius = 150.0f;       // 손톱 사거리
-    //CullCone->ConeAngle = 120.0f;    // 넓게 할퀴는 부채꼴 각도
-    ////CullCone->bShowDebug = true;     // ★ 에디터에서 빨간색 피자 조각 보이게 켜둠!
-    Behaviors.Add(CullCone);
+    
 
     UDEBehavior_PlayEffect* PlayFX = NewObject<UDEBehavior_PlayEffect>(this);
     PlayFX->TargetType = EEffectTargetType::Instigator;
@@ -42,6 +38,12 @@ void UDESkill_TalonOfCrow::InitBehaviors()
     PlayFX->SoundEffect = NailHitSound;    // ★ 여기에 쏙!
     PlayFX->RotationType = EEffectRotation::TowardTarget;
     Behaviors.Add(PlayFX);
+
+    UDEBehavior_CullByCone* CullCone = NewObject<UDEBehavior_CullByCone>(this);
+    //CullCone->Radius = 150.0f;       // 손톱 사거리
+    //CullCone->ConeAngle = 120.0f;    // 넓게 할퀴는 부채꼴 각도
+    ////CullCone->bShowDebug = true;     // ★ 에디터에서 빨간색 피자 조각 보이게 켜둠!
+    Behaviors.Add(CullCone);
 
     // 3. 즉발 데미지 적용
     UDEBehavior_InstantDamage* InstantDmg = NewObject<UDEBehavior_InstantDamage>(this);
@@ -53,7 +55,6 @@ void UDESkill_TalonOfCrow::InitBehaviors()
 
 void UDESkill_TalonOfCrow::ExecuteWithContext(FDESkillContext& Context)
 {
-    UE_LOG(LogTemp, Log, TEXT("Try Talon Of Crow"));
     for (int32 i = 0; i < Context.Amount; i++)
     {
         AActor* Target = nullptr;
@@ -67,9 +68,7 @@ void UDESkill_TalonOfCrow::ExecuteWithContext(FDESkillContext& Context)
 
         Context.Targets.Empty();
         Context.Targets.Add(Target);
-
         Super::ExecuteWithContext(Context);
-        UE_LOG(LogTemp, Log, TEXT("Talon Of Crow Executed With Context"));
     }
 
    

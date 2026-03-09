@@ -26,6 +26,7 @@ void UDEBehavior_CullByCone::Execute(FDESkillContext& Context)
     {
         // (타겟 위치 - 내 위치)를 하면 타겟을 향한 '방향 벡터'가 나옵니다.
         ForwardDir = (Context.Targets[0]->GetActorLocation() - Context.Instigator->GetActorLocation()).GetSafeNormal();
+        Context.Targets.Reset();
     }
 
     // 1. Context에 동적 스탯이 있으면 쓰고, 없으면 기본값(this) 사용
@@ -85,7 +86,7 @@ void UDEBehavior_CullByCone::Execute(FDESkillContext& Context)
         SphereShape,
         QueryParams);
 
-    Context.Targets.Reset(); // 찌꺼기 비우기
+    //Context.Targets.Reset(); // 찌꺼기 비우기
 
     //THIS MOFOKIN OverlapMultiByProfile NEVER RETURNS FUCKIN TRUE FOR OVERLAPS BUT FALSE FOR FUCKING BLOCKS
     if (OverlapResults.Num() > 0)

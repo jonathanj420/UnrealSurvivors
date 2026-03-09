@@ -5,9 +5,10 @@
 #include "DarkEdenSurvivors.h"
 #include "GameFramework/Actor.h"
 #include "DEStatTypes.h"
+#include "DESkillContext.h"
+
 #include "DESimpleProjectileBase.generated.h"
 
-struct FDESkillContext;
 class UNiagaraComponent;
 
 
@@ -42,7 +43,14 @@ protected:
 
     // ***************** Projectile Stats ******************
 protected:
+    UPROPERTY()
+    FDESkillContext CachedContext;
+
     FCombatSnapshot Snapshot;
+protected:
+    // 이 투사체'만' 가지고 있는 고유 특수 효과들
+    UPROPERTY(EditAnywhere, Instanced, Category = "Local Effects")
+    TArray<class UDECombatEffect*> LocalEffects;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite,Category="Stats")
     float Damage;
@@ -99,7 +107,7 @@ protected:
     // 스킬 스펙으로 초기화
     
 protected:
-    void ResetState();
+    virtual void ResetState();
 
     /** 풀로 반환 */
     void ReturnToPool();
@@ -116,7 +124,7 @@ public:
 
 protected:
     bool TryDealDamage(AActor* Victim);
-
+    virtual void UpdateMovement(float DeltaTime);
 
     TSet<AActor*> HitActors;
     //*********** GET ***************

@@ -7,6 +7,7 @@
 #include "DEGameMode_Stage.h"
 #include "DEMonsterBase.h"
 #include "Engine/OverlapResult.h"
+#include "DECombatTypes.h"
 
 FDEDamageResult UDEGameplayLibrary::ApplyCombatDamage(
 	const FDEDamageRequest& Request,
@@ -14,33 +15,52 @@ FDEDamageResult UDEGameplayLibrary::ApplyCombatDamage(
 	FVector KnockbackDir,
 	float KnockbackForce)
 {
+
 	FDEDamageResult Result;
 
-	// 1. 유효성 검사 (때린 놈, 맞은 놈 확인)
-	if (!Request.Instigator || !Request.Victim)
-	{
+	// 1. 유효성 검사
+	if (!Request.Instigator || !Request.Victim) return Result;
 
-		if (!Request.Instigator) UE_LOG(LogTemp, Error, TEXT("ApplyCombatDamage Error: Instigator is NULL!"));
-		if (!Request.Victim) UE_LOG(LogTemp, Error, TEXT("ApplyCombatDamage Error: Victim is NULL!"));
-		return Result;
-	}
-	
 	UDEHealthComponent* TargetHealth = Request.Victim->FindComponentByClass<UDEHealthComponent>();
-	if (!TargetHealth)
+	if (!TargetHealth) return Result;
+
+	// =========================================================
+	// ★ 2. [글로벌 OnPreHit] 데미지 조작의 시간!
+	// =========================================================
+	// 원본 Request를 복사해서 우리가 조작할 '진짜 청구서'를 만듦
+	FDEDamageRequest ModifiableReq = Request;
+
+	if (UDECombatComponent* CombatComp = Request.Instigator->FindComponentByClass<UDECombatComponent>())
 	{
-		UE_LOG(LogTemp, Error, TEXT("ApplyCombatDamage Error: No Victim HealthComponent"));
-		return Result;
+		// 택배 상자 만들기
+		FCombatEventData PreHitData;
+		PreHitData.Instigator = Request.Instigator;
+		PreHitData.Target = Request.Victim;
+		PreHitData.DamageMultiplier = 1.0f; // 기본 1배수
+
+		// 글로벌 패시브들에게 "나 얘 때릴 건데 데미지 뻥튀기할 놈 있어?" 하고 물어봄
+		CombatComp->BroadcastCombatEvent(ECombatEventTrigger::OnPreHit, PreHitData);
+
+		// 패시브들이 조작한 배수를 복사본 청구서에 곱해줌!
+		ModifiableReq.BaseDamage *= PreHitData.DamageMultiplier;
+
+		// (만약 아까 말한 크리티컬 보너스도 있다면 여기서 더해줌)
+		// ModifiableReq.CritChance += PreHitData.AddBonusCritChance; 
 	}
 
-	// 2. 피해자에게 데미지 처리 요청 (전달받은 Request 그대로 사용)
-	Result = TargetHealth->ProcessDamage(Request);
-	// 3. 가해자에게 후처리(피흡, 킬) 요청
+	// =========================================================
+	// 3. 피해자에게 '조작이 완료된' 청구서로 데미지 처리 요청
+	// =========================================================
+	Result = TargetHealth->ProcessDamage(ModifiableReq);
+
+	// 4. 가해자에게 후처리(OnHit, OnKill) 요청
+	// (여기는 네가 원래 짜둔 대로 HandleDamageDealt가 글로벌 이펙트를 잘 터뜨려 줄 거임)
 	if (UDECombatComponent* CombatComp = Request.Instigator->FindComponentByClass<UDECombatComponent>())
 	{
 		CombatComp->HandleDamageDealt(Result, Snapshot);
 	}
 
-	// 4. 넉백 처리
+	// 5. 넉백 처리
 	if (Result.FinalDamage > 0.0f && KnockbackForce > 0.0f)
 	{
 		if (ADEMonsterBase* Monster = Cast<ADEMonsterBase>(Request.Victim))
@@ -50,6 +70,43 @@ FDEDamageResult UDEGameplayLibrary::ApplyCombatDamage(
 	}
 
 	return Result;
+
+	//FDEDamageResult Result;
+
+	//// 1. 유효성 검사 (때린 놈, 맞은 놈 확인)
+	//if (!Request.Instigator || !Request.Victim)
+	//{
+
+	//	if (!Request.Instigator) UE_LOG(LogTemp, Error, TEXT("ApplyCombatDamage Error: Instigator is NULL!"));
+	//	if (!Request.Victim) UE_LOG(LogTemp, Error, TEXT("ApplyCombatDamage Error: Victim is NULL!"));
+	//	return Result;
+	//}
+	//
+	//UDEHealthComponent* TargetHealth = Request.Victim->FindComponentByClass<UDEHealthComponent>();
+	//if (!TargetHealth)
+	//{
+	//	UE_LOG(LogTemp, Error, TEXT("ApplyCombatDamage Error: No Victim HealthComponent"));
+	//	return Result;
+	//}
+
+	//// 2. 피해자에게 데미지 처리 요청 (전달받은 Request 그대로 사용)
+	//Result = TargetHealth->ProcessDamage(Request);
+	//// 3. 가해자에게 후처리(피흡, 킬) 요청
+	//if (UDECombatComponent* CombatComp = Request.Instigator->FindComponentByClass<UDECombatComponent>())
+	//{
+	//	CombatComp->HandleDamageDealt(Result, Snapshot);
+	//}
+
+	//// 4. 넉백 처리
+	//if (Result.FinalDamage > 0.0f && KnockbackForce > 0.0f)
+	//{
+	//	if (ADEMonsterBase* Monster = Cast<ADEMonsterBase>(Request.Victim))
+	//	{
+	//		Monster->ApplyKnockback(KnockbackDir, KnockbackForce);
+	//	}
+	//}
+
+	//return Result;
 }
 
 AActor* UDEGameplayLibrary::GetNearestTarget(AActor* Instigator, float Radius)

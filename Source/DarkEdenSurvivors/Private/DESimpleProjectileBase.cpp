@@ -13,6 +13,8 @@
 #include "DEHealthComponent.h"
 #include "DEGameplayLibrary.h"
 #include "DEStatTypes.h"
+#include "DECombatEffect.h"
+
 
 // Sets default values
 ADESimpleProjectileBase::ADESimpleProjectileBase()
@@ -73,20 +75,7 @@ void ADESimpleProjectileBase::Tick(float DeltaTime)
 		return;
 	}
 
-	// [최적화] 가속도가 있을 때만 연산
-	// KINDA_SMALL_NUMBER (0.0001) 체크도 비용이다. 그냥 0.0f 비교가 더 빠를 수도 있음.
-	if (MovementComponent && Acceleration != 0.0f)
-	{
-		// 1. float 덧셈 (CPU가 제일 좋아하는 연산)
-		CurrentSpeed += (Acceleration * DeltaTime);
-
-		// 2. 음수 방지 & MaxSpeed 제한
-		if (CurrentSpeed < 0.0f) CurrentSpeed = 0.0f;
-		// if (CurrentSpeed > MaxSpeed) ... (필요하면)
-
-		// 3. [핵심] 제곱근 연산(sqrt) 없이 단순 곱셈으로 속도 적용
-		MovementComponent->Velocity = ShootDirection * CurrentSpeed;
-	}
+	UpdateMovement(DeltaTime);
 
 	//zis old sqrt logic = no good
 	//// 2. [가속/감속 로직]
@@ -205,6 +194,7 @@ void ADESimpleProjectileBase::InitializeFromContext(const FDESkillContext& Conte
 	{
 		SetInstigator(InstigatorPawn);
 	}
+	CachedContext = Context;
 	Snapshot = Context.FinalSnapshot;
 	Damage = Context.Damage;             // ★ 중요: 곱하기 하지 마세요! 순수 데미지 저장
 	CritChance = Context.CritChance;
@@ -253,30 +243,6 @@ void ADESimpleProjectileBase::OnOverlap(UPrimitiveComponent* OverlappedComp, AAc
 		}
 	}
 
-	//// 넉백 방향 계산
-	//FVector KBDir = OtherActor->GetActorLocation() - GetActorLocation();
-
-	//// ★ [핵심] 주문서(Request) 작성
-	//FDEDamageRequest Req;
-	//Req.Instigator = GetInstigator();
-	//Req.DamageCauser = this;
-	//Req.Victim = OtherActor; // 맞은 놈을 넣어줍니다.
-	//Req.BaseDamage = Damage;
-	//Req.CritChance = CritChance; // 멤버 변수로 들고 있는 Snapshot 활용
-	//Req.CritDamageMultiplier = CritDamageMultiplier;
-
-	//// 라이브러리에 던지기 (피흡, 넉백, 킬 처리가 한 방에 끝남)
-	////UE_LOG(LogTemp, Log, TEXT("Try DEGameplayLibrary"));
-	//FDEDamageResult Res = UDEGameplayLibrary::ApplyCombatDamage(Req, this->Snapshot, KBDir, this->KnockbackForce);
-
-	//// 3. [관통 로직만 투사체 본연의 업무로 남김]
-	//if (Res.FinalDamage > 0.0f && Penetration != -1)
-	//{
-	//	if (--Penetration <= 0) ReturnToPool();
-	//}
-
-
-	//
 }
 bool ADESimpleProjectileBase::TryDealDamage(AActor* Victim)
 {
@@ -292,11 +258,79 @@ bool ADESimpleProjectileBase::TryDealDamage(AActor* Victim)
 	Req.CritChance = CritChance;
 	Req.CritDamageMultiplier = CritDamageMultiplier;
 
-	// 라이브러리 호출
+	// 1. [데미지 선 적용] 라이브러리 호출
 	FDEDamageResult Res = UDEGameplayLibrary::ApplyCombatDamage(Req, this->Snapshot, KBDir, this->KnockbackForce);
 
-	// 데미지가 성공적으로 들어갔는지 반환
-	return Res.FinalDamage > 0.0f;
+	// 데미지가 아예 안 들어갔으면(무적 등) 여기서 컷!
+	if (Res.FinalDamage <= 0.0f)
+	{
+		return false;
+	}
+
+	// ---------------------------------------------------------
+	// (삭제됨) 몹이 죽었다고 바로 return true 해버리던 바보 같은 최적화 제거!
+	// 죽었더라도 '적중(OnHit)'은 한 거니까 이펙트는 끝까지 책임지고 터뜨린다!
+	// ---------------------------------------------------------
+
+	// 2. [로컬 이펙트 발동] (투사체 고유 기믹: 피흡, 처형 등)
+	FCombatEventData EventData;
+	EventData.Instigator = GetInstigator();
+	EventData.Target = Victim;
+	EventData.DamageAmount = Res.FinalDamage; // 실제 들어간 데미지
+
+	for (UDECombatEffect* Effect : LocalEffects)
+	{
+		if (!Effect) continue;
+
+		// 케이스 A: "나는 때릴 때마다 터질래!" (OnHit)
+		if (Effect->TriggerCondition == ECombatEventTrigger::OnHit)
+		{
+			Effect->ExecuteEffect(EventData);
+		}
+		// 케이스 B: "나는 쟤가 죽었을 때만 터질래!" (OnKill)
+		else if (Effect->TriggerCondition == ECombatEventTrigger::OnKill && Res.bIsDead)
+		{
+			// Res.bIsDead가 true일 때만 진입! 막타를 쳤을 때만 실행됨.
+			Effect->ExecuteEffect(EventData);
+		}
+	}
+
+	return true;
+
+	//if (!Victim) return false;
+
+	//FVector KBDir = Victim->GetActorLocation() - GetActorLocation();
+
+	//FDEDamageRequest Req;
+	//Req.Instigator = GetInstigator();
+	//Req.DamageCauser = this;
+	//Req.Victim = Victim;
+	//Req.BaseDamage = Damage;
+	//Req.CritChance = CritChance;
+	//Req.CritDamageMultiplier = CritDamageMultiplier;
+
+	//// 라이브러리 호출
+	//FDEDamageResult Res = UDEGameplayLibrary::ApplyCombatDamage(Req, this->Snapshot, KBDir, this->KnockbackForce);
+
+	//// 데미지가 성공적으로 들어갔는지 반환
+	//return Res.FinalDamage > 0.0f;
+}
+void ADESimpleProjectileBase::UpdateMovement(float DeltaTime)
+{
+	// [최적화] 가속도가 있을 때만 연산
+	// KINDA_SMALL_NUMBER (0.0001) 체크도 비용이다. 그냥 0.0f 비교가 더 빠를 수도 있음.
+	if (MovementComponent && Acceleration != 0.0f)
+	{
+		// 1. float 덧셈 (CPU가 제일 좋아하는 연산)
+		CurrentSpeed += (Acceleration * DeltaTime);
+
+		// 2. 음수 방지 & MaxSpeed 제한
+		if (CurrentSpeed < 0.0f) CurrentSpeed = 0.0f;
+		// if (CurrentSpeed > MaxSpeed) ... (필요하면)
+
+		// 3. [핵심] 제곱근 연산(sqrt) 없이 단순 곱셈으로 속도 적용
+		MovementComponent->Velocity = ShootDirection * CurrentSpeed;
+	}
 }
 void ADESimpleProjectileBase::OnLifeTimeExpired()
 {

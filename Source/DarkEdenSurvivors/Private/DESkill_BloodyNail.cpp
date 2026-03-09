@@ -51,6 +51,7 @@ void UDESkill_BloodyNail::InitBehaviors()
     UDEBehavior_PlayEffect* PlayFX = NewObject<UDEBehavior_PlayEffect>(this);
     PlayFX->TargetType = EEffectTargetType::Instigator;
     PlayFX->NiagaraEffect = NailHitEffect; // ¡Ú ¿©±â¿¡ ½ï!
+    PlayFX->RotationType = EEffectRotation::InstigatorForward;
     PlayFX->SoundEffect = NailHitSound;    // ¡Ú ¿©±â¿¡ ½ï!
     Behaviors.Add(PlayFX);
 
