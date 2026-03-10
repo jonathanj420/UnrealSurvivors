@@ -74,19 +74,17 @@ void UDESkillManagerComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
         // 쿨타임이 다 돌았고, 스킬 데이터가 유효하다면 발사!
         if (Active.SkillObject && Active.RowData)
         {
-            // 데미지 합산, 스냅샷 등 복잡한 로직은 스킬 내부(BuildContext)가 알아서 함!
-            // 매니저는 그냥 "쏴라!" 하고 명령만 내립니다.
-            Active.SkillObject->Activate();
 
-            // ---------------------------------------------------------
-            // 4. 다음 발사를 위한 쿨타임 리셋 (Over-tick 최적화 포함)
-            // ---------------------------------------------------------
+            // =========================================================
+            // ★ [수정 1] 먼저! 다음 발사를 위한 새 쿨타임부터 장전합니다.
+            // =========================================================
             float BaseCooldown = Active.RowData->Cooldown;
-
-            // 기본 쿨타임에 현재 쿨감(%)을 적용 (최소 0.1초 방어선)
             float FinalCooldown = FMath::Max(0.1f, BaseCooldown * (1.0f - CurrentCDR));
-            // 초과 시간(Over-tick) 보정: 프레임 랙 때문에 쿨타임이 -0.05초가 되었다면,
-            // 다음 쿨타임에서 0.05초를 빼서 스킬 템포를 칼같이 유지합니다.
+
+            // (아까 만든 영수증 발급)
+           // Active.CalculatedMaxCooldown = FinalCooldown;
+
+            // 초과 시간(Over-tick) 보정
             Active.CurrentCooldown = FinalCooldown + Active.CurrentCooldown;
 
             // 만약 초과 보정 때문에 쿨이 또 0 이하로 내려가면 안전하게 리셋
@@ -94,6 +92,34 @@ void UDESkillManagerComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
             {
                 Active.CurrentCooldown = FinalCooldown;
             }
+
+            // =========================================================
+            // ★ [수정 2] 쿨타임 세팅이 다 끝난 깨끗한 상태에서 발사!
+            // =========================================================
+            // 이제 이 안에서 OnKill이 터져서 ReduceCooldown이 불려도,
+            // 방금 세팅된 '새 쿨타임'에서 정상적으로 깎이게 됩니다!
+            Active.SkillObject->Activate();
+
+            //// 데미지 합산, 스냅샷 등 복잡한 로직은 스킬 내부(BuildContext)가 알아서 함!
+            //// 매니저는 그냥 "쏴라!" 하고 명령만 내립니다.
+            //Active.SkillObject->Activate();
+
+            //// ---------------------------------------------------------
+            //// 4. 다음 발사를 위한 쿨타임 리셋 (Over-tick 최적화 포함)
+            //// ---------------------------------------------------------
+            //float BaseCooldown = Active.RowData->Cooldown;
+
+            //// 기본 쿨타임에 현재 쿨감(%)을 적용 (최소 0.1초 방어선)
+            //float FinalCooldown = FMath::Max(0.1f, BaseCooldown * (1.0f - CurrentCDR));
+            //// 초과 시간(Over-tick) 보정: 프레임 랙 때문에 쿨타임이 -0.05초가 되었다면,
+            //// 다음 쿨타임에서 0.05초를 빼서 스킬 템포를 칼같이 유지합니다.
+            //Active.CurrentCooldown = FinalCooldown + Active.CurrentCooldown;
+
+            //// 만약 초과 보정 때문에 쿨이 또 0 이하로 내려가면 안전하게 리셋
+            //if (Active.CurrentCooldown <= 0.0f)
+            //{
+            //    Active.CurrentCooldown = FinalCooldown;
+            //}
         }
     }
 
@@ -277,14 +303,15 @@ void UDESkillManagerComponent::LevelUpSkill(int32 SkillID)
 
             // 2) 주인 설정 (SetOwner 대신 Base에서 만든 InitSkill 사용 권장, 없으면 SetOwner)
             NewObj->InitSkill(GetOwner());
-
+            NewObj->SetSkillID(SkillID);
             // 3) [중요] 데이터 주입! (이제 스킬이 이 데이터를 봅니다)
             NewObj->SetSkillData(NewData);
 
             // 4) [가장 중요] 행동 조립! (이걸 해야 '전방 발사' 부품이 장착됨)
             NewObj->InitBehaviors();
-
+            
             NewSkill.SkillObject = NewObj;
+            UE_LOG(LogTemp, Error, TEXT("Skill ID SET : %d"), NewSkill.SkillObject->GetSkillID());
         }
         else
         {
@@ -566,30 +593,59 @@ void UDESkillManagerComponent::ReduceCooldown(int32 SkillID, float Amount, ECool
 {
     if (FActiveSkill* FoundSkill = ActiveSkills.Find(SkillID))
     {
-        // 스킬 데이터가 없으면 리턴
         if (!FoundSkill->RowData) return;
-
         float ReduceValue = 0.0f;
 
-        // 1. 타입에 따른 감소량(초) 계산
         switch (ReduceType)
         {
         case ECooldownReduceType::Flat:
-            // 고정 시간 (예: Amount가 1.5면 1.5초 감소)
             ReduceValue = Amount;
             break;
 
-        case ECooldownReduceType::Percentage:
-            // 퍼센트 (예: Amount가 0.2면 최대 쿨타임의 20% 감소)
-            // BaseCooldown을 기준으로 깎아야 기획 의도에 맞음!
-            float BaseCooldown = FoundSkill->RowData->Cooldown;
-            ReduceValue = BaseCooldown * Amount;
+        case ECooldownReduceType::PercentageOfMax:
+            // 1. 쿨타임 원본(혹은 플레이어 스탯이 반영된 최종 Max 쿨타임) 기준
+            // (나중에 악세서리로 쿨감이 생기면 RowData->Cooldown 대신 MaxCooldown 변수를 써야 함!)
+            ReduceValue = FoundSkill->RowData->Cooldown * Amount;
+            break;
+
+        case ECooldownReduceType::PercentageOfRemaining:
+            // 2. 현재 째깍째깍 흘러가고 있는 남은 시간 기준
+            ReduceValue = FoundSkill->CurrentCooldown * Amount;
             break;
         }
-
-        // 2. 남은 쿨타임에서 차감 (0 이하로 내려가지 않게 방어)
+        UE_LOG(LogTemp, Warning, TEXT("Remaining Cooldown Before Reduction : %f"),FoundSkill->CurrentCooldown);
         FoundSkill->CurrentCooldown = FMath::Max(0.0f, FoundSkill->CurrentCooldown - ReduceValue);
+        TotalReducedCooldownAmount += ReduceValue;
+        UE_LOG(LogTemp, Warning, TEXT("Reduced Amount : %f / Remaining : %f"), ReduceValue, FoundSkill->CurrentCooldown);
     }
+
+    //if (FActiveSkill* FoundSkill = ActiveSkills.Find(SkillID))
+    //{
+    //    // 스킬 데이터가 없으면 리턴
+    //    if (!FoundSkill->RowData) return;
+
+    //    float ReduceValue = 0.0f;
+
+    //    // 1. 타입에 따른 감소량(초) 계산
+    //    switch (ReduceType)
+    //    {
+    //    case ECooldownReduceType::Flat:
+    //        // 고정 시간 (예: Amount가 1.5면 1.5초 감소)
+    //        ReduceValue = Amount;
+    //        break;
+
+    //    case ECooldownReduceType::Percentage:
+    //        // 퍼센트 (예: Amount가 0.2면 최대 쿨타임의 20% 감소)
+    //        // BaseCooldown을 기준으로 깎아야 기획 의도에 맞음!
+    //        float BaseCooldown = FoundSkill->RowData->Cooldown;
+    //        ReduceValue = BaseCooldown * Amount;
+    //        break;
+    //    }
+
+    //    // 2. 남은 쿨타임에서 차감 (0 이하로 내려가지 않게 방어)
+    //    FoundSkill->CurrentCooldown = FMath::Max(0.0f, FoundSkill->CurrentCooldown - ReduceValue);
+    //    UE_LOG(LogTemp, Warning, TEXT("Cooldown Reduced ! Reduced Amount : %f"), ReduceValue);
+    //}
 }
 
 // 3. 전체 쿨타임 감소

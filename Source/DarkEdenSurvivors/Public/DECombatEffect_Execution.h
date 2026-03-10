@@ -18,6 +18,6 @@ public:
     UPROPERTY(EditAnywhere, Category = "Execution")
     float Threshold = 0.1f; // 10% 이하 즉사
 
-    virtual void ExecuteEffect(const FCombatEventData& EventData) override;
+    virtual void OnExecuteEffect(FCombatEventData& EventData) override;
 	
 };

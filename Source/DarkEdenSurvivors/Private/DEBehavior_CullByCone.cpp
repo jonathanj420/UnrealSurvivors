@@ -13,7 +13,7 @@
 
 void UDEBehavior_CullByCone::Execute(FDESkillContext& Context)
 {
-    bool bShowDebug = true;
+    bool bShowDebug = false;
     if (!Context.Instigator) return;
 
     UWorld* World = Context.Instigator->GetWorld();
@@ -70,7 +70,7 @@ void UDEBehavior_CullByCone::Execute(FDESkillContext& Context)
     //  3. UWorld 다이렉트 충돌 검사 (최적화)
     // ==========================================
     FCollisionShape SphereShape = FCollisionShape::MakeSphere(FinalRadius);
-    DrawDebugSphere(World, MyLoc, FinalRadius, 12, FColor::Green, false, 1.0f, 0, 1.0f);
+    //DrawDebugSphere(World, MyLoc, FinalRadius, 12, FColor::Green, false, 1.0f, 0, 1.0f);
 
     FCollisionQueryParams QueryParams;
     QueryParams.AddIgnoredActor(Context.Instigator);

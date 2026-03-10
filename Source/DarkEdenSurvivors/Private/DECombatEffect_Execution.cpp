@@ -5,11 +5,9 @@
 #include "DEHealthComponent.h"
 
 
-void UDECombatEffect_Execution::ExecuteEffect(const FCombatEventData& EventData)
+void UDECombatEffect_Execution::OnExecuteEffect(FCombatEventData& EventData)
 {
     if (!EventData.Target) return;
-
-
 
     UE_LOG(LogTemp, Warning, TEXT("On Hit Test . . . "));
 

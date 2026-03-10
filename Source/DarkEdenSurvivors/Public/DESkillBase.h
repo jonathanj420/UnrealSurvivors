@@ -20,7 +20,8 @@ public:
 	virtual UWorld* GetWorld() const override;
 
 	virtual void InitSkill(AActor* InOwner);
-
+	void SetSkillID(int32 InSkillID) { SkillID = InSkillID; }
+	int32 GetSkillID() { return SkillID; }
 protected:
 	UPROPERTY()
 	AActor* SkillOwner = nullptr;
@@ -28,7 +29,7 @@ protected:
 	UPROPERTY()
 	class UDECombatComponent* CachedCombatComp;
 
-
+	int32 SkillID = -1;
 	int32 CurrentLevel = 0;
    
 

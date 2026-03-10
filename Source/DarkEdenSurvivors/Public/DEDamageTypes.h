@@ -73,6 +73,16 @@ struct FDEDamageResult
 	// bool bIsEvaded = false;
 };
 
+UENUM(BlueprintType)
+enum class EDamageTextType : uint8
+{
+	Damage,         // 일반 데미지 (숫자)
+	Heal,           // 회복 (초록색 숫자)
+	Critical,       // 크리티컬 (크고 빨간 숫자)
+	Execution,      // 처형 ("Executed!")
+	StatusEffect    // 상태이상 ("Stunned!", "Bleeding!")
+};
+
 USTRUCT(BlueprintType)
 struct FDamageVisualInfo
 {

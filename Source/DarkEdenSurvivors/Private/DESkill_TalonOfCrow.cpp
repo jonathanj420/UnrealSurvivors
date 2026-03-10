@@ -9,6 +9,8 @@
 #include "DEBehavior_PlayEffect.h"
 #include "DEBehavior_ApplyKnockback.h"
 #include "DEGameplayLibrary.h"
+#include "DECombatEffect_CooldownReduction.h"
+
 
 UDESkill_TalonOfCrow::UDESkill_TalonOfCrow()
 {
@@ -51,6 +53,18 @@ void UDESkill_TalonOfCrow::InitBehaviors()
 
     UDEBehavior_ApplyKnockback* Knockback = NewObject< UDEBehavior_ApplyKnockback>(this);
     Behaviors.Add(Knockback);
+
+    UDECombatEffect_CooldownReduction* CooldownResetEffect = NewObject<UDECombatEffect_CooldownReduction>(this);
+    CooldownResetEffect->TriggerCondition = ECombatEventTrigger::OnKill;
+
+    // ★ 핵심: 하드코딩 10 대신, 블루프린트에서 세팅한 내 ID를 동적으로 가져옴!
+    CooldownResetEffect->SpecificSkillID = this->SkillID;
+    CooldownResetEffect->Amount = 0.5f;
+    UE_LOG(LogTemp, Warning, TEXT("WTF IS TALON OF CROW SKILL ID : %d"), this->SkillID);
+    CooldownResetEffect->TargetSkill = ECDRTargetSkill::SpecificSkill;
+    //CooldownResetEffect->bInstantReset = true;
+
+    LocalEffects.Add(CooldownResetEffect);
 }
 
 void UDESkill_TalonOfCrow::ExecuteWithContext(FDESkillContext& Context)

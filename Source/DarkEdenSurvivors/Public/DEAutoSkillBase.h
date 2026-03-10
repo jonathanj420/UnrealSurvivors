@@ -6,6 +6,7 @@
 #include "DESkillBase.h"
 #include "Data/DESkillData.h"
 #include "DESkillContext.h"
+#include "DECombatEffect.h"
 #include "DEAutoSkillBase.generated.h"
 
 
@@ -40,6 +41,10 @@ protected:
 
 	// 현재 스킬 스펙 (포인터만 참조)
 	const FDESkillData* SkillData = nullptr;
+
+public:
+	UPROPERTY(EditAnywhere, Instanced, Category = "Combat Effects")
+	TArray<UDECombatEffect*> LocalEffects;
 
 public:
 	UPROPERTY()
