@@ -2,6 +2,10 @@
 
 
 #include "DEPickup_Chest.h"
+#include "DELevelUpManagerComponent.h"
+#include "DESkillManagerComponent.h"
+#include "DEPlayerController.h"
+#include "Kismet/GameplayStatics.h"
 
 ADEPickup_Chest::ADEPickup_Chest()
 {
@@ -15,20 +19,25 @@ ADEPickup_Chest::ADEPickup_Chest()
 
 void ADEPickup_Chest::ApplyEffect(AActor* TargetActor)
 {
-    // 1. 안전 검사
-    if (!TargetActor) return;
+    // 1. 기본 픽업 이펙트(소리, 파티클 등) 실행
+    //Super::ApplyEffect(TargetActor);
 
-    UE_LOG(LogTemp, Warning, TEXT("Chest"));
+    // 2. 플레이어의 레벨업 매니저 가져오기
+    UDELevelUpManagerComponent* LevelUpMgr = TargetActor->FindComponentByClass<UDELevelUpManagerComponent>();
+    if (!LevelUpMgr) return;
 
-    // 2. 게임 일시정지! (시간이 멈추고 몹들이 멈춰야 함)
-    //// GetWorld()의 타이머 등은 안 멈추게 하려면 UI 띄울 때 SetGamePaused를 쓰는 게 정석입니다.
-    //APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
-    //if (PC)
-    //{
-    //    // 나중에 UI 띄우는 함수 호출
-    //    // PC->ShowChestRouletteUI();
-    //}
+    // 3. (임시) 행운 스탯. 나중에 TargetActor에서 제대로 가져오기
+    float PlayerLuck = 0.0f;
 
-    // 3. 다 먹었으니 맵에서 지우기 (Destroy 대신 님이 만든 풀링 회수 함수 호출!)
-    DeactivatePickup();
+    // 4. 네가 짠 잭팟 룰렛 돌려서 보상 목록(1, 3, 5개) 뽑아오기!
+    TArray<UDELevelUpChoiceBase*> ChestRewards = LevelUpMgr->GenerateChestRewards(PlayerLuck);
+
+    // 5. 게임 시간 즉시 멈춰! (타이머들도 다 같이 멈춤)
+    ADEPlayerController* PC = Cast<ADEPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+    if (PC)
+    {
+        PC->SetPause(true);
+        PC->ShowChestWidget(ChestRewards);
+    }
+    Super::ApplyEffect(TargetActor);
 }

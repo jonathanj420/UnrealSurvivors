@@ -2,7 +2,31 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "DEPickupBase.h"
 #include "DEMonsterData.generated.h"
+
+UENUM(BlueprintType)
+enum class EDEMonsterRank : uint8
+{
+	Normal  UMETA(DisplayName = "Normal Mob"),
+	Elite   UMETA(DisplayName = "Elite Mob"),
+	Boss    UMETA(DisplayName = "Boss Mob")
+};
+
+USTRUCT(BlueprintType)
+struct FDEMonsterDropInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drop")
+	TSubclassOf<ADEPickupBase> DropClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drop")
+	float DropChance = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drop")
+	float ItemValue = 10.0f;
+};
 
 /**
  * 몬스터의 모든 정보(스탯, 외형, 보상 등)를 정의하는 데이터 테이블용 구조체
@@ -13,6 +37,26 @@ struct FDEMonsterData : public FTableRowBase
 	GENERATED_BODY()
 
 public:
+	// [2. 스탯 데이터 (기존 동일)]
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	FText DisplayName;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	float MaxHP = 100.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	float MoveSpeed = 100.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	float AttackDamage = 5.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	float AttackInterval = 0.2f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	float KnockbackResistance = 5.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Drop")
+	TArray<FDEMonsterDropInfo> DropTable;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "System")
+	EDEMonsterRank MonsterRank = EDEMonsterRank::Normal;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "System")
+	TSoftClassPtr<class ADEMonsterBase> OverrideClass;
+
 	// [1. 외형 데이터 (핵심)]
 	// 메모리 관리를 위해 Soft Reference 사용
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
@@ -37,25 +81,5 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
 	float ScaleMultiplier = 1.0f;
 
-	// [2. 스탯 데이터 (기존 동일)]
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-	FText DisplayName;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-	float MaxHP = 100.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-	float MoveSpeed = 100.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-	float AttackDamage = 5.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-	float AttackInterval = 0.2f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-	float KnockbackResistance = 5.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-	float EXPDrop = 10.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-	float DropChance = 1.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "System")
-	TSoftClassPtr<class ADEMonsterBase> OverrideClass;
 
 };

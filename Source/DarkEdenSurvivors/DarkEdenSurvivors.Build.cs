@@ -21,7 +21,8 @@ public class DarkEdenSurvivors : ModuleRules
 			"UMG",
 			"NavigationSystem",
 			"Slate",
-			"GameplayTasks",
+            "SlateCore",
+            "GameplayTasks",
             "Niagara",
 			"Json",
             "JsonUtilities"

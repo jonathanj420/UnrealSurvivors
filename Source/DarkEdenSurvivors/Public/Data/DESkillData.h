@@ -102,6 +102,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     UTexture2D* SkillIcon;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int32 MaxLevel=9;
+
     UPROPERTY(EditAnywhere, Category = "Evolution")
     bool bIsEvolutionResult = false; // 진화 결과 스킬이면 true
 };

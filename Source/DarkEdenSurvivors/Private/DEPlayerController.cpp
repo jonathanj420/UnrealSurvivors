@@ -9,6 +9,8 @@
 #include "DELevelUpManagerComponent.h"
 #include "DESkillInventoryWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include "DEChestWidget.h"
+#include "DELevelUpChoiceBase.h"
 
 ADEPlayerController::ADEPlayerController()
 {
@@ -19,18 +21,20 @@ ADEPlayerController::ADEPlayerController()
         GameHUDWidgetClass = UI_GameHUDWidget_C.Class;
 
     }
-    //static ConstructorHelpers::FClassFinder<UDESkillInventoryWidget> UI_SkillInventoryWidget_C(TEXT("/Game/DarkEden/UI/WBP_SkillInventoryWidget.WBP_SkillInventoryWidget_C"));
-    //if (UI_SkillInventoryWidget_C.Succeeded())
-    //{
-    //    UE_LOG(LogTemp, Warning, TEXT("Inventory UI Succeeded"));
-    //    SkillInventoryWidgetClass = UI_SkillInventoryWidget_C.Class;
-
-    //}
+    
     static ConstructorHelpers::FClassFinder<UDELevelUpWidget> UI_LevelUpWidget_C(TEXT("/Game/DarkEden/UI/WBP_LevelUpWidget.WBP_LevelUpWidget_C"));
     if (UI_LevelUpWidget_C.Succeeded())
     {
         LevelUpWidgetClass = UI_LevelUpWidget_C.Class;
         UE_LOG(LogTemp, Warning, TEXT("Level Up Widget Succeeded"));
+
+    }
+
+    static ConstructorHelpers::FClassFinder<UDEChestWidget> UI_ChestWidget_C(TEXT("/Game/DarkEden/UI/WBP_ChestWidget.WBP_ChestWidget_C"));
+    if (UI_ChestWidget_C.Succeeded())
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Inventory UI Succeeded"));
+        ChestWidgetClass = UI_ChestWidget_C.Class;
 
     }
 }
@@ -148,4 +152,39 @@ void ADEPlayerController::ResumeGame()
     FInputModeGameOnly Mode;
     SetInputMode(Mode);
     bShowMouseCursor = false;
+}
+
+void ADEPlayerController::ShowChestWidget(const TArray<UDELevelUpChoiceBase*>& Rewards)
+{
+    // 1. 위젯 클래스 할당 여부 체크 (방어 코드)
+    if (!ChestWidgetClass)
+    {
+        UE_LOG(LogTemp, Error, TEXT("No Chest Widget"));
+        return;
+    }
+
+    // 2. 위젯 인스턴스가 없으면 동적 생성
+    if (!ChestWidget)
+    {
+        ChestWidget = CreateWidget<UDEChestWidget>(this, ChestWidgetClass);
+    }
+
+    if (ChestWidget)
+    {
+        // 3. 화면에 없으면 띄우기
+        if (!ChestWidget->IsInViewport())
+        {
+            ChestWidget->AddToViewport();
+        }
+
+        ChestWidget->SetupChestRewards(Rewards);
+
+        // 5. 마우스 커서 켜고, 입력 모드를 'UI 전용'으로 변경
+        bShowMouseCursor = true;
+        FInputModeUIOnly InputMode;
+        InputMode.SetWidgetToFocus(ChestWidget->TakeWidget());
+        SetInputMode(InputMode);
+
+        // (참고: SetPause(true)는 이미 상자 픽업의 ApplyEffect에서 하셨으므로 여기선 패스!)
+    }
 }

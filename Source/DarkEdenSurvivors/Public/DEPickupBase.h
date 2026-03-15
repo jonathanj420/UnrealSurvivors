@@ -56,10 +56,10 @@ protected:
 
 protected:
 	// 컴포넌트
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pickup")
 	USphereComponent* Trigger;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pickup")
 	UStaticMeshComponent* Mesh;
 
 public:
@@ -75,6 +75,7 @@ public:
 	float Acceleration = 2500.0f; // 빨려가는 가속도
 
 	// 자식들이 쓸 공용 데이터 (경험치 양, 회복량 등)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pickup")
 	float Value = 0.0f;
 	void SetTriggerRadius(float InSize);
 

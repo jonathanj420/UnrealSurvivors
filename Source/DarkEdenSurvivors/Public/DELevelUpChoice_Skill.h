@@ -36,5 +36,13 @@ private:
     FText SkillName;
     UPROPERTY()
     UTexture2D* SkillIcon = nullptr;
+
+public:
+
+    UPROPERTY()
+    bool bIsEvolution = false;
+
+    UPROPERTY()
+    int32 TargetBaseSkillID = INDEX_NONE; // 찢어버릴 기존 무기의 ID
 	
 };

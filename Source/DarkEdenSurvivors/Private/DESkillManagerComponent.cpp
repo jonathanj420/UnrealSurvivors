@@ -226,7 +226,7 @@ void UDESkillManagerComponent::InitSkills()
     {
         FDESkillData* Row = SkillDataTable->FindRow<FDESkillData>(RowName, Context); \
         if (!Row) continue;
-        UE_LOG(LogTemp, Warning, TEXT("Row %s_%d Found"), *Row->SkillName, Row->Level);
+        //UE_LOG(LogTemp, Warning, TEXT("Row %s_%d Found"), *Row->SkillName, Row->Level);
 
 
         int32 SkillID = Row->SkillID;   // RowName 사용 안 하는 방식
@@ -294,6 +294,7 @@ void UDESkillManagerComponent::LevelUpSkill(int32 SkillID)
         NewSkill.SkillID = SkillID;
         NewSkill.RowData = NewData; // 포인터 저장
         NewSkill.CurrentCooldown = 0.f;
+        NewSkill.CurrentLevel = 1;
 
         // 스킬 객체 생성
         if (RowInfo.SkillClass)
@@ -339,6 +340,7 @@ void UDESkillManagerComponent::LevelUpSkill(int32 SkillID)
     // 매니저 데이터 갱신
     Active.RowData = NewData;
     SkillLevels[SkillID] = NewLevel;
+    Active.CurrentLevel = NewLevel;
 
     // [중요] 스킬 객체 내부 데이터도 갱신해줘야 함
     if (Active.SkillObject)
@@ -502,16 +504,18 @@ bool UDESkillManagerComponent::CheckEvolution(int32& OutBaseSkillID, int32& OutR
         // 2. 그 무기가 요구 레벨을 달성했는가?
         if (SkillLevels[Row->BaseSkillID] < Row->RequiredSkillLevel) continue;
 
+        UE_LOG(LogTemp, Warning, TEXT("[Evolution] %d has MAX LEVEL to Evolve . . ."), SkillLevels[Row->BaseSkillID]);
+
         bool bHasAllAccessories = true;
         for (int32 AccID : Row->RequiredAccessoryIDs)
         {
             if (!CachedInventoryComp->HasAccessory(AccID))
             {
                 bHasAllAccessories = false;
+                UE_LOG(LogTemp, Warning, TEXT("[Evolution] %d has MAX LEVEL but No Acc . . ."), SkillLevels[Row->BaseSkillID]);
                 break; // 하나라도 없으면 이 레시피는 탈락!
             }
         }
-
         // 악세서리가 부족하면 다음 레시피로 패스
         if (!bHasAllAccessories) continue;
 
@@ -522,9 +526,10 @@ bool UDESkillManagerComponent::CheckEvolution(int32& OutBaseSkillID, int32& OutR
             OutBaseSkillID = Row->BaseSkillID;
             OutResultSkillID = Row->ResultSkillID;
             bCanEvolve = true;
+            UE_LOG(LogTemp, Warning, TEXT("[Evolution] Can Evolve !"));
         }
     }
-
+    
     return bCanEvolve;
 }
 void UDESkillManagerComponent::EvolveSkill(int32 BaseSkillID, int32 ResultSkillID)

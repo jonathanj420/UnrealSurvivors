@@ -8,6 +8,19 @@
 /**
  * 
  */
+UENUM(BlueprintType)
+enum class EWaveType : uint8
+{
+    // StartWave에서 MinimumCount만 즉시 스폰하고 끝. 추가 주기 스폰 없음.
+    OneShot     UMETA(DisplayName = "One Shot"),
+
+    // Duration 동안 SpawnInterval 주기로 스폰. 시간 끝나면 스폰 중단.
+    Timed       UMETA(DisplayName = "Timed"),
+
+    // 다음 웨이브가 시작될 때까지 계속 SpawnInterval 주기로 스폰.
+    Infinite    UMETA(DisplayName = "Infinite"),
+};
+
 USTRUCT(BlueprintType)
 struct FDEStageWaveData : public FTableRowBase
 {

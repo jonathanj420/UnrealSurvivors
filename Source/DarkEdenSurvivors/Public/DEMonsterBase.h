@@ -4,6 +4,7 @@
 
 #include "DarkEdenSurvivors.h"
 #include "GameFramework/Actor.h"
+#include "Data/DEMonsterData.h"
 #include "DEMonsterBase.generated.h"
 
 //class ADEMonsterBase;
@@ -57,9 +58,6 @@ protected:
 	class USkeletalMeshComponent* Mesh;
 	UPROPERTY(EditAnywhere, Category = "Monster Base")
 	class UStaticMeshComponent* TestMesh;
-
-	UPROPERTY(EditAnywhere, Category = "EXP")
-	TSubclassOf<class ADEEXPCrystal> EXPCrystal;
 public:
 	UPROPERTY(VisibleAnywhere)
 	class UDEStatusEffectComponent* StatusEffectComponent;
@@ -73,23 +71,23 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Monster Stats")
 	float AttackInterval = 0.2f;
 	UPROPERTY(EditAnywhere, Category = "Monster Stats")
-	float EXPDrop = 10.0f;
-	UPROPERTY(EditAnywhere, Category = "Monster Stats")
-	float DropChance = 1.0f;
-	UPROPERTY(EditAnywhere, Category = "Monster Stats")
 	float KnockbackResistance = 6.0f;
 	UPROPERTY(EditAnywhere, Category = "Monster Stats")
 	bool bIsDying = false;
-	UPROPERTY(EditAnywhere, Category = "Monster Stats")
-	bool bIsBoss = false;
 
+public:
+	// 내 등급이 뭔지 저장하는 변수 (블루프린트에서 기획자가 몹마다 딸깍 설정 가능)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster|Data")
+	EDEMonsterRank MonsterRank = EDEMonsterRank::Normal;
+
+	// 등급을 반환하는 Get 함수
+	EDEMonsterRank GetMonsterRank() const { return MonsterRank; }
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster|Drop")
+	TArray<FDEMonsterDropInfo> DropTable;
 
 public:
 	UPROPERTY()
 	FVector KnockbackVelocity;
-
-
-
 
 
 public:
@@ -111,11 +109,8 @@ public:
 	float GetAttackDamage() const { return AttackDamage; }
 	float GetCurrentHP() const;
 	float GetMaxHP() const;
-	float GetEXPDrop() const { return EXPDrop; }
 	FOnMonsterDeath OnMonsterDeath;
-	void DropExp();
 	void ResetMonster(const struct FDEMonsterData* Data);
-	bool IsBoss() { return bIsBoss; }
 
 
 	bool IsAlive();

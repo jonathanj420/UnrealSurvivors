@@ -9,7 +9,9 @@
 #include "Data/DEMonsterData.h"
 #include "DEMonsterSpawnManager.generated.h"
 
+
 class ADEGameMode_Stage;
+class UDEMonsterUpdateComponent;
 class ADEMonsterBase;
 class UDEGameInstance;
 
@@ -100,20 +102,6 @@ public:
 
     FVector GetRandomSpawnLocation();
 
-    //**** MONSTER COLLISION****
-    UPROPERTY(EditAnywhere, Category = "Collision")
-    float MinSeparationDistance = 80.f; // 몬스터간 최소 거리 (반지름*2 정도)
-
-    UPROPERTY(EditAnywhere, Category = "Collision")
-    float ChainKnockbackTransfer = 0.5f; // 앞->뒤로 전달 비율
-
-    void ResolveMonsterOverlap(ADEMonsterBase* A, ADEMonsterBase* B);
-    void ResolvePlayerPush(ADEMonsterBase* Mob);
-    // 겹침 방지 최소 거리 배율
-    float SoftPushRangeMultiplier = 1.3f; // 1.2 ~ 1.5 추천
-
-    // 소프트 밀림 강도
-    float SoftPushStrength = 1.0f; // 기본 1.0
 
 public:
     void OnMonsterDied(class ADEMonsterBase* Monster);
@@ -127,5 +115,9 @@ public:
 private:
     UPROPERTY()
     TObjectPtr<UDEGameInstance> GameInstanceCache;
+
+    // UPROPERTY 추가
+    UPROPERTY(VisibleAnywhere, Category = "Components")
+    UDEMonsterUpdateComponent* MonsterUpdateComponent;
 
 };

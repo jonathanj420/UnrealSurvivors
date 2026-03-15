@@ -31,7 +31,7 @@ public:
 
 	// [Public API]
 	// 1. 아이템 생성 요청
-	void SpawnPickup(const FVector& Location, int32 ExpValue, float Luck = 0.0f);
+	void SpawnPickup(const FVector& Location, float ItemValue, TSubclassOf<ADEPickupBase> ClassToSpawn);
 
 	// 2. 전역 자석 발동 (자석 아이템 먹었을 때)
 	void TriggerGlobalMagnet(AActor* TargetPlayer);
@@ -58,14 +58,6 @@ protected:
 	UPROPERTY()
 	TWeakObjectPtr<UDEStatComponent> CachedStatComponent;
 
-	// [Settings]
-	// 아이템 클래스들 (C++ StaticClass로 로드)
-	UPROPERTY()
-	TSubclassOf<ADEPickupBase> ExpGemClass;
-	UPROPERTY()
-	TSubclassOf<ADEPickupBase> PotionClass;
-	UPROPERTY()
-	TSubclassOf<ADEPickupBase> MagnetItemClass;
 
 	// 최적화용 제한 개수
 	const int32 MaxActivePickups = 400;

@@ -186,7 +186,7 @@ void UDECombatComponent::AddCombatEffect(UDECombatEffect* NewEffect)
     }
 }
 
-void UDECombatComponent::BroadcastCombatEvent(ECombatEventTrigger TriggerType, const FCombatEventData& EventData)
+void UDECombatComponent::BroadcastCombatEvent(ECombatEventTrigger TriggerType, FCombatEventData& EventData)
 {
     // 내가 가진 모든 이펙트를 쫙 훑어본다
     for (UDECombatEffect* Effect : ActiveCombatEffects)

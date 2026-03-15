@@ -21,5 +21,7 @@ public:
 
     // ★ 핵심: 선택 시 실제 적용
     virtual void Apply(AActor * PlayerActor) PURE_VIRTUAL(UDELevelUpChoiceBase::Apply, );
+
+
 	
 };

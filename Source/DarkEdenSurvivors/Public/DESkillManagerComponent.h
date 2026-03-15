@@ -27,6 +27,8 @@ struct FActiveSkill
 	const FDESkillData* RowData = nullptr;   // 데이터 테이블 Row
 	UPROPERTY()
 	int32 SkillID = 0; // SkillID만 가지고 있으면 됨
+	UPROPERTY()
+	int32 CurrentLevel = 1;
 
 	float CurrentCooldown = 0.f;
 };
@@ -77,14 +79,19 @@ public:
 	// 스킬 레벨 가져오기
 	int32 GetSkillLevel(int32 SkillID) const
 	{
-		const int32* Lv = SkillLevels.Find(SkillID);
-		return Lv ? *Lv : 0;
+		// TMap에서 구조체의 포인터를 찾습니다. (없으면 nullptr 반환)
+		const FActiveSkill* FoundSkill = ActiveSkills.Find(SkillID);
+
+		// 스킬이 존재하면 그 안의 CurrentLevel을, 없으면 0을 리턴합니다.
+		return FoundSkill ? FoundSkill->CurrentLevel : 0;
 	}
 
 	// 스킬 보유 여부
 	bool HasSkill(int32 SkillID) const
 	{
-		return SkillLevels.Contains(SkillID);
+		return ActiveSkills.Contains(SkillID);
+
+		//return SkillLevels.Contains(SkillID);
 	}
 	// DataTable에 특정 레벨의 row 존재하는지
 	bool HasSkillData(int32 SkillID, int32 Level) const;
@@ -99,6 +106,7 @@ public:
 public:
 	// 스킬 목록을 외부에서 '읽기 전용'으로 볼 수 있게 해주는 Getter
 	const TMap<int32, FActiveSkill>& GetActiveSkills() const { return ActiveSkills; }
+	const TMap<int32, int32>& GetSkillLevels() const { return SkillLevels; }
 public:
 
 	TArray<FDESkillData*> GetRandomSkillChoices(int32 Count = 3);

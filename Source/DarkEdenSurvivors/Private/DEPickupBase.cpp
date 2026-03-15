@@ -30,34 +30,6 @@ void ADEPickupBase::BeginPlay()
 	//Trigger->OnComponentBeginOverlap.AddDynamic(this, &ADEPickupBase::OnOverlap);
 }
 
-// Called every frame
-//void ADEPickupBase::Tick(float DeltaTime)
-//{
-//	Super::Tick(DeltaTime);
-//	if (bIsMagnetized && MagnetTarget)
-//	{
-//		FVector MyLoc = GetActorLocation();
-//		FVector TargetLoc = MagnetTarget->GetActorLocation();
-//		TargetLoc.Z += 50.0f; // 허리 높이로 유도
-//
-//		// 거리 체크 (너무 가까우면 강제 습득)
-//		float DistSq = FVector::DistSquared(MyLoc, TargetLoc);
-//		if (DistSq < 1000.0f) // 약 30cm
-//		{
-//			ApplyEffect(MagnetTarget);
-//			return;
-//		}
-//
-//		// 이동 로직
-//		FVector Dir = (TargetLoc - MyLoc).GetSafeNormal();
-//		CurrentSpeed += (Acceleration * DeltaTime); // 가속
-//		SetActorLocation(MyLoc + (Dir * CurrentSpeed * DeltaTime));
-//	}
-//	else
-//	{
-//		SetActorTickEnabled(false); // 타겟 없으면 멈춤
-//	}
-//}
 
 void ADEPickupBase::ActivatePickup(const FVector& Location, float DataValue)
 {

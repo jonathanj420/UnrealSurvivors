@@ -72,7 +72,7 @@ public:
 
 	// ★ 동네방네 사건을 알리는 핵심 방송국 함수
 	UFUNCTION(BlueprintCallable, Category = "Combat")
-	void BroadcastCombatEvent(ECombatEventTrigger TriggerType, const FCombatEventData& EventData);
+	void BroadcastCombatEvent(ECombatEventTrigger TriggerType, FCombatEventData& EventData);
 
 	// 데미지를 줬을 때 처리 (내용 수정할 거임)
 	void HandleDamageDealt(const FDEDamageResult& Result, const FCombatSnapshot& Snapshot);

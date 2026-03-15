@@ -9,6 +9,7 @@
 #include "DECharacterBase.h"
 #include "DEGameInstance.h"
 #include "DEGameMode_Stage.h"
+#include "DEMonsterUpdateComponent.h"
 #include "DEPickupManager.h"
 
 ADEMonsterSpawnManager::ADEMonsterSpawnManager()
@@ -22,6 +23,7 @@ ADEMonsterSpawnManager::ADEMonsterSpawnManager()
 
     USceneComponent* RootSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootScene"));
     RootComponent = RootSceneComponent;
+    MonsterUpdateComponent = CreateDefaultSubobject<UDEMonsterUpdateComponent>(TEXT("MonsterUpdater"));
 }
 
 void ADEMonsterSpawnManager::BeginPlay()
@@ -50,6 +52,7 @@ void ADEMonsterSpawnManager::BeginPlay()
         APawn* PlayerPawn = PlayerController->GetPawn();
 
         Player = Cast<ADECharacterBase>(PlayerPawn);
+        MonsterUpdateComponent->SetPlayer(Player);
 
     }
     // StageWaveTable이 있으면 RowName을 읽어와 StartTime 기준으로 정렬해서 캐시함
@@ -96,48 +99,13 @@ void ADEMonsterSpawnManager::Tick(float DeltaTime)
     Super::Tick(DeltaTime);
 
     // 현재 월드 시간 (한 번만 가져와서 1000마리한테 돌려씀 -> 최적화)
-    double CurrentWorldTime = GetWorld()->GetTimeSeconds();
+    //double CurrentWorldTime = GetWorld()->GetTimeSeconds();
 
     if (!Player) return;
     ProcessWave(DeltaTime);
 
-    FVector PlayerLocation = Player->GetActorLocation();
-    for (int32 i = 0; i < ActiveMonsters.Num(); ++i)
-    {
-        ADEMonsterBase* Mob = ActiveMonsters[i];
-        if (!Mob) continue;
+    MonsterUpdateComponent->UpdateMonsters(DeltaTime, ActiveMonsters);
 
-
-        //Mob->UpdateCrowdControl(Now);
-        Mob->UpdateKnockback(DeltaTime);
-
-        if (Mob->IsStunned())
-            continue;
-        Mob->MoveToPlayer(DeltaTime, PlayerLocation);
-        Mob->ExecuteAttackLogic(CurrentWorldTime);
-        ResolvePlayerPush(Mob);
-        
-    }
-
-    // 2) push-out (겹침 해소) - O(n^2), 필요시 spatial partitioning 사용
-    for (int32 i = ActiveMonsters.Num() - 1; i >= 0; --i)
-    {
-        ADEMonsterBase* A = ActiveMonsters[i];
-        if (!A) continue;
-
-        for (int32 j = i - 1; j >= 0; --j)
-        {
-            ADEMonsterBase* B = ActiveMonsters[j];
-            if (!B) continue;
-
-            ResolveMonsterOverlap(A, B);
-        }
-    }
-
-    /*ActiveMonsters.RemoveAllSwap([&](ADEMonsterBase* Mob)
-        {
-            return (!Mob || Mob->IsDead());
-        });*/
 
 }
 
@@ -149,18 +117,25 @@ void ADEMonsterSpawnManager::ProcessWave(float DeltaTime)
 
     const float Elapsed = GameMode->GetElapsedTime();
 
-    // 다음 웨이브가 준비되었는지 확인 (현재 인덱스 +1)
-    int32 NextIndex = CurrentWaveIndex + 1;
-    if (NextIndex < StageRowNames.Num())
+
+    while (CurrentWaveIndex + 1 < StageRowNames.Num())
     {
+        int32 NextIndex = CurrentWaveIndex + 1;
         FName NextName = StageRowNames[NextIndex];
         const FDEStageWaveData* NextRow = StageWaveTable->FindRow<FDEStageWaveData>(NextName, TEXT(""));
+
         if (NextRow && Elapsed >= NextRow->StartTime)
         {
             CurrentWaveIndex = NextIndex;
+            //UE_LOG(LogTemp, Warning, TEXT("Starting wave for Current Index : %d"), CurrentWaveIndex);
             StartWave(CurrentWaveIndex);
         }
+        else
+        {
+            break; // ← 이게 있어야 함
+        }
     }
+
 
     // 현재 활성 웨이브가 없다면 종료
     if (CurrentWaveIndex < 0 || CurrentWaveIndex >= StageRowNames.Num())
@@ -226,9 +201,6 @@ void ADEMonsterSpawnManager::StartWave(int32 WaveIndex)
 {
 
 
-    //
-    WaveElapsedTime = 0.0f;
-
     if (WaveIndex < 0 || WaveIndex >= StageRowNames.Num())
         return;
 
@@ -236,7 +208,9 @@ void ADEMonsterSpawnManager::StartWave(int32 WaveIndex)
     const FDEStageWaveData* WaveData = StageWaveTable->FindRow<FDEStageWaveData>(RowName, TEXT(""));
     if (!WaveData) return;
 
-    UE_LOG(LogTemp, Warning, TEXT("StartWave %d (StartTime %.2f)"), WaveIndex, WaveData->StartTime);
+    WaveElapsedTime = 0.0f;
+
+    //UE_LOG(LogTemp, Warning, TEXT("StartWave %d (StartTime %.2f)"), WaveIndex, WaveData->StartTime);
 
     // 보스 즉시 스폰 (보스가 지정되어 있으면 한 번만)
     if (!WaveData->BossMonsterID.IsNone())
@@ -244,11 +218,24 @@ void ADEMonsterSpawnManager::StartWave(int32 WaveIndex)
         SpawnBoss(*WaveData);
     }
 
+    for (auto MobName : WaveData->SpawnMonsterIDs)
+    {
+       // UE_LOG(LogTemp, Warning, TEXT("Monster Found : %s"), *MobName.ToString());
+    }
     // 2. MinimumCount 즉시 보충 (SpawnLimit 고려)
     int32 CurrentActive = ActiveMonsters.Num();
     int32 SpawnLimit = GameMode ? GameMode->GetSpawnLimit() : INT32_MAX;
-    int32 Need = FMath::Max(0, WaveData->MinimumCount - CurrentActive);
+
+    //  [수정 전] 전체 몹 수량에서 빼버리는 멍청한 짓
+    // int32 Need = FMath::Max(0, WaveData->MinimumCount - CurrentActive);
+
+    //  [수정 후] 이 웨이브가 시작할 때 무조건 뿌려야 하는 고유 할당량!
+    int32 Need = WaveData->MinimumCount;
+
+    // 엔진 터지는 건 막아야 하니, '맵 전체의 남은 빈자리(CanSpawn)' 계산
     int32 CanSpawn = FMath::Max(0, SpawnLimit - CurrentActive);
+
+    // 할당량과 빈자리 중 더 작은 값만큼 최종 소환!
     int32 ToSpawn = FMath::Min(Need, CanSpawn);
 
     for (int32 i = 0; i < ToSpawn; ++i)
@@ -259,7 +246,7 @@ void ADEMonsterSpawnManager::StartWave(int32 WaveIndex)
         // A. 랜덤 ID 뽑기
         int32 RandIdx = FMath::RandRange(0, WaveData->SpawnMonsterIDs.Num() - 1);
         FName TargetID = WaveData->SpawnMonsterIDs[RandIdx];
-
+       // UE_LOG(LogTemp, Warning, TEXT("Target Monster Name : %s"),*TargetID.ToString());
         // B. GameInstance에서 데이터 포인터 가져오기 (O(1) 속도)
         const FDEMonsterData* MonsterData = GameInstanceCache->GetMonsterData(TargetID);
 
@@ -395,46 +382,7 @@ bool ADEMonsterSpawnManager::SpawnBoss(const FDEStageWaveData& WaveData)
 
 ADEMonsterBase* ADEMonsterSpawnManager::SpawnFromPool(FVector& Location, const FDEMonsterData* DataToApply)
 {
-    // MK 1 
-    //const ADEMonsterBase* CDO = MonsterClass.GetDefaultObject();
 
-    //Location.Z = CDO->GetCapsuleHalfHeight();
-    //// Try reuse from pool first (matching subclass is optional: pool contains base class instances)
-    //for (ADEMonsterBase* Monster : MonsterPool)
-    //{
-    //    if (!Monster) continue;
-
-    //    // 기존 ResetForPool() / InitializePool()가 풀에 넣을 때 Hide 시킨다고 가정
-    //    if (Monster->IsHidden())
-    //    {
-    //        // Optionally, you can cast to check if this Monster can be used as MonsterClass,
-    //        // or you can change the actor's properties to become the desired 'type'.
-    //        Monster->SetActorLocation(Location);
-    //        Monster->ResetMonster();    // Show, enable, reset stats
-    //        ActiveMonsters.Add(Monster);
-
-    //        //UE_LOG(LogTemp, Verbose, TEXT("Reused monster from pool: %s"), *Monster->GetName());
-    //        return Monster;
-    //    }
-    //}
-
-    //// Spawn new one
-    //UWorld* World = GetWorld();
-    //if (!World) return nullptr;
-    //
-    //ADEMonsterBase* NewMonster = World->SpawnActor<ADEMonsterBase>(MonsterClass, Location, FRotator::ZeroRotator);
-    //if (!NewMonster) return nullptr;
-
-    //// 초기화 및 바인딩
-    //MonsterPool.Add(NewMonster);
-    //NewMonster->ResetMonster();    // Show, enable, reset stats
-    //ActiveMonsters.Add(NewMonster);
-    //NewMonster->OnMonsterDeath.AddUObject(this, &ADEMonsterSpawnManager::OnMonsterDied);
-
-    ////UE_LOG(LogTemp, Warning, TEXT("Spawned new monster: %s"), *NewMonster->GetName());
-    //return NewMonster;
-    // 
-    // 
     // --------------------------------------------------------
     // 1. [Class 결정] 기본 몹이냐? 데이터에 적힌 특수 몹(보스)이냐?
     // --------------------------------------------------------
@@ -556,21 +504,33 @@ FVector ADEMonsterSpawnManager::GetRandomSpawnLocation()
 
 void ADEMonsterSpawnManager::OnMonsterDied(ADEMonsterBase* Monster)
 {
-    if (!Monster)
-        return;
+    if (!Monster) return;
 
-    // 1. 아이템 드랍 처리 (여기서 매니저 부르면 됨!)
-     // SpawnManager는 이미 World나 GameMode를 잘 알고 있으니까요.
     if (UDEPickupManager* PickupMgr = GetWorld()->GetSubsystem<UDEPickupManager>())
     {
-        // 몬스터 데이터에서 경험치량 가져오기
-        float EXPToDrop = Monster->GetEXPDrop(); // 예시
+        FVector DeathLocation = Monster->GetActorLocation();
+        float PlayerLuck = 0.0f; // 필요시 플레이어 스탯에서 캐싱
 
-        // 드랍 확률 계산 등도 여기서 중앙 제어 가능
-        PickupMgr->SpawnPickup(Monster->GetActorLocation(), EXPToDrop);
+        // 몬스터의 만능 루트 테이블 굴리기!
+        for (const FDEMonsterDropInfo& DropInfo : Monster->DropTable)
+        {
+            if (!DropInfo.DropClass) continue;
+
+            float Roll = FMath::FRandRange(0.0f, 100.0f);
+            float FinalChance = DropInfo.DropChance + (PlayerLuck * 0.1f);
+
+            if (Roll <= FinalChance)
+            {
+                // 살짝 흩뿌리기 (여러 개 떨어질 때 겹침 방지)
+                FVector OffsetLoc = DeathLocation + FVector(FMath::RandRange(-30.f, 30.f), FMath::RandRange(-30.f, 30.f), 0.0f);
+
+                // ★ 대망의 한 줄! (어떤 클래스든, 어떤 밸류든 테이블 값 그대로 스폰!)
+                PickupMgr->SpawnPickup(OffsetLoc, DropInfo.ItemValue, DropInfo.DropClass);
+            }
+        }
     }
 
-   // UE_LOG(LogTemp, Warning, TEXT("Monster Died -> Active: %d, Inactive: %d"), ActiveMonsters.Num(), InactiveMonsters.Num());
+
 
     if (Player)
     {
@@ -591,167 +551,4 @@ void ADEMonsterSpawnManager::OnMonsterDied(ADEMonsterBase* Monster)
 const TArray<ADEMonsterBase*>& ADEMonsterSpawnManager::GetActiveMonsters() const
 {
     return ActiveMonsters;
-}
-
-//void ADEMonsterSpawnManager::ResolveMonsterOverlap(ADEMonsterBase* A, ADEMonsterBase* B)
-//{
-//    if (!A || !B) return;
-//    //if (A->IsImmovable() || B->IsImmovable()) return;
-//
-//    FVector PosA = A->GetActorLocation();
-//    FVector PosB = B->GetActorLocation();
-//
-//    FVector FlatA(PosA.X, PosA.Y, 0.f);
-//    FVector FlatB(PosB.X, PosB.Y, 0.f);
-//
-//    FVector Delta = FlatB - FlatA;
-//    float Dist = Delta.Size();
-//
-//    float RadiusA = A->GetCollisionRadius();
-//    float RadiusB = B->GetCollisionRadius();
-//
-//    float MinDist = RadiusA + RadiusB;
-//    float SoftRange = MinDist * SoftPushRangeMultiplier;
-//
-//    if (Dist < KINDA_SMALL_NUMBER)
-//    {
-//        FVector Nudge = FVector(
-//            FMath::FRandRange(-1.f, 1.f),
-//            FMath::FRandRange(-1.f, 1.f),
-//            0.f
-//        ).GetSafeNormal() * 0.5f;
-//
-//        A->AddActorWorldOffset(-Nudge, false);
-//        B->AddActorWorldOffset(Nudge, false);
-//        return;
-//    }
-//
-//    if (Dist >= SoftRange)
-//        return;
-//
-//    FVector PushDir = Delta / Dist;
-//
-//    // 0~1 (멀수록 0, 가까울수록 1)
-//    float Alpha = 1.f - (Dist / SoftRange);
-//
-//    // 곡선: 가까울수록 급격히 밀림
-//    float PushFactor = Alpha * Alpha;
-//
-//    float PushAmount = PushFactor * (SoftRange - Dist) * SoftPushStrength;
-//
-//    FVector PushA = -PushDir * PushAmount * 0.5f;
-//    FVector PushB = PushDir * PushAmount * 0.5f;
-//
-//    A->AddActorWorldOffset(PushA, false);
-//    B->AddActorWorldOffset(PushB, false);
-//
-//    // 체인 넉백 전파 (기존 로직 유지)
-//    float AKnockMag = A->KnockbackVelocity.Size();
-//    if (AKnockMag > 1.f)
-//    {
-//        float Transfer = AKnockMag * ChainKnockbackTransfer * PushFactor;
-//        B->ApplyKnockback(PushDir, Transfer);
-//        A->KnockbackVelocity *= 0.5f;
-//    }
-//
-//    float BKnockMag = B->KnockbackVelocity.Size();
-//    if (BKnockMag > 1.f)
-//    {
-//        float Transfer = BKnockMag * ChainKnockbackTransfer * PushFactor;
-//        A->ApplyKnockback(-PushDir, Transfer);
-//        B->KnockbackVelocity *= 0.5f;
-//    }
-//}
-
-// older 
-void ADEMonsterSpawnManager::ResolveMonsterOverlap(ADEMonsterBase* A, ADEMonsterBase* B)
-{
-    if (!A || !B) return;
-
-    FVector PosA = A->GetActorLocation();
-    FVector PosB = B->GetActorLocation();
-
-    // 평면(2D)으로 계산
-    FVector FlatA = FVector(PosA.X, PosA.Y, 0.f);
-    FVector FlatB = FVector(PosB.X, PosB.Y, 0.f);
-
-    FVector Delta = FlatB - FlatA;
-    float Dist = Delta.Size();
-
-    float radiusA = A->GetCollisionRadius();
-    float radiusB = B->GetCollisionRadius();
-    float MinDist = radiusA + radiusB + 2.0f;
-
-    if (Dist < KINDA_SMALL_NUMBER)
-    {
-        // 겹쳐서 동일 위치이면 랜덤 노즈
-        FVector Nudge = FVector(FMath::FRandRange(-1.f, 1.f), FMath::FRandRange(-1.f, 1.f), 0.f).GetSafeNormal() * 1.0f;
-        A->AddActorWorldOffset(-Nudge, false);
-        B->AddActorWorldOffset(Nudge, false);
-        return;
-    }
-
-    if (Dist < MinDist)
-    {
-        float Penetration = MinDist - Dist;
-        FVector PushDir = Delta / Dist; // A -> B
-
-        FVector PushA = -PushDir * (Penetration * 0.5f);
-        FVector PushB = PushDir * (Penetration * 0.5f);
-
-        A->AddActorWorldOffset(PushA, false);
-        B->AddActorWorldOffset(PushB, false);
-
-        // 체인 넉백 전파
-        float AKnockMag = A->KnockbackVelocity.Size();
-        if (AKnockMag > 1.f)
-        {
-            float Transfer = AKnockMag * ChainKnockbackTransfer;
-            B->ApplyKnockback(PushDir, Transfer);
-            A->KnockbackVelocity *= 0.5f;
-        }
-
-        float BKnockMag = B->KnockbackVelocity.Size();
-        if (BKnockMag > 1.f)
-        {
-            float Transfer = BKnockMag * ChainKnockbackTransfer;
-            A->ApplyKnockback(-PushDir, Transfer);
-            B->KnockbackVelocity *= 0.5f;
-        }
-    }
-}
-
-void ADEMonsterSpawnManager::ResolvePlayerPush(ADEMonsterBase* Mob)
-{
-    if (!Mob || !Player) return;
-
-    FVector PlayerPos = Player->GetActorLocation();
-    FVector MobPos = Mob->GetActorLocation();
-
-    FVector Delta = MobPos - PlayerPos;
-    Delta.Z = 0.f;
-
-    float DistSq = Delta.SizeSquared();
-
-    float PlayerRadius = Player->GetCapsuleHalfRadius(); // 캡슐 반지름
-    float MobRadius = Mob->GetCollisionRadius();
-    float MinDist = PlayerRadius + MobRadius;
-
-    float MinDistSq = MinDist * MinDist;
-
-    if (DistSq >= MinDistSq || DistSq < KINDA_SMALL_NUMBER)
-        return;
-
-    float Dist = FMath::Sqrt(DistSq);
-    FVector PushDir = Delta / Dist;
-
-    // [핵심 수정]
-    // 완벽하게(MinDist) 밀어내지 말고, 아주 조금(1.0f)은 겹쳐있게 놔둡니다.
-    // 그래야 물리 엔진이 "아, 둘이 닿아있구나!" 하고 Overlap 이벤트를 쏩니다.
-    float Buffer = 2.0f; // 2유닛 정도 여유를 줌
-    float Penetration = (MinDist - Dist) - Buffer;
-    //float Penetration = MinDist - Dist;
-
-    // 몬스터만 밀린다
-    Mob->AddActorWorldOffset(PushDir * Penetration, true);
 }

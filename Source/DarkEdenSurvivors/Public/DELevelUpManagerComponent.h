@@ -53,4 +53,23 @@ private:
     UDELevelUpChoiceBase* CreateRandomAccessoryChoice();
 
 
+public:
+    // 상자를 열었을 때 호출될 핵심 함수! (최종적으로 1, 3, 5개의 보상을 배열로 반환)
+    UFUNCTION(BlueprintCallable, Category = "Chest")
+    TArray<UDELevelUpChoiceBase*> GenerateChestRewards(float PlayerLuck);
+
+private:
+    // 1단계: 상자 등급(개수) 굴리기 (1개, 3개, 5개)
+    int32 CalculateChestJackpot(float Luck);
+
+    // 2단계: 현재 가진 스킬 중 진화 가능한 녀석이 있는지 탐색
+    UDELevelUpChoiceBase* TryGetEvolutionChoice();
+
+    // 3단계: 현재 가진 스킬/악세 중 '만렙이 아닌 녀석' 하나를 랜덤으로 뽑기
+    UDELevelUpChoiceBase* GetRandomUpgradableChoice();
+
+    // 4단계: 다 만렙일 때 줄 꽝 보상 (돈 주머니, 체력 회복 등)
+    UDELevelUpChoiceBase* GetFallbackChoice();
+
+
 };

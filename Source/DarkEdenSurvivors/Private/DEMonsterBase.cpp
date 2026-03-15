@@ -8,7 +8,6 @@
 #include "EngineUtils.h"
 #include "DECharacterBase.h"
 #include "Kismet/GameplayStatics.h"
-#include "DEEXPCrystal.h"
 #include "DEStatComponent.h"
 #include "DEHealthComponent.h"
 #include "DEStatusEffectComponent.h"
@@ -43,7 +42,6 @@ ADEMonsterBase::ADEMonsterBase()
 	//	TestMesh->SetStaticMesh(SM_TESTMESH.Object);
 	//}
 
-	EXPCrystal = ADEEXPCrystal::StaticClass();
 	StatComponent = CreateDefaultSubobject<UDEStatComponent>(TEXT("StatComponent"));
 	StatusEffectComponent = CreateDefaultSubobject<UDEStatusEffectComponent>(TEXT("StatusEffectComponent"));
 
@@ -216,29 +214,6 @@ float ADEMonsterBase::GetMaxHP() const
 	return HealthComponent->GetMaxHP();
 }
 
-void ADEMonsterBase::DropExp()
-{
-	if (!EXPCrystal) return;
-
-	int32 DropCount = FMath::RandRange(0, 1);
-	DropCount = 1;
-	for (int32 i = 0; i < DropCount; i++)
-	{
-		FVector Base = GetActorLocation();
-		FVector Rand = FMath::VRand() * FMath::RandRange(50.f, 150.f);
-		Rand.Z = FMath::RandRange(50.f, 200.f);
-
-		FVector SpawnLoc = Base + Rand;
-
-		GetWorld()->SpawnActor<ADEEXPCrystal>(
-			EXPCrystal,
-			SpawnLoc,
-			FRotator::ZeroRotator
-		);
-	}
-
-}
-
 void ADEMonsterBase::ResetMonster(const FDEMonsterData* Data)
 {
 	if (!Data) return;
@@ -292,8 +267,7 @@ void ADEMonsterBase::ResetMonster(const FDEMonsterData* Data)
 	AttackDamage = Data->AttackDamage;
 	AttackInterval = Data->AttackInterval;
 	KnockbackResistance = Data->KnockbackResistance;
-	EXPDrop = Data->EXPDrop;
-	DropChance = Data->DropChance;
+	DropTable = Data->DropTable;
 	// 5. 상태 초기화
 	HealthComponent->ResetHealth();
 	SetActorHiddenInGame(false);

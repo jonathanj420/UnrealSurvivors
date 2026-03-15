@@ -6,6 +6,11 @@
 #include "GameFramework/PlayerController.h"
 #include "DEPlayerController.generated.h"
 
+
+class UDEChestWidget;
+class UDELevelUpChoiceBase;
+
+
 /**
  * 
  */
@@ -41,8 +46,19 @@ private:
 	UPROPERTY()
 	class UDESkillInventoryWidget* SkillInventoryWidget;
 
+	// 에디터에서 할당할 상자 UI 블루프린트 클래스 (WBP_ChestWidget)
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UDEChestWidget> ChestWidgetClass;
+
+	// 생성된 상자 UI 인스턴스
+	UPROPERTY()
+	UDEChestWidget* ChestWidget;
+
+	
+
 public:
 	UFUNCTION()
 	void ResumeGame();
 	void ShowLevelUpUI();
+	void ShowChestWidget(const TArray<UDELevelUpChoiceBase*>& Rewards);
 };

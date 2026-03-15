@@ -4,19 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "DEPickupBase.h"
-#include "DEPickupEXPGem.generated.h"
+#include "DEPickup_Heal.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DARKEDENSURVIVORS_API ADEPickupEXPGem : public ADEPickupBase
+class DARKEDENSURVIVORS_API ADEPickup_Heal : public ADEPickupBase
 {
 	GENERATED_BODY()
 public:
-	ADEPickupEXPGem();
-
-public:
+	ADEPickup_Heal();
 	virtual void ApplyEffect(AActor* TargetActor) override;
-
+	
 };

@@ -19,7 +19,7 @@ class DARKEDENSURVIVORS_API UDELevelUpChoice_Accessory : public UDELevelUpChoice
     GENERATED_BODY()
 
 public:
-    void Init(UDEAccessoryData* InAccessoryData);
+    void Init(const UDEAccessoryData* InAccessoryData);
 
     // ===== UDELevelUpChoice =====
     virtual FText GetDisplayName() const override;
@@ -29,6 +29,6 @@ public:
 
 private:
     UPROPERTY()
-    UDEAccessoryData* AccessoryData = nullptr;
+    const UDEAccessoryData* AccessoryData = nullptr;
 	
 };

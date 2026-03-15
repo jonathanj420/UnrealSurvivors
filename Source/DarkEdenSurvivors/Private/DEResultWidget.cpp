@@ -34,9 +34,9 @@ void UDEResultWidget::SetResultData(int32 EarnedGold, int32 KillCount, float Sur
 	// 2. ★ [핵심] 획득한 골드를 영구 저장소(GameInstance)에 저장
 	if (UDEGameInstance* GI = Cast<UDEGameInstance>(GetGameInstance()))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("[Result] Saving Gold: +%d"), EarnedGold);
+		//UE_LOG(LogTemp, Warning, TEXT("[Result] Saving Gold: +%d"), EarnedGold);
 
-		GI->AddGold(EarnedGold); // 메모리에 더하기
+		//GI->AddGold(EarnedGold); // 메모리에 더하기
 		GI->SaveGame();          // 파일로 저장하기 (SaveSlot01.sav)
 	}
 }

@@ -1,20 +1,20 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "DEPickupEXPGem.h"
+#include "DEPickup_Exp.h"
 #include "DEProgressionComponent.h"
-ADEPickupEXPGem::ADEPickupEXPGem()
+ADEPickup_Exp::ADEPickup_Exp()
 {
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_EXPGem(TEXT("/Game/DarkEden/Data/StaticMesh/EXPCrystal/EXPCrystal.EXPCrystal"));
-	if (SM_EXPGem.Succeeded())
-	{
-		Mesh->SetStaticMesh(SM_EXPGem.Object);
-	}
+    static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_EXPGem(TEXT("/Game/DarkEden/Data/StaticMesh/EXPCrystal/EXPCrystal.EXPCrystal"));
+    if (SM_EXPGem.Succeeded())
+    {
+        Mesh->SetStaticMesh(SM_EXPGem.Object);
+    }
     Mesh->SetRelativeScale3D(FVector(0.1f));
-	bCanBeMagnetized = true;
+    bCanBeMagnetized = true;
 }
 
-void ADEPickupEXPGem::ApplyEffect(AActor* TargetActor)
+void ADEPickup_Exp::ApplyEffect(AActor* TargetActor)
 {
     // 1. 방어 코드: TargetActor가 없을 수도 있음 (안전 제일)
     if (!TargetActor) return;
@@ -31,3 +31,4 @@ void ADEPickupEXPGem::ApplyEffect(AActor* TargetActor)
     // 4. ★ 부모 호출 (여기서 DeactivatePickup이 실행되어 풀로 돌아감)
     Super::ApplyEffect(TargetActor);
 }
+

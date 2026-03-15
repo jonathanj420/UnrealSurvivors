@@ -6,7 +6,7 @@
 #include "DEAccessoryComponent.h"
 #include "GameFramework/Actor.h"
 
-void UDELevelUpChoice_Accessory::Init(UDEAccessoryData* InAccessoryData)
+void UDELevelUpChoice_Accessory::Init(const UDEAccessoryData* InAccessoryData)
 {
     AccessoryData = InAccessoryData;
 }

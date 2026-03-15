@@ -5,13 +5,11 @@
 #include "DEPickupBase.h"
 #include "DEPoolSubsystem.h"
 #include "DEStatComponent.h"
-#include "Kismet/GameplayStatics.h"
-#include "DEPickupEXPGem.h"      
+#include "Kismet/GameplayStatics.h"   
 //#include "Items/DEPotion.h"      
 //#include "Items/DEMagnetItem.h"
 UDEPickupManager::UDEPickupManager()
 {
-	ExpGemClass = ADEPickupEXPGem::StaticClass();
 
 }
 
@@ -33,42 +31,19 @@ void UDEPickupManager::Deinitialize()
 	Super::Deinitialize();
 }
 
-void UDEPickupManager::SpawnPickup(const FVector& Location, int32 ExpValue, float Luck)
+void UDEPickupManager::SpawnPickup(const FVector& Location, float ItemValue, TSubclassOf<ADEPickupBase> ClassToSpawn)
 {
-	// 0. 최적화: 너무 많으면 생성 안 함
-	if (ActivePickups.Num() >= MaxActivePickups) return;
+	if (!ClassToSpawn || ActivePickups.Num() >= MaxActivePickups) return;
 
-	// 1. 클래스 결정 로직 (RNG)
-	TSubclassOf<ADEPickupBase> ClassToSpawn = ExpGemClass;
-
-	float Roll = FMath::FRandRange(0.0f, 100.0f);
-
-	// 예: Luck이 높으면 자석/물약 확률 증가
-	// (Luck 10일 때: 자석 1.5%, 물약 5% 등)
-	if (Roll > (99.5f - Luck * 0.1f) && MagnetItemClass)
-	{
-		ClassToSpawn = MagnetItemClass;
-	}
-	else if (Roll > (95.0f - Luck * 0.1f) && PotionClass)
-	{
-		ClassToSpawn = PotionClass;
-	}
-
-	if (!ClassToSpawn) return;
-
-	// 2. 풀링 시스템 호출
 	UDEPoolSubsystem* Pool = GetWorld()->GetSubsystem<UDEPoolSubsystem>();
 	if (!Pool) return;
 
-	// ★ 중요: Tick이 꺼진 상태(false)로 가져옴. 매니저가 직접 옮길 거니까.
 	AActor* SpawnedActor = Pool->GetPooledActor(ClassToSpawn, Location, FRotator::ZeroRotator, false);
 
 	if (ADEPickupBase* Pickup = Cast<ADEPickupBase>(SpawnedActor))
 	{
-		// 초기화 (값 설정, Hidden 끄기 등)
-		Pickup->ActivatePickup(Location, (float)ExpValue);
-
-		// 장부에 등록 (약한 참조)
+		// ★ 구조체에서 가져온 Value를 픽업 아이템에게 주입!
+		Pickup->ActivatePickup(Location, ItemValue);
 		ActivePickups.Add(Pickup);
 	}
 }

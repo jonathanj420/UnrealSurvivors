@@ -41,6 +41,8 @@ void UDEAccessoryComponent::LevelUpAccessory(const UDEAccessoryData* InData)
 
 		UE_LOG(LogTemp, Warning, TEXT("Accessory %s -> Lv.%d"), *InData->Name.ToString(), CurrentLevel);
 
+		CachedInventoryComp->TryAddAccessory(InData->ID);
+
 		// 4. UI 갱신 알람 발송!
 		OnAccUpdated.Broadcast(InData);
 	}
