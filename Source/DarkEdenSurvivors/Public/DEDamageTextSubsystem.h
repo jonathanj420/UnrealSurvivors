@@ -21,6 +21,7 @@ public:
     // UWorldSubsystem
     virtual void Initialize(FSubsystemCollectionBase& Collection) override;
     virtual void Deinitialize() override;
+    virtual bool IsTickableWhenPaused() const override { return false; }
 
     // 외부(Gameplay) 진입점
     void ShowDamage(const FDamageVisualInfo& Info);

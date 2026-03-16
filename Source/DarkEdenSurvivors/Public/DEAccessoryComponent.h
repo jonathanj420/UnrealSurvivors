@@ -32,9 +32,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Accessory")
 	void LevelUpAccessory(const UDEAccessoryData* InData);
 
-	UFUNCTION(BlueprintCallable, Category = "Accessory")
-	void AddAccessory(const UDEAccessoryData* InData);
-
 	// 악세서리 제거 (필요 시)
 	UFUNCTION(BlueprintCallable, Category = "Accessory")
 	void RemoveAccessory(const UDEAccessoryData* InData);
@@ -43,22 +40,22 @@ public:
 	// 2. 쿼리 (CombatComponent가 사용)
 	// =========================================================
 
-	// 특정 트리거(OnKill 등)에 해당하는 효과 리스트 반환 (O(1) 조회)
-	const TArray<FEffectData>& GetEffectsByTrigger(EEffectTrigger InTrigger) const;
+	//// 특정 트리거(OnKill 등)에 해당하는 효과 리스트 반환 (O(1) 조회)
+	//const TArray<FEffectData>& GetEffectsByTrigger(EEffectTrigger InTrigger) const;
 
-	// 특정 효과 타입(StackDamage 등)의 현재 누적 값 반환 (Snapshot용)
-	float GetTotalStackValue(EEffectType InType) const;
+	//// 특정 효과 타입(StackDamage 등)의 현재 누적 값 반환 (Snapshot용)
+	//float GetTotalStackValue(EEffectType InType) const;
 
-	// =========================================================
-	// 3. 상태 변경 (CombatComponent가 실행)
-	// =========================================================
+	//// =========================================================
+	//// 3. 상태 변경 (CombatComponent가 실행)
+	//// =========================================================
 
-	// 스택 쌓기 요청
-	void AddStack(EEffectType InType, float InValue, int32 InMaxStack);
+	//// 스택 쌓기 요청
+	//void AddStack(EEffectType InType, float InValue, int32 InMaxStack); no more use for now
 
 protected:
 	// 내부 캐시 재구축 (장착/해제 시 호출)
-	void RebuildEffectCache();
+	//void RebuildEffectCache();
 
 	// 정적 스탯 적용 (이동속도 등)
 	void ApplyStaticStats(const UDEAccessoryData* InData);

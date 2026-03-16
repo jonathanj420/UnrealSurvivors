@@ -71,6 +71,19 @@ void UDEHealthComponent::Heal(float HealAmount)
     CurrentHP += HealAmount;
     CurrentHP = FMath::Clamp(CurrentHP, 0.f, MaxHP);
 
+    if (GetOwner())
+    {
+        if (UDEDamageTextSubsystem* DmgSys = GetWorld()->GetSubsystem<UDEDamageTextSubsystem>())
+        {
+            FDamageVisualInfo DmgInfo;
+            DmgInfo.WorldLocation = GetOwner()->GetActorLocation() + FVector(0, 0, 100);
+            DmgInfo.Amount = HealAmount;
+            DmgInfo.TextType = EDamageTextType::Heal;
+
+            DmgSys->ShowDamage(DmgInfo);
+        }
+    }
+
     OnHPChanged.Broadcast(CurrentHP, MaxHP);
 }
 
@@ -219,38 +232,59 @@ FDEDamageResult UDEHealthComponent::ProcessDamage(const FDEDamageRequest& Reques
     return Result;
 }
 
-void UDEHealthComponent::InstantKill(AActor* Executioner)
+void UDEHealthComponent::InstantKill(AActor* Executioner, bool bShowDamage /* = false */)
 {
-    // 1. 이미 죽은 놈은 두 번 죽이지 않음
     if (bIsDead) return;
 
-    // 2. 쉴드, 방어력 계산 다 무시하고 체력을 강제로 증발시킴
-    CurrentHP = 0.0f;
-
-    // 3. UI 갱신 (체력바 즉시 0으로)
-    OnHPChanged.Broadcast(CurrentHP, MaxHP);
-
-    // 4. (연출) 서브시스템을 통한 처형 데미지 텍스트 띄우기
-    if (UWorld* World = GetWorld())
+    // 1. 일반 즉사 데미지 연출 (함정, 폭발 등)
+    if (bShowDamage && GetOwner())
     {
-        if (UDEDamageTextSubsystem* DmgSys = World->GetSubsystem<UDEDamageTextSubsystem>())
+        if (UDEDamageTextSubsystem* DmgSys = GetWorld()->GetSubsystem<UDEDamageTextSubsystem>())
         {
             FDamageVisualInfo DmgInfo;
-            // 텍스트 연출을 위해 남은 체력이나 최대 체력만큼 띄워줌
-            DmgInfo.Amount = MaxHP;
-            DmgInfo.bIsCritical = true; // 처형이니까 크리티컬 이펙트 빌려 쓰기!
+            DmgInfo.WorldLocation = GetOwner()->GetActorLocation() + FVector(0, 0, 100);
+            DmgInfo.Amount = MaxHP; // 최대 체력만큼의 데미지 숫자!
+            DmgInfo.TextType = EDamageTextType::Critical; // 크고 빨간 숫자로 띄움
 
-            if (GetOwner())
-            {
-                DmgInfo.WorldLocation = GetOwner()->GetActorLocation() + FVector(0, 0, 100);
-            }
             DmgSys->ShowDamage(DmgInfo);
-            UE_LOG(LogTemp, Warning, TEXT("EXECUTED ! ! !"));
         }
     }
 
-    // 5. 진짜 사망 처리로 넘김
+    // 2. 데이터 처리
+    CurrentHP = 0.0f;
+    OnHPChanged.Broadcast(CurrentHP, MaxHP);
     HandleDeath(Executioner);
+
+    //// 1. 이미 죽은 놈은 두 번 죽이지 않음
+    //if (bIsDead) return;
+
+    //// 2. 쉴드, 방어력 계산 다 무시하고 체력을 강제로 증발시킴
+    //CurrentHP = 0.0f;
+
+    //// 3. UI 갱신 (체력바 즉시 0으로)
+    //OnHPChanged.Broadcast(CurrentHP, MaxHP);
+
+    //// 4. (연출) 서브시스템을 통한 처형 데미지 텍스트 띄우기
+    //if (UWorld* World = GetWorld())
+    //{
+    //    if (UDEDamageTextSubsystem* DmgSys = World->GetSubsystem<UDEDamageTextSubsystem>())
+    //    {
+    //        FDamageVisualInfo DmgInfo;
+    //        // 텍스트 연출을 위해 남은 체력이나 최대 체력만큼 띄워줌
+    //        DmgInfo.Amount = MaxHP;
+    //        DmgInfo.bIsCritical = true; // 처형이니까 크리티컬 이펙트 빌려 쓰기!
+
+    //        if (GetOwner())
+    //        {
+    //            DmgInfo.WorldLocation = GetOwner()->GetActorLocation() + FVector(0, 0, 100);
+    //        }
+    //        DmgSys->ShowDamage(DmgInfo);
+    //        UE_LOG(LogTemp, Warning, TEXT("EXECUTED ! ! !"));
+    //    }
+    //}
+
+    //// 5. 진짜 사망 처리로 넘김
+    //HandleDeath(Executioner);
 }
 
 void UDEHealthComponent::ApplyFinalDamage(float InDamage, AActor* InCauser, bool bInIsCritical)
@@ -274,6 +308,7 @@ void UDEHealthComponent::ApplyFinalDamage(float InDamage, AActor* InCauser, bool
                 DmgInfo.WorldLocation = GetOwner()->GetActorLocation() + FVector(0, 0, 100);
             }
             DmgInfo.bIsCritical = bInIsCritical; // ★ 여기서 빨간색 여부 결정
+            DmgInfo.TextType = bInIsCritical ? EDamageTextType::Critical : EDamageTextType::Damage;
             if (bInIsCritical)
             {
                 UE_LOG(LogTemp, Warning, TEXT("Kritz!!"));

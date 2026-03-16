@@ -22,10 +22,11 @@ ADECharacterBase::ADECharacterBase()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+    Tags.Add(FName("Player"));
+
+
     StatComponent = CreateDefaultSubobject<UDEStatComponent>(TEXT("StatComponent"));
-    //StatComponent->SetMaxHP(200.0f);
-    //StatComponent->SetCurrentHP(200.0f);
-   // StatComponent->SetPlayer(true);
 
     HealthComponent= CreateDefaultSubobject<UDEHealthComponent>(TEXT("DEHealthComponent"));
 
@@ -120,7 +121,6 @@ void ADECharacterBase::BeginPlay()
     }
     if (SkillManager && BaseSkillID > 0)
     {
-        UE_LOG(LogTemp, Warning, TEXT("WTF IS GOIN ON"));
         SkillManager->LevelUpSkill(BaseSkillID);  // 추가할 함수 구현해줄 것
     }
     //StatComponent->OnLevelUp.AddDynamic(this, &ADEPlayerController::ShowLevelUpUI);

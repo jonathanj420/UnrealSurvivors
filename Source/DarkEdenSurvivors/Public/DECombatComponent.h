@@ -68,7 +68,7 @@ protected:
 public:
 	// ★ 효과 추가/제거용 함수 (C++ 런타임 적용용)
 	UFUNCTION(BlueprintCallable, Category = "Combat")
-	void AddCombatEffect(UDECombatEffect* NewEffect);
+	void AddCombatEffect(UDECombatEffect* TemplateEffect);
 
 	// ★ 동네방네 사건을 알리는 핵심 방송국 함수
 	UFUNCTION(BlueprintCallable, Category = "Combat")

@@ -47,9 +47,6 @@ FCombatSnapshot UDECombatComponent::GetCombatSnapshot() const
     // 3. AccessoryComponent에서 '조건부 스택' 합산하기 (예: 처치 시 공격력 증가)
     if (CachedAccessoryComp)
     {
-        // 스택형 데미지 증가 (StackDamagePercent)
-        float StackBonus = CachedAccessoryComp->GetTotalStackValue(EEffectType::StackDamagePercent);
-        Snapshot.FinalDamageMultiplier += StackBonus;
     }
 
     return Snapshot;
@@ -178,12 +175,40 @@ void UDECombatComponent::HandleDamageDealt(const FDEDamageResult& Result, const 
 //    // UE_LOG(LogTemp, Verbose, TEXT("Enemy Killed by %s"), *GetName());
 //}
 
-void UDECombatComponent::AddCombatEffect(UDECombatEffect* NewEffect)
+void UDECombatComponent::AddCombatEffect(UDECombatEffect* TemplateEffect)
 {
+    if (!TemplateEffect) return;
+
+    // 1. 내 주머니에 이미 같은 클래스가 있는지 확인
+    for (UDECombatEffect* ExistingEffect : ActiveCombatEffects)
+    {
+        // 원본과 내 주머니에 있는 게 같은 클래스(종류)라면?
+        if (ExistingEffect->GetClass() == TemplateEffect->GetClass())
+        {
+            if (ExistingEffect->bIsStackable && ExistingEffect->CurrentStack < ExistingEffect->MaxStack)
+            {
+                ExistingEffect->CurrentStack++;
+                ExistingEffect->OnStackUpgraded();
+                UE_LOG(LogTemp, Warning, TEXT("Effect %s Level Up: %d"), *ExistingEffect->GetName(), ExistingEffect->CurrentStack);
+            }
+            return;
+        }
+    }
+
+    // 2. [핵심] 주머니에 없다면? 데이터 에셋의 '원본(Template)'을 똑같이 복제해서 장착!
+    // NewObject 대신 DuplicateObject를 쓰면, 에디터에서 입력해 둔 Chance나 Value 값이 그대로 복사됩니다!
+    UDECombatEffect* NewEffect = DuplicateObject<UDECombatEffect>(TemplateEffect, this);
     if (NewEffect)
     {
+        NewEffect->CurrentStack = 1;
         ActiveCombatEffects.Add(NewEffect);
+        UE_LOG(LogTemp, Warning, TEXT("New Effect Added : %s"), *NewEffect->GetName());
     }
+    
+    /*if (NewEffect)
+    {
+        ActiveCombatEffects.Add(NewEffect);
+    }*/
 }
 
 void UDECombatComponent::BroadcastCombatEvent(ECombatEventTrigger TriggerType, FCombatEventData& EventData)

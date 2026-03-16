@@ -32,11 +32,11 @@ ADEProjectile_BloodyKnife::ADEProjectile_BloodyKnife()
 
     CollisionComponent->InitSphereRadius(30.0f); // 기본값
   
-    UDECombatEffect_Execution* Execution =
+    /*UDECombatEffect_Execution* Execution =
         CreateDefaultSubobject<UDECombatEffect_Execution>(TEXT("ExecutionEffect"));
     Execution->Threshold = 0.1f;
     Execution->TriggerCondition = ECombatEventTrigger::OnKill;
-    LocalEffects.Add(Execution);
+    LocalEffects.Add(Execution);*/
 
     // *주의: 델리게이트 연결(AddDynamic)은 부모가 했으니 또 하면 안 됩니다!
 

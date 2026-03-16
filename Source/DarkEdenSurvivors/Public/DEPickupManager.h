@@ -28,6 +28,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual bool IsTickable() const override { return !IsTemplate(); }
 	virtual TStatId GetStatId() const override { RETURN_QUICK_DECLARE_CYCLE_STAT(UDEPickupManager, STATGROUP_Tickables); }
+	virtual bool IsTickableWhenPaused() const override { return false; }
 
 	// [Public API]
 	// 1. 아이템 생성 요청

@@ -15,8 +15,10 @@ ADEPickupBase::ADEPickupBase()
 
 	Trigger = CreateDefaultSubobject<USphereComponent>(TEXT("Trigger"));
 	RootComponent = Trigger;
-	Trigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	Trigger->SetSphereRadius(40.0f);
+	Trigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	//Trigger->SetCollisionResponseToAllChannels(ECR_Ignore);
+	//Trigger->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap); // 플레이어(Pawn)만 감지!
+	Trigger->SetSphereRadius(30.0f);
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(RootComponent);
@@ -27,7 +29,10 @@ ADEPickupBase::ADEPickupBase()
 void ADEPickupBase::BeginPlay()
 {
 	Super::BeginPlay();
-	//Trigger->OnComponentBeginOverlap.AddDynamic(this, &ADEPickupBase::OnOverlap);
+	if (Trigger)
+	{
+		Trigger->OnComponentBeginOverlap.AddDynamic(this, &ADEPickupBase::OnOverlapBegin);
+	}
 }
 
 
@@ -43,7 +48,7 @@ void ADEPickupBase::ActivatePickup(const FVector& Location, float DataValue)
 
 	// 켜기
 	SetActorHiddenInGame(false);
-	//SetActorEnableCollision(true);
+	Trigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	//SetActorTickEnabled(false); // 이동 전까진 틱 끔
 }
 
@@ -51,7 +56,7 @@ void ADEPickupBase::DeactivatePickup()
 {
 	// 끄기
 	SetActorHiddenInGame(true);
-	//SetActorEnableCollision(false);
+	Trigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	SetActorTickEnabled(false);
 
 	// TODO: 풀 시스템에 반환 요청
@@ -80,4 +85,25 @@ void ADEPickupBase::SetTriggerRadius(float InSize)
 	}
 	
 
+}
+
+void ADEPickupBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	//UE_LOG(LogTemp, Warning, TEXT("Pickup Touched Somthin,...."));
+	// 이미 먹혀서 안 보이는 놈이거나, OtherActor가 없으면 무시
+	if (IsHidden())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("WTF?"));
+	}
+	if (IsHidden() || !OtherActor) return;
+
+	// (선택) OtherActor가 진짜 플레이어인지 검사 (태그 기반이 젤 편합니다)
+	if (OtherActor->ActorHasTag(TEXT("Player")))
+	{
+		// 닿았다! 바로 효과 적용!
+		ApplyEffect(OtherActor);
+
+		// ApplyEffect 내부에서 어차피 SetActorHiddenInGame(true)를 하거나 Pool로 돌아가므로,
+		// 매니저의 다음 번 Tick에서 알아서 리스트에서 떨어져 나갑니다.
+	}
 }

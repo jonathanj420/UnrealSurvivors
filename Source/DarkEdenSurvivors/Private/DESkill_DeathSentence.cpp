@@ -1,18 +1,18 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "DESkill_Executioner.h"
+#include "DESkill_DeathSentence.h"
 #include "DEProjectile_Boomerang.h"
 #include "DEBehavior_SelectTargetsInRadius.h"
 #include "DEBehavior_FilterTargets.h"
 #include "DEBehavior_FireProjectile.h"
 
-UDESkill_Executioner::UDESkill_Executioner()
+UDESkill_DeathSentence::UDESkill_DeathSentence()
 {
-	
+
 
 	static ConstructorHelpers::FClassFinder<ADEProjectile_Boomerang> ProjectileBP(
-		TEXT("/Game/DarkEden/Blueprint/SkillProjectiles/DEProjectile_ExecutionerAxe.DEProjectile_ExecutionerAxe_C")
+		TEXT("/Game/DarkEden/Blueprint/SkillProjectiles/DEProjectile_Mortal.DEProjectile_Mortal_C")
 	);
 
 	if (ProjectileBP.Succeeded())
@@ -32,7 +32,7 @@ UDESkill_Executioner::UDESkill_Executioner()
 
 }
 
-void UDESkill_Executioner::InitBehaviors()
+void UDESkill_DeathSentence::InitBehaviors()
 {
 	Super::InitBehaviors();
 
@@ -40,7 +40,7 @@ void UDESkill_Executioner::InitBehaviors()
 	Targeting->Radius = 800.0f;
 	Targeting->OriginType = ESearchOrigin::Instigator;
 	Behaviors.Add(Targeting);
-	
+
 	UDEBehavior_FilterTargets* Filtering = NewObject<UDEBehavior_FilterTargets>(this);
 	Filtering->TargetCount = 1;
 	Filtering->FilterType = ETargetFilterType::Nearest;
@@ -52,7 +52,7 @@ void UDESkill_Executioner::InitBehaviors()
 	FireProjectile->ProjectileClass = this->ProjectileClass;
 	FireProjectile->FireSound = this->FireSound;
 	FireProjectile->BurstInterval = 0.1f;
-	FireProjectile->FireConeAngle = 30.0f;
+	FireProjectile->FireConeAngle = 10.0f;
 	Behaviors.Add(FireProjectile);
 
 }

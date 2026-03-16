@@ -49,7 +49,7 @@ void UDEBehavior_SelectTargetsInRadius::Execute(FDESkillContext& Context)
     if (bIgnoreInstigator) Params.AddIgnoredActor(Context.Instigator);
     //float FinalRadius = Context.GetValue(TEXT("Radius"), Radius);
     float FinalRadius = (Context.Radius != 0.f) ? Context.Radius : this->Radius;
-    //UE_LOG(LogTemp, Error, TEXT("Try Select In Radius"));
+    UE_LOG(LogTemp, Error, TEXT("Try Select In Radius"));
 
     // ★ 반경이 0 미만(-1)일 때: 맵 전체 몬스터 검색
     if (FinalRadius < 0.f)

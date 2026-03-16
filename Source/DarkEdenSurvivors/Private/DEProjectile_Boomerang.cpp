@@ -8,14 +8,22 @@ ADEProjectile_Boomerang::ADEProjectile_Boomerang()
 {
     // 부메랑은 MovementComponent 안 씀
     if (MovementComponent)
-        MovementComponent->SetComponentTickEnabled(false);
+    {
+        if (MovementComponent)
+        {
+            MovementComponent->Velocity = FVector::ZeroVector;
+            MovementComponent->bRotationFollowsVelocity = false;
+            MovementComponent->Deactivate();
+            MovementComponent->SetComponentTickEnabled(false);
+        }
+    }
 }
 
 void ADEProjectile_Boomerang::ResetState()
 {
     Super::ResetState();
 
-    // 부메랑 상태 초기화
+    MovementComponent->Deactivate();
     Phase = EBoomerangPhase::Going;
     TravelDistance = 0.f;
 }
@@ -39,6 +47,7 @@ void ADEProjectile_Boomerang::UpdateMovement(float DeltaTime)
         {
             Phase = EBoomerangPhase::Returning;
             HitActors.Empty(); // 복귀 시 다시 데미지 줄 수 있게
+
         }
         break;
     }
@@ -50,6 +59,7 @@ void ADEProjectile_Boomerang::UpdateMovement(float DeltaTime)
         if (ReturnMode == EReturnMode::Linear)
         {
             MoveDir = -ShootDirection;
+
         }
         else // Homing
         {
@@ -73,7 +83,7 @@ void ADEProjectile_Boomerang::UpdateMovement(float DeltaTime)
         SetActorRotation(CurrentRot);
 
         // 시전자 도달 체크
-        if (CachedContext.Instigator)
+        if (CachedContext.Instigator && bCanBeReturned)
         {
             float DistSq = FVector::DistSquared(
                 GetActorLocation(),
@@ -89,5 +99,6 @@ void ADEProjectile_Boomerang::UpdateMovement(float DeltaTime)
 
 void ADEProjectile_Boomerang::OnReturnComplete()
 {
+    UE_LOG(LogTemp, Warning, TEXT("Boomerang Returned"));
     ReturnToPool();
 }

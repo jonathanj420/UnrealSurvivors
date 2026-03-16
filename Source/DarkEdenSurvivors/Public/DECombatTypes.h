@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -11,34 +11,35 @@
 UENUM(BlueprintType)
 enum class ECombatEventTrigger : uint8
 {
-    OnNone              UMETA(DisplayName = "¾øÀ½"),
-    OnHit               UMETA(DisplayName = "Àû ÀûÁß ½Ã"),
-    OnTakeDamage        UMETA(DisplayName = "ÇÇ°İ ½Ã"),
-    OnKill              UMETA(DisplayName = "Àû Ã³Ä¡ ½Ã"),
-    OnSkillCast         UMETA(DisplayName = "½ºÅ³ ½ÃÀü ½Ã"),
-    OnPreHit            UMETA(DisplayName = "µ¥¹ÌÁö °è»ê Á÷Àü")
+    OnNone              UMETA(DisplayName = "ì—†ìŒ"),
+    OnHit               UMETA(DisplayName = "ì  ì ì¤‘ ì‹œ"),
+    OnTakeDamage        UMETA(DisplayName = "í”¼ê²© ì‹œ"),
+    OnKill              UMETA(DisplayName = "ì  ì²˜ì¹˜ ì‹œ"),
+    OnCrit              UMETA(DisplayName = "í¬ë¦¬í‹°ì»¬ ì‹œ"),
+    OnSkillCast         UMETA(DisplayName = "ìŠ¤í‚¬ ì‹œì „ ì‹œ"),
+    OnPreHit            UMETA(DisplayName = "ë°ë¯¸ì§€ ê³„ì‚° ì§ì „")
 };
 
-// 2. ÀÌº¥Æ® ¹ß»ı ½Ã Àü´ŞÇÒ ÅëÇÕ µ¥ÀÌÅÍ (ÅÃ¹è »óÀÚ)
+// 2. ì´ë²¤íŠ¸ ë°œìƒ ì‹œ ì „ë‹¬í•  í†µí•© ë°ì´í„° (íƒë°° ìƒì)
 USTRUCT(BlueprintType)
 struct FCombatEventData
 {
     GENERATED_BODY()
 
     UPROPERTY(BlueprintReadWrite, Category = "CombatEvent")
-    AActor* Instigator; // »ç°ÇÀÇ ¿øÀÎ Á¦°øÀÚ (¶§¸° ³ğ)
+    AActor* Instigator; // ì‚¬ê±´ì˜ ì›ì¸ ì œê³µì (ë•Œë¦° ë†ˆ)
 
     UPROPERTY(BlueprintReadWrite, Category = "CombatEvent")
-    AActor* Target;     // »ç°ÇÀÇ ÇÇÇØÀÚ (¸ÂÀº ³ğ)
+    AActor* Target;     // ì‚¬ê±´ì˜ í”¼í•´ì (ë§ì€ ë†ˆ)
 
     UPROPERTY(BlueprintReadWrite, Category = "CombatEvent")
-    float DamageAmount; // ¹ß»ıÇÑ µ¥¹ÌÁö·® (ÇÊ¿ä ½Ã »ç¿ë)
+    float DamageAmount; // ë°œìƒí•œ ë°ë¯¸ì§€ëŸ‰ (í•„ìš” ì‹œ ì‚¬ìš©)
 
-    // ¡Ú Ãß°¡µÊ: OnPreHit¿¡¼­ ÀÌÆåÆ®µéÀÌ °Çµå¸± ¼ö ÀÖ´Â 'µ¥¹ÌÁö ¹è¼ö'
-    // ±âº»°ªÀº 1.0 (100%). ÀÌÆåÆ®°¡ ÀÌ°É 2.0À¸·Î ¹Ù²Ù¸é 2¹è°¡ µÊ!
+    // â˜… ì¶”ê°€ë¨: OnPreHitì—ì„œ ì´í™íŠ¸ë“¤ì´ ê±´ë“œë¦´ ìˆ˜ ìˆëŠ” 'ë°ë¯¸ì§€ ë°°ìˆ˜'
+    // ê¸°ë³¸ê°’ì€ 1.0 (100%). ì´í™íŠ¸ê°€ ì´ê±¸ 2.0ìœ¼ë¡œ ë°”ê¾¸ë©´ 2ë°°ê°€ ë¨!
     UPROPERTY(BlueprintReadWrite)
     float DamageMultiplier = 1.0f;
 
-    // ±âº» »ı¼ºÀÚ
+    // ê¸°ë³¸ ìƒì„±ì
     FCombatEventData() : Instigator(nullptr), Target(nullptr), DamageAmount(0.0f) {}
 };

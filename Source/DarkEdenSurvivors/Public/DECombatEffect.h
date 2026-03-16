@@ -20,6 +20,26 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trigger")
     ECombatEventTrigger TriggerCondition = ECombatEventTrigger::OnHit;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect")
+    float Value = 0.f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect", meta = (ClampMin = "0.0", ClampMax = "1.0"))
+    float Chance = 1.f;
+
+    // 2. 메가봉크식 스택(중첩) 시스템을 위한 세팅
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stack")
+    bool bIsStackable = false;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stack", meta = (EditCondition = "bIsStackable"))
+    int32 MaxStack = 0;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stack", meta = (EditCondition = "bIsStackable"))
+    float StackMultiplier = 1.f;
+
+    // (NEW) 현재 플레이어가 이 효과를 몇 스택이나 쌓았는지 기억할 변수
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stack")
+    int32 CurrentStack = 1;
+
     // 자식 클래스들이 무조건 구현해야 하는 실제 실행 로직
     // 1. 외부(스킬 등)에서 호출하는 진짜 입구! (더 이상 virtual이 아님!)
     void ExecuteEffect(FCombatEventData& EventData);
@@ -41,4 +61,6 @@ private:
 public:
     // 자식 클래스들이 ExecuteEffect 안에서 호출할 '쿨타임 검문소' 함수
     bool CanTriggerEffect(UWorld* World);
+    // 스택이 올랐을 때 자식 클래스가 수치를 재계산할 수 있게 열어두는 창구
+    virtual void OnStackUpgraded() {}
 };

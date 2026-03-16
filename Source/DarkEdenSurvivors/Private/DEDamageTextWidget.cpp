@@ -27,23 +27,67 @@ void UDEDamageTextWidget::NativeConstruct()
 
 void UDEDamageTextWidget::Activate(const FDamageVisualInfo& Info)
 {
-    TargetWorldLocation = Info.WorldLocation;
+	TargetWorldLocation = Info.WorldLocation;
+	bActive = true;
+	SetVisibility(ESlateVisibility::HitTestInvisible);
 
-    DamageText->SetText(FText::AsNumber(FMath::RoundToInt(Info.Amount)));
-    DamageText->SetColorAndOpacity(
-        Info.bIsCritical ? FLinearColor::Red : FLinearColor::White
-    );
+	//  Enum을 이용한 분기 처리 (확장성 MAX)
+	switch (Info.TextType)
+	{
+	case EDamageTextType::Execution:
+	{
+		DamageText->SetText(FText::FromString(TEXT("EXECUTED!")));
+		//DamageText->SetColorAndOpacity(FSlateColor(FLinearColor(0.6f, 0.0f, 0.8f, 1.0f))); // 다크 퍼플 (사신 느낌)
+		DamageText->SetColorAndOpacity(FSlateColor(FLinearColor::Red));
+		// 처형은 크기를 1.5배 뻥튀기!
+		DamageText->SetRenderTransform(FWidgetTransform(FVector2D::ZeroVector, FVector2D(1.5f, 1.5f), FVector2D::ZeroVector, 0.0f));
+		break;
+	}
+	case EDamageTextType::Critical:
+	{
+		DamageText->SetText(FText::AsNumber(FMath::RoundToInt(Info.Amount)));
+		DamageText->SetColorAndOpacity(FSlateColor(FLinearColor::Red));
+		DamageText->SetRenderTransform(FWidgetTransform(FVector2D::ZeroVector, FVector2D(1.2f, 1.2f), FVector2D::ZeroVector, 0.0f));
+		break;
+	}
+	case EDamageTextType::Heal:
+	{
+		DamageText->SetText(FText::AsNumber(FMath::RoundToInt(Info.Amount)));
+		DamageText->SetColorAndOpacity(FSlateColor(FLinearColor::Green));
+		DamageText->SetRenderTransform(FWidgetTransform(FVector2D::ZeroVector, FVector2D(1.0f, 1.0f), FVector2D::ZeroVector, 0.0f));
+		break;
+	}
+	default: // Damage (일반 타격)
+	{
+		DamageText->SetText(FText::AsNumber(FMath::RoundToInt(Info.Amount)));
+		DamageText->SetColorAndOpacity(FSlateColor(FLinearColor::White));
+		DamageText->SetRenderTransform(FWidgetTransform(FVector2D::ZeroVector, FVector2D(1.0f, 1.0f), FVector2D::ZeroVector, 0.0f));
+		break;
+	}
+	}
 
-    bActive = true;
-    //SetAlignmentInViewport(FVector2D(0.5f, 0.5f));
-    SetVisibility(ESlateVisibility::HitTestInvisible);
+	// 애니메이션 재생
+	if (PopAnimMk2)
+	{
+		PlayAnimation(PopAnimMk2);
+	}
+    //TargetWorldLocation = Info.WorldLocation;
 
-    if (PopAnimMk2)
-    {
-        PlayAnimation(PopAnimMk2);
+    //DamageText->SetText(FText::AsNumber(FMath::RoundToInt(Info.Amount)));
+    //DamageText->SetColorAndOpacity(
+    //    Info.bIsCritical ? FLinearColor::Red : FLinearColor::White
+    //);
+
+    //bActive = true;
+    ////SetAlignmentInViewport(FVector2D(0.5f, 0.5f));
+    //SetVisibility(ESlateVisibility::HitTestInvisible);
+
+    //if (PopAnimMk2)
+    //{
+    //    PlayAnimation(PopAnimMk2);
 
 
-    }
+    //}
 }
 
 void UDEDamageTextWidget::HandleAnimFinished()

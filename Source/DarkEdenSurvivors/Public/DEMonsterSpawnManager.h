@@ -48,6 +48,11 @@ public:
     UPROPERTY(VisibleInstanceOnly, Category = "Pooling")
     TArray<ADEMonsterBase*> InactiveMonsters;
 
+    bool bIsResolvingOverlaps = false;
+
+    TArray<ADEMonsterBase*> PendingRemoveMonsters;
+
+
     ADEMonsterBase* SpawnFromPool(FVector& Location, const struct FDEMonsterData* DataToApply);
     UFUNCTION()
     void ReturnMonsterToPool(class ADEMonsterBase* Monster);

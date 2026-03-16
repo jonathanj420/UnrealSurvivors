@@ -9,6 +9,8 @@
 #include "DEStatTypes.h"
 #include "DEAccessoryData.generated.h"
 
+
+class UDECombatEffect;
 /**
  * 
  */
@@ -37,8 +39,14 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stats")
     TArray<FDEStatModifier> StatModifiers;
 
-    UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effects")
-    TArray<FEffectData> Effects;
+   /* UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effects")
+    TArray<FEffectData> Effects;*/
+
+    //  구버전: TArray<FEffectData> Effects; (삭제!)
+    //  신버전: 어떤 이펙트(클래스)들을 가지고 있는지 클래스 정보만 저장!
+    UPROPERTY(EditAnywhere, Instanced, Category = "Effects")
+    TArray<UDECombatEffect*> AccessoryEffects;
+
 };
 
 USTRUCT(BlueprintType)

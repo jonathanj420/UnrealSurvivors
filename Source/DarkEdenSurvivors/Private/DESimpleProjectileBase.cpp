@@ -233,7 +233,7 @@ void ADESimpleProjectileBase::OnOverlap(UPrimitiveComponent* OverlappedComp, AAc
 
 	// 2. 타격 기록
 	HitActors.Add(OtherActor);
-
+	//UE_LOG(LogTemp, Warning, TEXT("Projectile : %s , Hit : %s"), *GetName(), *OtherActor->GetName());
 	// 3. ★ 갓-벽하게 압축된 데미지 로직 & 관통 처리 ★
 	if (TryDealDamage(OtherActor))
 	{
@@ -268,7 +268,7 @@ bool ADESimpleProjectileBase::TryDealDamage(AActor* Victim)
 	}
 
 	// ---------------------------------------------------------
-	// (삭제됨) 몹이 죽었다고 바로 return true 해버리던 바보 같은 최적화 제거!
+	// 몹이 죽었다고 바로 return true 해버리던 바보 같은 최적화 제거!
 	// 죽었더라도 '적중(OnHit)'은 한 거니까 이펙트는 끝까지 책임지고 터뜨린다!
 	// ---------------------------------------------------------
 
@@ -325,7 +325,7 @@ void ADESimpleProjectileBase::UpdateMovement(float DeltaTime)
 		CurrentSpeed += (Acceleration * DeltaTime);
 
 		// 2. 음수 방지 & MaxSpeed 제한
-		if (CurrentSpeed < 0.0f) CurrentSpeed = 0.0f;
+		//if (CurrentSpeed < 0.0f) CurrentSpeed = 0.0f;
 		// if (CurrentSpeed > MaxSpeed) ... (필요하면)
 
 		// 3. [핵심] 제곱근 연산(sqrt) 없이 단순 곱셈으로 속도 적용

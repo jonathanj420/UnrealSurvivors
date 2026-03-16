@@ -96,4 +96,6 @@ struct FDamageVisualInfo
 
     UPROPERTY(BlueprintReadOnly)
     bool bIsCritical = false;
+
+	UPROPERTY() EDamageTextType TextType = EDamageTextType::Damage;
 };//zis for floating damage num

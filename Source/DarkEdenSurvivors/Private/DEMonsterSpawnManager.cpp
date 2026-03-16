@@ -96,15 +96,35 @@ void ADEMonsterSpawnManager::BeginPlay()
 void ADEMonsterSpawnManager::Tick(float DeltaTime)
 {
     //control all monsters' logic here
+    
     Super::Tick(DeltaTime);
-
-    // 현재 월드 시간 (한 번만 가져와서 1000마리한테 돌려씀 -> 최적화)
-    //double CurrentWorldTime = GetWorld()->GetTimeSeconds();
-
     if (!Player) return;
     ProcessWave(DeltaTime);
 
+    // 플래그 ON
+    bIsResolvingOverlaps = true;
     MonsterUpdateComponent->UpdateMonsters(DeltaTime, ActiveMonsters);
+    // 플래그 OFF
+    bIsResolvingOverlaps = false;
+
+    // 예약된 몬스터 처리
+    for (ADEMonsterBase* Dead : PendingRemoveMonsters)
+    {
+        ActiveMonsters.RemoveSwap(Dead);
+        InactiveMonsters.Add(Dead);
+        ReturnMonsterToPool(Dead);
+    }
+    PendingRemoveMonsters.Reset();
+
+    //Super::Tick(DeltaTime);
+
+    //// 현재 월드 시간 (한 번만 가져와서 1000마리한테 돌려씀 -> 최적화)
+    ////double CurrentWorldTime = GetWorld()->GetTimeSeconds();
+
+    //if (!Player) return;
+    //ProcessWave(DeltaTime);
+
+    //MonsterUpdateComponent->UpdateMonsters(DeltaTime, ActiveMonsters);
 
 
 }
@@ -537,14 +557,26 @@ void ADEMonsterSpawnManager::OnMonsterDied(ADEMonsterBase* Monster)
         Player->AddBloodDrainGauge(Player->GetBloodDrainGainPerKill());
     }
     KillCount++;
-    // 1. 활성 목록에서 제거
-    ActiveMonsters.RemoveSwap(Monster);
 
-    // 2. 비활성(풀) 목록으로 이동
-    InactiveMonsters.Add(Monster);
+    if (bIsResolvingOverlaps)
+    {
+        PendingRemoveMonsters.Add(Monster);
+    }
+    else
+    {
+        ActiveMonsters.RemoveSwap(Monster);
+        InactiveMonsters.Add(Monster);
+        ReturnMonsterToPool(Monster);
+    }
 
-    //UE_LOG(LogTemp, Warning, TEXT("Monster Died, Instantly Removed // TO FIX"));
-    ReturnMonsterToPool(Monster);
+    //// 1. 활성 목록에서 제거
+    //ActiveMonsters.RemoveSwap(Monster);
+
+    //// 2. 비활성(풀) 목록으로 이동
+    //InactiveMonsters.Add(Monster);
+
+    ////UE_LOG(LogTemp, Warning, TEXT("Monster Died, Instantly Removed // TO FIX"));
+    //ReturnMonsterToPool(Monster);
 
 }
 

@@ -41,7 +41,7 @@ public:
 
     // 복귀 방식
     UPROPERTY(EditAnywhere, Category = "Boomerang")
-    EReturnMode ReturnMode = EReturnMode::Homing;
+    EReturnMode ReturnMode = EReturnMode::Linear;
 
     // 시전자 도달 판정 거리
     UPROPERTY(EditAnywhere, Category = "Boomerang")
@@ -54,5 +54,7 @@ protected:
 
     EBoomerangPhase Phase = EBoomerangPhase::Going;
     float TravelDistance = 0.f;
+    bool bCanBeReturned = false; //회수 가능?
+
 
 };

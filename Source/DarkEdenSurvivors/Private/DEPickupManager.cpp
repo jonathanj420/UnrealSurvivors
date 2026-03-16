@@ -50,6 +50,11 @@ void UDEPickupManager::SpawnPickup(const FVector& Location, float ItemValue, TSu
 
 void UDEPickupManager::Tick(float DeltaTime)
 {
+	if (GetWorld() && GetWorld()->IsPaused())
+	{
+		return;
+	}
+
 	// -------------------------------------------------------------
 	// 0. 플레이어 & 스탯 컴포넌트 캐싱 (없으면 찾기)
 	// -------------------------------------------------------------
@@ -101,6 +106,7 @@ void UDEPickupManager::Tick(float DeltaTime)
 		if (DistSq < PickupRadiusSq)
 		{
 			RegisterMagnetRequest(Pickup, PlayerActor);
+
 		}
 	}
 
@@ -111,7 +117,6 @@ void UDEPickupManager::Tick(float DeltaTime)
 
 	for (int32 i = MagnetizingPickups.Num() - 1; i >= 0; --i)
 	{
-		// 유효성 체크
 		if (!MagnetizingPickups[i].IsValid())
 		{
 			MagnetizingPickups.RemoveAtSwap(i);
@@ -120,37 +125,23 @@ void UDEPickupManager::Tick(float DeltaTime)
 
 		ADEPickupBase* Pickup = MagnetizingPickups[i].Get();
 
-		// 방어 코드: 타겟이 사라졌거나, 이미 먹혀서 안 보이면 제거
+		// 타겟이 사라졌거나, (충돌 이벤트에 의해) 이미 먹혀서 숨겨졌다면 리스트에서 아웃!
 		if (!Pickup || !Pickup->MagnetTarget || Pickup->IsHidden())
 		{
 			MagnetizingPickups.RemoveAtSwap(i);
 			continue;
 		}
 
-		// 이동 로직
+		// 이동 로직 (매니저는 배달만 한다!)
 		FVector MyLoc = Pickup->GetActorLocation();
 		FVector TargetLoc = Pickup->MagnetTarget->GetActorLocation();
 		TargetLoc.Z += 50.0f; // 허리 높이
 
-		// 거리 체크
-		float DistSq = FVector::DistSquared(MyLoc, TargetLoc);
-
-		if (DistSq < 1000.0f) // 닿았다! (약 30cm)
-		{
-			// 효과 적용 (PickupBase의 함수 호출)
-			Pickup->ApplyEffect(Pickup->MagnetTarget);
-
-			// 할 일 다 했으니 리스트에서 제거
-			MagnetizingPickups.RemoveAtSwap(i);
-			continue;
-		}
-
-		// 위치 업데이트 (가속)
+		// 방향 구하고 가속해서 이동
 		FVector Dir = (TargetLoc - MyLoc).GetSafeNormal();
-
-		// Pickup->CurrentSpeed는 public이어야 접근 가능!
 		Pickup->CurrentSpeed += (2500.0f * DeltaTime);
 		Pickup->SetActorLocation(MyLoc + (Dir * Pickup->CurrentSpeed * DeltaTime));
+
 	}
 }
 
@@ -158,13 +149,13 @@ void UDEPickupManager::TriggerGlobalMagnet(AActor* TargetPlayer)
 {
 	if (!TargetPlayer) return;
 
-	// 현재 살아있는 모든 놈들을 강제로 자석 리스트에 넣음
 	for (int32 i = ActivePickups.Num() - 1; i >= 0; --i)
 	{
 		if (ActivePickups[i].IsValid())
 		{
 			ADEPickupBase* Pickup = ActivePickups[i].Get();
-			if (Pickup && !Pickup->IsHidden())
+
+			if (Pickup && !Pickup->IsHidden() && Pickup->bCanBeMagnetized)
 			{
 				RegisterMagnetRequest(Pickup, TargetPlayer);
 			}

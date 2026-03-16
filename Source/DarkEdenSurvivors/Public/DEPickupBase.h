@@ -79,4 +79,9 @@ public:
 	float Value = 0.0f;
 	void SetTriggerRadius(float InSize);
 
+protected:
+	// 언리얼의 네이티브 충돌 이벤트에 바인딩할 함수!
+	UFUNCTION()
+	virtual void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 };
