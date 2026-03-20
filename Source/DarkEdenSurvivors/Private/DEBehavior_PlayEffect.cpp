@@ -15,67 +15,37 @@ void UDEBehavior_PlayEffect::Execute(FDESkillContext& Context)
     UWorld* World = Context.Instigator->GetWorld();
     if (!World) return;
 
-    // 1. 위치 & 어태치 타겟 수집
-    TArray<FVector> SpawnLocations;
-    TArray<AActor*> AttachTargets;
-
-    switch (TargetType)
+    // ---------------------------------------------------------
+    // 1. 나이아가라 이펙트 처리 (시각 효과 - 타겟 수만큼 복사)
+    // ---------------------------------------------------------
+    if (NiagaraEffect)
     {
-    case EEffectTargetType::Instigator:
-        SpawnLocations.Add(Context.Instigator->GetActorLocation());
-        if (bAttachToActor) AttachTargets.Add(Context.Instigator);
-        break;
+        TArray<FVector> NiagaraLocs = ResolveLocations(NiagaraTargetType, Context);
 
-    case EEffectTargetType::AllTargets:
-        for (AActor* Target : Context.Targets)
+        // 어태치 타겟 수집 (나이아가라 타겟 타입이 Instigator나 AllTargets일 때만 적용)
+        TArray<AActor*> AttachTargets;
+        if (bAttachToActor)
         {
-            if (!Target) continue;
-            SpawnLocations.Add(Target->GetActorLocation());
-            if (bAttachToActor) AttachTargets.Add(Target);
-        }
-        break;
-
-    case EEffectTargetType::TargetCenter:
-        if (Context.Targets.Num() > 0)
-        {
-            FVector Center = FVector::ZeroVector;
-            int32 ValidCount = 0;
-            for (AActor* Target : Context.Targets)
+            if (NiagaraTargetType == EEffectTargetType::Instigator)
             {
-                if (!Target) continue;
-                Center += Target->GetActorLocation();
-                ValidCount++;
+                AttachTargets.Add(Context.Instigator);
             }
-            if (ValidCount > 0)
-                SpawnLocations.Add(Center / ValidCount);
+            else if (NiagaraTargetType == EEffectTargetType::AllTargets)
+            {
+                for (AActor* Target : Context.Targets)
+                {
+                    if (Target) AttachTargets.Add(Target);
+                }
+            }
         }
-        break;
 
-    case EEffectTargetType::CustomLocations:
-        SpawnLocations = Context.CustomLocations;
-        break;
-    }
-
-    // 2. 스폰
-    for (int32 i = 0; i < SpawnLocations.Num(); i++)
-    {
-        
-        FVector FinalPos = SpawnLocations[i] + Offset;
-        AActor* TargetForRot = Context.Targets.IsValidIndex(i) ? Context.Targets[i] : nullptr;
-        FRotator SpawnRot = GetSpawnRotation(Context, FinalPos, TargetForRot);
-       // UE_LOG(LogTemp, Warning, TEXT("Spawn Locations : %d"), SpawnLocations.Num());
-        //if (TargetForRot != nullptr)
-        //{
-        //   // UE_LOG(LogTemp, Warning, TEXT("Target For Rot : %s"), *TargetForRot->GetName());
-        //}
-        //else
-        //{
-        //   // UE_LOG(LogTemp, Warning, TEXT("Target For Rot is Nullptr"));
-        //}
-        
-        // 나이아가라
-        if (NiagaraEffect)
+        // 수집된 위치마다 나이아가라
+        for (int32 i = 0; i < NiagaraLocs.Num(); i++)
         {
+            FVector FinalPos = NiagaraLocs[i] + Offset;
+            AActor* TargetForRot = Context.Targets.IsValidIndex(i) ? Context.Targets[i] : nullptr;
+            FRotator SpawnRot = GetSpawnRotation(Context, FinalPos, TargetForRot);
+
             UNiagaraComponent* SpawnedComp = nullptr;
 
             if (bAttachToActor && AttachTargets.IsValidIndex(i))
@@ -115,13 +85,32 @@ void UDEBehavior_PlayEffect::Execute(FDESkillContext& Context)
                 SpawnedComp->SetVariableFloat(SizeVariableName, FinalSize);
             }
         }
+        UE_LOG(LogTemp, Warning, TEXT("NiagaraLocs count: %d"), NiagaraLocs.Num());
+    }
 
-        // 사운드
-        if (SoundEffect)
+    // ---------------------------------------------------------
+    // 2. 사운드 처리 (청각 효과 - 고막 보호를 위해 무조건 1번만!)
+    // ---------------------------------------------------------
+    if (SoundEffect)
+    {
+        if (SoundTargetType == EEffectTargetType::Instigator)
         {
-            UGameplayStatics::PlaySoundAtLocation(World, SoundEffect, FinalPos);
+            // 시전자 기준: 2D 사운드로 화면 전체에 쩌렁쩌렁하게!
+            UGameplayStatics::PlaySound2D(World, SoundEffect);
+        }
+        else
+        {
+            // 그 외 기준: 위치를 수집해서 3D 사운드로 1번만 재생!
+            TArray<FVector> SoundLocs = ResolveLocations(SoundTargetType, Context);
+            if (SoundLocs.Num() > 0)
+            {
+                // 적이 300마리여도 첫 번째 위치에서 딱 1번만 소리가 납니다.
+                UGameplayStatics::PlaySoundAtLocation(World, SoundEffect, SoundLocs[0]);
+            }
         }
     }
+
+    
 }
 
 FRotator UDEBehavior_PlayEffect::GetSpawnRotation(
@@ -146,4 +135,42 @@ FRotator UDEBehavior_PlayEffect::GetSpawnRotation(
     default:
         return FRotator::ZeroRotator;
     }
+}
+
+TArray<FVector> UDEBehavior_PlayEffect::ResolveLocations(EEffectTargetType InTargetType, const FDESkillContext& Context) const
+{
+    TArray<FVector> Locs;
+    switch (InTargetType)
+    {
+    case EEffectTargetType::Instigator:
+        if (Context.Instigator) Locs.Add(Context.Instigator->GetActorLocation());
+        break;
+
+    case EEffectTargetType::AllTargets:
+        for (AActor* Target : Context.Targets)
+        {
+            if (Target) Locs.Add(Target->GetActorLocation());
+        }
+        break;
+
+    case EEffectTargetType::TargetCenter:
+        if (Context.Targets.Num() > 0)
+        {
+            FVector Center = FVector::ZeroVector;
+            int32 ValidCount = 0;
+            for (AActor* Target : Context.Targets)
+            {
+                if (!Target) continue;
+                Center += Target->GetActorLocation();
+                ValidCount++;
+            }
+            if (ValidCount > 0) Locs.Add(Center / ValidCount);
+        }
+        break;
+
+    case EEffectTargetType::CustomLocations:
+        Locs = Context.CustomLocations;
+        break;
+    }
+    return Locs;
 }

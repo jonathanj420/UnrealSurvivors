@@ -37,8 +37,9 @@ private:
     void UpdateMovementAndAttack(float DeltaTime, TArray<ADEMonsterBase*>& ActiveMonsters);
     void ResolveOverlaps(TArray<ADEMonsterBase*>& ActiveMonsters);
 
-    void ResolveMonsterOverlap(ADEMonsterBase* A, ADEMonsterBase* B);
-    void ResolvePlayerPush(ADEMonsterBase* Mob);
+    void ResolveMonsterOverlap(ADEMonsterBase* A, ADEMonsterBase* B,
+        const FVector& PosA, const FVector& PosB);
+    void ResolvePlayerPush(ADEMonsterBase* Mob, const FVector& PlayerLocation, const FVector& MobLocation);
 
     UPROPERTY()
     ADECharacterBase* Player = nullptr;
@@ -47,10 +48,14 @@ private:
 private:
     // 1. 셀 사이즈는 기획자가 에디터에서 튜닝할 수 있게 UPROPERTY로 빼주는 게 국룰!
     UPROPERTY(EditAnywhere, Category = "Optimization")
-    float CellSize = 200.0f;
+    float CellSize = 100.0f;
 
     // 2. 매 프레임 재활용할 공간 분할 바구니 (절대 Tick 안에서 생성하지 않음!)
     TMap<FIntPoint, TArray<ADEMonsterBase*>> SpatialGrid;
+
+    // [최적화 #1] 프레임당 GetActorLocation() 중복 호출 제거용 캐시
+    // SetNumUninitialized()로 크기만 맞추고 재사용 → 매 프레임 힙 할당 없음
+    TArray<FVector> CachedPositions;
 
 		
 };

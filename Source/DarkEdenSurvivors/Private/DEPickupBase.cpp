@@ -22,6 +22,7 @@ ADEPickupBase::ADEPickupBase()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(RootComponent);
+	Mesh->SetCastShadow(false);
 	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision); // ¸Þ½¬ Ãæµ¹ ²û
 }
 

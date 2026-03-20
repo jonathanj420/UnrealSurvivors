@@ -44,8 +44,9 @@ ADECharacterBase::ADECharacterBase()
 
     SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SPRINGARM"));
     SpringArm->SetupAttachment(GetRootComponent());
-    SpringArm->TargetArmLength = 800.0f;
+    SpringArm->TargetArmLength = 1600.0f;
     SpringArm->SetRelativeRotation(FRotator(-60.0f, 0.0f, 0.0f));
+    SpringArm->bDoCollisionTest = false;
 
     Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CAMERA"));
     Camera->SetupAttachment(SpringArm);
@@ -253,7 +254,7 @@ void ADECharacterBase::SetControlMode(EControlMode NewControlMode)
     case EControlMode::FREETPS:
     {
         ArmRotationTo = FRotator(-60.0f, 0.0f, 0.0f);
-        ArmLengthTo = 600.0f;
+        ArmLengthTo = 1600.0f;
         SpringArm->bUsePawnControlRotation = true;
         SpringArm->bInheritPitch = true;
         SpringArm->bInheritRoll = true;
@@ -265,7 +266,7 @@ void ADECharacterBase::SetControlMode(EControlMode NewControlMode)
         IsFPS = false;
         break;
     case EControlMode::FIXEDTPS:
-        ArmLengthTo = 800.0f;
+        ArmLengthTo = 1600.0f;
         ArmRotationTo = FRotator(-60.0f, 0.0f, 0.0f);
         SpringArm->bUsePawnControlRotation = false;
         SpringArm->bInheritPitch = false;
@@ -426,7 +427,7 @@ float ADECharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& Damag
         DmgRequest.CritChance = 0.0f; // 일반 피격은 크리티컬 확률 0 (필요 시 수정)
 
         // 2. 통합된 처리 함수 호출
-        HealthComponent->ProcessDamage(DmgRequest);
+        //HealthComponent->ProcessDamage(DmgRequest);
     }
 
     return ActualDamage;

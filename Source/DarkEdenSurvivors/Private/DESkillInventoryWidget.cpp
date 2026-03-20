@@ -7,6 +7,11 @@
 #include "DESkillSlotWidget.h"
 #include "Components/PanelWidget.h"
 
+UDESkillInventoryWidget::UDESkillInventoryWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+{
+    bHasScriptImplementedTick = false;
+}
+
 void UDESkillInventoryWidget::NativeConstruct()
 {
     Super::NativeConstruct();

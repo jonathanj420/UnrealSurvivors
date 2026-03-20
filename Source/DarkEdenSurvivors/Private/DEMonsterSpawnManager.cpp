@@ -132,6 +132,8 @@ void ADEMonsterSpawnManager::Tick(float DeltaTime)
 //************************NEW FUNC
 void ADEMonsterSpawnManager::ProcessWave(float DeltaTime)
 {
+    TRACE_CPUPROFILER_EVENT_SCOPE(ADEMonsterSpawnManager::ProcessWave);
+
     if (!GameMode || StageRowNames.Num() == 0)
         return;
 
@@ -276,7 +278,7 @@ void ADEMonsterSpawnManager::StartWave(int32 WaveIndex)
             FVector SpawnLocation = GetRandomSpawnLocation();
 
             // SpawnFromPool(위치, 데이터포인터) 호출
-            SpawnFromPool(SpawnLocation, MonsterData);
+            SpawnFromPool(SpawnLocation, MonsterData, TargetID);
         }
         else
         {
@@ -327,7 +329,7 @@ bool ADEMonsterSpawnManager::TrySpawnMonster(const FDEStageWaveData& WaveData)
     FVector SpawnLocation = GetRandomSpawnLocation();
 
     // 더 이상 MonsterClass를 넘기지 않음 (MasterClass 사용)
-    SpawnFromPool(SpawnLocation, MonsterData);
+    SpawnFromPool(SpawnLocation, MonsterData, TargetID);
 
     return true;
 }
@@ -400,96 +402,161 @@ bool ADEMonsterSpawnManager::SpawnBoss(const FDEStageWaveData& WaveData)
 }
 
 
-ADEMonsterBase* ADEMonsterSpawnManager::SpawnFromPool(FVector& Location, const FDEMonsterData* DataToApply)
+ADEMonsterBase* ADEMonsterSpawnManager::SpawnFromPool(FVector& Location, const FDEMonsterData* DataToApply, FName MonsterID)
 {
+    TRACE_CPUPROFILER_EVENT_SCOPE(ADEMonsterSpawnManager::SpawnFromPool);
 
-    // --------------------------------------------------------
-    // 1. [Class 결정] 기본 몹이냐? 데이터에 적힌 특수 몹(보스)이냐?
-    // --------------------------------------------------------
-    TSubclassOf<ADEMonsterBase> ClassToSpawn = MonsterBase; // 기본값
+    // 1. [최적화] 매번 로드하지 않고, 캐시된 맵에서 클래스를 꺼내 쓴다! (O(1) 속도)
+    TSubclassOf<ADEMonsterBase> ClassToSpawn = MonsterBase;
 
     if (DataToApply && !DataToApply->OverrideClass.IsNull())
     {
-        ClassToSpawn = DataToApply->OverrideClass.LoadSynchronous();
+        // 맵에 클래스가 저장되어 있는지 확인
+        if (TSubclassOf<ADEMonsterBase>* FoundClass = CachedMonsterClasses.Find(MonsterID))
+        {
+            ClassToSpawn = *FoundClass;
+        }
+        else
+        {
+            // 없으면 딱 한 번만 무거운 LoadSynchronous 실행 후 맵에 저장!
+            ClassToSpawn = DataToApply->OverrideClass.LoadSynchronous();
+            CachedMonsterClasses.Add(MonsterID, ClassToSpawn);
+            //UE_LOG(LogTemp, Warning, TEXT("Class Loaded and Cached for %s"), *MonsterID.ToString());
+        }
     }
 
     if (!ClassToSpawn) return nullptr;
 
-    // --------------------------------------------------------
-    // 2. [높이 보정] CDO를 사용해 "자동으로" 땅에 안 박히게 만들기
-    // --------------------------------------------------------
-    // CDO(Class Default Object): 블루프린트의 기본 세팅값을 읽어옴
+    // 2. 높이 보정 (CDO도 사실 매번 안 불러도 되지만 일단 유지)
     const ADEMonsterBase* CDO = ClassToSpawn.GetDefaultObject();
     if (CDO)
     {
-        // 땅바닥 위치(Location.Z) + 캡슐 절반 높이 = 발바닥이 땅에 닿음
-        float HalfHeight = CDO->GetCapsuleHalfHeight();
-        Location.Z += HalfHeight;
+        Location.Z += CDO->GetCapsuleHalfHeight();
     }
 
-    // --------------------------------------------------------
-    // 3. [Pooling] 풀 뒤지기 (클래스 타입 검사 필수!)
-    // --------------------------------------------------------
     ADEMonsterBase* SpawnedMonster = nullptr;
-   // UE_LOG(LogTemp, Warning, TEXT("Try Spawn From Pool First"));
-    // *InactiveMonsters: 죽어서 대기 중인 몬스터 목록이라고 가정
-    for (int32 i = 0; i < InactiveMonsters.Num(); i++)
+
+    // 3. [최적화] 배열을 '뒤에서부터' 검사 (RemoveAtSwap을 할 때 인덱스가 꼬이지 않고 훨씬 빠름)
+    for (int32 i = InactiveMonsters.Num() - 1; i >= 0; --i)
     {
         ADEMonsterBase* Candidate = InactiveMonsters[i];
 
-        // ★ [핵심 보완] 
-        // 1. 유효한가?
-        // 2. 내가 찾는 클래스(ClassToSpawn)와 같은 종류인가? (좀비 찾는데 스켈레톤 꺼내면 안됨)
         if (Candidate && Candidate->GetClass() == ClassToSpawn)
         {
             SpawnedMonster = Candidate;
-            //InactiveMonsters.RemoveAt(i); // 대기열에서 제외
-            // RemoveAt 대신 RemoveAtSwap 사용 (O(N) -> O(1))
-            InactiveMonsters.RemoveAtSwap(i);
-          //  UE_LOG(LogTemp, Warning, TEXT("Monster ReSpawned From Pool"));
+            InactiveMonsters.RemoveAtSwap(i); // O(1) 삭제
             break;
         }
     }
 
-    // --------------------------------------------------------
-    // 4. [Spawn] 풀에 없으면 새로 생성
-    // --------------------------------------------------------
+    // 4. 풀에 없으면 새로 생성
     if (!SpawnedMonster)
     {
-      //  UE_LOG(LogTemp, Warning, TEXT("Monster Spawned New"));
         FActorSpawnParameters Params;
         Params.Owner = this;
         Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 
-        SpawnedMonster = GetWorld()->SpawnActor<ADEMonsterBase>(
-            ClassToSpawn,
-            Location,
-            FRotator::ZeroRotator,
-            Params
-        );
-
+        SpawnedMonster = GetWorld()->SpawnActor<ADEMonsterBase>(ClassToSpawn, Location, FRotator::ZeroRotator, Params);
         if (!SpawnedMonster) return nullptr;
 
-        // 신규 생성된 녀석은 사망 시 델리게이트 연결 필요
         SpawnedMonster->OnMonsterDeath.AddUObject(this, &ADEMonsterSpawnManager::OnMonsterDied);
     }
 
-    // --------------------------------------------------------
-    // 5. [Init] 공통 초기화 (재사용/신규 모두 적용)
-    // --------------------------------------------------------
-    // 위치 이동 (재사용된 놈은 엉뚱한 곳에 있을 테니까)
+    // 5. 공통 초기화
     SpawnedMonster->SetActorLocation(Location);
     SpawnedMonster->SetActorRotation(FRotator::ZeroRotator);
-
-    // 몬스터 내부 상태 리셋 (HP, 메쉬 등) -> 아까 만든 InitializeMonster 함수 활용
-    //SpawnedMonster->InitializeMonster(DataToApply);
     SpawnedMonster->ResetMonster(DataToApply);
 
-
-    // 활성 목록에 등록
     ActiveMonsters.Add(SpawnedMonster);
-
     return SpawnedMonster;
+
+   // // --------------------------------------------------------
+   // // 1. [Class 결정] 기본 몹이냐? 데이터에 적힌 특수 몹(보스)이냐?
+   // // --------------------------------------------------------
+   // TSubclassOf<ADEMonsterBase> ClassToSpawn = MonsterBase; // 기본값
+
+   // if (DataToApply && !DataToApply->OverrideClass.IsNull())
+   // {
+   //     ClassToSpawn = DataToApply->OverrideClass.LoadSynchronous();
+   // }
+
+   // if (!ClassToSpawn) return nullptr;
+
+   // // --------------------------------------------------------
+   // // 2. [높이 보정] CDO를 사용해 "자동으로" 땅에 안 박히게 만들기
+   // // --------------------------------------------------------
+   // // CDO(Class Default Object): 블루프린트의 기본 세팅값을 읽어옴
+   // const ADEMonsterBase* CDO = ClassToSpawn.GetDefaultObject();
+   // if (CDO)
+   // {
+   //     // 땅바닥 위치(Location.Z) + 캡슐 절반 높이 = 발바닥이 땅에 닿음
+   //     float HalfHeight = CDO->GetCapsuleHalfHeight();
+   //     Location.Z += HalfHeight;
+   // }
+
+   // // --------------------------------------------------------
+   // // 3. [Pooling] 풀 뒤지기 (클래스 타입 검사 필수!)
+   // // --------------------------------------------------------
+   // ADEMonsterBase* SpawnedMonster = nullptr;
+   //// UE_LOG(LogTemp, Warning, TEXT("Try Spawn From Pool First"));
+   // // *InactiveMonsters: 죽어서 대기 중인 몬스터 목록이라고 가정
+   // for (int32 i = 0; i < InactiveMonsters.Num(); i++)
+   // {
+   //     ADEMonsterBase* Candidate = InactiveMonsters[i];
+
+   //     // ★ [핵심 보완] 
+   //     // 1. 유효한가?
+   //     // 2. 내가 찾는 클래스(ClassToSpawn)와 같은 종류인가? (좀비 찾는데 스켈레톤 꺼내면 안됨)
+   //     if (Candidate && Candidate->GetClass() == ClassToSpawn)
+   //     {
+   //         SpawnedMonster = Candidate;
+   //         //InactiveMonsters.RemoveAt(i); // 대기열에서 제외
+   //         // RemoveAt 대신 RemoveAtSwap 사용 (O(N) -> O(1))
+   //         InactiveMonsters.RemoveAtSwap(i);
+   //       //  UE_LOG(LogTemp, Warning, TEXT("Monster ReSpawned From Pool"));
+   //         break;
+   //     }
+   // }
+
+   // // --------------------------------------------------------
+   // // 4. [Spawn] 풀에 없으면 새로 생성
+   // // --------------------------------------------------------
+   // if (!SpawnedMonster)
+   // {
+   //   //  UE_LOG(LogTemp, Warning, TEXT("Monster Spawned New"));
+   //     FActorSpawnParameters Params;
+   //     Params.Owner = this;
+   //     Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+   //     SpawnedMonster = GetWorld()->SpawnActor<ADEMonsterBase>(
+   //         ClassToSpawn,
+   //         Location,
+   //         FRotator::ZeroRotator,
+   //         Params
+   //     );
+
+   //     if (!SpawnedMonster) return nullptr;
+
+   //     // 신규 생성된 녀석은 사망 시 델리게이트 연결 필요
+   //     SpawnedMonster->OnMonsterDeath.AddUObject(this, &ADEMonsterSpawnManager::OnMonsterDied);
+   // }
+
+   // // --------------------------------------------------------
+   // // 5. [Init] 공통 초기화 (재사용/신규 모두 적용)
+   // // --------------------------------------------------------
+   // // 위치 이동 (재사용된 놈은 엉뚱한 곳에 있을 테니까)
+   // SpawnedMonster->SetActorLocation(Location);
+   // SpawnedMonster->SetActorRotation(FRotator::ZeroRotator);
+
+   // // 몬스터 내부 상태 리셋 (HP, 메쉬 등) -> 아까 만든 InitializeMonster 함수 활용
+   // //SpawnedMonster->InitializeMonster(DataToApply);
+   // SpawnedMonster->ResetMonster(DataToApply);
+
+
+   // // 활성 목록에 등록
+   // ActiveMonsters.Add(SpawnedMonster);
+
+   // return SpawnedMonster;
 }
 
 void ADEMonsterSpawnManager::ReturnMonsterToPool(ADEMonsterBase* Monster)

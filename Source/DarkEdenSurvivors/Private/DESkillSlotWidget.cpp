@@ -3,6 +3,12 @@
 
 #include "DESkillSlotWidget.h"
 
+UDESkillSlotWidget::UDESkillSlotWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+{
+
+    bHasScriptImplementedTick = false;
+}
+
 void UDESkillSlotWidget::SetSkill(const FText& InSkillName, int32 InSkillLevel, UTexture2D* InSkillIcon)
 {
 	SkillName = InSkillName;

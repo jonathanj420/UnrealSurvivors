@@ -205,7 +205,7 @@ void ADESimpleAOEBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActo
     {
         return;
     }
-    UE_LOG(LogTemp, Warning, TEXT("%s OnOverlapBegin"), *GetName());
+    //UE_LOG(LogTemp, Warning, TEXT("%s OnOverlapBegin"), *GetName());
     // 들어오자마자 쿨타임 체크 후 즉시 타격 (반응성 UP)
     if (CanHitTarget(OtherActor))
     {

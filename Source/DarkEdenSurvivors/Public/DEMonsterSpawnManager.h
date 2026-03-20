@@ -35,6 +35,10 @@ public:
     //Monster classes to spawn
     UPROPERTY(EditAnywhere, Category = "Pooling")
     TArray<TSubclassOf<class ADEMonsterBase>> MonsterClasses;
+
+    UPROPERTY()
+    TMap<FName, TSubclassOf<ADEMonsterBase>> CachedMonsterClasses;
+
     //Pooled Monster Instance
     UPROPERTY(EditAnywhere, Category = "Pooling")
     TArray<class ADEMonsterBase*> MonsterPool;
@@ -53,7 +57,7 @@ public:
     TArray<ADEMonsterBase*> PendingRemoveMonsters;
 
 
-    ADEMonsterBase* SpawnFromPool(FVector& Location, const struct FDEMonsterData* DataToApply);
+    ADEMonsterBase* SpawnFromPool(FVector& Location, const struct FDEMonsterData* DataToApply, FName MonsterID);
     UFUNCTION()
     void ReturnMonsterToPool(class ADEMonsterBase* Monster);
 

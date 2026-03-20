@@ -17,6 +17,9 @@ class DARKEDENSURVIVORS_API UDESkillSlotWidget : public UUserWidget
     GENERATED_BODY()
 
 public:
+    UDESkillSlotWidget(const FObjectInitializer& ObjectInitializer);
+
+public:
     // [변경] 입력받는 ID도 숫자가 아니라 이름(FName)이어야 합니다.
     UFUNCTION(BlueprintCallable)
     void SetSkill(const FText& InSkillName, int32 InSkillLevel, UTexture2D* InSkillIcon);

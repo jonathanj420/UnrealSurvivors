@@ -35,6 +35,7 @@ ADESimpleProjectileBase::ADESimpleProjectileBase()
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(RootComponent);
 	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision); // 메시는 장식용
+	Mesh->SetCastShadow(false);
     Mesh->SetSimulatePhysics(false);
     Mesh->SetEnableGravity(false);
 	// 3. [무브먼트 생성] (공통)

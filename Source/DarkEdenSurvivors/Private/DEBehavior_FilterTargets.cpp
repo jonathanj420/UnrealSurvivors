@@ -14,10 +14,12 @@ UDEBehavior_FilterTargets::UDEBehavior_FilterTargets()
 void UDEBehavior_FilterTargets::Execute(FDESkillContext& Context)
 {
 	// 1. 예외 처리: 타겟이 없거나, 이미 목표보다 적으면 필터링할 필요 없음
-	if (Context.Targets.Num() <= TargetCount)
-	{
+	const int32 FinalCount = (TargetCount == -1)
+		? Context.Amount
+		: TargetCount;
+
+	if (Context.Targets.Num() <= FinalCount)
 		return;
-	}
 
 	// 거리 계산을 위해 내 위치 가져오기
 	FVector MyLoc = FVector::ZeroVector;
@@ -100,7 +102,7 @@ void UDEBehavior_FilterTargets::Execute(FDESkillContext& Context)
 
 	// 3. 자르기 (Truncate)
 	// 정렬이 끝났으니 앞에서부터 N개만 남기고 뒤는 다 날림
-	Context.Targets.SetNum(TargetCount);
+	Context.Targets.SetNum(FinalCount);
 	for (const AActor* Target : Context.Targets)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Targets filtered : %s"), *Target->GetName());

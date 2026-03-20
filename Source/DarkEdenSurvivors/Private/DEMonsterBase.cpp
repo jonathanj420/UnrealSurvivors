@@ -8,7 +8,7 @@
 #include "EngineUtils.h"
 #include "DECharacterBase.h"
 #include "Kismet/GameplayStatics.h"
-#include "DEStatComponent.h"
+//#include "DEStatComponent.h"
 #include "DEHealthComponent.h"
 #include "DEStatusEffectComponent.h"
 #include "Data/DEMonsterData.h"
@@ -24,13 +24,17 @@ ADEMonsterBase::ADEMonsterBase()
 	Capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
 	Capsule->InitCapsuleSize(42.0f, 96.0f); // 반지름, 높이
 	Capsule->SetCollisionProfileName(TEXT("Monster"));
+	Capsule->SetCastShadow(false);
+	//Capsule->bUpdateOverlapsOnComponentMove = false;
+	//Capsule->SetGenerateOverlapEvents(false);
 	RootComponent = Capsule;
 
-
+	//SetCastShad
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(RootComponent);
 	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	
+	Mesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
+	Mesh->SetCastShadow(false);
 	
 	//TestMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TestMesh"));
 	//TestMesh->SetupAttachment(RootComponent);
@@ -42,7 +46,7 @@ ADEMonsterBase::ADEMonsterBase()
 	//	TestMesh->SetStaticMesh(SM_TESTMESH.Object);
 	//}
 
-	StatComponent = CreateDefaultSubobject<UDEStatComponent>(TEXT("StatComponent"));
+	//StatComponent = CreateDefaultSubobject<UDEStatComponent>(TEXT("StatComponent"));
 	StatusEffectComponent = CreateDefaultSubobject<UDEStatusEffectComponent>(TEXT("StatusEffectComponent"));
 
 	HealthComponent = CreateDefaultSubobject<UDEHealthComponent>(TEXT("HealthComponent"));
@@ -69,36 +73,68 @@ void ADEMonsterBase::BeginPlay()
 // Called every frame
 void ADEMonsterBase::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
 	
 }
 
 void ADEMonsterBase::MoveToPlayer(float DeltaTime, const FVector& PlayerLocation)
 {
-	// if (!TargetPlayer) return; <--- 매니저가 이미 널 체크 했으므로 지워도 됨! 최적화 +1
+	//// 1.[최적화] VInterpTo를 버리고, 초경량 마찰력(Friction) 연산으로 교체!
+	//	if (!KnockbackVelocity.IsNearlyZero(1.0f)) // SizeSquared < 1.0f를 알아서 가볍게 체크해 줌
+	//	{
+	//		// 프레임에 맞춰 부드럽게 감쇠시키는 단순 곱연산 (CPU가 아주 좋아함)
+	//		float Friction = FMath::Clamp(1.0f - (KnockbackResistance * DeltaTime), 0.0f, 1.0f);
+	//		KnockbackVelocity *= Friction;
+	//	}
+	//	else
+	//	{
+	//		KnockbackVelocity = FVector::ZeroVector;
+	//	}
 
-	if (KnockbackVelocity != FVector::ZeroVector)
-	{
-		KnockbackVelocity = FMath::VInterpTo(
-			KnockbackVelocity,
-			FVector::ZeroVector,
-			DeltaTime,
-			KnockbackResistance);
-
-		if (KnockbackVelocity.SizeSquared() < 1.0f)
-		{
-			KnockbackVelocity = FVector::ZeroVector;
-		}
-	}
-
-	// ★ 여기가 핵심! 직접 구하지 않고, 배달받은 PlayerLocation을 바로 쓴다!
+	// 2. 방향 및 속도 계산 (기존과 동일)
 	FVector Dir = PlayerLocation - GetActorLocation();
 	Dir.Z = 0.0f; // Fix Z
 
+	// GetSafeNormal()은 루트 연산이 들어가지만, 플레이어 추적을 위해 1번은 필수입니다.
 	FVector MoveDelta = Dir.GetSafeNormal();
 	FVector FinalMove = (MoveDelta * MoveSpeed + KnockbackVelocity) * DeltaTime;
 
-	AddActorWorldOffset(FinalMove, false);
+	// 3. 🔴 [핵심 최적화] 여기서 즉시 이동하지 마세요! 장바구니에 담기만 합니다!
+	PendingOverlapPush += FinalMove;
+
+	//// if (!TargetPlayer) return; <--- 매니저가 이미 널 체크 했으므로 지워도 됨! 최적화 +1
+
+	//if (!KnockbackVelocity.IsNearlyZero())
+	//{
+	//	// VInterpTo 대신 더 가벼운 감쇄 방식
+	//	KnockbackVelocity -= KnockbackVelocity * KnockbackResistance * DeltaTime;
+
+	//	if (KnockbackVelocity.SizeSquared() < 1.0f)
+	//	{
+	//		KnockbackVelocity = FVector::ZeroVector;
+	//	}
+	//}
+	///*if (KnockbackVelocity != FVector::ZeroVector)
+	//{
+	//	KnockbackVelocity = FMath::VInterpTo(
+	//		KnockbackVelocity,
+	//		FVector::ZeroVector,
+	//		DeltaTime,
+	//		KnockbackResistance);
+
+	//	if (KnockbackVelocity.SizeSquared() < 1.0f)
+	//	{
+	//		KnockbackVelocity = FVector::ZeroVector;
+	//	}
+	//}*/
+
+	//// ★ 여기가 핵심! 직접 구하지 않고, 배달받은 PlayerLocation을 바로 쓴다!
+	//FVector Dir = PlayerLocation - GetActorLocation();
+	//Dir.Z = 0.0f; // Fix Z
+
+	//FVector MoveDelta = Dir.GetSafeNormal();
+	//FVector FinalMove = (MoveDelta * MoveSpeed + KnockbackVelocity) * DeltaTime;
+
+	//AddActorWorldOffset(FinalMove, false);
 }
 
 
@@ -168,7 +204,8 @@ void ADEMonsterBase::ApplyKnockback(const FVector& Direction, float Strength)
 void ADEMonsterBase::UpdateKnockback(float DeltaTime)
 {
 	// 부드럽게 0으로 감쇠 (VInterpTo)
-	KnockbackVelocity = FMath::VInterpTo(KnockbackVelocity, FVector::ZeroVector, DeltaTime, KnockbackResistance);
+	//KnockbackVelocity = FMath::VInterpTo(KnockbackVelocity, FVector::ZeroVector, DeltaTime, KnockbackResistance);
+	KnockbackVelocity -= KnockbackVelocity * KnockbackResistance * DeltaTime;
 
 	// 아주 작아지면 0으로
 	if (KnockbackVelocity.SizeSquared() < 1.0f)
@@ -216,6 +253,8 @@ float ADEMonsterBase::GetMaxHP() const
 
 void ADEMonsterBase::ResetMonster(const FDEMonsterData* Data)
 {
+	TRACE_CPUPROFILER_EVENT_SCOPE(ADEMonsterBase::ResetMonster);
+
 	if (!Data) return;
 
 	//mesh for later
@@ -253,7 +292,7 @@ void ADEMonsterBase::ResetMonster(const FDEMonsterData* Data)
 
 	// 3. 캡슐 및 트랜스폼 보정
 	Capsule->InitCapsuleSize(Data->CapsuleRadius, Data->CapsuleHalfHeight);
-
+	CachedRadius = Capsule->GetScaledCapsuleRadius();
 	// 메쉬 위치 보정 (발바닥 높이 맞추기)
 	//GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, Data->MeshZOffset));
 
@@ -272,7 +311,7 @@ void ADEMonsterBase::ResetMonster(const FDEMonsterData* Data)
 	HealthComponent->ResetHealth();
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
-	SetActorTickEnabled(true);
+	SetActorTickEnabled(false);
 	bIsAlive = true;
 	bIsDying = false;
 	if (HealthComponent) HealthComponent->ResetHealth(true);
@@ -344,33 +383,21 @@ void ADEMonsterBase::UpdateCrowdControl(float CurrentTime)
 
 void ADEMonsterBase::NotifyActorBeginOverlap(AActor* OtherActor)
 {
-
+	//UE_LOG(LogTemp, Warning, TEXT("Mob Touching Something"));
 	Super::NotifyActorBeginOverlap(OtherActor);
 
-	if (OtherActor->IsA(ADECharacterBase::StaticClass()))
+	if (ADECharacterBase* PlayerCharacter = Cast<ADECharacterBase>(OtherActor))
+	{
+		bIsTouchingPlayer = true;
+		OverlappingPlayer = PlayerCharacter;
+	}
+
+	/*if (OtherActor->IsA(ADECharacterBase::StaticClass()))
 	{
 		bIsTouchingPlayer = true;
 		OverlappingPlayer = Cast<ADECharacterBase>(OtherActor);
-	}
+	}*/
 
-	//Super::NotifyActorBeginOverlap(OtherActor);
-	//// 1. 플레이어인지 확인
-	//if (ADECharacterBase* Player = Cast<ADECharacterBase>(OtherActor))
-	//{
-	//	OverlappingPlayer = Player;
-	//	bIsTouchingPlayer = true;
-	//	// 2. 닿자마자 한 대 때림 (즉발)
-	//	AttackPlayer();
-
-	//	// 3. 계속 닿아있으면 0.5초마다 때리라고 타이머 켜기
-	//	GetWorld()->GetTimerManager().SetTimer(
-	//		AttackTimerHandle,
-	//		this,
-	//		&ADEMonsterBase::AttackPlayer,
-	//		AttackInterval,
-	//		true // 반복(Loop)
-	//	);
-	//} timer heavi
 }
 
 void ADEMonsterBase::NotifyActorEndOverlap(AActor* OtherActor)
@@ -383,15 +410,6 @@ void ADEMonsterBase::NotifyActorEndOverlap(AActor* OtherActor)
 		OverlappingPlayer = nullptr;
 	}
 
-	//Super::NotifyActorEndOverlap(OtherActor);
-
-	//// 1. 플레이어가 나갔는지 확인
-	//if (OtherActor == OverlappingPlayer)
-	//{
-	//	// 2. 타이머 끄기 (더 이상 안 때림)
-	//	GetWorld()->GetTimerManager().ClearTimer(AttackTimerHandle);
-	//	OverlappingPlayer = nullptr;
-	//}
 }
 
 void ADEMonsterBase::ExecuteAttackLogic(double CurrentTime)

@@ -62,5 +62,6 @@ private:
 
     // 초기 풀 크기 (권장 32~64)
     static constexpr int32 InitialPoolSize = 64;
+    int32 MaxDamageTexts = 50;
 };
 

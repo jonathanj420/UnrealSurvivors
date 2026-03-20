@@ -42,8 +42,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	//*************** COMPONENTS ******************
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	UDEStatComponent* StatComponent;
+	/*UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UDEStatComponent* StatComponent;*/
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UDEHealthComponent* HealthComponent;
@@ -88,7 +88,11 @@ public:
 public:
 	UPROPERTY()
 	FVector KnockbackVelocity;
-
+	FVector PendingOverlapPush = FVector::ZeroVector;
+public:
+	// 매 프레임 위치와 반지름을 딱 한 번만 캐싱해둘 변수
+	FVector CachedLocation = FVector::ZeroVector;
+	float CachedRadius = 42.0f;
 
 public:
 	void MoveToPlayer(float DeltaTime, const FVector& PlayerLocation);
@@ -146,6 +150,8 @@ protected:
 	// 실제 데미지 주는 함수
 	bool bIsTouchingPlayer = false;
 	double LastAttackTime = 0.0;
+
+	
 
 public:
 	// 매니저가 부를 함수

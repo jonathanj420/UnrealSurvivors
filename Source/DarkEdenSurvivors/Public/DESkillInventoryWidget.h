@@ -20,6 +20,8 @@ class DARKEDENSURVIVORS_API UDESkillInventoryWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
+public:
+    UDESkillInventoryWidget(const FObjectInitializer& ObjectInitializer);
 protected:
     virtual void NativeConstruct() override;
 

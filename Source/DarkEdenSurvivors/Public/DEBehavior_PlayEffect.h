@@ -67,6 +67,16 @@ public:
     UPROPERTY(EditAnywhere, Category = "Effect|Size")
     float SizeMultiplier = 1.0f;
 
+public:
+    // 나이아가라 이펙트가 터질 위치
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
+    EEffectTargetType NiagaraTargetType;
+
+    // 사운드가 재생될 위치 (분리!)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+    EEffectTargetType SoundTargetType;
+
 private:
     FRotator GetSpawnRotation(const FDESkillContext& Context, const FVector& SpawnLoc, AActor* Target) const;
+    TArray<FVector> ResolveLocations(EEffectTargetType InTargetType, const FDESkillContext& Context) const;
 };

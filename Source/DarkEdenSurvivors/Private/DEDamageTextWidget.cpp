@@ -3,6 +3,7 @@
 
 #include "DEDamageTextWidget.h"
 #include "Components/TextBlock.h"
+#include "Components/Overlay.h"
 
 void UDEDamageTextWidget::NativeConstruct()
 {
@@ -40,20 +41,22 @@ void UDEDamageTextWidget::Activate(const FDamageVisualInfo& Info)
 		//DamageText->SetColorAndOpacity(FSlateColor(FLinearColor(0.6f, 0.0f, 0.8f, 1.0f))); // 다크 퍼플 (사신 느낌)
 		DamageText->SetColorAndOpacity(FSlateColor(FLinearColor::Red));
 		// 처형은 크기를 1.5배 뻥튀기!
-		DamageText->SetRenderTransform(FWidgetTransform(FVector2D::ZeroVector, FVector2D(1.5f, 1.5f), FVector2D::ZeroVector, 0.0f));
+		ScaleContainer->SetRenderTransform(FWidgetTransform(FVector2D::ZeroVector, FVector2D(1.5f, 1.5f), FVector2D::ZeroVector, 0.0f));
+
 		break;
 	}
 	case EDamageTextType::Critical:
 	{
 		DamageText->SetText(FText::AsNumber(FMath::RoundToInt(Info.Amount)));
 		DamageText->SetColorAndOpacity(FSlateColor(FLinearColor::Red));
-		DamageText->SetRenderTransform(FWidgetTransform(FVector2D::ZeroVector, FVector2D(1.2f, 1.2f), FVector2D::ZeroVector, 0.0f));
+		ScaleContainer->SetRenderTransform(FWidgetTransform(FVector2D::ZeroVector, FVector2D(1.2f, 1.2f), FVector2D::ZeroVector, 0.0f));
 		break;
 	}
 	case EDamageTextType::Heal:
 	{
 		DamageText->SetText(FText::AsNumber(FMath::RoundToInt(Info.Amount)));
 		DamageText->SetColorAndOpacity(FSlateColor(FLinearColor::Green));
+//		DamageText->SetRenderTransform(FWidgetTransform(FVector2D::ZeroVector, FVector2D(1.0f, 1.0f), FVector2D::ZeroVector, 0.0f));
 		DamageText->SetRenderTransform(FWidgetTransform(FVector2D::ZeroVector, FVector2D(1.0f, 1.0f), FVector2D::ZeroVector, 0.0f));
 		break;
 	}
