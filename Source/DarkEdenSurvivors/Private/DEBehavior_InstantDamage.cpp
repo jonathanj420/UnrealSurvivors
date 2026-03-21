@@ -30,7 +30,7 @@ void UDEBehavior_InstantDamage::Execute(FDESkillContext& Context)
             FDEDamageRequest Req;
             Req.Instigator = Context.Instigator;        // 시전한 사람
             Req.DamageCauser = Context.Instigator;      // 가해자
-            Req.SourceObject = Context.ActiveSkill;     // 스킬 본체
+            Req.SourceObject = Context.SourceSkill;     // 스킬 본체
             Req.Victim = Target;
             Req.BaseDamage = FinalDamage;
             Req.CritChance = Context.CritChance;
@@ -44,10 +44,10 @@ void UDEBehavior_InstantDamage::Execute(FDESkillContext& Context)
             PreHitData.Target = Target;
             PreHitData.DamageMultiplier = 1.0f; // 오염되지 않은 기본 1배수
 
-            if (Context.ActiveSkill)
+            if (Context.SourceSkill)
             {
                 // 스킬 주머니(LocalEffects)에 있는 OnPreHit 이펙트들을 실행
-                for (UDECombatEffect* Effect : Context.ActiveSkill->LocalEffects)
+                for (UDECombatEffect* Effect : Context.SourceSkill->LocalEffects)
                 {
                     if (Effect && Effect->TriggerCondition == ECombatEventTrigger::OnPreHit)
                     {
@@ -64,8 +64,8 @@ void UDEBehavior_InstantDamage::Execute(FDESkillContext& Context)
             // ★ 6. 라이브러리에 던지기 (글로벌 OnPreHit 개입 및 실제 데미지 연산)
             // =========================================================
             // 이 안에서 플레이어의 패시브가 알아서 싹 다 터짐
-            FDEDamageResult Res = UDEGameplayLibrary::ApplyCombatDamage(Req, Context.FinalSnapshot, FVector::ZeroVector, 0.0f);
-
+            FDEDamageResult Res = UDEGameplayLibrary::ApplyCombatDamage(Req);
+            UE_LOG(LogTemp, Error, TEXT("Applied Final Damage in InstantDamage Behavior"));
             // 무적 등으로 데미지가 0이 들어갔다면 아래 적중 효과는 쿨하게 생략
             if (Res.FinalDamage <= 0.0f) continue;
 
@@ -78,9 +78,18 @@ void UDEBehavior_InstantDamage::Execute(FDESkillContext& Context)
             PostHitData.DamageAmount = Res.FinalDamage; // 실제 들어간 찐 데미지 기록
             // PostHitData.DamageMultiplier는 건드리지 않았으니 안전한 1.0 상태!
 
-            if (Context.ActiveSkill)
+            if (Res.bIsDead)
             {
-                for (UDECombatEffect* Effect : Context.ActiveSkill->LocalEffects)
+                UE_LOG(LogTemp, Error, TEXT("Completely Dead . . . "));
+            }
+            else
+            {
+                UE_LOG(LogTemp, Error, TEXT("WTF?"));
+            }
+            if (Context.SourceSkill)
+            {
+                UE_LOG(LogTemp, Error, TEXT("There's SourceSkill At Least . . . "));
+                for (UDECombatEffect* Effect : Context.SourceSkill->LocalEffects)
                 {
                     if (!Effect) continue;
 
@@ -88,13 +97,17 @@ void UDEBehavior_InstantDamage::Execute(FDESkillContext& Context)
                     if (Effect->TriggerCondition == ECombatEventTrigger::OnHit)
                     {
                         Effect->ExecuteEffect(PostHitData);
+                        UE_LOG(LogTemp, Error, TEXT("Applied OnHit Effects in InstantDamage Behavior"));
                     }
                     else if (Effect->TriggerCondition == ECombatEventTrigger::OnKill && Res.bIsDead)
                     {
                         Effect->ExecuteEffect(PostHitData);
+                        UE_LOG(LogTemp, Error, TEXT("Applied OnKill Effects in InstantDamage Behavior"));
                     }
                 }
+                
             }
+            UE_LOG(LogTemp, Error, TEXT("Tried Effects In InstantDamage Behavior"));
         }
         else
         {

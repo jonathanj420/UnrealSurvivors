@@ -13,6 +13,7 @@
 #include "DEHealthComponent.h"
 #include "DEGameplayLibrary.h"
 #include "DEStatTypes.h"
+#include "DEAutoSkillBase.h"
 #include "DECombatEffect.h"
 
 
@@ -254,18 +255,25 @@ bool ADESimpleProjectileBase::TryDealDamage(AActor* Victim)
 	FDEDamageRequest Req;
 	Req.Instigator = GetInstigator();
 	Req.DamageCauser = this;
+	Req.SourceObject = CachedContext.SourceSkill;
 	Req.Victim = Victim;
 	Req.BaseDamage = Damage;
 	Req.CritChance = CritChance;
 	Req.CritDamageMultiplier = CritDamageMultiplier;
 
 	// 1. [데미지 선 적용] 라이브러리 호출
-	FDEDamageResult Res = UDEGameplayLibrary::ApplyCombatDamage(Req, this->Snapshot, KBDir, this->KnockbackForce);
+	FDEDamageResult Res = UDEGameplayLibrary::ApplyCombatDamage(Req);
 
 	// 데미지가 아예 안 들어갔으면(무적 등) 여기서 컷!
 	if (Res.FinalDamage <= 0.0f)
 	{
 		return false;
+	}
+
+	if (Res.FinalDamage > 0.0f && this->KnockbackForce > 0.0f)
+	{
+		if (ADEMonsterBase* Monster = Cast<ADEMonsterBase>(Req.Victim))
+			Monster->ApplyKnockback(KBDir, this->KnockbackForce);
 	}
 
 	// ---------------------------------------------------------

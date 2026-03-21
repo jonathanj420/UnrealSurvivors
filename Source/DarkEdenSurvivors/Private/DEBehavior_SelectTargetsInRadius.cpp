@@ -51,7 +51,7 @@ void UDEBehavior_SelectTargetsInRadius::Execute(FDESkillContext& Context)
     float FinalRadius = (this->Radius==-1.0f) ? this->Radius : Context.Radius;
     //float FinalRadius = (Context.Radius != 0.f) ? Context.Radius : this->Radius;
 
-    UE_LOG(LogTemp, Error, TEXT("Try Select In Radius"));
+    //UE_LOG(LogTemp, Error, TEXT("Try Select In Radius"));
 
     // ★ 반경이 0 미만(-1)일 때: 맵 전체 몬스터 검색
     if (FinalRadius < 0.f)
@@ -144,7 +144,7 @@ void UDEBehavior_SelectTargetsInRadius::Execute(FDESkillContext& Context)
         // 중복 제거된 Set을 배열로 변환
         Context.Targets = UniqueResults.Array();
     }
-    UE_LOG(LogTemp, Warning, TEXT("Targets collected: %d"), Context.Targets.Num());
+    //UE_LOG(LogTemp, Warning, TEXT("Targets collected: %d"), Context.Targets.Num());
     //중복 없는 old 
     //// 2. 다중 검색 수행 (결과 합치기)
     //TSet<AActor*> UniqueResults; // 중복 제거를 위해 Set 사용 (A, B 둘 다한테 맞은 놈은 1번만)

@@ -62,11 +62,11 @@ void UDEBehavior_SpawnAOE::Execute(FDESkillContext& Context)
         // ----------------------------------------------
         // 1-A. Persistent AOE 재사용 시도
         // ----------------------------------------------
-        UDEAutoSkillBase* ActiveSkill = Context.ActiveSkill;
-        if (bHasKey && ActiveSkill)
+        UDEAutoSkillBase* SourceSkill = Context.SourceSkill;
+        if (bHasKey && SourceSkill)
         {
             if (TWeakObjectPtr<ADESimpleAOEBase>* Found =
-                ActiveSkill->OwnedAOEMap.Find(Request.AOEKey))
+                SourceSkill->OwnedAOEMap.Find(Request.AOEKey))
             {
                 if (Found->IsValid())
                 {
@@ -98,9 +98,9 @@ void UDEBehavior_SpawnAOE::Execute(FDESkillContext& Context)
             AOE->SetOwner(Instigator);
             bIsNewSpawn = true;
             // Persistent 등록
-            if (bHasKey && ActiveSkill)
+            if (bHasKey && SourceSkill)
             {
-                ActiveSkill->OwnedAOEMap.Add(Request.AOEKey, AOE);
+                SourceSkill->OwnedAOEMap.Add(Request.AOEKey, AOE);
             }
         }
         else

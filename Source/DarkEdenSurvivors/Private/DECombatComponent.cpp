@@ -52,9 +52,9 @@ FCombatSnapshot UDECombatComponent::GetCombatSnapshot() const
     return Snapshot;
 }
 
-void UDECombatComponent::HandleDamageDealt(const FDEDamageResult& Result, const FCombatSnapshot& Snapshot)
+void UDECombatComponent::HandleDamageDealt(const FDEDamageResult& Result)
 {
-
+    UE_LOG(LogTemp, Warning, TEXT("Handle Damage Dealt By : %s"), *Result.SourceObject->GetName());
     if (Result.FinalDamage <= 0.0f || !Result.Victim) return;
 
     ADECharacterBase* OwnerCharacter = Cast<ADECharacterBase>(GetOwner());
@@ -75,6 +75,7 @@ void UDECombatComponent::HandleDamageDealt(const FDEDamageResult& Result, const 
     // (예전 ProcessLifeSteal 로직은 이제 여기서 자동으로 튀어나옴)
     // --------------------------------------------------------
     BroadcastCombatEvent(ECombatEventTrigger::OnHit, EventData);
+   
 
     // --------------------------------------------------------
     // [로직 2] 처치 시 (OnKill) 이벤트 방송
@@ -85,45 +86,86 @@ void UDECombatComponent::HandleDamageDealt(const FDEDamageResult& Result, const 
         ++TotalKillCount;
         BroadcastCombatEvent(ECombatEventTrigger::OnKill, EventData);
         UE_LOG(LogTemp, Log, TEXT("Total Kill Count : %d"), TotalKillCount);
+
     }
 
-   // //UE_LOG(LogTemp, Error, TEXT("Try Handle Damage Dealt"));
-   // // 1. 유효성 체크
-   // // 데미지가 0이거나, 때린 대상이 없으면 처리 안 함
-   // if (Result.FinalDamage <= 0.0f || !Result.Victim)
-   // {
-   //     return;
-   // }
-   // //UE_LOG(LogTemp, Error, TEXT("HDD Dmg, Victim Passed"));
-   // // 2. 주인님(Character) 확인
-   // // 컴포넌트의 주인은 캐릭터여야 힐을 주든 말든 함
-   // ADECharacterBase* OwnerCharacter = Cast<ADECharacterBase>(GetOwner());
-   // if (!OwnerCharacter)
-   // {
-   //     return;
-   // }
-   // TotalDamageDealt += Result.FinalDamage;
-
-   //// UE_LOG(LogTemp, Error, TEXT("HDD Owner Passed"));
-   // // ====================================================
-   // // [로직 1] 타격 시 발동 효과 (On Hit)
-   // // ====================================================
-
-   // // 생명력 흡수 (Life Steal) 처리
-   // ProcessLifeSteal(Snapshot);
-
-
-   // // ====================================================
-   // // [로직 2] 처치 시 발동 효과 (On Kill)
-   // // ====================================================
-   // if (Result.bIsDead)
-   // {
-   //     ++TotalKillCount;
-   //     ProcessOnKillEffect(Result.Victim);
-   //     
-   //     
-   // }
 }
+
+
+//legacy w snapshot??
+//void UDECombatComponent::HandleDamageDealt(const FDEDamageResult& Result, const FCombatSnapshot& Snapshot)
+//{
+//
+//    if (Result.FinalDamage <= 0.0f || !Result.Victim) return;
+//
+//    ADECharacterBase* OwnerCharacter = Cast<ADECharacterBase>(GetOwner());
+//    if (!OwnerCharacter) return;
+//
+//    TotalDamageDealt += Result.FinalDamage;
+//
+//    // --------------------------------------------------------
+//    // [택배 상자(EventData) 포장]
+//    // --------------------------------------------------------
+//    FCombatEventData EventData;
+//    EventData.Instigator = OwnerCharacter;
+//    EventData.Target = Result.Victim;
+//    EventData.DamageAmount = Result.FinalDamage;
+//
+//    // --------------------------------------------------------
+//    // [로직 1] 적중 시 (OnHit) 이벤트 방송
+//    // (예전 ProcessLifeSteal 로직은 이제 여기서 자동으로 튀어나옴)
+//    // --------------------------------------------------------
+//    BroadcastCombatEvent(ECombatEventTrigger::OnHit, EventData);
+//
+//    // --------------------------------------------------------
+//    // [로직 2] 처치 시 (OnKill) 이벤트 방송
+//    // (예전 ProcessOnKillEffect 로직도 알아서 튀어나옴)
+//    // --------------------------------------------------------
+//    if (Result.bIsDead)
+//    {
+//        ++TotalKillCount;
+//        BroadcastCombatEvent(ECombatEventTrigger::OnKill, EventData);
+//        UE_LOG(LogTemp, Log, TEXT("Total Kill Count : %d"), TotalKillCount);
+//    }
+//
+//    // //UE_LOG(LogTemp, Error, TEXT("Try Handle Damage Dealt"));
+//    // // 1. 유효성 체크
+//    // // 데미지가 0이거나, 때린 대상이 없으면 처리 안 함
+//    // if (Result.FinalDamage <= 0.0f || !Result.Victim)
+//    // {
+//    //     return;
+//    // }
+//    // //UE_LOG(LogTemp, Error, TEXT("HDD Dmg, Victim Passed"));
+//    // // 2. 주인님(Character) 확인
+//    // // 컴포넌트의 주인은 캐릭터여야 힐을 주든 말든 함
+//    // ADECharacterBase* OwnerCharacter = Cast<ADECharacterBase>(GetOwner());
+//    // if (!OwnerCharacter)
+//    // {
+//    //     return;
+//    // }
+//    // TotalDamageDealt += Result.FinalDamage;
+//
+//    //// UE_LOG(LogTemp, Error, TEXT("HDD Owner Passed"));
+//    // // ====================================================
+//    // // [로직 1] 타격 시 발동 효과 (On Hit)
+//    // // ====================================================
+//
+//    // // 생명력 흡수 (Life Steal) 처리
+//    // ProcessLifeSteal(Snapshot);
+//
+//
+//    // // ====================================================
+//    // // [로직 2] 처치 시 발동 효과 (On Kill)
+//    // // ====================================================
+//    // if (Result.bIsDead)
+//    // {
+//    //     ++TotalKillCount;
+//    //     ProcessOnKillEffect(Result.Victim);
+//    //     
+//    //     
+//    // }
+//}
+
 
 //void UDECombatComponent::ProcessLifeSteal(const FCombatSnapshot& Snapshot)
 //{
@@ -213,6 +255,7 @@ void UDECombatComponent::AddCombatEffect(UDECombatEffect* TemplateEffect)
 
 void UDECombatComponent::BroadcastCombatEvent(ECombatEventTrigger TriggerType, FCombatEventData& EventData)
 {
+    const UEnum* EnumPtr = StaticEnum<ECombatEventTrigger>();
     // 내가 가진 모든 이펙트를 쫙 훑어본다
     for (UDECombatEffect* Effect : ActiveCombatEffects)
     {
@@ -220,6 +263,9 @@ void UDECombatComponent::BroadcastCombatEvent(ECombatEventTrigger TriggerType, F
         if (Effect && Effect->TriggerCondition == TriggerType)
         {
             Effect->ExecuteEffect(EventData);
+            FString EnumName = EnumPtr->GetNameStringByValue((int64)TriggerType);
+
+            UE_LOG(LogTemp, Error, TEXT("Applied %s Effect in CombatComp"), *EnumName);
         }
     }
 }

@@ -10,11 +10,12 @@
 #include "DECombatTypes.h"
 
 FDEDamageResult UDEGameplayLibrary::ApplyCombatDamage(
-	const FDEDamageRequest& Request,
-	const FCombatSnapshot& Snapshot,
-	FVector KnockbackDir,
-	float KnockbackForce)
+	const FDEDamageRequest& Request)
 {
+	if (Request.SourceObject == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ApplyCombatDamage called, but SourceObject is NULL!"));
+	}
 
 	FDEDamageResult Result;
 
@@ -52,21 +53,28 @@ FDEDamageResult UDEGameplayLibrary::ApplyCombatDamage(
 	// 3. 피해자에게 '조작이 완료된' 청구서로 데미지 처리 요청
 	// =========================================================
 	Result = TargetHealth->ProcessDamage(ModifiableReq);
+	UE_LOG(LogTemp, Warning, TEXT("Processed Final Damage of Result : %f"), Result.FinalDamage);
 
 	// 4. 가해자에게 후처리(OnHit, OnKill) 요청
 	// (여기는 네가 원래 짜둔 대로 HandleDamageDealt가 글로벌 이펙트를 잘 터뜨려 줄 거임)
 	if (UDECombatComponent* CombatComp = Request.Instigator->FindComponentByClass<UDECombatComponent>())
 	{
-		CombatComp->HandleDamageDealt(Result, Snapshot);
+		CombatComp->HandleDamageDealt(Result);
 	}
 
-	// 5. 넉백 처리
-	if (Result.FinalDamage > 0.0f && KnockbackForce > 0.0f)
+	//// 5. 넉백 처리
+	//if (Result.FinalDamage > 0.0f && KnockbackForce > 0.0f)
+	//{
+	//	if (ADEMonsterBase* Monster = Cast<ADEMonsterBase>(Request.Victim))
+	//	{
+	//		Monster->ApplyKnockback(KnockbackDir, KnockbackForce);
+	//	}
+	//}
+	if (TargetHealth)
 	{
-		if (ADEMonsterBase* Monster = Cast<ADEMonsterBase>(Request.Victim))
-		{
-			Monster->ApplyKnockback(KnockbackDir, KnockbackForce);
-		}
+		// TargetHealth에 bIsDead 변수가 퍼블릭이면 그냥 쓰고, 
+		// 캡슐화되어 있다면 TargetHealth->IsDead() 같은 Getter 함수를 쓰십쇼!
+		Result.bIsDead = TargetHealth->IsDead();
 	}
 
 	return Result;

@@ -5,6 +5,7 @@
 
 void UDECombatEffect::ExecuteEffect(FCombatEventData& EventData)
 {
+    UE_LOG(LogTemp, Error, TEXT("%s ::ExecuteEffect"),*GetName());
     if (!EventData.Instigator) return;
 
     // 1. 부모가 강제로 쿨타임 검문소 검사! (자식들은 이제 이거 신경 쓸 필요 없음)

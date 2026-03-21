@@ -52,7 +52,7 @@ void UDEAutoSkillBase::BuildContext(FDESkillContext& OutContext)
 {
     // 1. 필수 참조 연결
     OutContext.Instigator = SkillOwner;
-    OutContext.ActiveSkill = this;
+    OutContext.SourceSkill = this;
 
     // 데이터가 없으면 중단
     if (!SkillData) return;

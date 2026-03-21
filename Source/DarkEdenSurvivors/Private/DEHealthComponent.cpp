@@ -183,54 +183,130 @@ FDEDamageResult UDEHealthComponent::ProcessDamage(const FDEDamageRequest& Reques
 {
     FDEDamageResult Result;
 
-    // 1. 이미 죽었거나 무적이면 데미지 0 처리
-    if (bIsDead /* || bIsInvincible */)
+    // 1. 요청받은 정보들을 결과(Result)에 그대로 복사해서 '기억'시킴!
+    Result.Victim = Request.Victim;
+    Result.SourceObject = Request.SourceObject;
+    Result.DamageType = Request.DamageType;
+
+    // 2. 이미 죽었으면 무시
+    if (bIsDead)
     {
-        return Result; // FinalDamage = 0, bIsDead = true/false
+        Result.bIsDead = true;
+        return Result;
     }
 
-    // 2. 치명타 주사위 굴리기 (RNG)
-    // (나중에 '치명타 저항' 스탯이 생기면 여기서 Request.CritChance를 깎음)
+    float CalculatedDamage = 0.0f;
     bool bCriticalSuccess = false;
-    if (Request.CritChance > 0.0f)
+
+    // =========================================================
+    // ★ 3. Enum으로 완벽하게 분리된 데미지 파이프라인!
+    // =========================================================
+    switch (Request.DamageType)
     {
-        bCriticalSuccess = FMath::RandRange(0.0f, 1.0f) < Request.CritChance;
+    case EDEDamageType::Execution:
+    case EDEDamageType::InstantKill:
+    {
+        //  처형이나 즉사는 묻지도 따지지도 않고 남은 피통만큼 데미지!
+        CalculatedDamage = CurrentHP;
+        bCriticalSuccess = true; // 처형 연출을 위해 강제 크리티컬 취급
+        break;
     }
 
-    // 3. 데미지 계산
-    if (bCriticalSuccess)
+    case EDEDamageType::Poison:
+    case EDEDamageType::Bleed:
     {
-        Result.FinalDamage = Request.BaseDamage * Request.CritDamageMultiplier;
-        Result.bIsCritical = true;
-    }
-    else
-    {
-        Result.FinalDamage = Request.BaseDamage;
-        Result.bIsCritical = false;
+        //  도트 데미지는 크리티컬이나 방어력을 무시하게 짤 수도 있음
+        CalculatedDamage = Request.BaseDamage;
+        bCriticalSuccess = false;
+        break;
     }
 
-    // 4. (확장성) 방어력(Defense) 적용 로직이 들어갈 자리
-    // Result.FinalDamage = FMath::Max(Result.FinalDamage - MyDefense, 1.0f);
+    case EDEDamageType::Normal:
+    default:
+    {
+        //  일반 타격 (치명타 주사위 굴리기)
+        if (Request.CritChance > 0.0f)
+        {
+            bCriticalSuccess = FMath::RandRange(0.0f, 1.0f) < Request.CritChance;
+        }
+        CalculatedDamage = bCriticalSuccess ? (Request.BaseDamage * Request.CritDamageMultiplier) : Request.BaseDamage;
 
-    // 5. 실제 체력 차감 및 UI 처리 (내부 함수 호출)
+        // Result.FinalDamage -= MyDefense; // (확장) 나중에 방어력 깎는 로직
+        break;
+    }
+    }
+
+    Result.FinalDamage = CalculatedDamage;
+    Result.bIsCritical = bCriticalSuccess;
+
+    // 4. 실제 체력 차감 및 UI 처리 (여기서 Request.DamageCauser를 넘기기 때문에 쿨감 버그 해결!)
     if (Result.FinalDamage > 0.0f)
     {
-        ApplyFinalDamage(Result.FinalDamage, Request.DamageCauser, Result.bIsCritical);
+        ApplyFinalDamage(Result.FinalDamage, Request.DamageCauser, bCriticalSuccess, Request.DamageType);
     }
 
-    // 6. 결과 갱신 (죽었는지 확인)
+    // 5. ApplyFinalDamage를 거치면서 죽었을 수 있으므로 갱신
     Result.bIsDead = bIsDead;
-    Result.Victim = Request.Victim;
     if (Result.bIsDead)
     {
-        //UE_LOG(LogTemp, Error, TEXT("Really Died :D"));
+        UE_LOG(LogTemp, Warning, TEXT("So dead"), Result.FinalDamage);
     }
     else
     {
-        //UE_LOG(LogTemp, Error, TEXT("Not really Died :/"));
+        UE_LOG(LogTemp, Warning, TEXT("Not So Ded"));
     }
+    
     return Result;
 }
+
+void UDEHealthComponent::ApplyFinalDamage(float InDamage, AActor* InCauser, bool bInIsCritical, EDEDamageType InDamageType)
+{
+    if (bIsDead) return;
+
+    CurrentHP = FMath::Clamp(CurrentHP - InDamage, 0.0f, MaxHP);
+
+    // 체력바 갱신
+    OnHPChanged.Broadcast(CurrentHP, MaxHP);
+
+    // 데미지 텍스트 띄우기
+    if (UWorld* World = GetWorld())
+    {
+        if (UDEDamageTextSubsystem* DmgSys = World->GetSubsystem<UDEDamageTextSubsystem>())
+        {
+            FDamageVisualInfo DmgInfo;
+            DmgInfo.Amount = InDamage;
+            if (GetOwner())
+            {
+                DmgInfo.WorldLocation = GetOwner()->GetActorLocation() + FVector(0.f, 0.f, 100.f);
+            }
+
+            // =========================================================
+            // ★ 텍스트 타입 분기 (처형 텍스트 처리!)
+            // =========================================================
+            if (InDamageType == EDEDamageType::Execution)
+            {
+                DmgInfo.TextType = EDamageTextType::Execution; // "Executed!" 출력
+            }
+            else if (bInIsCritical)
+            {
+                DmgInfo.TextType = EDamageTextType::Critical; // 크고 빨간 숫자
+            }
+            else
+            {
+                DmgInfo.TextType = EDamageTextType::Damage; // 일반 하얀 숫자
+            }
+
+            DmgSys->ShowDamage(DmgInfo);
+        }
+    }
+
+    // 사망 처리
+    if (CurrentHP <= 0.0f)
+    {
+        HandleDeath(InCauser);
+    }
+}
+
 
 void UDEHealthComponent::InstantKill(AActor* Executioner, bool bShowDamage /* = false */)
 {
@@ -287,39 +363,3 @@ void UDEHealthComponent::InstantKill(AActor* Executioner, bool bShowDamage /* = 
     //HandleDeath(Executioner);
 }
 
-void UDEHealthComponent::ApplyFinalDamage(float InDamage, AActor* InCauser, bool bInIsCritical)
-{
-    if (bIsDead) return;
-
-    CurrentHP = FMath::Clamp(CurrentHP - InDamage, 0.0f, MaxHP);
-
-    // UI 알림
-    OnHPChanged.Broadcast(CurrentHP, MaxHP);
-
-    // 데미지 텍스트 서브시스템 호출
-    if (UWorld* World = GetWorld())
-    {
-        if (UDEDamageTextSubsystem* DmgSys = World->GetSubsystem<UDEDamageTextSubsystem>())
-        {
-            FDamageVisualInfo DmgInfo;
-            DmgInfo.Amount = InDamage;
-            if (GetOwner())
-            {
-                DmgInfo.WorldLocation = GetOwner()->GetActorLocation() + FVector(0, 0, 100);
-            }
-            DmgInfo.bIsCritical = bInIsCritical; // ★ 여기서 빨간색 여부 결정
-            DmgInfo.TextType = bInIsCritical ? EDamageTextType::Critical : EDamageTextType::Damage;
-            if (bInIsCritical)
-            {
-                UE_LOG(LogTemp, Warning, TEXT("Kritz!!"));
-            }
-            DmgSys->ShowDamage(DmgInfo);
-        }
-    }
-
-    // 사망 처리
-    if (CurrentHP <= 0.0f)
-    {
-        HandleDeath(InCauser);
-    }
-}

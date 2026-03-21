@@ -18,11 +18,9 @@ class DARKEDENSURVIVORS_API UDEGameplayLibrary : public UBlueprintFunctionLibrar
 
 public:
 	static FDEDamageResult ApplyCombatDamage(
-		const FDEDamageRequest& Request, // 이미 완성된 영수증
-		const FCombatSnapshot& Snapshot, // 후처리(피흡 등)를 위한 스탯 뭉치
-		FVector KnockbackDir = FVector::ZeroVector,
-		float KnockbackForce = 0.0f
+		const FDEDamageRequest& Request // 이미 완성된 영수증
 	);
+	static void ApplyKnockback(AActor* TargetActor, FVector KnockbackDir, float KnockbackForce);
 	static AActor* GetNearestTarget(AActor* Instigator, float Radius);
 	static TArray<AActor*> GetRandomTargets(AActor* Instigator, float Radius, int32 Count);
 	

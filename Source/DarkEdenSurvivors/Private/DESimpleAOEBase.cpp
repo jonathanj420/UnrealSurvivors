@@ -293,7 +293,13 @@ bool ADESimpleAOEBase::TryDealDamage(AActor* Victim)
     Req.CritChance = CritChance;
     Req.CritDamageMultiplier = CritDamageMultiplier;
     // 3. 순수한 계산기(Library)에 던지기
-    FDEDamageResult Res = UDEGameplayLibrary::ApplyCombatDamage(Req, this->Snapshot, KBDir, this->KnockbackForce);
+    FDEDamageResult Res = UDEGameplayLibrary::ApplyCombatDamage(Req);
+   /* if (Res.FinalDamage > 0.0f && this->KnockbackForce > 0.0f)
+    {
+        if (ADEMonsterBase* Monster = Cast<ADEMonsterBase>(Req.Victim))
+            Monster->ApplyKnockback(KBDir, this->KnockbackForce);
+    }*/
+
     return Res.FinalDamage > 0.0f;
 }
 

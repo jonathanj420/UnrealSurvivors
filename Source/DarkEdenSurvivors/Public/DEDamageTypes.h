@@ -5,6 +5,18 @@
 #include "CoreMinimal.h"
 #include "DEDamageTypes.generated.h"
 
+
+UENUM(BlueprintType)
+enum class EDEDamageType : uint8
+{
+	Normal,         // 일반 타격
+	Execution,      // 처형 (조건부 마무리 -> 시너지 발동 O)
+	InstantKill,    // 즉사 (무조건부 삭제 -> 시너지 발동 X)
+	Poison,         // 독
+	Bleed,        // 출혈
+	Acid
+};
+
 /**
  * 
  */
@@ -46,6 +58,9 @@ struct FDEDamageRequest
 	// (확장성) 방어 무시 여부, 속성 타입 등은 나중에 여기에 추가
 	UPROPERTY(BlueprintReadWrite)
 	float LifeStealChance = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EDEDamageType DamageType = EDEDamageType::Normal;
 };
 
 // [결과] 맞은 놈이 계산해서 돌려주는 정보
@@ -71,6 +86,14 @@ struct FDEDamageResult
 	AActor* Victim = nullptr;
 	// (확장성) 회피했는지? 막았는지?
 	// bool bIsEvaded = false;
+
+	// [추가] 어떤 스킬/무기로 때린 결과인지
+	UPROPERTY(BlueprintReadWrite)
+	UObject* SourceObject = nullptr;
+
+	// [추가] 무슨 타입의 데미지로 피를 깎았는지
+	UPROPERTY(BlueprintReadWrite)
+	EDEDamageType DamageType = EDEDamageType::Normal;
 };
 
 UENUM(BlueprintType)

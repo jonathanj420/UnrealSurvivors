@@ -48,9 +48,9 @@ public:
 	TArray<TWeakObjectPtr<class ADESimpleAOEBase>> SpawnedAOEs;
 
 	// [중요 추가] 이 컨텍스트를 만든 스킬 인스턴스 (상태 접근용)
-	// 예: ActiveSkill->SpawnedAura 에 접근하기 위해 필수
+	// 예: SourceSkill->SpawnedAura 에 접근하기 위해 필수
 	UPROPERTY(Transient)
-	UDEAutoSkillBase* ActiveSkill = nullptr;
+	UDEAutoSkillBase* SourceSkill = nullptr;
 	// --- [2. 메이저 스탯 (Raw C++ Type)] ---
 	// 일반 변수는 UPROPERTY 없어도 되지만, TMap 직렬화/초기화를 위해 남김
 	// (필요 없으면 float는 그냥 float로 써도 됩니다. 여기선 통일성을 위해 둠)

@@ -75,6 +75,6 @@ public:
 	void BroadcastCombatEvent(ECombatEventTrigger TriggerType, FCombatEventData& EventData);
 
 	// 데미지를 줬을 때 처리 (내용 수정할 거임)
-	void HandleDamageDealt(const FDEDamageResult& Result, const FCombatSnapshot& Snapshot);
+	void HandleDamageDealt(const FDEDamageResult& Result);
 
 };

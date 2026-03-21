@@ -85,7 +85,7 @@ void UDEBehavior_PlayEffect::Execute(FDESkillContext& Context)
                 SpawnedComp->SetVariableFloat(SizeVariableName, FinalSize);
             }
         }
-        UE_LOG(LogTemp, Warning, TEXT("NiagaraLocs count: %d"), NiagaraLocs.Num());
+        //UE_LOG(LogTemp, Warning, TEXT("NiagaraLocs count: %d"), NiagaraLocs.Num());
     }
 
     // ---------------------------------------------------------

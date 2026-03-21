@@ -80,6 +80,6 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Health")
     void InstantKill(AActor* Executioner, bool bShowDamage /* = false */);
 protected:
-    void ApplyFinalDamage(float InDamage, AActor* InCauser, bool bInIsCritical);
+    void ApplyFinalDamage(float InDamage, AActor* InCauser, bool bInIsCritical, EDEDamageType InDamageType);
 		
 };
