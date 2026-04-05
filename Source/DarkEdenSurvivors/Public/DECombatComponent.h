@@ -12,6 +12,7 @@
 class UDEStatComponent;
 class UDEAccessoryComponent;
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnEnemyKilledSignature, const FDEDamageResult&);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DARKEDENSURVIVORS_API UDECombatComponent : public UActorComponent
@@ -76,5 +77,7 @@ public:
 
 	// 데미지를 줬을 때 처리 (내용 수정할 거임)
 	void HandleDamageDealt(const FDEDamageResult& Result);
+
+	FOnEnemyKilledSignature OnEnemyKilled;
 
 };

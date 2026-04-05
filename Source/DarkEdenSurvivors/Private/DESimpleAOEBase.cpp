@@ -10,6 +10,7 @@
 #include "DESkillContext.h"
 #include "DEDamageTypes.h"
 #include "DEGameplayLibrary.h"
+#include "DEAutoSkillBase.h"
 #include "DEHealthComponent.h"
 
 ADESimpleAOEBase::ADESimpleAOEBase()
@@ -42,7 +43,7 @@ void ADESimpleAOEBase::ApplyContext(const FDESkillContext& Context)
 {
     //피해 주체 설정 (Player / Monster 공통)
     DamageInstigator = Context.Instigator;
-
+    CachedContext = Context;
     //Context에서 기본 스탯 추출
     const float FinalDamage = Context.Damage;
     const float FinalRadius = Context.Radius;
@@ -140,7 +141,10 @@ void ADESimpleAOEBase::InitializeAOE(float InDamage, float InRadius, float InHit
 
     // [옵션] 나이아가라 크기도 반경에 맞춰 자동 조절 (예: 300단위가 스케일 1.0일 때)
     // float EffectScale = InRadius / 300.0f;
-    // NiagaraComp->SetRelativeScale3D(FVector(EffectScale));
+    if (NiagaraComp)
+    {
+        NiagaraComp->SetFloatParameter(FName("SkillRadius"), InRadius);
+    }
 
     // 맵 초기화 (재사용 시 필수)
     //HitCooldownMap.Empty();
@@ -164,6 +168,7 @@ void ADESimpleAOEBase::InitializeFromContext(const FDESkillContext& Context)
 
     // 2. 데이터 추출
     // 데미지, 범위, 지속시간은 컨텍스트의 기본 스탯 사용
+    CachedContext = Context;
     float FinalDamage = Context.Damage;
     float FinalRadius = Context.Radius; // 혹은 Context.Range 등 스탯 이름에 맞춰 사용
     float FinalDuration = Context.Duration;
@@ -288,6 +293,8 @@ bool ADESimpleAOEBase::TryDealDamage(AActor* Victim)
     FDEDamageRequest Req;
     Req.Instigator = DamageInstigator.Get();
     Req.DamageCauser = this;
+    
+    Req.SourceObject = CachedContext.SourceSkill;
     Req.Victim = Victim;
     Req.BaseDamage = Damage;
     Req.CritChance = CritChance;

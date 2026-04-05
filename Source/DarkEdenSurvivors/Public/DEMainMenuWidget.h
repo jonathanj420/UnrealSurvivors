@@ -15,9 +15,10 @@ class UImage;
 class UScrollBox;
 class UDECharacterSlotWidget;
 class UDEStageSlotWidget;
+class UDEShopWidget;
 
 /**
- * 
+ * ë©”ì¸ ë©”ë‰´ ì „ì²´ë¥¼ ê´€ë¦¬í•˜ëŠ” ìœ„ì ¯ í´ë˜ìŠ¤ì…ë‹ˆë‹¤.
  */
 UCLASS()
 class DARKEDENSURVIVORS_API UDEMainMenuWidget : public UUserWidget
@@ -28,20 +29,21 @@ protected:
     virtual void NativeConstruct() override;
 
 private:
-    // ==========================================
-    // ==========================================
+    // [UI êµ¬ì„± ìš”ì†Œ]
     UPROPERTY(meta = (BindWidget))
     UWidgetSwitcher* Switcher_Main;
 
-    // [0¹ø È­¸é: Å¸ÀÌÆ²]
+    // [0ë²ˆ í™”ë©´: íƒ€ì´í‹€]
     UPROPERTY(meta = (BindWidget))
     UButton* Btn_StartGame;
     UPROPERTY(meta = (BindWidget))
+    UButton* Btn_OpenShop; // ìƒì  ì—´ê¸° ë²„íŠ¼ ì¶”ê°€
+    UPROPERTY(meta = (BindWidget))
     UButton* Btn_QuitGame;
 
-    // [1¹ø È­¸é: Ä³¸¯ÅÍ ¼±ÅÃ]
+    // [1ë²ˆ í™”ë©´: ìºë¦­í„° ì„ íƒ]
     UPROPERTY(meta = (BindWidget))
-    UButton* Btn_SelectCharacter; // ´ÙÀ½À¸·Î (ÃÊ±â¿£ ºñÈ°¼ºÈ­)
+    UButton* Btn_SelectCharacter;
     UPROPERTY(meta = (BindWidget))
     UButton* Btn_BackToTitle;
 
@@ -54,7 +56,6 @@ private:
     UPROPERTY(meta = (BindWidget))
     UWrapBox* WrapBox_CharacterList;
 
-    // ½½·Ô Å¬¸¯ ½Ã ¶ç¿öÁÙ ÇÏ´Ü »ó¼¼ Á¤º¸ UIµé (À§Á¬ ºí·çÇÁ¸°Æ®¿¡¼­ Ãß°¡ ÇÊ¿ä!)
     UPROPERTY(meta = (BindWidgetOptional))
     UTextBlock* Txt_SelectedCharName;
 
@@ -64,28 +65,23 @@ private:
     UPROPERTY(meta = (BindWidgetOptional))
     UImage* Img_SelectedCharPortrait;
 
-    // ÇöÀç À¯Àú°¡ ÃÖÁ¾ ¼±ÅÃÇÑ Ä³¸¯ÅÍ ID¸¦ ±â¾ïÇØµÑ º¯¼ö
     int32 SelectedCharacterID = -1;
 
-
-    // [2¹ø È­¸é: ½ºÅ×ÀÌÁö ¼±ÅÃ]
+    // [2ë²ˆ í™”ë©´: ìŠ¤í…Œì´ì§€ ì„ íƒ]
     UPROPERTY(meta = (BindWidget))
-    UButton* Btn_EnterGame;       // °ÔÀÓ ÁøÀÔ!
+    UButton* Btn_EnterGame;
     UPROPERTY(meta = (BindWidget))
     UButton* Btn_BackToCharacter;
 
-    // 1. ¿¡µğÅÍ¿¡¼­ ²È¾Æ³ÖÀ» ¸Ê µ¥ÀÌÅÍ Å×ÀÌºí & ºØ¾î»§ Æ²
     UPROPERTY(EditDefaultsOnly, Category = "Data")
     UDataTable* StageDataTable;
 
     UPROPERTY(EditDefaultsOnly, Category = "UI")
     TSubclassOf<UDEStageSlotWidget> StageSlotClass;
 
-    // 2. ¸Ê ½½·ÔµéÀ» ¼¼·Î·Î ´ã¾ÆÁÙ ½ºÅ©·Ñ »óÀÚ (À§Á¬ ºí·çÇÁ¸°Æ®¿Í ¿¬°á!)
     UPROPERTY(meta = (BindWidget))
     UScrollBox* ScrollBox_StageList;
 
-    // 3. ¿ìÃø »ó¼¼ Á¤º¸ UIµé (¼±ÅÃµÈ ¸Ê ÇÁ¸®ºä, ÀÌ¸§, ¼³¸í)
     UPROPERTY(meta = (BindWidget))
     UTextBlock* Txt_SelectedStageName;
 
@@ -95,11 +91,16 @@ private:
     UPROPERTY(meta = (BindWidget))
     UImage* Img_SelectedStageThumbnail;
 
-    // ¡Ú 4. À¯Àú°¡ ÃÖÁ¾ ¼±ÅÃÇÑ ¸ÊÀÇ 'ÁøÂ¥ ·¹º§ ÀÌ¸§'À» ±â¾ïÇØµÑ º¯¼ö
     FName SelectedStageLevelName;
 
+    // [3ë²ˆ í™”ë©´: ìƒì ] - WidgetSwitcher ë‚´ë¶€ì— ë°°ì¹˜ë¨
+    UPROPERTY(meta = (BindWidget))
+    UDEShopWidget* Shop_Content;
 
+private:
+    // [ì´ë²¤íŠ¸ í•¸ë“¤ëŸ¬]
     UFUNCTION() void OnStartGameClicked();
+    UFUNCTION() void OnOpenShopClicked(); // ìƒì  ì—´ê¸° í´ë¦­
     UFUNCTION() void OnQuitGameClicked();
 
     UFUNCTION() void OnSelectCharacterClicked();
@@ -108,11 +109,11 @@ private:
     UFUNCTION() void OnEnterGameClicked();
     UFUNCTION() void OnBackToCharacterClicked();
 
+    UFUNCTION() void OnShopClosed(); // ìƒì  ë‹«ê¸° ì´ë²¤íŠ¸ ì‘ë‹µ
+
     UFUNCTION() void OnCharacterSlotClicked(int32 ClickedCharacterID);
     void GenerateCharacterSlots();
 
-    UFUNCTION()
-    void OnStageSlotClicked(int32 ClickedStageID);
-
+    UFUNCTION() void OnStageSlotClicked(int32 ClickedStageID);
     void GenerateStageSlots();
 };

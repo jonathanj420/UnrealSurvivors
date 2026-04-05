@@ -46,24 +46,49 @@ TArray<UDELevelUpChoiceBase*> UDELevelUpManagerComponent::GenerateChoices(int32 
 {
     TArray<UDELevelUpChoiceBase*> Result;
 
-    for (int32 i = 0; i < Count; ++i)
+    // =========================================================
+    // ★ [핵심] 이미 뽑힌 녀석들을 기록해둘 '블랙리스트 장부'
+    // =========================================================
+    TArray<int32> PickedSkillIDs;
+    TArray<const UDEAccessoryData*> PickedAccs;
+
+    int32 MaxAttempts = Count * 10; // (안전장치) 최대 시도 횟수
+    int32 Attempts = 0;
+
+    // 장바구니가 꽉 차거나, 최대 시도 횟수를 넘길 때까지 무한 반복!
+    while (Result.Num() < Count && Attempts < MaxAttempts)
     {
+        Attempts++;
         float Roll = FMath::FRand();
 
         if (Roll < SkillWeight)
         {
-            if (UDELevelUpChoiceBase* Choice = CreateRandomSkillChoice())
+            if (UDELevelUpChoiceBase* RawChoice = CreateRandomSkillChoice())
             {
-                Result.Add(Choice);
-                UE_LOG(LogTemp, Warning, TEXT("Random Choice : %s"), *Choice->GetName());
+                UDELevelUpChoice_Skill* SkillChoice = Cast<UDELevelUpChoice_Skill>(RawChoice);
+
+                // 장부에 없는(처음 뽑힌) 스킬이라면?
+                if (SkillChoice && !PickedSkillIDs.Contains(SkillChoice->GetSkillID()))
+                {
+                    PickedSkillIDs.Add(SkillChoice->GetSkillID()); // 장부에 기록
+                    Result.Add(SkillChoice);                  // 결과 바구니에 담기
+                    UE_LOG(LogTemp, Warning, TEXT("Random Skill Selected: %s"), *SkillChoice->GetDisplayName().ToString());
+                }
             }
         }
         else
         {
-            if (UDELevelUpChoiceBase* Choice = CreateRandomAccessoryChoice())
+            if (UDELevelUpChoiceBase* RawChoice = CreateRandomAccessoryChoice())
             {
-                Result.Add(Choice);
-                UE_LOG(LogTemp, Warning, TEXT("Random Choice : %s"), *Choice->GetName());
+                UDELevelUpChoice_Accessory* AccChoice = Cast<UDELevelUpChoice_Accessory>(RawChoice);
+
+                // 장부에 없는(처음 뽑힌) 장신구라면?
+                if (AccChoice && !PickedAccs.Contains(AccChoice->GetAccessoryData()))
+                {
+                    PickedAccs.Add(AccChoice->GetAccessoryData()); // 장부에 기록
+                    Result.Add(AccChoice);                    // 결과 바구니에 담기
+                    UE_LOG(LogTemp, Warning, TEXT("Random Accessory Selected: %s"), *AccChoice->GetDisplayName().ToString());
+                }
             }
         }
     }
@@ -86,7 +111,57 @@ void UDELevelUpManagerComponent::ApplyChoice(UDELevelUpChoiceBase* Choice)
 
 UDELevelUpChoiceBase* UDELevelUpManagerComponent::CreateRandomSkillChoice()
 {
-    UDESkillManagerComponent* SkillMgr =
+    UDESkillManagerComponent* SkillMgr = GetOwner()->FindComponentByClass<UDESkillManagerComponent>();
+    if (!SkillMgr) return nullptr;
+
+    // 1. 랜덤 스킬의 기본 정보(Row)를 가져옵니다 (아이콘, 이름 등을 위해 필수!)
+    const FDESkillRow* Row = SkillMgr->GetRandomSkillRow();
+    if (!Row) return nullptr;
+
+    // 2. 플레이어의 현재 스킬 레벨을 확인합니다. (SkillMgr에 이런 함수가 있다고 가정)
+    int32 CurrentLevel = SkillMgr->GetSkillLevel(Row->SkillID);
+    int32 TargetLevel = CurrentLevel + 1;
+
+    FText DisplayDescription; // UI에 최종적으로 띄워줄 텍스트
+
+    // 3. 레벨에 따라 텍스트를 다르게 가져옵니다.
+    if (CurrentLevel == 0)
+    {
+        // 처음 먹는 스킬일 때
+        DisplayDescription = Row->BaseDescription;
+    }
+    else
+    {
+        // 이미 있는 스킬 레벨업일 때 (FDESkillData 테이블 조회)
+        // (가정: SkillID와 TargetLevel을 주면 해당 행을 뱉어내는 함수)
+        const FDESkillData* DataRow = SkillMgr->GetSkillDataRow(Row->SkillID, TargetLevel);
+
+        if (DataRow)
+        {
+            DisplayDescription = DataRow->UpgradeDescription;
+        }
+        else
+        {
+            // 혹시라도 데이터를 못 찾거나 만렙인 경우의 안전장치
+            DisplayDescription = FText::FromString(TEXT("최대 레벨 도달!"));
+        }
+    }
+
+    // 4. 초이스 객체 생성
+    UDELevelUpChoice_Skill* Choice = NewObject<UDELevelUpChoice_Skill>(this);
+
+    // ★ Choice->Init 함수를 수정해서 설명과 레벨도 같이 넘겨줍니다!
+    Choice->Init(
+        Row->SkillID,
+        Row->SkillName,
+        Row->SkillIcon,
+        DisplayDescription, // 위에서 결정한 텍스트
+        TargetLevel         // UI에서 "Lv.2" 같이 띄워주기 위해 넘김
+    );
+
+    return Choice;
+
+    /*UDESkillManagerComponent* SkillMgr =
         GetOwner()->FindComponentByClass<UDESkillManagerComponent>();
 
     if (!SkillMgr)
@@ -105,7 +180,7 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::CreateRandomSkillChoice()
         Row->SkillIcon
     );
 
-    return Choice;
+    return Choice;*/
 }
 
 UDELevelUpChoiceBase* UDELevelUpManagerComponent::CreateRandomAccessoryChoice()
@@ -257,7 +332,9 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::TryGetEvolutionChoice()
             EvolutionChoice->Init(
                 EvolvedRow->SkillID,
                 EvolvedRow->SkillName,
-                EvolvedRow->SkillIcon
+                EvolvedRow->SkillIcon,
+                EvolvedRow->BaseDescription
+
             );
 
             // =========================================================
@@ -342,8 +419,30 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::GetRandomUpgradableChoice()
         int32 PickedSkillID = UpgradableSkillIDs[RandomIndex];
         const FDESkillRow* Row = SkillMgr->GetSkillRow(PickedSkillID);
 
+        // ★ [추가] 현재 레벨 파악 & 다음 레벨 데이터 가져오기
+        int32 CurrentLevel = SkillMgr->GetSkillLevel(PickedSkillID);
+        int32 TargetLevel = CurrentLevel + 1;
+
+        FText DisplayDescription;
+        const FDESkillData* DataRow = SkillMgr->GetSkillDataRow(PickedSkillID, TargetLevel);
+        if (DataRow)
+        {
+            DisplayDescription = DataRow->UpgradeDescription;
+        }
+        else
+        {
+            DisplayDescription = FText::FromString(TEXT("None"));
+        }
+
+        // ★ [수정] 새로 바뀐 Init 함수 규격에 맞춰서 포장!
         UDELevelUpChoice_Skill* Choice = NewObject<UDELevelUpChoice_Skill>(this);
-        Choice->Init(Row->SkillID, Row->SkillName, Row->SkillIcon);
+        Choice->Init(
+            Row->SkillID,
+            Row->SkillName,
+            Row->SkillIcon,
+            DisplayDescription, // 텍스트 추가
+            TargetLevel         // 다음 레벨 추가
+        );
         return Choice;
     }
     else

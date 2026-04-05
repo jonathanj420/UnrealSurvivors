@@ -40,6 +40,9 @@ struct FCombatEventData
     UPROPERTY(BlueprintReadWrite)
     float DamageMultiplier = 1.0f;
 
+    UPROPERTY(BlueprintReadWrite, Category = "CombatEvent")
+    UObject* SourceObject;
+
     // 기본 생성자
-    FCombatEventData() : Instigator(nullptr), Target(nullptr), DamageAmount(0.0f) {}
+    FCombatEventData() : Instigator(nullptr), Target(nullptr), DamageAmount(0.0f), SourceObject(nullptr) {}
 };

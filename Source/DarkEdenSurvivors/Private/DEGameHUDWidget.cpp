@@ -14,26 +14,39 @@
 void UDEGameHUDWidget::NativeConstruct()
 {
     Super::NativeConstruct();
+    // ★ 알람시계 세팅: 1.0초마다 'UpdateTimeTick' 함수를 반복(true)해서 불러라!
+    if (GetWorld())
+    {
+        GetWorld()->GetTimerManager().SetTimer(TimeUpdateTimerHandle, this, &UDEGameHUDWidget::UpdateTimeTick, 1.0f, true);
+    }
+    
 }
-
-void UDEGameHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+void UDEGameHUDWidget::UpdateTimeTick()
 {
-    Super::NativeTick(MyGeometry, InDeltaTime);
-
-    // 월드 시간을 가져와서 바로 업데이트
     if (GetWorld())
     {
         float TimeSeconds = GetWorld()->GetTimeSeconds();
-
-        // [최적화] 1초에 한 번만 텍스트 갱신 (매 프레임 문자열 연산 방지)
-        int32 CurrentSeconds = (int32)TimeSeconds;
-        if (CurrentSeconds != LastSeconds)
-        {
-            LastSeconds = CurrentSeconds;
-            UpdateTime(TimeSeconds);
-        }
+        UpdateTime(TimeSeconds);
     }
 }
+//void UDEGameHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+//{
+//    Super::NativeTick(MyGeometry, InDeltaTime);
+//
+//    // 월드 시간을 가져와서 바로 업데이트
+//    if (GetWorld())
+//    {
+//        float TimeSeconds = GetWorld()->GetTimeSeconds();
+//
+//        // [최적화] 1초에 한 번만 텍스트 갱신 (매 프레임 문자열 연산 방지)
+//        int32 CurrentSeconds = (int32)TimeSeconds;
+//        if (CurrentSeconds != LastSeconds)
+//        {
+//            LastSeconds = CurrentSeconds;
+//            UpdateTime(TimeSeconds);
+//        }
+//    }
+//}
 
 void UDEGameHUDWidget::BindCharacterStat(ADECharacterBase* Character)
 {
@@ -54,8 +67,12 @@ void UDEGameHUDWidget::BindCharacterStat(ADECharacterBase* Character)
 
     if (UDEProgressionComponent* ProgressionComponent = Character->GetProgressionComponent())
     {
+
         UpdateExp(ProgressionComponent->GetCurrentExp(), ProgressionComponent->GetMaxExp());
         ProgressionComponent->OnExpChanged.AddUObject(this, &UDEGameHUDWidget::UpdateExp);
+
+        UpdateLevel(ProgressionComponent->GetCurrentLevel());
+        ProgressionComponent->OnLevelUp.AddUObject(this, &UDEGameHUDWidget::UpdateLevel);
     }
 
     // 2. 스킬 위젯도 연결해라! (여기가 핵심)
@@ -66,7 +83,7 @@ void UDEGameHUDWidget::BindCharacterStat(ADECharacterBase* Character)
 
     if (WBP_AccInventoryWidget)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Try Acc Inv"));
+        //UE_LOG(LogTemp, Warning, TEXT("Try Acc Inv"));
         WBP_AccInventoryWidget->InitializeAccessoryWidget(Character);
     }
     UE_LOG(LogTemp, Warning, TEXT("Stat Bound successfully"));
@@ -101,4 +118,16 @@ void UDEGameHUDWidget::UpdateTime(float TimeSeconds)
 
     if (Text_Time)
         Text_Time->SetText(FText::FromString(TimeStr));
+}
+
+void UDEGameHUDWidget::UpdateLevel(int32 CurrentLevel)
+{
+    if (Text_Level)
+    {
+        // "Lv.1" 이나 "LV. 99" 처럼 원하는 포맷으로 문자열 만들기
+        FString LevelStr = FString::Printf(TEXT("Lv.%d"), CurrentLevel);
+
+        // 텍스트 블록에 적용
+        Text_Level->SetText(FText::FromString(LevelStr));
+    }
 }

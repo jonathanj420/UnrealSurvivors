@@ -3,19 +3,20 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "DEDamageTypes.generated.h"
 
 
-UENUM(BlueprintType)
-enum class EDEDamageType : uint8
-{
-	Normal,         // 일반 타격
-	Execution,      // 처형 (조건부 마무리 -> 시너지 발동 O)
-	InstantKill,    // 즉사 (무조건부 삭제 -> 시너지 발동 X)
-	Poison,         // 독
-	Bleed,        // 출혈
-	Acid
-};
+//UENUM(BlueprintType)
+//enum class EDEDamageType : uint8
+//{
+//	Normal,         // 일반 타격
+//	Execution,      // 처형 (조건부 마무리 -> 시너지 발동 O)
+//	InstantKill,    // 즉사 (무조건부 삭제 -> 시너지 발동 X)
+//	Poison,         // 독
+//	Bleed,        // 출혈
+//	Acid
+//};
 
 /**
  * 
@@ -59,8 +60,14 @@ struct FDEDamageRequest
 	UPROPERTY(BlueprintReadWrite)
 	float LifeStealChance = 0.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EDEDamageType DamageType = EDEDamageType::Normal;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//EDEDamageType DamageType = EDEDamageType::Normal;
+	// ★ [NEW] 무한대의 속성과 메커니즘을 담는 태그 가방!
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Damage"))
+	FGameplayTagContainer DamageTags;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bCanTriggerOnHit = true;
 };
 
 // [결과] 맞은 놈이 계산해서 돌려주는 정보
@@ -91,9 +98,15 @@ struct FDEDamageResult
 	UPROPERTY(BlueprintReadWrite)
 	UObject* SourceObject = nullptr;
 
-	// [추가] 무슨 타입의 데미지로 피를 깎았는지
+	//// [추가] 무슨 타입의 데미지로 피를 깎았는지
+	//UPROPERTY(BlueprintReadWrite)
+	//EDEDamageType DamageType = EDEDamageType::Normal;
+	// ★ [NEW] 결과에도 태그 가방을 그대로 넘겨줍니다. (플로팅 텍스트 색상 판별용)
 	UPROPERTY(BlueprintReadWrite)
-	EDEDamageType DamageType = EDEDamageType::Normal;
+	FGameplayTagContainer DamageTags;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bCanTriggerOnHit = true;
 };
 
 UENUM(BlueprintType)

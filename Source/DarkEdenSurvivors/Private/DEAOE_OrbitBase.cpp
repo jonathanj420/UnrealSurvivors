@@ -28,6 +28,7 @@ ADEAOE_OrbitBase::ADEAOE_OrbitBase()
     // 실제 데미지 판정은 SphereComponent(Collision)가 담당하므로 중복 계산을 막습니다.
     MeshComp->SetCollisionProfileName(TEXT("NoCollision"));
     MeshComp->SetGenerateOverlapEvents(false);
+    MeshComp->SetCastShadow(false);
     MeshComp->SetCanEverAffectNavigation(false); // 내비게이션 영향 X
 }
 

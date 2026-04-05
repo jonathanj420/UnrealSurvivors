@@ -11,7 +11,7 @@ UDEStatusEffectComponent::UDEStatusEffectComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-	PrimaryComponentTick.bStartWithTickEnabled = false;
+	PrimaryComponentTick.bStartWithTickEnabled = false; // 걸린 게 없을 땐 Tick 끄기!
 
 	// ...
 }
@@ -33,24 +33,23 @@ void UDEStatusEffectComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// 안전한 삭제를 위해 무조건 역순(Reverse) 순회!
+	if (!OwnerActor.IsValid()) return;
+
 	for (int32 i = ActiveEffects.Num() - 1; i >= 0; --i)
 	{
-		UDEStatusEffectBase* Effect = ActiveEffects[i];
+		FActiveStatusEffect& EffectData = ActiveEffects[i];
 
-		if (!Effect)
+		if (!EffectData.EffectDef)
 		{
 			ActiveEffects.RemoveAtSwap(i);
 			continue;
 		}
 
-		Effect->Tick(DeltaTime);
+		EffectData.EffectDef->Tick(OwnerActor.Get(), EffectData, DeltaTime);
 
-		// 지속 시간이 다 끝났다면?
-		if (Effect->IsFinished())
+		if (EffectData.Duration > 0.f && EffectData.ElapsedTime >= EffectData.Duration)
 		{
-			Effect->OnRemove(); // (예: 깎았던 스탯 복구)
-			OnEffectChanged.Broadcast(Effect, false); // UI에 해제 알림
+			EffectData.EffectDef->OnRemove(OwnerActor.Get(), EffectData);
 			ActiveEffects.RemoveAtSwap(i);
 		}
 	}
@@ -59,123 +58,172 @@ void UDEStatusEffectComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	{
 		SetComponentTickEnabled(false);
 	}
-
 }
 
 void UDEStatusEffectComponent::AddEffect(TSubclassOf<UDEStatusEffectBase> EffectClass, AActor* Instigator, float Duration, float Power, float Interval)
 {
 	if (!EffectClass || !OwnerActor.IsValid()) return;
 
-	// 최적화: 쌩으로 NewObject를 때리기 전에 CDO를 가져와서 검사합니다.
 	const UDEStatusEffectBase* CDO = GetDefault<UDEStatusEffectBase>(EffectClass);
 	if (!CDO) return;
 
-	// 1. 면역 체크
-	if (ImmuneTags.Contains(CDO->EffectTag)) return;
+	// =========================================================
+	// ★ 1. 면역 체크 (태그 가방 교집합 검사!)
+	// 내 면역 가방(ImmuneTags)과 들어오는 디버프의 정체성(StatusTags)이 하나라도 겹치면 무시!
+	// =========================================================
+	if (ImmuneTags.HasAny(CDO->StatusTags)) return;
 
-	// 2. 중첩(Stack) 정책 처리
-	if (CDO->EffectTag != EEffectTag::None)
+	// =========================================================
+	// ★ 2. 중첩(Stack) 정책 처리
+	// 이제 Enum 대신, "이미 내 몸에 똑같은 스킬(Class)이 묻어있는가?"로 검사합니다.
+	// =========================================================
+	FActiveStatusEffect* Existing = nullptr;
+	for (FActiveStatusEffect& Effect : ActiveEffects)
 	{
-		UDEStatusEffectBase* Existing = GetEffectByTag(CDO->EffectTag);
-		if (Existing)
+		if (Effect.EffectDef && Effect.EffectDef->GetClass() == EffectClass)
 		{
-			switch (CDO->StackPolicy)
-			{
-			case EStackPolicy::Ignore:
-				// 이미 걸려있으니 새 효과는 무시 (객체 생성 X)
-				return;
-
-			case EStackPolicy::Refresh:
-				// 지속 시간만 초기화하고 위력(Power)은 더 쎈 놈으로 갱신
-				Existing->ElapsedTime = 0.f;
-				Existing->Power = FMath::Max(Existing->Power, Power);
-				return;
-
-			case EStackPolicy::Stack:
-				// 최대 스택 수치 이하일 때만 중첩 증가
-				if (Existing->CurrentStacks < CDO->MaxStacks)
-				{
-					Existing->CurrentStacks++;
-					Existing->OnStacked(Existing->CurrentStacks);
-				}
-				return;
-
-			case EStackPolicy::Replace:
-				// 기존 효과를 지우고 아래 로직으로 내려가 새 효과를 씌웁니다.
-				Existing->OnRemove();
-				OnEffectChanged.Broadcast(Existing, false);
-				ActiveEffects.Remove(Existing);
-				break;
-			}
+			Existing = &Effect;
+			break;
 		}
 	}
 
-	// 3. 필터를 모두 통과했다면 실제 객체 생성 및 적용!
-	UDEStatusEffectBase* NewEffect = NewObject<UDEStatusEffectBase>(this, EffectClass);
-	if (NewEffect)
+	if (Existing)
 	{
-		NewEffect->InitEffect(Instigator, OwnerActor.Get(), Duration, Power, Interval);
+		switch (CDO->StackPolicy)
+		{
+		case EStackPolicy::Ignore:
+			return;
 
-		NewEffect->OnApply(); // 효과 시작 (예: 파티클 재생, 이속 감소)
-		ActiveEffects.Add(NewEffect);
+		case EStackPolicy::Refresh:
+			Existing->ElapsedTime = 0.f;
+			Existing->Power = FMath::Max(Existing->Power, Power);
+			return;
 
-		OnEffectChanged.Broadcast(NewEffect, true); // UI에 부여 알림
+		case EStackPolicy::Stack:
+			// (참고: CDO에 MaxStacks 변수가 있다고 가정합니다)
+			if (Existing->CurrentStacks < CDO->MaxStacks)
+			{
+				Existing->CurrentStacks++;
+				CDO->OnStacked(OwnerActor.Get(), *Existing, Existing->CurrentStacks);
+			}
+			return;
 
-		SetComponentTickEnabled(true);
+		case EStackPolicy::Replace:
+			CDO->OnRemove(OwnerActor.Get(), *Existing);
+
+			Existing->Instigator = Instigator;
+			Existing->Duration = Duration;
+			Existing->Power = Power;
+			Existing->Interval = Interval;
+			Existing->ElapsedTime = 0.f;
+			Existing->TickTimer = 0.f;
+			Existing->CurrentStacks = 1;
+
+			CDO->OnApply(OwnerActor.Get(), *Existing);
+			return;
+		}
 	}
+
+	// 3. 필터를 모두 통과했다면 새 구조체 적용
+	FActiveStatusEffect NewEffect;
+	NewEffect.EffectDef = CDO;
+	NewEffect.Instigator = Instigator;
+	NewEffect.Duration = Duration;
+	NewEffect.Power = Power;
+	NewEffect.Interval = Interval;
+	NewEffect.ElapsedTime = 0.f;
+	NewEffect.TickTimer = 0.f;
+	NewEffect.CurrentStacks = 1;
+
+	CDO->OnApply(OwnerActor.Get(), NewEffect);
+	ActiveEffects.Add(NewEffect);
+
+	SetComponentTickEnabled(true);
 }
 
-void UDEStatusEffectComponent::RemoveEffectsByTag(EEffectTag Tag)
+void UDEStatusEffectComponent::RemoveEffectsByTag(FGameplayTag Tag)
 {
-	if (Tag == EEffectTag::None) return;
+	// 태그가 비어있으면 무시
+	if (!Tag.IsValid() || !OwnerActor.IsValid()) return;
 
-	// 역순 순회하며 일치하는 태그 전부 제거 (예: 해독 물약 먹었을 때 독 전부 제거)
 	for (int32 i = ActiveEffects.Num() - 1; i >= 0; --i)
 	{
-		UDEStatusEffectBase* Effect = ActiveEffects[i];
-		if (Effect && Effect->EffectTag == Tag)
+		FActiveStatusEffect& EffectData = ActiveEffects[i];
+
+		// 이 상태이상 거푸집의 '정체성 태그 가방' 안에 해당 태그가 들어있다면? 삭제!
+		if (EffectData.EffectDef && EffectData.EffectDef->StatusTags.HasTag(Tag))
 		{
-			Effect->OnRemove();
-			OnEffectChanged.Broadcast(Effect, false);
+			EffectData.EffectDef->OnRemove(OwnerActor.Get(), EffectData);
 			ActiveEffects.RemoveAtSwap(i);
 		}
+	}
+
+	if (ActiveEffects.IsEmpty())
+	{
+		SetComponentTickEnabled(false);
 	}
 }
 
 void UDEStatusEffectComponent::RemoveAllEffects()
 {
-	// 캐릭터 사망, 혹은 완전 정화 스킬 사용 시 싹 비워줍니다.
+	if (!OwnerActor.IsValid()) return;
+
+	// 캐릭터 사망, 혹은 보스의 페이즈 전환(완전 정화) 패턴 시 호출됩니다.
 	for (int32 i = ActiveEffects.Num() - 1; i >= 0; --i)
 	{
-		UDEStatusEffectBase* Effect = ActiveEffects[i];
-		if (Effect)
+		FActiveStatusEffect& EffectData = ActiveEffects[i];
+		if (EffectData.EffectDef)
 		{
-			Effect->OnRemove();
-			OnEffectChanged.Broadcast(Effect, false);
+			// 싹 다 원상복구 로직 실행
+			EffectData.EffectDef->OnRemove(OwnerActor.Get(), EffectData);
 		}
 	}
-	ActiveEffects.Empty();
+
+	// 배열 메모리를 날리지 않고 크기만 0으로 만듭니다 (TArray의 Empty 재할당 방지 최적화)
+	ActiveEffects.Reset();
+
+	// 컴포넌트 틱 끄기
+	SetComponentTickEnabled(false);
 }
 
-bool UDEStatusEffectComponent::HasEffectWithTag(EEffectTag Tag) const
+bool UDEStatusEffectComponent::HasEffectWithTag(FGameplayTag Tag) const
 {
-	if (Tag == EEffectTag::None) return false;
+	if (!Tag.IsValid()) return false;
 
-	// 람다식을 활용한 우아한 탐색
-	return ActiveEffects.ContainsByPredicate([Tag](const UDEStatusEffectBase* Effect)
+	for (const FActiveStatusEffect& EffectData : ActiveEffects)
+	{
+		// 태그 가방 검사!
+		if (EffectData.EffectDef && EffectData.EffectDef->StatusTags.HasTag(Tag))
 		{
-			return Effect && Effect->EffectTag == Tag;
-		});
+			return true;
+		}
+	}
+
+	return false;
 }
 
-UDEStatusEffectBase* UDEStatusEffectComponent::GetEffectByTag(EEffectTag Tag) const
+void UDEStatusEffectComponent::ProcessIncomingDamageModifiers(FDEDamageRequest& InOutRequest)
 {
-	if (Tag == EEffectTag::None) return nullptr;
-
-	UDEStatusEffectBase* const* FoundEffect = ActiveEffects.FindByPredicate([Tag](const UDEStatusEffectBase* Effect)
+	for (const FActiveStatusEffect& EffectData : ActiveEffects) // (배열 이름은 개발자님 코드에 맞게!)
+	{
+		if (EffectData.EffectDef)
 		{
-			return Effect && Effect->EffectTag == Tag;
-		});
-
-	return FoundEffect ? *FoundEffect : nullptr;
+			// 각 상태이상 클래스(부식, 방어력 감소 등)의 훅을 차례대로 실행!
+			EffectData.EffectDef->ModifyIncomingDamage(EffectData, InOutRequest);
+		}
+	}
 }
+
+FActiveStatusEffect* UDEStatusEffectComponent::GetEffectByTag(FGameplayTag Tag)
+{
+	for (FActiveStatusEffect& Effect : ActiveEffects)
+	{
+		// 이 상태이상 거푸집의 '정체성 태그 가방' 안에 해당 태그가 들어있는지 검사!
+		if (Effect.EffectDef && Effect.EffectDef->StatusTags.HasTag(Tag))
+		{
+			return &Effect;
+		}
+	}
+	return nullptr;
+}
+

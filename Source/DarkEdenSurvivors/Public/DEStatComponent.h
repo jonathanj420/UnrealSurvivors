@@ -31,11 +31,11 @@ protected:
 
 public:
 	// =========================================================
-	// [1] Combat Stats (ÀüÅõ ´É·Â - CombatComponent¿¡¼­ ÀÌ»ç¿È)
+	// [1] Combat Stats (ï¿½ï¿½ï¿½ï¿½ ï¿½É·ï¿½ - CombatComponentï¿½ï¿½ï¿½ï¿½ ï¿½Ì»ï¿½ï¿½)
 	// =========================================================
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Combat")
-	FGameplayStat DamageMultiplier; // °ø°İ·Â %
+	FGameplayStat DamageMultiplier; // ï¿½ï¿½ï¿½İ·ï¿½ %
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Combat")
 	FGameplayStat CritChance;
@@ -59,7 +59,7 @@ public:
 	FGameplayStat BonusAmount; // BonusAmount
 
 	// =========================================================
-	// [2] Physical Stats (½ÅÃ¼ ´É·Â)
+	// [2] Physical Stats (ï¿½ï¿½Ã¼ ï¿½É·ï¿½)
 	// =========================================================
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Physical")
@@ -69,16 +69,16 @@ public:
 	FGameplayStat MagnetRange;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Physical")
-	FGameplayStat MaxHP; // Ã¼·ÂÅë Å©±â
+	FGameplayStat MaxHP; // Ã¼ï¿½ï¿½ï¿½ï¿½ Å©ï¿½ï¿½
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Physical")
-	FGameplayStat Regeneration; // ÃÊ´ç È¸º¹·®
+	FGameplayStat Regeneration; // ï¿½Ê´ï¿½ È¸ï¿½ï¿½ï¿½ï¿½
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Physical")
-	FGameplayStat Armor; // ¹æ¾î·Â
+	FGameplayStat Armor; // ï¿½ï¿½ï¿½ï¿½
 
 	// =========================================================
-	// [3] Utility Stats (À¯Æ¿¸®Æ¼/ÆÄ¹Ö)
+	// [3] Utility Stats (ï¿½ï¿½Æ¿ï¿½ï¿½Æ¼/ï¿½Ä¹ï¿½)
 	// =========================================================
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Utility")
@@ -94,36 +94,40 @@ public:
 	FGameplayStat Curse;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Utility")
-	FGameplayStat Revival; // ºÎÈ° È½¼ö
+	FGameplayStat Revival; // ï¿½ï¿½È° È½ï¿½ï¿½
 
 	// =========================================================
-	// [4] Core API (ÇÙ½É ±â´É)
+	// [4] Core API (ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½)
 	// =========================================================
 
-	// ÅëÇÕ ¼öÁ¤ÀÚ Àû¿ë ÇÔ¼ö (¾î¶² ½ºÅÈÀÌµç ´Ù ¹ŞÀ½)
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ (ï¿½î¶² ï¿½ï¿½ï¿½ï¿½ï¿½Ìµï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
 	UFUNCTION(BlueprintCallable, Category = "Stats")
 	void ApplyModifier(const FDEStatModifier& Mod);
 
-	// Ç®¸µ ÃÊ±âÈ­
+	// Ç®ï¿½ï¿½ ï¿½Ê±ï¿½È­
 	void ResetStats();
 
-	// »çÀÌµå ÀÌÆåÆ® Ã³¸® (ÀÌ¼Ó º¯°æ µî)
+	// ï¿½ï¿½ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ï¿½Æ® Ã³ï¿½ï¿½ (ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½)
 	void RefreshDerivedStats(EDEStatType StatType);
 
 public:
-	// ÀÌº¥Æ®
+	// ï¿½Ìºï¿½Æ®
 	FOnSpeedChanged OnSpeedChanged;
 	FOnMagnetChanged OnMagnetChanged;
 
 private:
-	// ¡Ú ÇÙ½É: Enum°ú º¯¼ö ÁÖ¼Ò¸¦ ¿¬°áÇÏ´Â ¸Ê (Switch¹® Á¦°Å¿ë)
+	// ï¿½ï¿½ ï¿½Ù½ï¿½: Enumï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¼Ò¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ (Switchï¿½ï¿½ ï¿½ï¿½ï¿½Å¿ï¿½)
 	TMap<EDEStatType, FGameplayStat*> StatRegistry;
 
 public:
 	void InitAsPlayer(ADECharacterBase* InPlayer);
 
+protected:
+    // ì˜êµ¬ ê°•í™”(Meta-Progression) ìˆ˜ì¹˜ ì ìš©
+    void ApplyMetaUpgrades();
+
 public:
-		// ¿ÜºÎ¿¡¼­ Æ¯Á¤ ½ºÅÈÀÇ ÃÖÁ¾(°è»êµÈ) °ªÀ» ½±°Ô °¡Á®¿À´Â ÇÔ¼ö
+		// ï¿½ÜºÎ¿ï¿½ï¿½ï¿½ Æ¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
 		UFUNCTION(BlueprintCallable, Category = "Stats")
 		float GetStatValue(EDEStatType StatType) const;
 

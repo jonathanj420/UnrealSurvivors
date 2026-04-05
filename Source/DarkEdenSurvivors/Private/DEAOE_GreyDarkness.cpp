@@ -50,5 +50,5 @@ void ADEAOE_GreyDarkness::ApplyDarknessEffects(AActor* Target)
 
 	//FreezeResist = FMath::Max(FreezeResist - FreezeResistReduction, 0.f);
 	//Monster->SetFreezeResistance(FreezeResist);
-	UE_LOG(LogTemp, Warning, TEXT("%s Hit By %s"), *GetNameSafe(Target), *GetNameSafe(this));
+	//UE_LOG(LogTemp, Warning, TEXT("%s Hit By %s"), *GetNameSafe(Target), *GetNameSafe(this));
 }

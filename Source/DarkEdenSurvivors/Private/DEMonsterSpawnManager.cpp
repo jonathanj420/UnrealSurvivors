@@ -83,6 +83,9 @@ void ADEMonsterSpawnManager::BeginPlay()
         UE_LOG(LogTemp, Warning, TEXT("StageWaveTable loaded: %d rows"), StageRowNames.Num());
     }
 
+
+    PreloadMonsterResources();
+
     // 초기화
     CurrentWaveIndex = -1;
     WaveElapsedTime = 0.0f;
@@ -650,4 +653,61 @@ void ADEMonsterSpawnManager::OnMonsterDied(ADEMonsterBase* Monster)
 const TArray<ADEMonsterBase*>& ADEMonsterSpawnManager::GetActiveMonsters() const
 {
     return ActiveMonsters;
+}
+
+void ADEMonsterSpawnManager::PreloadMonsterResources()
+{
+    if (!StageWaveTable || !GameInstanceCache) return;
+
+    TArray<FSoftObjectPath> AssetsToLoad;
+    TSet<FName> MonsterIDsToLoad; // 중복 로딩을 막기 위한 Set
+
+    // 1. 스테이지 테이블을 쫙 돌면서 이번 판에 등장할 '모든 몬스터 ID' 수집
+    for (const FName& RowName : StageRowNames)
+    {
+        const FDEStageWaveData* WaveData = StageWaveTable->FindRow<FDEStageWaveData>(RowName, TEXT(""));
+        if (WaveData)
+        {
+            // A. 일반 몬스터 배열 싹 다 추가
+            for (const FName& MobID : WaveData->SpawnMonsterIDs)
+            {
+                MonsterIDsToLoad.Add(MobID);
+            }
+
+            // B. 보스 몬스터가 있으면 추가
+            if (!WaveData->BossMonsterID.IsNone())
+            {
+                MonsterIDsToLoad.Add(WaveData->BossMonsterID);
+            }
+        }
+    }
+
+    // 2. 수집된 ID들로 DataAsset을 뒤져서 '진짜 파일 경로' 뽑아내기
+    for (const FName& MobID : MonsterIDsToLoad)
+    {
+        const FDEMonsterData* MData = GameInstanceCache->GetMonsterData(MobID);
+        if (MData)
+        {
+            // ★가장 중요: 블루프린트 클래스 경로
+            if (!MData->OverrideClass.IsNull())
+            {
+                AssetsToLoad.Add(MData->OverrideClass.ToSoftObjectPath());
+            }
+
+            // 메쉬 경로 (만약 쌩얼 C++ 몹을 쓸 때를 대비)
+            if (!MData->MonsterMesh.IsNull())
+            {
+                AssetsToLoad.Add(MData->MonsterMesh.ToSoftObjectPath());
+            }
+        }
+    }
+
+    // 3. 백그라운드(비동기)에서 로딩 시작!
+    if (AssetsToLoad.Num() > 0)
+    {
+        PreloadHandle = StreamableManager.RequestAsyncLoad(AssetsToLoad, FStreamableDelegate::CreateLambda([]() {
+            // 로딩이 100% 끝나면 이 로그가 뜹니다!
+            UE_LOG(LogTemp, Warning, TEXT("=== All Monster Assets Preloaded Successfully! ==="));
+            }));
+    }
 }

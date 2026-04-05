@@ -16,10 +16,11 @@ class DARKEDENSURVIVORS_API UDELevelUpChoice_Skill : public UDELevelUpChoiceBase
     GENERATED_BODY()
 
 public:
-    void Init(
-        int32 InSkillID,
-        const FText& InSkillName,
-        UTexture2D* InIcon
+    void Init(int32 InSkillID,
+        FText InName, 
+        UTexture2D* InIcon, 
+        FText InDescription, 
+        int32 InTargetLevel=0
     );
 
     // ===== UDELevelUpChoice =====
@@ -27,6 +28,8 @@ public:
     virtual FText GetDescription() const override;
     virtual UTexture2D* GetIcon() const override;
     virtual void Apply(AActor* PlayerActor) override;
+    int32 GetSkillID() const { return SkillID; }
+
 
 private:
     // ★ 핵심: ID만 들고 있음
@@ -34,8 +37,16 @@ private:
 
     // UI 표시용 캐시
     FText SkillName;
+
+    FText SkillDesc;
     UPROPERTY()
     UTexture2D* SkillIcon = nullptr;
+
+    // UI 위젯에 바인딩할 변수들 추가
+    FText ChoiceDescription;
+
+    int32 TargetLevel;
+
 
 public:
 

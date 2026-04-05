@@ -10,6 +10,8 @@
 void UDEHUDWidget::NativeConstruct()
 {
     Super::NativeConstruct();
+
+
 }
 
 void UDEHUDWidget::BindCharacterStat(ADECharacterBase* Character)

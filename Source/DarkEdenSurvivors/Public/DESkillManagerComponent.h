@@ -111,6 +111,7 @@ public:
 
 	TArray<FDESkillData*> GetRandomSkillChoices(int32 Count = 3);
 	const FDESkillRow* GetRandomSkillRow();
+	const FDESkillData* GetSkillDataRow(int32 SkillID, int32 Level) const;
 	UFUNCTION(BlueprintCallable)
 	void ApplySkillChoice(int32 SkillID);
 protected:

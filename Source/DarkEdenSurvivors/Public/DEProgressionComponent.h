@@ -24,6 +24,8 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
+	UPROPERTY(Transient) // 세이브 파일에 저장할 필요 없는 임시 데이터라는 뜻
+		class UDEStatComponent* CachedStatComp;
 
 public:
 	// 경험치 획득 (외부에서 호출: 보석 먹었을 때)
@@ -32,7 +34,7 @@ public:
 
 	// 현재 레벨 확인
 	UFUNCTION(BlueprintPure, Category = "Progression")
-	int32 GetLevel() const { return CurrentLevel; }
+	int32 GetCurrentLevel() const { return CurrentLevel; }
 	float GetMaxExp() const { return MaxExp; }
 	float GetCurrentExp() const { return CurrentExp; }
 

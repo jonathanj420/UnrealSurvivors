@@ -30,65 +30,57 @@ void ADEProjectile_Boomerang::ResetState()
 
 void ADEProjectile_Boomerang::UpdateMovement(float DeltaTime)
 {
+    // 공통 회전 로직 (중복 제거)
+    FRotator CurrentRot = GetActorRotation();
+    CurrentRot.Yaw += 720.f * DeltaTime; // 부메랑은 좀 더 빨리 돌아야 제맛!
+    SetActorRotation(CurrentRot);
+
     switch (Phase)
     {
     case EBoomerangPhase::Going:
     {
+        // 1. [핵심] 가속도를 이용해 현재 속도를 점점 줄입니다.
+        // RetractionAcceleration은 약 1000.0f 정도로 잡으시면 적당합니다.
+        CurrentSpeed -= RetractionAcceleration * DeltaTime;
+
+        // 2. 이동 처리
         FVector Delta = ShootDirection * CurrentSpeed * DeltaTime;
         AddActorWorldOffset(Delta);
-        TravelDistance += Delta.Size();
 
-        // 회전 (도끼가 빙글빙글)
-        FRotator CurrentRot = GetActorRotation();
-        CurrentRot.Yaw += 360.f * DeltaTime;
-        SetActorRotation(CurrentRot);
-
-        if (TravelDistance >= MaxDistance)
+        // 3. [상태 전환] 속도가 0 이하(정점)가 되면 Returning 페이즈로 전환!
+        if (CurrentSpeed <= 0.0f)
         {
             Phase = EBoomerangPhase::Returning;
-            HitActors.Empty(); // 복귀 시 다시 데미지 줄 수 있게
-
+            HitActors.Empty();
+            CurrentSpeed = 0.0f; // 0부터 다시 가속 시작하기 위해 초기화
         }
         break;
     }
 
     case EBoomerangPhase::Returning:
     {
-        FVector MoveDir;
+        // 1. [핵심] 속도를 다시 가속시킵니다. (MaxSpeed까지)
+        CurrentSpeed += RetractionAcceleration * DeltaTime;
+        float FinalReturnSpeed = FMath::Min(CurrentSpeed, ReturnSpeed);
 
-        if (ReturnMode == EReturnMode::Linear)
+        FVector MoveDir;
+        if (ReturnMode == EReturnMode::Linear || !CachedContext.Instigator)
         {
             MoveDir = -ShootDirection;
-
         }
         else // Homing
         {
-            if (CachedContext.Instigator)
-            {
-                FVector ToOwner = CachedContext.Instigator->GetActorLocation()
-                    - GetActorLocation();
-                MoveDir = ToOwner.GetSafeNormal();
-            }
-            else
-            {
-                MoveDir = -ShootDirection;
-            }
+            FVector ToOwner = CachedContext.Instigator->GetActorLocation() - GetActorLocation();
+            MoveDir = ToOwner.GetSafeNormal();
         }
 
-        AddActorWorldOffset(MoveDir * ReturnSpeed * DeltaTime);
+        // 2. 가속된 속도로 이동
+        AddActorWorldOffset(MoveDir * FinalReturnSpeed * DeltaTime);
 
-        // 회전
-        FRotator CurrentRot = GetActorRotation();
-        CurrentRot.Yaw += 360.f * DeltaTime;
-        SetActorRotation(CurrentRot);
-
-        // 시전자 도달 체크
+        // 3. 시전자 도달 체크 (기존 로직 유지)
         if (CachedContext.Instigator && bCanBeReturned)
         {
-            float DistSq = FVector::DistSquared(
-                GetActorLocation(),
-                CachedContext.Instigator->GetActorLocation());
-
+            float DistSq = FVector::DistSquared(GetActorLocation(), CachedContext.Instigator->GetActorLocation());
             if (DistSq <= FMath::Square(ReturnCompleteDistance))
                 OnReturnComplete();
         }

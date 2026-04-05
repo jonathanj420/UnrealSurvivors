@@ -84,6 +84,12 @@ void UDEBehavior_PlayEffect::Execute(FDESkillContext& Context)
                 float FinalSize = FMath::Max(Context.Radius, 100.f) * SizeMultiplier;
                 SpawnedComp->SetVariableFloat(SizeVariableName, FinalSize);
             }
+
+            if (SpawnedComp && TargetForRot) // 개발자님이 이미 만들어둔 완벽한 변수 재활용!
+            {
+                // 나이아가라의 User.TargetPosition 에 몬스터의 절대 좌표를 꽂습니다!
+                SpawnedComp->SetVariableVec3(FName("TargetPosition"), TargetForRot->GetActorLocation());
+            }
         }
         //UE_LOG(LogTemp, Warning, TEXT("NiagaraLocs count: %d"), NiagaraLocs.Num());
     }

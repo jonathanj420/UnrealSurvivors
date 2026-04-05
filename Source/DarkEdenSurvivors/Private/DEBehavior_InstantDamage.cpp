@@ -35,6 +35,7 @@ void UDEBehavior_InstantDamage::Execute(FDESkillContext& Context)
             Req.BaseDamage = FinalDamage;
             Req.CritChance = Context.CritChance;
             Req.CritDamageMultiplier = Context.CritDamageMultiplier;
+            Req.DamageTags = SkillDamageTags;
 
             // =========================================================
             // ★ 5. [로컬 OnPreHit] 조작 전용 '첫 번째' 깨끗한 택배 상자
@@ -64,8 +65,9 @@ void UDEBehavior_InstantDamage::Execute(FDESkillContext& Context)
             // ★ 6. 라이브러리에 던지기 (글로벌 OnPreHit 개입 및 실제 데미지 연산)
             // =========================================================
             // 이 안에서 플레이어의 패시브가 알아서 싹 다 터짐
+           // UE_LOG(LogTemp, Error, TEXT("Try to Damage in InstantDamage Behavior"));
             FDEDamageResult Res = UDEGameplayLibrary::ApplyCombatDamage(Req);
-            UE_LOG(LogTemp, Error, TEXT("Applied Final Damage in InstantDamage Behavior"));
+            //UE_LOG(LogTemp, Error, TEXT("Applied Final Damage in InstantDamage Behavior"));
             // 무적 등으로 데미지가 0이 들어갔다면 아래 적중 효과는 쿨하게 생략
             if (Res.FinalDamage <= 0.0f) continue;
 
@@ -80,15 +82,14 @@ void UDEBehavior_InstantDamage::Execute(FDESkillContext& Context)
 
             if (Res.bIsDead)
             {
-                UE_LOG(LogTemp, Error, TEXT("Completely Dead . . . "));
+               // UE_LOG(LogTemp, Error, TEXT("Completely Dead . . . "));
             }
             else
             {
-                UE_LOG(LogTemp, Error, TEXT("WTF?"));
+               //UE_LOG(LogTemp, Error, TEXT("WTF?"));
             }
             if (Context.SourceSkill)
             {
-                UE_LOG(LogTemp, Error, TEXT("There's SourceSkill At Least . . . "));
                 for (UDECombatEffect* Effect : Context.SourceSkill->LocalEffects)
                 {
                     if (!Effect) continue;
@@ -97,17 +98,17 @@ void UDEBehavior_InstantDamage::Execute(FDESkillContext& Context)
                     if (Effect->TriggerCondition == ECombatEventTrigger::OnHit)
                     {
                         Effect->ExecuteEffect(PostHitData);
-                        UE_LOG(LogTemp, Error, TEXT("Applied OnHit Effects in InstantDamage Behavior"));
+                        //UE_LOG(LogTemp, Error, TEXT("Applied OnHit Effects in InstantDamage Behavior"));
                     }
                     else if (Effect->TriggerCondition == ECombatEventTrigger::OnKill && Res.bIsDead)
                     {
                         Effect->ExecuteEffect(PostHitData);
-                        UE_LOG(LogTemp, Error, TEXT("Applied OnKill Effects in InstantDamage Behavior"));
+                       // UE_LOG(LogTemp, Error, TEXT("Applied OnKill Effects in InstantDamage Behavior"));
                     }
                 }
                 
             }
-            UE_LOG(LogTemp, Error, TEXT("Tried Effects In InstantDamage Behavior"));
+           // UE_LOG(LogTemp, Error, TEXT("Tried Effects In InstantDamage Behavior"));
         }
         else
         {

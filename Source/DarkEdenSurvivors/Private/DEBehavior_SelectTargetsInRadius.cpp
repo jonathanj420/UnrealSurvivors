@@ -40,6 +40,7 @@ void UDEBehavior_SelectTargetsInRadius::Execute(FDESkillContext& Context)
 
     if (CenterPoints.Num() == 0) return;
 
+    Context.Targets.Reset();
 
     // 1. 결과 담을 그릇 준비
     TArray<AActor*> RawResults; // 중복 허용 그릇
@@ -51,7 +52,7 @@ void UDEBehavior_SelectTargetsInRadius::Execute(FDESkillContext& Context)
     float FinalRadius = (this->Radius==-1.0f) ? this->Radius : Context.Radius;
     //float FinalRadius = (Context.Radius != 0.f) ? Context.Radius : this->Radius;
 
-    //UE_LOG(LogTemp, Error, TEXT("Try Select In Radius"));
+   // UE_LOG(LogTemp, Error, TEXT("Try Select In Radius"));
 
     // ★ 반경이 0 미만(-1)일 때: 맵 전체 몬스터 검색
     if (FinalRadius < 0.f)
@@ -64,7 +65,7 @@ void UDEBehavior_SelectTargetsInRadius::Execute(FDESkillContext& Context)
             if (ADEMonsterSpawnManager* SpawnManager = GameMode->GetMonsterSpawnManager())
             {
                 // 3. 매니저가 들고 있는 활성화된 몬스터 리스트를 그대로 복사! (초고속 O(1))
-                Context.Targets.Append(SpawnManager->GetActiveMonsters());
+                Context.Targets.Append(SpawnManager->GetActiveMonsters()); // THIS ADDS, ADDS NOT COPYING
             }
         }
         return; // 광역 검색 끝났으니 리턴
@@ -132,7 +133,7 @@ void UDEBehavior_SelectTargetsInRadius::Execute(FDESkillContext& Context)
     }
 
     // 3. 결과 갱신
-    Context.Targets.Empty();
+    //Context.Targets.Empty();
 
     if (bAllowOverlap)
     {

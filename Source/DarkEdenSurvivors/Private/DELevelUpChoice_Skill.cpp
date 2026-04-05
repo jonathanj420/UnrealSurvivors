@@ -5,15 +5,15 @@
 #include "DESkillManagerComponent.h"
 #include "GameFramework/Actor.h"
 
-void UDELevelUpChoice_Skill::Init(
-    int32 InSkillID,
-    const FText& InSkillName,
-    UTexture2D* InIcon
+void UDELevelUpChoice_Skill::Init(int32 InSkillID, FText InName, UTexture2D* InIcon, FText InDescription, int32 InTargetLevel
 )
 {
     SkillID = InSkillID;
-    SkillName = InSkillName;
+    SkillName = InName;
     SkillIcon = InIcon;
+    ChoiceDescription = InDescription; // 저장해두면 블루프린트 UI에서 읽어감
+    TargetLevel = InTargetLevel;
+
 }
 
 FText UDELevelUpChoice_Skill::GetDisplayName() const
@@ -24,7 +24,7 @@ FText UDELevelUpChoice_Skill::GetDisplayName() const
 FText UDELevelUpChoice_Skill::GetDescription() const
 {
     // 필요하면 SkillManager에서 SkillID로 설명 조회
-    return FText::GetEmpty();
+    return ChoiceDescription;
 }
 
 UTexture2D* UDELevelUpChoice_Skill::GetIcon() const

@@ -10,11 +10,16 @@ void UDEAutoSkillBase::Activate()
 {
 	if (!SkillOwner) return;
     //UE_LOG(LogTemp, Warning, TEXT("%s Activated"), *GetNameSafe(this));
-	FDESkillContext Context;
-	BuildContext(Context);
+	//FDESkillContext Context;
+
+    //zis no = game boom
+    CachedContext = FDESkillContext();
+
+
+	BuildContext(CachedContext);
 
     // Context를 만들었으니, 실행 로직으로 던져줍니다.
-    ExecuteWithContext(Context);
+    ExecuteWithContext(CachedContext);
 }
 
 void UDEAutoSkillBase::ExecuteWithContext(FDESkillContext& Context)
@@ -53,7 +58,6 @@ void UDEAutoSkillBase::BuildContext(FDESkillContext& OutContext)
     // 1. 필수 참조 연결
     OutContext.Instigator = SkillOwner;
     OutContext.SourceSkill = this;
-
     // 데이터가 없으면 중단
     if (!SkillData) return;
 
@@ -101,6 +105,8 @@ void UDEAutoSkillBase::BuildContext(FDESkillContext& OutContext)
         FinalRadius *= PlayerStat.EffectSizeMultiplier;
 
         // (참고: 넉백이나 관통도 필요하다면 여기서 PlayerStat을 이용해 보정 가능)
+        //so i did
+        FinalKnockback *= PlayerStat.KnockbackMultiplier;
 
         // 4. 치명타 로직 (AAA 스타일 합산 방식)
         // -1.0f는 "치명타 절대 발동 안 함"을 의미 (도트딜, 장판 등)
@@ -166,4 +172,8 @@ void UDEAutoSkillBase::EndSkill()
             Pair.Value->ReturnToPool();
     }
     OwnedAOEMap.Empty();
+}
+
+void UDEAutoSkillBase::OnTargetKilled(const FDEDamageResult& Result)
+{
 }

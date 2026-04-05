@@ -1,20 +1,15 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "DEGameInstance.h"
-#include "UObject/ConstructorHelpers.h" // ÇÊ¼ö Çì´õ
+#include "UObject/ConstructorHelpers.h"
 #include "Serialization/JsonSerializer.h"
 #include "JsonObjectConverter.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
+#include "Kismet/GameplayStatics.h"
 
 UDEGameInstance::UDEGameInstance()
 {
-    // [C++ ÇÏµåÄÚµù ·Îµå ¹æ½Ä]
-    // TEXT("...") ¾È¿¡ ¾Æ±î º¹»çÇÑ °æ·Î¸¦ ºÙ¿©³ÖÀ¸¼¼¿ä.
-    // ÁÖÀÇ: °æ·Î ¾ÕÀÇ ºÒÇÊ¿äÇÑ Å¸ÀÔ¸í(/Script/Engine.DataTable')Àº Áö¿ì°í 
-    //       /Game/... ºÎºÐ¸¸ ³²±â´Â °Ô ±ò²ûÇÕ´Ï´Ù.
-
     static ConstructorHelpers::FObjectFinder<UDataTable> DT_MonsterAsset(
         TEXT("/Game/DarkEden/Data/Monster/DT_MonsterData.DT_MonsterData")
     );
@@ -22,11 +17,6 @@ UDEGameInstance::UDEGameInstance()
     if (DT_MonsterAsset.Succeeded())
     {
         SourceMonsterTable = DT_MonsterAsset.Object;
-        UE_LOG(LogTemp, Warning, TEXT("GameInstance: DataTable Loaded via C++ Code."));
-    }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("GameInstance: Failed to Load DataTable! Check Path."));
     }
 }
 
@@ -34,48 +24,37 @@ void UDEGameInstance::Init()
 {
     Super::Init();
     LoadGame();
+    
     if (SourceMonsterTable)
     {
-        // 1. Å×ÀÌºíÀÇ ¸ðµç Çà(Row)À» °¡Á®¿È
         TArray<FName> RowNames = SourceMonsterTable->GetRowNames();
-
         for (const FName& RowName : RowNames)
         {
-            // 2. µ¥ÀÌÅÍ ÃßÃâ
             FDEMonsterData* Data = SourceMonsterTable->FindRow<FDEMonsterData>(RowName, TEXT("GameInstance Init"));
-
             if (Data)
             {
-                // 3. ³» Ä³½Ã(Map)¿¡ ÀúÀå
                 MonsterDataCache.Add(RowName, *Data);
             }
         }
-
-        UE_LOG(LogTemp, Warning, TEXT("GameInstance: Cached %d Monsters."), MonsterDataCache.Num());
     }
 }
 
 void UDEGameInstance::SaveGame()
 {
 	if (!CurrentSaveData) return;
-
-	// ºñµ¿±â ÀúÀå (Async) - °ÔÀÓ ·º ¹æÁö ÇÊ¼ö
 	UGameplayStatics::AsyncSaveGameToSlot(CurrentSaveData, SAVE_SLOT_NAME, 0);
-
 	UE_LOG(LogTemp, Log, TEXT("[GameInstance] Game Saved. Gold: %d"), CurrentSaveData->TotalGold);
 }
 
 void UDEGameInstance::LoadGame()
 {
-	// ½½·Ô¿¡ ÆÄÀÏÀÌ ÀÖ´ÂÁö È®ÀÎ
 	if (UGameplayStatics::DoesSaveGameExist(SAVE_SLOT_NAME, 0))
 	{
 		CurrentSaveData = Cast<UDESaveGame>(UGameplayStatics::LoadGameFromSlot(SAVE_SLOT_NAME, 0));
-		UE_LOG(LogTemp, Log, TEXT("[GameInstance] Save Loaded."));
+		UE_LOG(LogTemp, Log, TEXT("[GameInstance] Save Loaded. Gold: %d"), CurrentSaveData->TotalGold);
 	}
 	else
 	{
-		// ¾øÀ¸¸é »õ·Î »ý¼º
 		CurrentSaveData = Cast<UDESaveGame>(UGameplayStatics::CreateSaveGameObject(UDESaveGame::StaticClass()));
 		UE_LOG(LogTemp, Warning, TEXT("[GameInstance] New Save Created."));
 	}
@@ -89,9 +68,7 @@ int32 UDEGameInstance::GetTotalGold() const
 void UDEGameInstance::AddGold(int32 Amount)
 {
 	if (!CurrentSaveData) return;
-
 	CurrentSaveData->TotalGold += Amount;
-	// Áß¿ä: µ· ¸ÔÀ» ¶§¸¶´Ù ÀúÀåÇÏ¸é IO ºÎÇÏ ½ÉÇÔ. °ÔÀÓ ¿À¹ö³ª »óÁ¡ Á¾·á ½Ã¿¡¸¸ SaveGame È£Ãâ ±ÇÀå.
 }
 
 bool UDEGameInstance::TryConsumeGold(int32 Amount)
@@ -101,56 +78,91 @@ bool UDEGameInstance::TryConsumeGold(int32 Amount)
 	if (CurrentSaveData->TotalGold >= Amount)
 	{
 		CurrentSaveData->TotalGold -= Amount;
-		SaveGame(); // µ· ½èÀ¸¸é ¹Ù·Î ÀúÀåÇÏ´Â °Ô ¾ÈÀüÇÔ
+		SaveGame();
 		return true;
 	}
 	return false;
 }
 
-int32 UDEGameInstance::GetUpgradeLevel(FName StatName) const
+int32 UDEGameInstance::GetUpgradeLevel(EDEStatType StatType) const
 {
 	if (!CurrentSaveData) return 0;
 
-	// ÀÌ¸§À¸·Î ºÐ±â (³ªÁß¿¡ EnumÀ¸·Î ¹Ù²Ù¸é ´õ ¾ÈÀüÇÔ)
-	/*if (StatName == FName("Attack")) return CurrentSaveData->UpgradeStatus.DamageMultiplierLevel;
-	if (StatName == FName("Health")) return CurrentSaveData->UpgradeStatus.MaxHealthLevel;
-	if (StatName == FName("Speed")) return CurrentSaveData->UpgradeStatus.MoveSpeedLevel;
-	if (StatName == FName("Greed")) return CurrentSaveData->UpgradeStatus.GreedLevel;*/
-
-	return 0;
+	switch (StatType)
+	{
+	case EDEStatType::Damage: return CurrentSaveData->UpgradeStatus.DamageMultiplierLevel;
+	case EDEStatType::MaxHP: return CurrentSaveData->UpgradeStatus.HealthMultiplierLevel;
+	case EDEStatType::MoveSpeed: return CurrentSaveData->UpgradeStatus.MoveSpeedMultiplierLevel;
+	case EDEStatType::Amount: return CurrentSaveData->UpgradeStatus.BonusAmountLevel;
+	case EDEStatType::Greed: return CurrentSaveData->UpgradeStatus.GreedLevel;
+	default: return 0;
+	}
 }
 
-void UDEGameInstance::LevelUpStat(FName StatName)
+int32 UDEGameInstance::GetUpgradeCost(EDEStatType StatType) const
 {
-	if (!CurrentSaveData) return;
+    int32 Level = GetUpgradeLevel(StatType);
+    // ê¸°ë³¸ ë¹„ìš© 500ê³¨ë“œ, ë ˆë²¨ë‹¹ 500ê³¨ë“œì”© ì¦ê°€í•˜ëŠ” ê°„ë‹¨í•œ ê³µì‹
+    return (Level + 1) * 500;
+}
 
-	/*if (StatName == FName("Attack")) CurrentSaveData->UpgradeStatus.AttackDamageLevel++;
-	else if (StatName == FName("Health")) CurrentSaveData->UpgradeStatus.MaxHealthLevel++;
-	else if (StatName == FName("Speed")) CurrentSaveData->UpgradeStatus.MoveSpeedLevel++;
-	else if (StatName == FName("Greed")) CurrentSaveData->UpgradeStatus.GreedLevel++;*/
+bool UDEGameInstance::TryLevelUpStat(EDEStatType StatType)
+{
+    if (!CurrentSaveData) return false;
 
-	SaveGame(); // °­È­ Á÷ÈÄ ÀúÀå
+    int32 Cost = GetUpgradeCost(StatType);
+    if (TryConsumeGold(Cost))
+    {
+        switch (StatType)
+        {
+        case EDEStatType::Damage: CurrentSaveData->UpgradeStatus.DamageMultiplierLevel++; break;
+        case EDEStatType::MaxHP: CurrentSaveData->UpgradeStatus.HealthMultiplierLevel++; break;
+        case EDEStatType::MoveSpeed: CurrentSaveData->UpgradeStatus.MoveSpeedMultiplierLevel++; break;
+        case EDEStatType::Amount: CurrentSaveData->UpgradeStatus.BonusAmountLevel++; break;
+        case EDEStatType::Greed: CurrentSaveData->UpgradeStatus.GreedLevel++; break;
+        default: return false;
+        }
+        SaveGame();
+        return true;
+    }
+
+    return false;
+}
+
+float UDEGameInstance::GetStatUpgradeBonus(EDEStatType StatType) const
+{
+    int32 Level = GetUpgradeLevel(StatType);
+    if (Level <= 0) return 0.0f;
+
+    switch (StatType)
+    {
+    case EDEStatType::Damage:
+    case EDEStatType::MaxHP:
+    case EDEStatType::MoveSpeed:
+    case EDEStatType::Greed:
+        // í¼ì„¼íŠ¸ ìˆ˜ì¹˜: ë ˆë²¨ë‹¹ +5% (0.05)
+        return Level * 0.05f;
+
+    case EDEStatType::Amount:
+        // ê°€ì‚° ìˆ˜ì¹˜: ë ˆë²¨ë‹¹ +1ê°œ
+        return (float)Level;
+
+    default:
+        return 0.0f;
+    }
 }
 
 void UDEGameInstance::SaveGameToJSON()
 {
     if (!CurrentSaveData) return;
-
-    // [¼öÁ¤ 1] ºó JSON °´Ã¼¸¦ ¸ÕÀú ¸¸µç´Ù (MakeShared)
     TSharedRef<FJsonObject> JsonObject = MakeShared<FJsonObject>();
-
-    // [¼öÁ¤ 2] StaticStruct() ´ë½Å GetClass() »ç¿ë
-    // ÇÔ¼ö ÇüÅÂ: UStructToJsonObject(Å¬·¡½ºÁ¤º¸, ÀÎ½ºÅÏ½º, Ã¤¿ï_JSON_°´Ã¼)
     FJsonObjectConverter::UStructToJsonObject(CurrentSaveData->GetClass(), CurrentSaveData, JsonObject);
 
-    // JSON °´Ã¼¸¦ ¹®ÀÚ¿­(String)·Î º¯È¯
     FString JsonString;
     TSharedRef<TJsonWriter<>> Writer = TJsonWriterFactory<>::Create(&JsonString);
     FJsonSerializer::Serialize(JsonObject, Writer);
 
-    // ÆÄÀÏ·Î ÀúÀå
     FString SavePath = FPaths::ProjectSavedDir() + TEXT("SaveGames/SaveData.json");
-
     if (FFileHelper::SaveStringToFile(JsonString, *SavePath))
     {
         UE_LOG(LogTemp, Warning, TEXT("JSON Saved to: %s"), *SavePath);
@@ -160,22 +172,11 @@ void UDEGameInstance::SaveGameToJSON()
 void UDEGameInstance::LoadGameFromJSON()
 {
     FString SavePath = FPaths::ProjectSavedDir() + TEXT("SaveGames/SaveData.json");
+    if (!FPlatformFileManager::Get().GetPlatformFile().FileExists(*SavePath)) return;
 
-    // ÆÄÀÏ È®ÀÎ
-    if (!FPlatformFileManager::Get().GetPlatformFile().FileExists(*SavePath))
-    {
-        UE_LOG(LogTemp, Error, TEXT("JSON File not found!"));
-        return;
-    }
-
-    // ÆÄÀÏ ÀÐ±â
     FString JsonString;
-    if (!FFileHelper::LoadFileToString(JsonString, *SavePath))
-    {
-        return;
-    }
+    if (!FFileHelper::LoadFileToString(JsonString, *SavePath)) return;
 
-    // ¹®ÀÚ¿­ -> JSON °´Ã¼ ÆÄ½Ì
     TSharedPtr<FJsonObject> JsonObject;
     TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonString);
 
@@ -185,25 +186,16 @@ void UDEGameInstance::LoadGameFromJSON()
         {
             CurrentSaveData = Cast<UDESaveGame>(UGameplayStatics::CreateSaveGameObject(UDESaveGame::StaticClass()));
         }
-
-        // [¼öÁ¤ 3] StaticStruct() ´ë½Å GetClass() »ç¿ë
-        // JSON ³»¿ëÀ» ³» SaveGame ÀÎ½ºÅÏ½º¿¡ µ¤¾î¾º¿ì±â
         FJsonObjectConverter::JsonObjectToUStruct(JsonObject.ToSharedRef(), CurrentSaveData->GetClass(), CurrentSaveData, 0, 0);
-
         UE_LOG(LogTemp, Warning, TEXT("JSON Loaded! Gold: %d"), CurrentSaveData->TotalGold);
-
-        // Áß¿ä: ºÒ·¯¿Â ³»¿ëÀ» ¹ÙÀÌ³Ê¸® ÆÄÀÏ(.sav)·Îµµ µ¿±âÈ­ÇÏ°í ½Í´Ù¸é ¿©±â¼­ SaveGame() È£Ãâ
-        // SaveGame(); 
     }
 }
 
 const FDEMonsterData* UDEGameInstance::GetMonsterData(FName MonsterID)
 {
-    // ÀÌÁ¦ Å×ÀÌºí µÚÁú ÇÊ¿ä ¾øÀÌ Map¿¡¼­ Áï½Ã ¸®ÅÏ (°¡Àå ºü¸§)
     if (MonsterDataCache.Contains(MonsterID))
     {
         return &MonsterDataCache[MonsterID];
     }
-
     return nullptr;
 }

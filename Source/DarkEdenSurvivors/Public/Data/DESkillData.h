@@ -46,6 +46,10 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FString SkillName;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FText UpgradeDescription= FText::FromString(TEXT("Next Level Desc"));
+
+
     //stats
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float Damage;
@@ -101,6 +105,9 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     UTexture2D* SkillIcon;
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    FText BaseDescription;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int32 MaxLevel=9;

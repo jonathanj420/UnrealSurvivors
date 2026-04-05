@@ -420,6 +420,23 @@ const FDESkillRow* UDESkillManagerComponent::GetRandomSkillRow()
     return GetSkillRow(SelectedSkillID);
 }
 
+const FDESkillData* UDESkillManagerComponent::GetSkillDataRow(int32 SkillID, int32 Level) const
+{
+    // 1. 해당 SkillID의 레벨업 데이터 모음집(안쪽 맵)을 찾는다.
+    if (const TMap<int32, FDESkillData>* LevelMap = InitializedSkills.Find(SkillID))
+    {
+        // 2. 그 안에서 정확히 요청한 Level의 데이터를 찾아 리턴한다.
+        if (const FDESkillData* FoundData = LevelMap->Find(Level))
+        {
+            return FoundData;
+        }
+    }
+
+    // 만약 만렙이라서 다음 레벨 데이터가 없거나 잘못된 ID면 nullptr 반환
+    return nullptr;
+
+}
+
 FDESkillRow* UDESkillManagerComponent::GetSkillRow(int32 SkillID)
 {
     return SkillRowMap.Find(SkillID);
@@ -618,10 +635,10 @@ void UDESkillManagerComponent::ReduceCooldown(int32 SkillID, float Amount, ECool
             ReduceValue = FoundSkill->CurrentCooldown * Amount;
             break;
         }
-        UE_LOG(LogTemp, Warning, TEXT("Remaining Cooldown Before Reduction : %f"),FoundSkill->CurrentCooldown);
+       // UE_LOG(LogTemp, Warning, TEXT("Remaining Cooldown Before Reduction : %f"),FoundSkill->CurrentCooldown);
         FoundSkill->CurrentCooldown = FMath::Max(0.0f, FoundSkill->CurrentCooldown - ReduceValue);
         TotalReducedCooldownAmount += ReduceValue;
-        UE_LOG(LogTemp, Warning, TEXT("Reduced Amount : %f / Remaining : %f"), ReduceValue, FoundSkill->CurrentCooldown);
+        //UE_LOG(LogTemp, Warning, TEXT("Reduced Amount : %f / Remaining : %f"), ReduceValue, FoundSkill->CurrentCooldown);
     }
 
     //if (FActiveSkill* FoundSkill = ActiveSkills.Find(SkillID))

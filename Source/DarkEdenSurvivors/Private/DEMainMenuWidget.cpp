@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "DEMainMenuWidget.h"
 #include "DECharacterSlotWidget.h"
 #include "DEStageSlotWidget.h"
-#include "DECharacterRow.h" // µ¥ÀÌÅÍ Å×ÀÌºí ±¸Á¶Ã¼
+#include "DEShopWidget.h"
+#include "DECharacterRow.h"
 #include "Components/Button.h"
 #include "DEGameTypes.h"
 #include "Components/WidgetSwitcher.h"
@@ -15,19 +15,19 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-
 void UDEMainMenuWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    // 1. ÃÊ±â È­¸é ¼¼ÆÃ: ¹«Á¶°Ç 0¹ø(Å¸ÀÌÆ²) ¶ç¿ì±â
+    // ì´ˆê¸° í™”ë©´ ì„¤ì • (0: íƒ€ì´í‹€)
     if (Switcher_Main) Switcher_Main->SetActiveWidgetIndex(0);
 
-    // 2. Ä³¸¯ÅÍ¸¦ °í¸£±â Àü±îÁø '´ÙÀ½À¸·Î' ¹öÆ° ºñÈ°¼ºÈ­ (¹ì¼­ µğÅ×ÀÏ!)
+    // ìºë¦­í„° ì„ íƒ ë²„íŠ¼ì€ ìºë¦­í„°ê°€ ì„ íƒë˜ê¸° ì „ê¹Œì§€ ë¹„í™œì„±í™”
     if (Btn_SelectCharacter) Btn_SelectCharacter->SetIsEnabled(false);
 
-    // 3. ¹öÆ° Å¬¸¯ ÀÌº¥Æ® ¿¬°á
+    // ë²„íŠ¼ ì´ë²¤íŠ¸ ë°”ì¸ë”©
     if (Btn_StartGame) Btn_StartGame->OnClicked.AddDynamic(this, &UDEMainMenuWidget::OnStartGameClicked);
+    if (Btn_OpenShop) Btn_OpenShop->OnClicked.AddDynamic(this, &UDEMainMenuWidget::OnOpenShopClicked);
     if (Btn_QuitGame) Btn_QuitGame->OnClicked.AddDynamic(this, &UDEMainMenuWidget::OnQuitGameClicked);
 
     if (Btn_SelectCharacter) Btn_SelectCharacter->OnClicked.AddDynamic(this, &UDEMainMenuWidget::OnSelectCharacterClicked);
@@ -36,35 +36,21 @@ void UDEMainMenuWidget::NativeConstruct()
     if (Btn_EnterGame) Btn_EnterGame->OnClicked.AddDynamic(this, &UDEMainMenuWidget::OnEnterGameClicked);
     if (Btn_BackToCharacter) Btn_BackToCharacter->OnClicked.AddDynamic(this, &UDEMainMenuWidget::OnBackToCharacterClicked);
 
-    // 4. Ä³¸¯ÅÍ ¸ñ·Ï ½½·Ô »ı¼º ½ÇÇà!
+    // ìƒì  ì´ë²¤íŠ¸ ë°”ì¸ë”©
+    if (Shop_Content)
+    {
+        Shop_Content->OnShopClosed.AddDynamic(this, &UDEMainMenuWidget::OnShopClosed);
+    }
+
+    // ì´ˆê¸°í™”
     GenerateCharacterSlots();
     GenerateStageSlots();
 }
 
 void UDEMainMenuWidget::GenerateCharacterSlots()
 {
-    UE_LOG(LogTemp, Warning, TEXT("Try Generate Char Slots"));
-    //if (!CharacterDataTable || !CharacterSlotClass || !WrapBox_CharacterList) return;
-    if (!CharacterDataTable)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("NO CHARAC DT"));
-        return;
-    }
-    if (!CharacterSlotClass)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("NO CHARAC SLOTS"));
-        return;
-    }
+    if (!CharacterDataTable || !CharacterSlotClass || !WrapBox_CharacterList) return;
 
-    if (!WrapBox_CharacterList)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("NO WRAP "));
-        return;
-    }
-
-
-
-    UE_LOG(LogTemp, Warning, TEXT("Reqments Passed"));
     WrapBox_CharacterList->ClearChildren();
 
     TArray<FDECharacterRow*> AllCharacters;
@@ -78,72 +64,38 @@ void UDEMainMenuWidget::GenerateCharacterSlots()
             if (NewSlot)
             {
                 NewSlot->InitSlot(*RowData);
-                // ½½·ÔÀÌ Å¬¸¯µÆÀ» ¶§ ³» ÇÔ¼ö(OnCharacterSlotClicked)°¡ ½ÇÇàµÇµµ·Ï ¿¬°á
                 NewSlot->OnSlotClicked.AddDynamic(this, &UDEMainMenuWidget::OnCharacterSlotClicked);
                 WrapBox_CharacterList->AddChildToWrapBox(NewSlot);
-                UE_LOG(LogTemp, Warning, TEXT("Char Slot Goood"));
             }
         }
     }
 }
 
-// ==========================================
-// ¡Ú ÇÙ½É: ½½·Ô Å¬¸¯ ½Ã ÇÏ´Ü Á¤º¸Ã¢ ¾÷µ¥ÀÌÆ®
-// ==========================================
 void UDEMainMenuWidget::OnCharacterSlotClicked(int32 ClickedCharacterID)
 {
-    // ¼±ÅÃÇÑ ID ±â¾ïÇÏ±â
     SelectedCharacterID = ClickedCharacterID;
-
-    // µ¥ÀÌÅÍ Å×ÀÌºí¿¡¼­ ÀÌ ID¿¡ ÇØ´çÇÏ´Â ÁÙ(Row) Ã£±â
-    // (º¸Åë Row NameÀ» ID¸¦ StringÀ¸·Î º¯È¯ÇØ¼­ ¾¹´Ï´Ù. ¿¡µğÅÍ¿¡¼­ Çà ÀÌ¸§À» 1, 2, 3.. À¸·Î Áö¾îÁÖ¼¼¿ä!)
     FName RowName = FName(*FString::FromInt(ClickedCharacterID));
     FDECharacterRow* FoundRow = CharacterDataTable->FindRow<FDECharacterRow>(RowName, TEXT("FindCharacter"));
 
     if (FoundRow)
     {
-
-        UE_LOG(LogTemp, Warning, TEXT("Charc Row arimasuyo"));
-        // ÇÏ´Ü »ó¼¼ Á¤º¸ UI ¾÷µ¥ÀÌÆ®
         if (Txt_SelectedCharName) Txt_SelectedCharName->SetText(FoundRow->CharacterName);
         if (Txt_SelectedCharDesc) Txt_SelectedCharDesc->SetText(FoundRow->Description);
         if (Img_SelectedCharPortrait && FoundRow->Portrait) Img_SelectedCharPortrait->SetBrushFromTexture(FoundRow->Portrait);
 
-        // Ä³¸¯ÅÍ¸¦ °ñ¶úÀ¸´Ï µåµğ¾î '´ÙÀ½À¸·Î' ¹öÆ° È°¼ºÈ­!
         if (Btn_SelectCharacter) Btn_SelectCharacter->SetIsEnabled(true);
     }
 }
 
 void UDEMainMenuWidget::GenerateStageSlots()
 {
-    UE_LOG(LogTemp, Warning, TEXT("Try Generate Stage SLots"));
-    // ¾ÈÀü °Ë»ç
-    //if (!StageDataTable || !StageSlotClass || !ScrollBox_StageList) return;
-    if (!StageDataTable)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("NO StageDataTable DT"));
-        return;
-    }
-    if (!StageSlotClass)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("NO StageSlotClass SLOTS"));
-        return;
-    }
-
-    if (!ScrollBox_StageList)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("NO ScrollBox_StageList "));
-        return;
-    }
-
+    if (!StageDataTable || !StageSlotClass || !ScrollBox_StageList) return;
 
     ScrollBox_StageList->ClearChildren();
 
-    // µ¥ÀÌÅÍ Å×ÀÌºí ±Ü¾î¿À±â
-    TArray<FDEStageRow*> AllStages; // (±¸Á¶Ã¼ ÀÌ¸§À» Row·Î ÇÏ¼Ì´Ù¸é FDEStageRow)
+    TArray<FDEStageRow*> AllStages;
     StageDataTable->GetAllRows<FDEStageRow>(TEXT("StageContext"), AllStages);
 
-    // ½½·Ô ÂÓ ½ºÆùÇØ¼­ ½ºÅ©·Ñ »óÀÚ¿¡ ²È¾Æ³Ö±â!
     for (FDEStageRow* StageData : AllStages)
     {
         if (StageData)
@@ -152,25 +104,20 @@ void UDEMainMenuWidget::GenerateStageSlots()
             if (NewSlot)
             {
                 NewSlot->InitSlot(*StageData);
-                // ½½·ÔÀÌ ´­¸®¸é ³» ÇÔ¼ö(OnStageSlotClicked)°¡ ½ÇÇàµÇµµ·Ï ¿¬°á!
                 NewSlot->OnSlotClicked.AddDynamic(this, &UDEMainMenuWidget::OnStageSlotClicked);
-
                 ScrollBox_StageList->AddChild(NewSlot);
             }
         }
     }
 }
 
-// ¸Ê ¸®½ºÆ® Áß ÇÏ³ª¸¦ Å¬¸¯ÇßÀ» ¶§!
 void UDEMainMenuWidget::OnStageSlotClicked(int32 ClickedStageID)
 {
-    // µ¥ÀÌÅÍ Å×ÀÌºí¿¡¼­ ÀÌ ID¿¡ ÇØ´çÇÏ´Â ÁÙ Ã£±â
     FName RowName = FName(*FString::FromInt(ClickedStageID));
     FDEStageRow* FoundStage = StageDataTable->FindRow<FDEStageRow>(RowName, TEXT("FindStage"));
 
     if (FoundStage)
     {
-        // 1. ¿ìÃø »ó¼¼ Á¤º¸ UI ¾÷µ¥ÀÌÆ®
         if (Txt_SelectedStageName) Txt_SelectedStageName->SetText(FoundStage->StageName);
         if (Txt_SelectedStageDesc) Txt_SelectedStageDesc->SetText(FoundStage->Description);
         if (Img_SelectedStageThumbnail && FoundStage->StageThumbnail)
@@ -178,18 +125,20 @@ void UDEMainMenuWidget::OnStageSlotClicked(int32 ClickedStageID)
             Img_SelectedStageThumbnail->SetBrushFromTexture(FoundStage->StageThumbnail);
         }
 
-        // 2. ¡Ú ÀÎ°ÔÀÓÀ¸·Î ³Ñ¾î°¥ ¶§ ¾µ ÁøÂ¥ ¸Ê ÀÌ¸§(LevelName) ¸Ş¸ğÇØµÎ±â!
         SelectedStageLevelName = FoundStage->LevelName;
-
-        // ÀüÅõ ÁøÀÔ ¹öÆ° È°¼ºÈ­ (Ä³¸¯ÅÍ ¶§¶û ¶È°°ÀÌ ÃÊ±â¿£ ºñÈ°¼ºÈ­ÇØµÎ´Â °É ÃßÃµ)
         if (Btn_EnterGame) Btn_EnterGame->SetIsEnabled(true);
     }
 }
 
-// ==========================================
-// È­¸é ÀüÈ¯ ¹× °ÔÀÓ Á¾·á ·ÎÁ÷
-// ==========================================
+// í™”ë©´ ì „í™˜ í•¸ë“¤ëŸ¬
 void UDEMainMenuWidget::OnStartGameClicked() { if (Switcher_Main) Switcher_Main->SetActiveWidgetIndex(1); }
+
+void UDEMainMenuWidget::OnOpenShopClicked() 
+{ 
+    if (Switcher_Main) Switcher_Main->SetActiveWidgetIndex(3); // ìƒì  í™”ë©´ìœ¼ë¡œ ì „í™˜
+    if (Shop_Content) Shop_Content->RefreshShopUI(); // ìµœì‹  ê³¨ë“œ ìˆ˜ì¹˜ ë“± ë°˜ì˜
+}
+
 void UDEMainMenuWidget::OnQuitGameClicked() { UKismetSystemLibrary::QuitGame(this, GetWorld()->GetFirstPlayerController(), EQuitPreference::Quit, true); }
 
 void UDEMainMenuWidget::OnSelectCharacterClicked() { if (Switcher_Main) Switcher_Main->SetActiveWidgetIndex(2); }
@@ -197,12 +146,13 @@ void UDEMainMenuWidget::OnBackToTitleClicked() { if (Switcher_Main) Switcher_Mai
 
 void UDEMainMenuWidget::OnEnterGameClicked()
 {
-    // ¾Æ¹« ¸Êµµ ¾È °ñ¶úÀ¸¸é(ÀÌ¸§ÀÌ ºñ¾îÀÖÀ¸¸é) ¸·±â
     if (SelectedStageLevelName.IsNone()) return;
-
-    // TODO: GameInstance¿¡ ¼±ÅÃÇÑ Ä³¸¯ÅÍ ID ÀúÀåÇÏ´Â ·ÎÁ÷ ÇÊ¿ä
-
-    // ¡Ú ÇÏµåÄÚµù Å»Ãâ! À¯Àú°¡ °í¸¥ ¸Ê ÀÌ¸§À¸·Î ¿Ïº®ÇÏ°Ô ÀÌµ¿!
     UGameplayStatics::OpenLevel(this, SelectedStageLevelName);
 }
+
 void UDEMainMenuWidget::OnBackToCharacterClicked() { if (Switcher_Main) Switcher_Main->SetActiveWidgetIndex(1); }
+
+void UDEMainMenuWidget::OnShopClosed()
+{
+    if (Switcher_Main) Switcher_Main->SetActiveWidgetIndex(0); // ë‹¤ì‹œ íƒ€ì´í‹€ë¡œ ë³µê·€
+}

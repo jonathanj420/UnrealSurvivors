@@ -30,11 +30,14 @@ void UDECombatEffect_Execution::OnExecuteEffect(FCombatEventData& EventData)
         // 1. 누가, 무엇으로 때리는지 정보 세팅 (쿨감 버그 해결!)
         ExecutionRequest.Instigator = EventData.Instigator;   // 공격자 (플레이어)
         ExecutionRequest.DamageCauser = EventData.Instigator; // 공격 도구 (투사체/칼 등)
-        ExecutionRequest.SourceObject = this;                   // ★ 이 '처형' 이펙트 자체를 원인으로 기록! (시너지용)
+        ExecutionRequest.SourceObject = EventData.SourceObject;                   // ★ 이 '처형' 이펙트 자체를 원인으로 기록! (시너지용)
         ExecutionRequest.Victim = EventData.Target;           // 맞은 놈
 
+
         // 2. ★ 가장 중요한 핵심: 데미지 타입을 'Execution'으로 지정! ★
-        ExecutionRequest.DamageType = EDEDamageType::Execution;
+        //ExecutionRequest.DamageType = EDEDamageType::Execution;
+        ExecutionRequest.DamageTags.AddTag(FGameplayTag::RequestGameplayTag(FName("Damage.Mechanic.Execution")));
+        ExecutionRequest.bCanTriggerOnHit = false;
 
         // 3. 데미지 수치는 고민하지 마십쇼! 
         // HealthComp 안의 ProcessDamage switch문에서 MaxHP * 100.0f로 덮어씌울 겁니다.

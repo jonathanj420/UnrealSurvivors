@@ -10,8 +10,8 @@
 
 UDESkill_BloodySpear::UDESkill_BloodySpear()
 {
-	//static ConstructorHelpers::FObjectFinder<UNiagaraSystem> NiagaraRef(TEXT("/Game/DarkEden/Data/Niagara/NS_TalonOfCrow.NS_TalonOfCrow"));
-	static ConstructorHelpers::FObjectFinder<UNiagaraSystem> NiagaraRef(TEXT("/Game/DarkEden/Data/Niagara/NS_BloodySpear.NS_BloodySpear"));
+	static ConstructorHelpers::FObjectFinder<UNiagaraSystem> NiagaraRef(TEXT("/Game/DarkEden/Data/Niagara/NS_BloodyScarify.NS_BloodyScarify"));
+	//static ConstructorHelpers::FObjectFinder<UNiagaraSystem> NiagaraRef(TEXT("/Game/DarkEden/Data/Niagara/NS_BloodySpear.NS_BloodySpear"));
 	if (NiagaraRef.Succeeded())
 	{
 		NiagaraFx = NiagaraRef.Object;

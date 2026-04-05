@@ -39,6 +39,9 @@ public:
     UPROPERTY(EditAnywhere, Category = "Boomerang")
     float ReturnSpeed = 900.f;
 
+    UPROPERTY(EditAnywhere, Category = "Boomerang")
+    float RetractionAcceleration = 1000.0f;
+
     // º¹±Í ¹æ½Ä
     UPROPERTY(EditAnywhere, Category = "Boomerang")
     EReturnMode ReturnMode = EReturnMode::Linear;

@@ -54,6 +54,10 @@ struct FDEAccessoryRow : public FTableRowBase
 {
     GENERATED_BODY()
 
+
+    UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    int32 ID = 0;
+
     // 어떤 악세서리인가? (위에서 만든 데이터 에셋을 쏙 넣음)
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     UDEAccessoryData* AccessoryData = nullptr;

@@ -3,55 +3,53 @@
 
 #include "DEStatusEffectBase.h"
 #include "DEMonsterBase.h"
+#include "Components/SkeletalMeshComponent.h"    // ★ 몬스터 메쉬를 찾기 위해 필수!
+#include "Materials/MaterialInstanceDynamic.h"
 
-void UDEStatusEffectBase::InitEffect(AActor* InInstigator, AActor* InTarget, float InDuration, float InPower, float InInterval)
+UDEStatusEffectBase::UDEStatusEffectBase()
 {
-	Instigator = InInstigator;
-	Target = InTarget;
-	Duration = InDuration;
-	Power = InPower;
-	Interval = InInterval;
-
-	ElapsedTime = 0.f;
-	TickTimer = 0.f;
-	CurrentStacks = 1; // 처음 걸렸으니 1스택!
+	// 기본값 안전 세팅
+	StackPolicy = EStackPolicy::Ignore;
+	MaxStacks = 1;
 }
 
-void UDEStatusEffectBase::Tick(float DeltaTime)
+void UDEStatusEffectBase::Tick(AActor* Target, FActiveStatusEffect& EffectData, float DeltaTime) const
 {
-	ElapsedTime += DeltaTime;
+	// 1. 전체 지속 시간 업데이트
+	EffectData.ElapsedTime += DeltaTime;
 
-	// 인터벌이 있는 경우 (도트 데미지 등)
-	if (Interval > 0.f)
+	// 2. 인터벌(틱 주기)이 있는 경우 도트 딜 타이머 업데이트
+	if (EffectData.Interval > 0.f)
 	{
-		TickTimer += DeltaTime;
-		if (TickTimer >= Interval)
+		EffectData.TickTimer += DeltaTime;
+		if (EffectData.TickTimer >= EffectData.Interval)
 		{
-			TickTimer -= Interval;
+			EffectData.TickTimer -= EffectData.Interval;
 
-			// 도트 딜 로직 발동!
-			OnIntervalTick();
+			// 도트 딜이나 주기적 효과 발동! 
+			// (블루프린트나 자식 C++ 클래스에서 오버라이드한 로직이 실행됨)
+			OnIntervalTick(Target, EffectData);
 		}
 	}
 }
 
-// BlueprintNativeEvent의 C++ 기본 구현부 (_Implementation을 붙여야 함!)
-void UDEStatusEffectBase::OnApply_Implementation()
+void UDEStatusEffectBase::OnApply(AActor* Target, FActiveStatusEffect& EffectData) const
 {
-	// 자식 클래스(C++)에서 Super::OnApply_Implementation() 호출 후 로직 작성
+	// 자식 클래스(UDEStatusEffect_CC 등)에서 Super::OnApply_Implementation() 호출 후 로직 작성
+	// (예: 여기서 EffectParticle을 Target에 Attach 시키는 공통 로직을 넣기 좋습니다.)
 }
 
-void UDEStatusEffectBase::OnRemove_Implementation()
+void UDEStatusEffectBase::OnRemove(AActor* Target, FActiveStatusEffect& EffectData) const
 {
-	// 자식 클래스(C++)에서 로직 작성
+	// 자식 클래스에서 스탯 원복 등의 로직 작성
 }
 
-void UDEStatusEffectBase::OnIntervalTick_Implementation()
+void UDEStatusEffectBase::OnIntervalTick(AActor* Target, FActiveStatusEffect& EffectData) const
 {
-	// 자식 클래스(C++)에서 로직 작성 (예: ApplyCombatDamage 호출)
+	// UDEStatusEffect_DoT 클래스에서 데미지를 가하는 로직 구현
 }
 
-void UDEStatusEffectBase::OnStacked_Implementation(int32 NewStackCount)
+void UDEStatusEffectBase::OnStacked(AActor* Target, FActiveStatusEffect& EffectData, int32 NewStackCount) const
 {
-	// 자식 클래스(C++)에서 로직 작성
+	// 스택이 쌓일 때 파티클 펑 터지는 연출이나 사운드 재생
 }

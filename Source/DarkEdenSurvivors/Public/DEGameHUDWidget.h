@@ -22,10 +22,20 @@ public:
 	void UpdateHP(float CurrentHP, float MaxHP);
 	void UpdateExp(float CurrentExp, float MaxExp);
 	void UpdateTime(float TimeSeconds);
+	void UpdateLevel(int32 CurrentLevel);
+
 protected:
 	virtual void NativeConstruct() override;
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	//virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	int32 LastSeconds = -1;
+
+	// 알람시계 손잡이
+	FTimerHandle TimeUpdateTimerHandle;
+
+	// 타이머가 1초마다 부를 함수
+	UFUNCTION()
+	void UpdateTimeTick();
+
 protected:
 	// --- [1. 에디터 바인딩] ---
 	// 이름 꼭 맞춰야 합니다!
@@ -39,6 +49,8 @@ protected:
     UPROPERTY(meta = (BindWidget))
     class UTextBlock* Text_Time;
 
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* Text_Level;
 
 	UPROPERTY(meta = (BindWidget))
 	class UDESkillInventoryWidget* WBP_SkillInventoryWidget;

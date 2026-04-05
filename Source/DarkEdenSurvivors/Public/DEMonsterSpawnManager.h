@@ -7,6 +7,7 @@
 #include "Engine/DataTable.h"
 #include "Data/DEStageWaveData.h"    
 #include "Data/DEMonsterData.h"
+#include "Engine/StreamableManager.h" // 상단 인클루드 추가
 #include "DEMonsterSpawnManager.generated.h"
 
 
@@ -38,6 +39,15 @@ public:
 
     UPROPERTY()
     TMap<FName, TSubclassOf<ADEMonsterBase>> CachedMonsterClasses;
+
+    // 비동기 로딩을 도와줄 엔진 매니저
+    FStreamableManager StreamableManager;
+
+    // 로딩된 에셋들이 가비지 컬렉터(GC)에 날아가지 않게 꽉 잡고 있을 손잡이
+    TSharedPtr<FStreamableHandle> PreloadHandle;
+
+    // 프리로드 함수 선언
+    void PreloadMonsterResources();
 
     //Pooled Monster Instance
     UPROPERTY(EditAnywhere, Category = "Pooling")

@@ -25,7 +25,6 @@ ADEMonsterBase::ADEMonsterBase()
 	Capsule->InitCapsuleSize(42.0f, 96.0f); // 반지름, 높이
 	Capsule->SetCollisionProfileName(TEXT("Monster"));
 	Capsule->SetCastShadow(false);
-	//Capsule->bUpdateOverlapsOnComponentMove = false;
 	//Capsule->SetGenerateOverlapEvents(false);
 	RootComponent = Capsule;
 
@@ -34,17 +33,13 @@ ADEMonsterBase::ADEMonsterBase()
 	Mesh->SetupAttachment(RootComponent);
 	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Mesh->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
+	Mesh->bEnableUpdateRateOptimizations = true;
+	Mesh->SetGenerateOverlapEvents(false);
 	Mesh->SetCastShadow(false);
-	
-	//TestMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TestMesh"));
-	//TestMesh->SetupAttachment(RootComponent);
-	//TestMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	//TestMesh->SetRelativeLocation(FVector(0.0f, 0.0f, -96.0f));
-	//ConstructorHelpers::FObjectFinder<UStaticMesh>SM_TESTMESH(TEXT("/Game/InfinityBladeWeapons/Weapons/Staff/StaticMesh/SM_Stf_StaffofAncients.SM_Stf_StaffofAncients"));
-	//if (SM_TESTMESH.Succeeded())
-	//{
-	//	TestMesh->SetStaticMesh(SM_TESTMESH.Object);
-	//}
+
+	Capsule->SetShouldUpdatePhysicsVolume(false);
+	//Capsule->SetCollisionResponseToChannel(ECC_Monster, ECR_Ignore);
+	Mesh->SetShouldUpdatePhysicsVolume(false);
 
 	//StatComponent = CreateDefaultSubobject<UDEStatComponent>(TEXT("StatComponent"));
 	StatusEffectComponent = CreateDefaultSubobject<UDEStatusEffectComponent>(TEXT("StatusEffectComponent"));
@@ -66,17 +61,15 @@ void ADEMonsterBase::BeginPlay()
 	}
 	
 	
-	TargetPlayer = Cast<ADECharacterBase>(UGameplayStatics::GetPlayerPawn(GetWorld(), 0));
 
 }
 
 // Called every frame
 void ADEMonsterBase::Tick(float DeltaTime)
 {
-	
 }
 
-void ADEMonsterBase::MoveToPlayer(float DeltaTime, const FVector& PlayerLocation)
+void ADEMonsterBase::MoveToPlayer(float DeltaTime, const FVector& PlayerLocation, const FVector& MyLocation)
 {
 	//// 1.[최적화] VInterpTo를 버리고, 초경량 마찰력(Friction) 연산으로 교체!
 	//	if (!KnockbackVelocity.IsNearlyZero(1.0f)) // SizeSquared < 1.0f를 알아서 가볍게 체크해 줌
@@ -91,14 +84,20 @@ void ADEMonsterBase::MoveToPlayer(float DeltaTime, const FVector& PlayerLocation
 	//	}
 
 	// 2. 방향 및 속도 계산 (기존과 동일)
-	FVector Dir = PlayerLocation - GetActorLocation();
+	FVector Dir = PlayerLocation - MyLocation;
 	Dir.Z = 0.0f; // Fix Z
 
 	// GetSafeNormal()은 루트 연산이 들어가지만, 플레이어 추적을 위해 1번은 필수입니다.
-	FVector MoveDelta = Dir.GetSafeNormal();
+	FVector MoveDelta = Dir.GetSafeNormal2D();
+
+	if (!MoveDelta.IsNearlyZero())
+	{
+		PendingRotation = MoveDelta.Rotation();
+	}
+
 	FVector FinalMove = (MoveDelta * MoveSpeed + KnockbackVelocity) * DeltaTime;
 
-	// 3. 🔴 [핵심 최적화] 여기서 즉시 이동하지 마세요! 장바구니에 담기만 합니다!
+	// 3.  [핵심 최적화] 여기서 즉시 이동하지 마세요! 장바구니에 담기만 합니다!
 	PendingOverlapPush += FinalMove;
 
 	//// if (!TargetPlayer) return; <--- 매니저가 이미 널 체크 했으므로 지워도 됨! 최적화 +1
@@ -258,13 +257,10 @@ void ADEMonsterBase::ResetMonster(const FDEMonsterData* Data)
 	if (!Data) return;
 
 	//mesh for later
-	// 1. 메쉬 교체 (Soft Pointer 로딩)
+	// 1. 메쉬 교체 (Get() 사용 - 미리 로드되어 있어야 함)
 	if (!Data->MonsterMesh.IsNull())
 	{
-		// 동기 로딩 (Synchronous Load). 
-		// 뱀서류는 웨이브 시작 전 매니저가 미리 로딩해두는 게 정석이지만,
-		// 구현 편의상 여기서 즉시 로딩해도 초기에는 문제 없음.
-		USkeletalMesh* NewMesh = Data->MonsterMesh.LoadSynchronous();
+		USkeletalMesh* NewMesh = Data->MonsterMesh.Get();
 		if (NewMesh)
 		{
 			Mesh->SetSkeletalMesh(NewMesh);
@@ -294,7 +290,7 @@ void ADEMonsterBase::ResetMonster(const FDEMonsterData* Data)
 	Capsule->InitCapsuleSize(Data->CapsuleRadius, Data->CapsuleHalfHeight);
 	CachedRadius = Capsule->GetScaledCapsuleRadius();
 	// 메쉬 위치 보정 (발바닥 높이 맞추기)
-	//GetMesh()->SetRelativeLocation(FVector(0.0f, 0.0f, Data->MeshZOffset));
+	Mesh->SetRelativeLocation(FVector(0.0f, 0.0f, -Data->MeshZOffset));
 
 	// 전체 크기 보정
 	//SetActorScale3D(FVector(Data->ScaleMultiplier));
@@ -383,11 +379,12 @@ void ADEMonsterBase::UpdateCrowdControl(float CurrentTime)
 
 void ADEMonsterBase::NotifyActorBeginOverlap(AActor* OtherActor)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Mob Touching Something"));
+	
 	Super::NotifyActorBeginOverlap(OtherActor);
-
+	//UE_LOG(LogTemp, Warning, TEXT("Mob Touching Something"));
 	if (ADECharacterBase* PlayerCharacter = Cast<ADECharacterBase>(OtherActor))
 	{
+		
 		bIsTouchingPlayer = true;
 		OverlappingPlayer = PlayerCharacter;
 	}

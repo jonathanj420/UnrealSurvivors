@@ -2,10 +2,7 @@
 
 
 #include "DESkill_Darkness.h"
-// Behaviors
-#include "DEBehavior_Prepare_PlayerAura.h"
 #include "DEBehavior_SpawnAOE.h"
-#include "DEBehavior_AttachAOE.h"
 // AOE
 #include "DEAOE_Darkness.h"
 
@@ -19,20 +16,19 @@ UDESkill_Darkness::UDESkill_Darkness()
 
 void UDESkill_Darkness::InitBehaviors()
 {
-	Super::InitBehaviors();
+    UDEBehavior_SpawnAOE* SpawnDarkness = NewObject<UDEBehavior_SpawnAOE>(this);
 
-	UDEBehavior_Prepare_PlayerAura* Prepare = NewObject<UDEBehavior_Prepare_PlayerAura>(this);
+    if (SpawnDarkness)
+    {
+        // 2. Context가 아니라, 비헤이비어 본체에 직접 세팅을 주입!
+        SpawnDarkness->AOEClass = AOEClass;               // 블루프린트에서 할당한 마늘 오라 클래스
+        SpawnDarkness->AOEKey = TEXT("Darkness");         // 중복 생성 방지용 영구 키
 
-	if (Prepare)
-	{
-		Prepare->AuraAOEClass = AOEClass;
-		Prepare->AuraAOEKey = TEXT("Darkness");
-		Behaviors.Add(Prepare);
+        // ★ 3. 우리가 만든 범용 타겟팅 시스템 적용!
+        SpawnDarkness->SpawnTarget = EAOESpawnTarget::Instigator; // 타겟: "내 위치에 스폰해라!"
+        SpawnDarkness->bAttachToTarget = true;                    // 옵션: "스폰 즉시 내 몸에 찰싹 붙여라!"
 
-	}
-
-	Behaviors.Add(NewObject<UDEBehavior_SpawnAOE>(this));
-
-	// 3. Attach : 플레이어에게 부착
-	Behaviors.Add(NewObject<UDEBehavior_AttachAOE>(this));
+        // 4. 파이프라인에 장착
+        Behaviors.Add(SpawnDarkness);
+    }
 }

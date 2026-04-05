@@ -26,6 +26,8 @@ public:
     virtual FText GetDescription() const override;
     virtual UTexture2D* GetIcon() const override;
     virtual void Apply(AActor* PlayerActor) override;
+    const UDEAccessoryData* GetAccessoryData() const { return AccessoryData; }
+
 
 private:
     UPROPERTY()

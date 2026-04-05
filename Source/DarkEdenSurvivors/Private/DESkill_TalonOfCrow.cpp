@@ -21,7 +21,7 @@ UDESkill_TalonOfCrow::UDESkill_TalonOfCrow()
         NailHitEffect = FXAsset.Object;
     }
 
-    static ConstructorHelpers::FObjectFinder<USoundBase> SoundAsset(TEXT("/Game/DarkEden/Data/Sound/SkillSoundEffect/Vampire_attack.Vampire_attack"));
+    static ConstructorHelpers::FObjectFinder<USoundBase> SoundAsset(TEXT("/Game/DarkEden/Data/Sound/SkillSoundEffect/Vampire_Acid_AT.Vampire_Acid_AT"));
     if (SoundAsset.Succeeded())
     {
         NailHitSound = SoundAsset.Object;

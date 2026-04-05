@@ -5,13 +5,14 @@
 #include "DarkEdenSurvivors.h"
 #include "Engine/GameInstance.h"
 #include "Data/DEMonsterData.h"
+#include "DEStatTypes.h"
 #include "DESaveGame.h"
 #include "Json.h"
 #include "JsonUtilities.h"
 #include "DEGameInstance.generated.h"
 
 /**
- * 
+ * ê²Œì„ì˜ ì „ì—­ ìƒíƒœ ë° ë©”íƒ€ í”„ë¡œê·¸ë ˆì…˜(ì˜êµ¬ ê°•í™”) ì •ë³´ë¥¼ ê´€ë¦¬í•˜ëŠ” GameInstance í´ë˜ìŠ¤ì…ë‹ˆë‹¤.
  */
 UCLASS()
 class DARKEDENSURVIVORS_API UDEGameInstance : public UGameInstance
@@ -22,62 +23,62 @@ public:
     UDEGameInstance();
     virtual void Init() override;
 
-
-
-	// === [ÀúÀå/·Îµå ½Ã½ºÅÛ] ===
+	// === [ì €ì¥/ë¡œë“œ ì‹œìŠ¤í…œ] ===
 	UFUNCTION(BlueprintCallable, Category = "SaveSystem")
 	void SaveGame();
 
 	UFUNCTION(BlueprintCallable, Category = "SaveSystem")
 	void LoadGame();
 
-	// === [°ñµå °ü¸® API] ===
+	// === [ì¬í™” ê´€ë ¨ API] ===
 	UFUNCTION(BlueprintPure, Category = "Progression")
 	int32 GetTotalGold() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Progression")
-	void AddGold(int32 Amount); // °ñµå È¹µæ
+	void AddGold(int32 Amount); // ê³¨ë“œ íšë“
 
 	UFUNCTION(BlueprintCallable, Category = "Progression")
-	bool TryConsumeGold(int32 Amount); // °ñµå »ç¿ë (¼º°ø ½Ã true)
+	bool TryConsumeGold(int32 Amount); // ê³¨ë“œ ì†Œë¹„ (ì„±ê³µ ì‹œ true)
 
-	// === [¾÷±×·¹ÀÌµå °ü¸® API] ===
-	// Æ¯Á¤ ½ºÅÈÀÇ ÇöÀç ·¹º§ °¡Á®¿À±â
+	// === [ì—…ê·¸ë ˆì´ë“œ ê´€ë ¨ API] ===
+	// íŠ¹ì • ìŠ¤íƒœíŠ¸ì˜ í˜„ì¬ ê°•í™” ë ˆë²¨ ê°€ì ¸ì˜¤ê¸°
 	UFUNCTION(BlueprintPure, Category = "Progression")
-	int32 GetUpgradeLevel(FName StatName) const;
+	int32 GetUpgradeLevel(EDEStatType StatType) const;
 
-	// Æ¯Á¤ ½ºÅÈ ·¹º§¾÷ ½ÃÅ°±â (°ñµå Â÷°¨ ·ÎÁ÷Àº UI¿¡¼­ TryConsumeGold ÈÄ È£Ãâ ±ÇÀå)
+	// íŠ¹ì • ìŠ¤íƒœíŠ¸ ê°•í™” ì‹œ í•„ìš”í•œ ë¹„ìš© ê°€ì ¸ì˜¤ê¸°
+	UFUNCTION(BlueprintPure, Category = "Progression")
+	int32 GetUpgradeCost(EDEStatType StatType) const;
+
+	// íŠ¹ì • ìŠ¤íƒœíŠ¸ ë ˆë²¨ì—… ì‹œë„ (ê³¨ë“œ ì†Œëª¨ í¬í•¨)
 	UFUNCTION(BlueprintCallable, Category = "Progression")
-	void LevelUpStat(FName StatName);
+	bool TryLevelUpStat(EDEStatType StatType);
+
+	// ê²Œì„ ë‚´ì—ì„œ ì ìš©í•  ì‹¤ì œ ë³´ë„ˆìŠ¤ ìˆ˜ì¹˜ ê°€ì ¸ì˜¤ê¸°
+	UFUNCTION(BlueprintPure, Category = "Progression")
+	float GetStatUpgradeBonus(EDEStatType StatType) const;
 
 public:
-	// »ç¶÷ÀÌ ÀĞÀ» ¼ö ÀÖ´Â JSON ÀúÀå
+	// ë””ë²„ê·¸ìš© JSON ì €ì¥/ë¡œë“œ
 	UFUNCTION(BlueprintCallable, Category = "SaveSystem")
 	void SaveGameToJSON();
 
-	// JSON ÆÄÀÏ ºÒ·¯¿À±â
 	UFUNCTION(BlueprintCallable, Category = "SaveSystem")
 	void LoadGameFromJSON();
 
 protected:
 	UPROPERTY()
-	UDESaveGame* CurrentSaveData; // ¸Ş¸ğ¸®¿¡ ·ÎµåµÈ ¼¼ÀÌºê µ¥ÀÌÅÍ Ä³½Ì
+	UDESaveGame* CurrentSaveData; // ë©”ëª¨ë¦¬ì— ë¡œë“œëœ ì„¸ì´ë¸Œ ë°ì´í„°
 
 	const FString SAVE_SLOT_NAME = TEXT("DESaveSlot01");
 
-
-
-
 public:
-    // ¿ÜºÎ¿¡¼­ ¸ó½ºÅÍ ID¸¸ ÁÖ¸é µ¥ÀÌÅÍ¸¦ ¹ñ¾îÁÖ´Â ÇÔ¼ö
+    // ëª¬ìŠ¤í„° ë°ì´í„°ë¥¼ ê°€ì ¸ì˜¤ëŠ” í•¨ìˆ˜
     const FDEMonsterData* GetMonsterData(FName MonsterID);
 
 protected:
-    // ¿¡µğÅÍ¿¡¼­ ÇÒ´çÇÒ ¿øº» µ¥ÀÌÅÍ Å×ÀÌºí
     UPROPERTY(EditDefaultsOnly, Category = "Data")
     TObjectPtr<UDataTable> SourceMonsterTable;
 
 private:
-    // °ÔÀÓ ½ÇÇà ½Ã ÆÄ½ÌÇØ¼­ µé°í ÀÖÀ» Ä³½Ã ¸Ş¸ğ¸® (Map ±¸Á¶)
     TMap<FName, FDEMonsterData> MonsterDataCache;
 };

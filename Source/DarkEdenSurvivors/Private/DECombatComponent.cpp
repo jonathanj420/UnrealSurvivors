@@ -6,6 +6,8 @@
 #include "DEAccessoryComponent.h"
 #include "DEHealthComponent.h"
 #include "DECharacterBase.h"
+#include "DEDamageInstigatorInterface.h"
+
 
 // Sets default values for this component's properties
 UDECombatComponent::UDECombatComponent()
@@ -54,7 +56,7 @@ FCombatSnapshot UDECombatComponent::GetCombatSnapshot() const
 
 void UDECombatComponent::HandleDamageDealt(const FDEDamageResult& Result)
 {
-    UE_LOG(LogTemp, Warning, TEXT("Handle Damage Dealt By : %s"), *Result.SourceObject->GetName());
+   // UE_LOG(LogTemp, Warning, TEXT("Handle Damage Dealt By : %s"), *Result.SourceObject->GetName());
     if (Result.FinalDamage <= 0.0f || !Result.Victim) return;
 
     ADECharacterBase* OwnerCharacter = Cast<ADECharacterBase>(GetOwner());
@@ -68,13 +70,18 @@ void UDECombatComponent::HandleDamageDealt(const FDEDamageResult& Result)
     FCombatEventData EventData;
     EventData.Instigator = OwnerCharacter;
     EventData.Target = Result.Victim;
+    EventData.SourceObject = Result.SourceObject;
     EventData.DamageAmount = Result.FinalDamage;
 
     // --------------------------------------------------------
     // [로직 1] 적중 시 (OnHit) 이벤트 방송
     // (예전 ProcessLifeSteal 로직은 이제 여기서 자동으로 튀어나옴)
     // --------------------------------------------------------
-    BroadcastCombatEvent(ECombatEventTrigger::OnHit, EventData);
+    if (Result.bCanTriggerOnHit)
+    {
+        BroadcastCombatEvent(ECombatEventTrigger::OnHit, EventData);
+        //UE_LOG(LogTemp, Log, TEXT("Applied OnHit Effect in CombatComp"));
+    }
    
 
     // --------------------------------------------------------
@@ -83,10 +90,25 @@ void UDECombatComponent::HandleDamageDealt(const FDEDamageResult& Result)
     // --------------------------------------------------------
     if (Result.bIsDead)
     {
-        ++TotalKillCount;
-        BroadcastCombatEvent(ECombatEventTrigger::OnKill, EventData);
-        UE_LOG(LogTemp, Log, TEXT("Total Kill Count : %d"), TotalKillCount);
+        if (Result.SourceObject)
+        {
+            ++TotalKillCount;
+            BroadcastCombatEvent(ECombatEventTrigger::OnKill, EventData);
+            UE_LOG(LogTemp, Log, TEXT("Total Kill Count : %d"), TotalKillCount);
 
+            // ★ [AAA 핵심] 출처가 '처치 알림' 인터페이스를 달고 있는지 확인 후 직통 전화!
+            if (Result.SourceObject->Implements<UDEDamageInstigatorInterface>())
+            {
+                IDEDamageInstigatorInterface* Instigator = Cast<IDEDamageInstigatorInterface>(Result.SourceObject);
+                Instigator->OnTargetKilled(Result);
+            }
+        }
+        else
+        {
+            return;
+
+        }
+        
     }
 
 }
@@ -265,7 +287,7 @@ void UDECombatComponent::BroadcastCombatEvent(ECombatEventTrigger TriggerType, F
             Effect->ExecuteEffect(EventData);
             FString EnumName = EnumPtr->GetNameStringByValue((int64)TriggerType);
 
-            UE_LOG(LogTemp, Error, TEXT("Applied %s Effect in CombatComp"), *EnumName);
+            //UE_LOG(LogTemp, Error, TEXT("Applied %s_%s in CombatComp"), *EnumName,*Effect->GetName());
         }
     }
 }

@@ -4,23 +4,49 @@
 
 #include "CoreMinimal.h"
 #include "DEStatusEffectTypes.generated.h"
+class UDEStatusEffectBase;
 
-UENUM(BlueprintType)
-enum class EEffectTag : uint8
+USTRUCT(BlueprintType)
+struct FActiveStatusEffect
 {
-    None      UMETA(DisplayName = "None"),
-    Fire      UMETA(DisplayName = "Fire (Burn)"),
-    Poison    UMETA(DisplayName = "Poison"),
-    Stun      UMETA(DisplayName = "Stun"),
-    Slow      UMETA(DisplayName = "Slow"),
-    Bleed     UMETA(DisplayName = "Bleed")
+	GENERATED_BODY()
+
+	// 1. 거푸집(CDO) 포인터: 변하지 않는 로직과 세팅값에 접근하기 위함
+	UPROPERTY()
+	const UDEStatusEffectBase* EffectDef = nullptr;
+
+	// 2. 변하는 상태값들 (개발자님의 완벽한 크래시 방어 철학을 이어받아 WeakPtr 사용)
+	UPROPERTY()
+	TWeakObjectPtr<AActor> Instigator = nullptr;
+
+	UPROPERTY()
+	float ElapsedTime = 0.f;
+
+	UPROPERTY()
+	float TickTimer = 0.f;
+
+	UPROPERTY()
+	float Duration = 0.f;
+
+	UPROPERTY()
+	float Power = 0.f;
+
+	UPROPERTY()
+	float Interval = 0.f;
+
+	UPROPERTY()
+	int32 CurrentStacks = 1;
+
+	// 구조체 초기화를 위한 편의 생성자
+	FActiveStatusEffect() {}
 };
+
 
 UENUM(BlueprintType)
 enum class EStackPolicy : uint8
 {
-    Replace   UMETA(DisplayName = "기존 제거 후 덮어쓰기"),
-    Refresh   UMETA(DisplayName = "지속시간 초기화"),
-    Stack     UMETA(DisplayName = "중첩 허용 (스택 증가)"),
-    Ignore    UMETA(DisplayName = "새로운 효과 무시")
+    Replace   UMETA(DisplayName = "Replace"),
+    Refresh   UMETA(DisplayName = "Refresh"),
+    Stack     UMETA(DisplayName = "Can Stack"),
+    Ignore    UMETA(DisplayName = "Ignore")
 };

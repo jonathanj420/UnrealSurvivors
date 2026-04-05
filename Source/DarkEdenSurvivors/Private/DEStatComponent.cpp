@@ -1,52 +1,34 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "DEStatComponent.h"
 #include "GameFramework/Actor.h"
 #include "Engine/Engine.h"
 #include "Components/SphereComponent.h"
 #include "DECharacterBase.h"
+#include "DEGameInstance.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-// Sets default values for this component's properties
 UDEStatComponent::UDEStatComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false;
 
-	// =========================================================
-	// [1] Combat Stats (ÀüÅõ ½ºÅÈ) - ¡Ú ¿©±â°¡ 0ÀÌ¶ó ¹®Á¦¿´À½!
-	// =========================================================
+	// ê¸°ë³¸ ëŠ¥ë ¥ì¹˜ ì´ˆê¸°í™”
+	DamageMultiplier = FGameplayStat(1.0f);
+	CritChance = FGameplayStat(0.0f);
+	CritDamageMultiplier = FGameplayStat(2.0f);
+	CooldownReduction = FGameplayStat(0.0f);
+	AreaSize = FGameplayStat(1.0f);
+	Duration = FGameplayStat(1.0f);
+	ProjectileSpeed = FGameplayStat(1.0f);
+	BonusAmount = FGameplayStat(0.0f);
 
-	// °ö¿¬»ê(Multiplier)À¸·Î ¾²ÀÌ´Â ¾ÖµéÀº ¹«Á¶°Ç 1.0f°¡ ±âº»°ªÀÌ¾î¾ß ÇÔ
-	DamageMultiplier = FGameplayStat(1.0f); // °ø°İ·Â 100%
-	CritChance = FGameplayStat(0.0f); // ±âº» Å©¸® 5% (ÃëÇâ²¯ Á¶Àı)
-	CritDamageMultiplier = FGameplayStat(2.0f); // Å©¸® µ¥¹ÌÁö 200%
+	MoveSpeed = FGameplayStat(600.0f);
+	MagnetRange = FGameplayStat(200.0f);
+	MaxHP = FGameplayStat(100.0f);
+	Regeneration = FGameplayStat(0.0f);
+	Armor = FGameplayStat(0.0f);
 
-	CooldownReduction = FGameplayStat(0.0f); // Äğ°¨ 0%
-
-	AreaSize = FGameplayStat(1.0f); // ¹üÀ§ 100%
-	Duration = FGameplayStat(1.0f); // Áö¼Ó½Ã°£ 100%
-	ProjectileSpeed = FGameplayStat(1.0f); // Åõ»çÃ¼ ¼Óµµ 100%
-
-	BonusAmount = FGameplayStat(0.0f); // Ãß°¡ Åõ»çÃ¼ 0°³ (ÀÌ°Ç ´õÇÏ±â´Ï±î 0ÀÌ ¸ÂÀ½)
-
-
-	// =========================================================
-	// [2] Physical Stats (½ÅÃ¼ ´É·Â)
-	// =========================================================
-	MoveSpeed = FGameplayStat(600.0f); // ±âº» ÀÌ¼Ó 600
-	MagnetRange = FGameplayStat(200.0f); // ÀÚ¼® ¹üÀ§ Á» ³Ë³ËÇÏ°Ô
-	MaxHP = FGameplayStat(100.0f); // Ã¼·Â 100
-	Regeneration = FGameplayStat(0.0f);   // Àç»ı 0
-	Armor = FGameplayStat(0.0f);   // ¹æ¾î 0
-
-
-	// =========================================================
-	// [3] Utility Stats (À¯Æ¿¸®Æ¼)
-	// =========================================================
 	Luck = FGameplayStat(1.0f);
 	Greed = FGameplayStat(1.0f);
 	Growth = FGameplayStat(1.0f);
@@ -54,13 +36,11 @@ UDEStatComponent::UDEStatComponent()
 	Revival = FGameplayStat(0.0f);
 }
 
-
-// Called when the game starts
 void UDEStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	//  1. ·¹Áö½ºÆ®¸® µî·Ï (Enum -> º¯¼ö Æ÷ÀÎÅÍ ¸ÅÇÎ)
-	// ÀÌ·¸°Ô ÇØµÎ¸é ³ªÁß¿¡ ¹İº¹¹®ÀÌ³ª °Ë»öÀ¸·Î ¹Ù·Î Á¢±Ù °¡´É!
+
+	// Enum ë§¤í•‘ ë“±ë¡
 	StatRegistry.Add(EDEStatType::Damage, &DamageMultiplier);
 	StatRegistry.Add(EDEStatType::CritChance, &CritChance);
 	StatRegistry.Add(EDEStatType::CritDamage, &CritDamageMultiplier);
@@ -81,48 +61,31 @@ void UDEStatComponent::BeginPlay()
 	StatRegistry.Add(EDEStatType::Growth, &Growth);
 	StatRegistry.Add(EDEStatType::Curse, &Curse);
 	StatRegistry.Add(EDEStatType::Revival, &Revival);
-	
 }
 
-
-// Called every frame
 void UDEStatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	
 }
 
 void UDEStatComponent::ApplyModifier(const FDEStatModifier& Mod)
 {
-	// 1. ¸Ê¿¡¼­ ÇØ´ç ½ºÅÈ º¯¼ö Ã£±â (O(1))
 	if (FGameplayStat** FoundStat = StatRegistry.Find(Mod.StatType))
 	{
-		// 2. °ª Àû¿ë
 		(*FoundStat)->ApplyModifier(Mod);
-
-		// 3. ÈÄÃ³¸® (ÀÌ¼Ó µî Áï½Ã ¹İ¿µÀÌ ÇÊ¿äÇÑ °æ¿ì)
 		RefreshDerivedStats(Mod.StatType);
-	}
-	else
-	{
-		// ¿¹¿Ü Ã³¸® (¿©±â ¾ø´Â ½ºÅÈÀÌ°Å³ª Àß¸øµÈ Enum)
-		UE_LOG(LogTemp, Warning, TEXT("StatType %d not found in Registry!"), (int32)Mod.StatType);
 	}
 }
 
 void UDEStatComponent::RefreshDerivedStats(EDEStatType StatType)
 {
-	// °ªÀÌ ¹Ù²î¾úÀ» ¶§ ¿£Áø¿¡ ¹İ¿µÇØ¾ß ÇÏ´Â °Íµé¸¸ Ã³¸®
 	switch (StatType)
 	{
 	case EDEStatType::MoveSpeed:
-		if (OwnedChar!=nullptr)
+		if (OwnedChar && OwnedChar->GetCharacterMovement())
 		{
-			if (auto* MoveComp = OwnedChar->GetCharacterMovement())
-			{
-				MoveComp->MaxWalkSpeed = MoveSpeed.GetValue();
-				OnSpeedChanged.Broadcast(MoveComp->MaxWalkSpeed);
-			}
+			OwnedChar->GetCharacterMovement()->MaxWalkSpeed = MoveSpeed.GetValue();
+			OnSpeedChanged.Broadcast(OwnedChar->GetCharacterMovement()->MaxWalkSpeed);
 		}
 		break;
 
@@ -131,37 +94,70 @@ void UDEStatComponent::RefreshDerivedStats(EDEStatType StatType)
 		break;
 
 	case EDEStatType::MaxHP:
-		UE_LOG(LogTemp, Warning, TEXT("HP CHEATED"));
-		if (OwnedChar!=nullptr)
+		if (OwnedChar)
 		{
 			OwnedChar->SetMaxHP(MaxHP.GetValue());
-			UE_LOG(LogTemp, Warning, TEXT("HP CHEATED"));
-
 		}
 		break;
 	}
-
-		// MaxHP º¯°æ ½Ã ÇöÀç Ã¼·Â ºñÀ² À¯Áö ·ÎÁ÷ µîÀº HealthComponent¿Í ¿¬µ¿ ÇÊ¿ä
-
 }
 
 void UDEStatComponent::InitAsPlayer(ADECharacterBase* InPlayer)
 {
 	OwnedChar = InPlayer;
-	RefreshDerivedStats(EDEStatType::MoveSpeed); // 200 -> 600À¸·Î µ¤¾î¾º¿ò!
-	RefreshDerivedStats(EDEStatType::MaxHP);     // Ã¼·Âµµ È¤½Ã ¸ğ¸£´Ï µ¤¾î¾º¿ò!
-	RefreshDerivedStats(EDEStatType::Magnet);    // ÀÚ¼® ¹üÀ§ ÃÊ±âÈ­
+    
+    // ì˜êµ¬ ê°•í™” ìˆ˜ì¹˜ ì ìš©
+    ApplyMetaUpgrades();
+
+	RefreshDerivedStats(EDEStatType::MoveSpeed);
+	RefreshDerivedStats(EDEStatType::MaxHP);
+	RefreshDerivedStats(EDEStatType::Magnet);
+}
+
+void UDEStatComponent::ApplyMetaUpgrades()
+{
+    UDEGameInstance* GI = Cast<UDEGameInstance>(GetWorld()->GetGameInstance());
+    if (!GI) return;
+
+    // ì ìš©í•  ìŠ¤íƒœíŠ¸ ëª©ë¡
+    TArray<EDEStatType> MetaStats = { 
+        EDEStatType::Damage, 
+        EDEStatType::MaxHP, 
+        EDEStatType::MoveSpeed, 
+        EDEStatType::Greed, 
+        EDEStatType::Amount 
+    };
+
+    for (EDEStatType Stat : MetaStats)
+    {
+        float BonusValue = GI->GetStatUpgradeBonus(Stat);
+        if (BonusValue <= 0.0f) continue;
+
+        FDEStatModifier MetaMod;
+        MetaMod.StatType = Stat;
+
+        // Amount(ë°œì‚¬ì²´ ìˆ˜)ëŠ” ê°€ì‚°(Additive), ë‚˜ë¨¸ì§€ëŠ” ìŠ¹ì‚°(Multiplier)ìœ¼ë¡œ ì²˜ë¦¬
+        if (Stat == EDEStatType::Amount)
+        {
+            MetaMod.Additive = BonusValue;
+            MetaMod.Multiplier = 1.0f;
+        }
+        else
+        {
+            MetaMod.Additive = 0.0f;
+            MetaMod.Multiplier = 1.0f + BonusValue;
+        }
+
+        ApplyModifier(MetaMod);
+    }
 }
 
 float UDEStatComponent::GetStatValue(EDEStatType StatType) const
 {
-	// ·¹Áö½ºÆ®¸®¿¡¼­ ½ºÅÈ Æ÷ÀÎÅÍ¸¦ Ã£¾Æ¼­ GetValue() ¹İÈ¯
 	if (const FGameplayStat* const* FoundStat = StatRegistry.Find(StatType))
 	{
 		return (*FoundStat)->GetValue();
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("GetStatValue: StatType %d not found!"), (int32)StatType);
 	return 0.0f;
 }
 
@@ -174,6 +170,5 @@ void UDEStatComponent::ResetStats()
 			Pair.Value->ResetModifiers();
 		}
 	}
-	// ÃÊ±âÈ­ ÈÄ ¹İ¿µ
 	RefreshDerivedStats(EDEStatType::MoveSpeed);
 }

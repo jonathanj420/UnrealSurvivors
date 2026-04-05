@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
+#include "GameplayTagContainer.h"
 #include "Data/DEStatusEffectTypes.h"
+#include "DEDamageTypes.h"
 #include "DEStatusEffectBase.generated.h"
 
 /**
@@ -16,65 +18,54 @@ class DARKEDENSURVIVORS_API UDEStatusEffectBase : public UObject
 	GENERATED_BODY()
 
 public:
-	// 초기화 (누가, 누구에게, 얼마나, 강도는?) - ADEMonsterBase에서 AActor로 변경!
-	virtual void InitEffect(AActor* InInstigator, AActor* InTarget, float InDuration, float InPower, float InInterval = 0.f);
+	UDEStatusEffectBase();
 
-	// 컴포넌트가 매 프레임 호출해 줄 Tick 함수
-	virtual void Tick(float DeltaTime);
+	// --- 기획자가 에디터에서 세팅할 변하지 않는 데이터 (CDO) ---
+	// ★ [NEW] 이 상태이상의 정체성 (예: Status.Debuff.Poison, Status.Buff.MoveSpeed)
+	// 나중에 해제 스킬(정화)을 만들 때 이 명찰을 보고 지웁니다.
+	// =========================================================
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect|Tags", meta = (Categories = "Status"))
+	FGameplayTagContainer StatusTags;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect|Core")
+	EStackPolicy StackPolicy;
 
-	// 종료 여부 체크
-	bool IsFinished() const { return Duration > 0.f && ElapsedTime >= Duration; }
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect|Core")
+	int32 MaxStacks;
 
-	// ───  이벤트 함수들 (C++ 구현 + BP에서 이펙트 추가 가능) ───
+	// (선택) 시각 효과: 다크에덴 특유의 세피아 톤, 테두리 없는(Borderless) 고딕 이펙트 등
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect|Visual")
+	class UNiagaraSystem* EffectParticle;
 
-	// 시작될 때 (예: 스턴 걸림 -> 움직임 멈춤)
-	UFUNCTION(BlueprintNativeEvent, Category = "StatusEffect")
-	void OnApply();
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect|Visual")
+	bool bApplyMaterialTint = false;
 
-	// 끝날 때 (예: 스턴 풀림 -> 움직임 재개)
-	UFUNCTION(BlueprintNativeEvent, Category = "StatusEffect")
-	void OnRemove();
+	// 머티리얼에서 색상을 조작할 파라미터 이름 (예: "BaseColor", "Tint" 등)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect|Visual", meta = (EditCondition = "bApplyMaterialTint"))
+	FName TintParameterName = TEXT("ColorTint");
 
-	// 틱마다 (예: 독 데미지 들어가는 순간)
-	UFUNCTION(BlueprintNativeEvent, Category = "StatusEffect")
-	void OnIntervalTick();
+	// 상태이상이 걸렸을 때 칠할 색상 (맹독 = 초록색)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect|Visual", meta = (EditCondition = "bApplyMaterialTint"))
+	FLinearColor TintColor = FLinearColor(0.0f, 1.0f, 0.0f, 1.0f); // 기본값 초록색
 
-	// 스택이 쌓였을 때 (예: 출혈 스택 증가 시 이펙트 폭발)
-	UFUNCTION(BlueprintNativeEvent, Category = "StatusEffect")
-	void OnStacked(int32 NewStackCount);
+	// 상태이상이 끝났을 때 돌아갈 원래 색상 (보통 흰색)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect|Visual", meta = (EditCondition = "bApplyMaterialTint"))
+	FLinearColor OriginalColor = FLinearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-public:
-	// ───  에디터(블루프린트) 세팅용 데이터 (데이터 주도 설계!) ───
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "StatusEffect|Policy")
-	EEffectTag EffectTag = EEffectTag::None;
+	// --- 핵심 로직 (모든 함수는 const로 선언되어 객체 자체의 변형을 막습니다) ---
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "StatusEffect|Policy")
-	EStackPolicy StackPolicy = EStackPolicy::Replace;
+	// --- 핵심 로직 (모든 함수는 const로 선언되어 객체 자체의 변형을 막습니다) ---
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "StatusEffect|Policy", meta = (EditCondition = "StackPolicy == EStackPolicy::Stack"))
-	int32 MaxStacks = 1;
+	// 블루프린트용 UFUNCTION, UPARAM(ref), _Implementation 꼬리표 모두 삭제!
+	virtual void OnApply(AActor* Target, FActiveStatusEffect& EffectData) const;
 
-	// ─── 런타임 데이터 ───
-	UPROPERTY(BlueprintReadOnly, Category = "StatusEffect|State")
-	int32 CurrentStacks = 1;
+	virtual void OnRemove(AActor* Target, FActiveStatusEffect& EffectData) const;
 
-	UPROPERTY(BlueprintReadOnly, Category = "StatusEffect|State")
-	AActor* Instigator; // 시전한 사람
+	virtual void OnIntervalTick(AActor* Target, FActiveStatusEffect& EffectData) const;
 
-	UPROPERTY(BlueprintReadOnly, Category = "StatusEffect|State")
-	AActor* Target; // 당한 대상 (플레이어 or 몬스터)
+	virtual void OnStacked(AActor* Target, FActiveStatusEffect& EffectData, int32 NewStackCount) const;
 
-	UPROPERTY(BlueprintReadOnly, Category = "StatusEffect|State")
-	float Duration;     // 지속 시간
+	// Tick은 매 프레임 수백~수천 번 불리므로 원래부터 순수 가상 함수였습니다. 유지!
+	virtual void Tick(AActor* Target, FActiveStatusEffect& EffectData, float DeltaTime) const;
 
-	UPROPERTY(BlueprintReadOnly, Category = "StatusEffect|State")
-	float ElapsedTime;  // 경과 시간
-
-	UPROPERTY(BlueprintReadOnly, Category = "StatusEffect|State")
-	float Power;        // 위력 (데미지 양 or 슬로우 비율)
-
-	UPROPERTY(BlueprintReadOnly, Category = "StatusEffect|State")
-	float Interval;     // 틱 간격 (도트딜용)
-
-	float TickTimer;    // 내부 틱 계산용
+	virtual void ModifyIncomingDamage(const FActiveStatusEffect& EffectData, FDEDamageRequest& InOutRequest) const {};
 };

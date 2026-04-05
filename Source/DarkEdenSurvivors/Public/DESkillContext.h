@@ -9,18 +9,6 @@ class AActor;
 struct FDESkillData;
 class UDEAutoSkillBase;
 
-struct FAOERequest
-{
-	FName AOEKey;
-
-	TSubclassOf<class ADESimpleAOEBase> AOEClass;
-
-	FVector SpawnLocation;
-
-	AActor* AttachTarget = nullptr;
-	bool bAttach = false;
-};
-
 
 /**
  * 스킬 실행 시 전달되는 실행 컨텍스트
@@ -42,7 +30,6 @@ public:
 	UPROPERTY(Transient)
 	TArray<AActor*> Targets;
 
-	TArray<FAOERequest> AOERequests;
 
 	// Spawn 결과 기록 (선택, SpawnAOE에서 사용)
 	TArray<TWeakObjectPtr<class ADESimpleAOEBase>> SpawnedAOEs;

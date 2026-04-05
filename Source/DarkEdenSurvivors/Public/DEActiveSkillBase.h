@@ -27,4 +27,5 @@ protected:
     float Cooldown = 0.f;
     float LastActivateTime = -FLT_MAX;
 
+
 };

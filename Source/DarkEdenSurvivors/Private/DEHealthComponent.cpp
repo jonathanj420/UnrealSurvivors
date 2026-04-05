@@ -184,9 +184,10 @@ FDEDamageResult UDEHealthComponent::ProcessDamage(const FDEDamageRequest& Reques
     FDEDamageResult Result;
 
     // 1. 요청받은 정보들을 결과(Result)에 그대로 복사해서 '기억'시킴!
-    Result.Victim = Request.Victim;
+    /*Result.Victim = Request.Victim;
     Result.SourceObject = Request.SourceObject;
     Result.DamageType = Request.DamageType;
+    Result.bCanTriggerOnHit = Request.bCanTriggerOnHit;*/
 
     // 2. 이미 죽었으면 무시
     if (bIsDead)
@@ -198,68 +199,90 @@ FDEDamageResult UDEHealthComponent::ProcessDamage(const FDEDamageRequest& Reques
     float CalculatedDamage = 0.0f;
     bool bCriticalSuccess = false;
 
+    //// =========================================================
+    //// ★ 3. Enum으로 완벽하게 분리된 데미지 파이프라인!
+    //// =========================================================
+    //switch (Request.DamageType)
+    //{
+    //case EDEDamageType::Execution:
+    //case EDEDamageType::InstantKill:
+    //{
+    //    //  처형이나 즉사는 묻지도 따지지도 않고 남은 피통만큼 데미지!
+    //    CalculatedDamage = CurrentHP;
+    //    bCriticalSuccess = true; // 처형 연출을 위해 강제 크리티컬 취급
+    //    break;
+    //}
+
+    //case EDEDamageType::Poison:
+    //case EDEDamageType::Bleed:
+    //{
+    //    //  도트 데미지는 크리티컬이나 방어력을 무시하게 짤 수도 있음
+    //    CalculatedDamage = Request.BaseDamage;
+    //    bCriticalSuccess = false;
+    //    break;
+    //}
+
+    //case EDEDamageType::Normal:
+    //default:
+    //{
+    //    //  일반 타격 (치명타 주사위 굴리기)
+    //    if (Request.CritChance > 0.0f)
+    //    {
+    //        bCriticalSuccess = FMath::RandRange(0.0f, 1.0f) < Request.CritChance;
+    //    }
+    //    CalculatedDamage = bCriticalSuccess ? (Request.BaseDamage * Request.CritDamageMultiplier) : Request.BaseDamage;
+
+    //    // Result.FinalDamage -= MyDefense; // (확장) 나중에 방어력 깎는 로직
+    //    break;
+    //}
+    //}
+
     // =========================================================
-    // ★ 3. Enum으로 완벽하게 분리된 데미지 파이프라인!
+    // ★ 3. 태그 기반 데미지 파이프라인 판정!
     // =========================================================
-    switch (Request.DamageType)
+
+    // 자주 쓰는 태그 캐싱 (성능 최적화)
+    static const FGameplayTag Tag_Execution = FGameplayTag::RequestGameplayTag(FName("Damage.Mechanic.Execution"));
+    static const FGameplayTag Tag_InstantKill = FGameplayTag::RequestGameplayTag(FName("Damage.Mechanic.InstantKill"));
+    static const FGameplayTag Tag_DoT = FGameplayTag::RequestGameplayTag(FName("Damage.Mechanic.DoT"));
+
+    // 가방 안에 처형이나 즉사 태그가 들어있다면?
+    if (Request.DamageTags.HasTag(Tag_Execution) || Request.DamageTags.HasTag(Tag_InstantKill))
     {
-    case EDEDamageType::Execution:
-    case EDEDamageType::InstantKill:
-    {
-        //  처형이나 즉사는 묻지도 따지지도 않고 남은 피통만큼 데미지!
         CalculatedDamage = CurrentHP;
-        bCriticalSuccess = true; // 처형 연출을 위해 강제 크리티컬 취급
-        break;
+        bCriticalSuccess = true;
     }
-
-    case EDEDamageType::Poison:
-    case EDEDamageType::Bleed:
+    // 가방 안에 도트(DoT) 태그가 들어있다면?
+    else if (Request.DamageTags.HasTag(Tag_DoT))
     {
-        //  도트 데미지는 크리티컬이나 방어력을 무시하게 짤 수도 있음
         CalculatedDamage = Request.BaseDamage;
-        bCriticalSuccess = false;
-        break;
+        bCriticalSuccess = false; // 도트는 크리티컬 안 터짐
     }
-
-    case EDEDamageType::Normal:
-    default:
+    // 그 외 일반 타격 (DirectHit 등)
+    else
     {
-        //  일반 타격 (치명타 주사위 굴리기)
         if (Request.CritChance > 0.0f)
         {
             bCriticalSuccess = FMath::RandRange(0.0f, 1.0f) < Request.CritChance;
         }
         CalculatedDamage = bCriticalSuccess ? (Request.BaseDamage * Request.CritDamageMultiplier) : Request.BaseDamage;
-
-        // Result.FinalDamage -= MyDefense; // (확장) 나중에 방어력 깎는 로직
-        break;
     }
-    }
-
     Result.FinalDamage = CalculatedDamage;
     Result.bIsCritical = bCriticalSuccess;
 
     // 4. 실제 체력 차감 및 UI 처리 (여기서 Request.DamageCauser를 넘기기 때문에 쿨감 버그 해결!)
     if (Result.FinalDamage > 0.0f)
     {
-        ApplyFinalDamage(Result.FinalDamage, Request.DamageCauser, bCriticalSuccess, Request.DamageType);
+        ApplyFinalDamage(Result.FinalDamage, Request.DamageCauser, bCriticalSuccess, Request.DamageTags);
     }
 
     // 5. ApplyFinalDamage를 거치면서 죽었을 수 있으므로 갱신
     Result.bIsDead = bIsDead;
-    if (Result.bIsDead)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("So dead"), Result.FinalDamage);
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Not So Ded"));
-    }
-    
+
     return Result;
 }
 
-void UDEHealthComponent::ApplyFinalDamage(float InDamage, AActor* InCauser, bool bInIsCritical, EDEDamageType InDamageType)
+void UDEHealthComponent::ApplyFinalDamage(float InDamage, AActor* InCauser, bool bInIsCritical, const FGameplayTagContainer& InDamageTags)
 {
     if (bIsDead) return;
 
@@ -281,16 +304,31 @@ void UDEHealthComponent::ApplyFinalDamage(float InDamage, AActor* InCauser, bool
             }
 
             // =========================================================
-            // ★ 텍스트 타입 분기 (처형 텍스트 처리!)
+            // ★ 텍스트 타입 분기 (태그 가방 검사!)
             // =========================================================
-            if (InDamageType == EDEDamageType::Execution)
+            // 캐싱해 둔 태그들
+            static const FGameplayTag Tag_Execution = FGameplayTag::RequestGameplayTag(FName("Damage.Mechanic.Execution"));
+            static const FGameplayTag Tag_DoT = FGameplayTag::RequestGameplayTag(FName("Damage.Mechanic.DoT"));
+            static const FGameplayTag Tag_Poison = FGameplayTag::RequestGameplayTag(FName("Damage.Affinity.Poison"));
+
+            // 1. 처형인가?
+            if (InDamageTags.HasTag(Tag_Execution))
             {
-                DmgInfo.TextType = EDamageTextType::Execution; // "Executed!" 출력
+                DmgInfo.TextType = EDamageTextType::Execution; // "Executed!"
             }
+            // 2. 도트 딜인가? (기존 상태이상 텍스트 재활용)
+            else if (InDamageTags.HasTag(Tag_DoT))
+            {
+                // (확장) 만약 독 속성이면 텍스트 색을 바꾸고 싶다면?
+                // 서브시스템 쪽에서 DmgInfo.TextType 을 세분화해서 녹색 틱뎀 띄우기도 가능합니다.
+                DmgInfo.TextType = EDamageTextType::StatusEffect;
+            }
+            // 3. 크리티컬인가? (일반 타격 중 크리 터진 놈)
             else if (bInIsCritical)
             {
                 DmgInfo.TextType = EDamageTextType::Critical; // 크고 빨간 숫자
             }
+            // 4. 전부 아니면 일반 타격!
             else
             {
                 DmgInfo.TextType = EDamageTextType::Damage; // 일반 하얀 숫자

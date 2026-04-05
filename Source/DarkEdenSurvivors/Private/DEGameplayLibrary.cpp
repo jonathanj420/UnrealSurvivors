@@ -5,6 +5,7 @@
 #include "DEHealthComponent.h"
 #include "DECombatComponent.h"
 #include "DEGameMode_Stage.h"
+#include "DEStatusEffectComponent.h"
 #include "DEMonsterBase.h"
 #include "Engine/OverlapResult.h"
 #include "DECombatTypes.h"
@@ -50,10 +51,28 @@ FDEDamageResult UDEGameplayLibrary::ApplyCombatDamage(
 	}
 
 	// =========================================================
+	// ★ [NEW] 2. 맞은 놈의 상태이상(디버프)들에게 데미지 조작 기회 주기!
+	// =========================================================
+	if (UDEStatusEffectComponent* VictimStatusComp = Request.Victim->FindComponentByClass<UDEStatusEffectComponent>())
+	{
+		// 부식, 맹독 등의 디버프가 여기서 ModifiableReq.BaseDamage 를 뻥튀기시킵니다!
+		VictimStatusComp->ProcessIncomingDamageModifiers(ModifiableReq);
+	}
+
+	// =========================================================
 	// 3. 피해자에게 '조작이 완료된' 청구서로 데미지 처리 요청
 	// =========================================================
 	Result = TargetHealth->ProcessDamage(ModifiableReq);
-	UE_LOG(LogTemp, Warning, TEXT("Processed Final Damage of Result : %f"), Result.FinalDamage);
+	//UE_LOG(LogTemp, Warning, TEXT("Processed Final Damage of Result : %f"), Result.FinalDamage);
+
+	// =========================================================
+	// ★ 3. 중앙 라이브러리에서 '공통 메타데이터' 무조건 보장 (영수증 완성)
+	// =========================================================
+	Result.Victim = ModifiableReq.Victim;
+	Result.SourceObject = ModifiableReq.SourceObject;
+	Result.DamageTags = ModifiableReq.DamageTags;
+	Result.bCanTriggerOnHit = ModifiableReq.bCanTriggerOnHit;
+
 
 	// 4. 가해자에게 후처리(OnHit, OnKill) 요청
 	// (여기는 네가 원래 짜둔 대로 HandleDamageDealt가 글로벌 이펙트를 잘 터뜨려 줄 거임)

@@ -27,6 +27,12 @@ void UDEProgressionComponent::BeginPlay()
 	OnExpChanged.Broadcast(CurrentExp, MaxExp);
 	// ...
 	
+	// ★ 게임 시작(생성) 시점에 딱 한 번만 찾아서 포인터를 쥐고 있는다!
+	if (AActor* Owner = GetOwner())
+	{
+		CachedStatComp = Owner->FindComponentByClass<UDEStatComponent>();
+	}
+
 }
 
 
@@ -94,14 +100,15 @@ void UDEProgressionComponent::AddExp(float Amount)
 	float FinalExp = Amount;
 
 	// [StatComponent 연동] (님이 짜신 코드 유지! 아주 좋습니다)
-	if (AActor* Owner = GetOwner())
+	if (CachedStatComp)
 	{
-		if (UDEStatComponent* StatComp = Owner->FindComponentByClass<UDEStatComponent>())
-		{
-			// StatComponent에 GetGrowth() 함수가 있다고 가정
-			// (없으면 StatComp->GrowthStat.GetValue() 등으로 수정하세요)
-			 FinalExp *= StatComp->GetGrowth(); 
-		}
+		FinalExp *= CachedStatComp->GetGrowth();
+		//if (UDEStatComponent* StatComp = Owner->FindComponentByClass<UDEStatComponent>())
+		//{
+		//	// StatComponent에 GetGrowth() 함수가 있다고 가정
+		//	// (없으면 StatComp->GrowthStat.GetValue() 등으로 수정하세요)
+		//	 FinalExp *= CachedStatComp->GetGrowth();
+		//}
 	}
 
 	// 경험치 적용

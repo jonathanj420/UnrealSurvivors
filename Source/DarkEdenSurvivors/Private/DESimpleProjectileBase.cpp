@@ -250,7 +250,8 @@ bool ADESimpleProjectileBase::TryDealDamage(AActor* Victim)
 {
 	if (!Victim) return false;
 
-	FVector KBDir = Victim->GetActorLocation() - GetActorLocation();
+	//FVector KBDir = Victim->GetActorLocation() - GetActorLocation();
+	FVector KBDir = GetActorForwardVector().GetSafeNormal2D();
 
 	FDEDamageRequest Req;
 	Req.Instigator = GetInstigator();

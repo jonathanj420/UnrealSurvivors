@@ -7,6 +7,7 @@
 #include "Data/DESkillData.h"
 #include "DESkillContext.h"
 #include "DECombatEffect.h"
+#include "DEDamageInstigatorInterface.h"
 #include "DEAutoSkillBase.generated.h"
 
 
@@ -14,7 +15,7 @@
  * 
  */
 UCLASS(Abstract)
-class DARKEDENSURVIVORS_API UDEAutoSkillBase : public UDESkillBase
+class DARKEDENSURVIVORS_API UDEAutoSkillBase : public UDESkillBase, public IDEDamageInstigatorInterface
 {
 	GENERATED_BODY()
 
@@ -23,6 +24,7 @@ public:
 	virtual void Activate();
 
 protected:
+	FDESkillContext CachedContext;
 	// ★ 새로 만든 가상 함수! 자식들이 오버라이드하기 딱 좋게 Context를 던져줍니다.
 	virtual void ExecuteWithContext(FDESkillContext& Context);
 
@@ -34,6 +36,7 @@ public:	// 데이터 주입 (레벨업 시 호출)
 
 protected:
 	virtual void BuildContext(FDESkillContext& OutContext);
+
 
 protected:
 	UPROPERTY()
@@ -47,9 +50,12 @@ public:
 	TArray<UDECombatEffect*> LocalEffects;
 
 public:
-	UPROPERTY()
 	TMap<FName, TWeakObjectPtr<class ADESimpleAOEBase>> OwnedAOEMap;
 public:
 	virtual void EndSkill();
+public:
+	// ★ 인터페이스 함수 선언 (기본적으로는 아무것도 안 함)
+	virtual void OnTargetKilled(const FDEDamageResult& Result) override;
+
 
 };

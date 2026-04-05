@@ -5,10 +5,10 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "DEStatTypes.h"
+#include "DESkillContext.h"
 #include "DESimpleAOEBase.generated.h"
 
 
-struct FDESkillContext;
 class USphereComponent;
 class UNiagaraComponent;
 
@@ -67,6 +67,9 @@ protected:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     UNiagaraComponent* NiagaraComp;
+
+    UPROPERTY()
+    FDESkillContext CachedContext;
 
     // --- ½ºÅÈ º¯¼ö ---
     struct FCombatSnapshot Snapshot;
