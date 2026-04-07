@@ -22,6 +22,20 @@ class DARKEDENSURVIVORS_API UDEAutoSkillBase : public UDESkillBase, public IDEDa
 public:
 	// 외부(매니저)에서 호출하는 실행 함수
 	virtual void Activate();
+	// ★ 매니저가 이 스킬이 '시전(유지) 중'인지 확인하는 용도
+	bool IsRunning() const { return bIsRunning; }
+
+protected:
+	// ★ 이 스킬이 '지속시간이 끝난 후 쿨타임이 도는' 성서 타입인가?
+	// (나중에 성서(DanseMacabre) 자식 클래스 C++ 생성자나 블루프린트에서 이걸 true로 체크하면 됨!)
+	UPROPERTY(EditDefaultsOnly, Category = "Skill Option")
+	bool bCooldownAfterDuration = false;
+
+	bool bIsRunning = false;
+	FTimerHandle DurationTimerHandle;
+
+	// 지속시간이 끝났을 때 호출될 함수
+	virtual void FinishSkill();
 
 protected:
 	FDESkillContext CachedContext;

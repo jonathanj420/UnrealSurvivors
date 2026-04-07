@@ -8,7 +8,7 @@
 UDESkill_DanseMacabre::UDESkill_DanseMacabre()
 {
     //AOEClass = ADEAOE_Orbit_DanseMacabre::StaticClass();
-
+	bCooldownAfterDuration = true;
 }
 
 void UDESkill_DanseMacabre::InitBehaviors()

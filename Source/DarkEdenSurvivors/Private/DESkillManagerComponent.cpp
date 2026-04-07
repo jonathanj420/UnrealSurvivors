@@ -64,6 +64,14 @@ void UDESkillManagerComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
     {
         FActiveSkill& Active = Pair.Value;
 
+        // =========================================================
+        // ★ [핵심 2] 스킬이 아직 공전(유지) 중이라면 쿨타임을 깎지 않고 스킵!
+        // =========================================================
+        if (Active.SkillObject && Active.SkillObject->IsRunning())
+        {
+            continue;
+        }
+
         // 아직 쿨타임이 남았다면 깎고 다음 스킬로 넘어감
         if (Active.CurrentCooldown > 0.f)
         {

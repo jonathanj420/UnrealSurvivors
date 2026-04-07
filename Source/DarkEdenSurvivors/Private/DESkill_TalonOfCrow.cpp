@@ -70,7 +70,40 @@ void UDESkill_TalonOfCrow::InitBehaviors()
 
 void UDESkill_TalonOfCrow::ExecuteWithContext(FDESkillContext& Context)
 {
+    // Amount(공격 횟수)만큼 할퀴기를 반복합니다.
     for (int32 i = 0; i < Context.Amount; i++)
+    {
+        AActor* AnchorTarget = nullptr; // 방향의 기준점이 될 과녁
+
+        if (i == 0)
+        {
+            // 첫 타: 가장 가까운 적
+            AnchorTarget = UDEGameplayLibrary::GetNearestTarget(SkillOwner, -1.0f);
+        }
+        else
+        {
+            // 후속 타: 랜덤한 적 1명
+            TArray<AActor*> RandomEnemies = UDEGameplayLibrary::GetRandomTargets(SkillOwner, -1.0f, 1);
+
+            // ★ [안전장치] 맵에 적이 1명뿐이라 배열이 비어있을 수 있으므로 튕김(Crash) 방지
+            if (RandomEnemies.Num() > 0)
+            {
+                AnchorTarget = RandomEnemies[0];
+            }
+        }
+
+        // 맵에 적이 하나도 없어서 과녁을 못 찾았다면 이 번 타격은 스킵
+        if (!AnchorTarget) continue;
+
+        // Context의 Target을 이번 할퀴기의 '방향 기준점'으로 세팅
+        Context.Targets.Reset();
+        Context.Targets.Add(AnchorTarget);
+
+        // 부모 함수 호출 (PlayFX -> 부채꼴 타겟팅 -> 데미지 파이프라인 실행)
+        Super::ExecuteWithContext(Context);
+    }
+
+    /*for (int32 i = 0; i < Context.Amount; i++)
     {
         AActor* Target = nullptr;
 
@@ -84,7 +117,7 @@ void UDESkill_TalonOfCrow::ExecuteWithContext(FDESkillContext& Context)
         Context.Targets.Empty();
         Context.Targets.Add(Target);
         Super::ExecuteWithContext(Context);
-    }
+    }*/
 
    
 }

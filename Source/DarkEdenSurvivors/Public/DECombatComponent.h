@@ -39,7 +39,10 @@ public:
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Combat")
 	FCombatSnapshot GetCombatSnapshot() const;
-
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	int32 GetTotalKillCount() const { return TotalKillCount; }
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	float GetTotalDamageDealt() const { return TotalDamageDealt; }
 
 protected:
 	//// 내부 로직 분리 (protected나 private 권장)

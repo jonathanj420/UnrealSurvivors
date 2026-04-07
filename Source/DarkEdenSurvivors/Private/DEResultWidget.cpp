@@ -17,7 +17,7 @@ void UDEResultWidget::NativeConstruct()
 		Btn_MainMenu->OnClicked.AddDynamic(this, &UDEResultWidget::OnMainMenuClicked);
 }
 
-void UDEResultWidget::SetResultData(int32 EarnedGold, int32 KillCount, float SurviveTime)
+void UDEResultWidget::SetResultData(int32 EarnedGold, int32 KillCount, float DamageDealt, float SurviveTime)
 {
 	// 1. 화면에 텍스트 갱신
 	if (Text_GoldEarned)
@@ -25,6 +25,9 @@ void UDEResultWidget::SetResultData(int32 EarnedGold, int32 KillCount, float Sur
 
 	if (Text_KillCount)
 		Text_KillCount->SetText(FText::AsNumber(KillCount));
+
+	if (Text_DamageDealt)
+		Text_DamageDealt->SetText(FText::AsNumber(FMath::RoundToInt(DamageDealt)));
 
 	// 시간 포맷 (분:초) 변환
 	FTimespan Time(0, 0, (int32)SurviveTime);

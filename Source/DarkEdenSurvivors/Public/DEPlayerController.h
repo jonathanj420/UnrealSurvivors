@@ -27,7 +27,9 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
-
+protected:
+	// 입력을 세팅하는 언리얼 기본 함수 오버라이드
+	virtual void SetupInputComponent() override;
 
 
 private:
@@ -61,4 +63,18 @@ public:
 	void ResumeGame();
 	void ShowLevelUpUI();
 	void ShowChestWidget(const TArray<UDELevelUpChoiceBase*>& Rewards);
+	// ESC 메뉴 껐다 켜기
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void TogglePauseMenu();
+
+protected:
+	// 에디터에서 우리가 만든 WBP_PauseMenu를 끼워넣을 슬롯
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<class UUserWidget> PauseMenuClass;
+
+private:
+	// 현재 화면에 떠있는 일시정지 메뉴 인스턴스
+	UPROPERTY()
+	class UUserWidget* PauseMenuInstance;
+
 };

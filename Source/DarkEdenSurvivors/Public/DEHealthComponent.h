@@ -81,5 +81,11 @@ public:
     void InstantKill(AActor* Executioner, bool bShowDamage /* = false */);
 protected:
     void ApplyFinalDamage(float InDamage, AActor* InCauser, bool bInIsCritical, const FGameplayTagContainer& InDamageTags);
+
+public:
+    // 기본 타격음 (살점 맞는 소리 등)
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
+    USoundBase* DefaultHitSound;
+
 		
 };

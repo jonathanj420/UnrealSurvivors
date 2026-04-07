@@ -43,8 +43,6 @@ void UDESkill_BloodyNail::InitBehaviors()
 
     // 1. 타겟 수집 & 필터링 (통합된 부채꼴 판정 한 방에 처리!)
     UDEBehavior_CullByCone* CullCone = NewObject<UDEBehavior_CullByCone>(this);
-    CullCone->Radius = 150.0f;       // 손톱 사거리
-    CullCone->ConeAngle = 120.0f;    // 넓게 할퀴는 부채꼴 각도
     //CullCone->bShowDebug = true;     // ★ 에디터에서 빨간색 피자 조각 보이게 켜둠!
     Behaviors.Add(CullCone);
 
@@ -53,6 +51,7 @@ void UDESkill_BloodyNail::InitBehaviors()
     PlayFX->NiagaraEffect = NailHitEffect; // ★ 여기에 쏙!
     PlayFX->RotationType = EEffectRotation::InstigatorForward;
     PlayFX->SoundEffect = NailHitSound;    // ★ 여기에 쏙!
+    PlayFX->SizeVariableName = FName("SkillRadius");
     Behaviors.Add(PlayFX);
 
     // 3. 즉발 데미지 적용

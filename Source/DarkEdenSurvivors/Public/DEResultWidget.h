@@ -21,7 +21,7 @@ public:
 
 	// 외부(GameMode)에서 데이터를 넣어주는 함수
 	UFUNCTION(BlueprintCallable, Category = "Result")
-	void SetResultData(int32 EarnedGold, int32 KillCount, float SurviveTime);
+	void SetResultData(int32 EarnedGold, int32 KillCount, float DamageDealt, float SurviveTime);
 
 protected:
 	// --- 버튼 클릭 이벤트 ---
@@ -42,6 +42,10 @@ protected:
 	UTextBlock* Text_KillCount;
 
 	UPROPERTY(meta = (BindWidget))
+	UTextBlock* Text_DamageDealt;
+
+
+	UPROPERTY(meta = (BindWidget))
 	UTextBlock* Text_SurviveTime;
 
 	// 2. 버튼
@@ -50,5 +54,5 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* Btn_MainMenu;
-	
+
 };

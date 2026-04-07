@@ -46,4 +46,10 @@ public:
 		bool bFromSweep, const FHitResult& SweepResult) override;
 	void Explode();
 	virtual void OnLifeTimeExpired() override;
+
+public:
+	// 에디터에서 폭발 나이아가라 에셋을 넣을 슬롯
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect")
+	class UNiagaraSystem* ExplosionEffect;
+
 };

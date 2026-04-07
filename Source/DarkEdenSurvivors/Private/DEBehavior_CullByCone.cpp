@@ -88,7 +88,7 @@ void UDEBehavior_CullByCone::Execute(FDESkillContext& Context)
 
     //Context.Targets.Reset(); // Âî²¨±â ºñ¿ì±â
 
-    //THIS MOFOKIN OverlapMultiByProfile NEVER RETURNS FUCKIN TRUE FOR OVERLAPS BUT FALSE FOR FUCKING BLOCKS
+    //THIS MOFOKIN OverlapMultiByProfile NEVER RETURNS FUCKIN TRUE FOR OVERLAPS ONLY TRUE FOR FUCKING BLOCKS
     if (OverlapResults.Num() > 0)
     {
         float CosHalfAngle = FMath::Cos(FMath::DegreesToRadians(FinalAngle / 2.0f));

@@ -7,6 +7,10 @@
 #include "Kismet/GameplayStatics.h"
 #include "DEMonsterBase.h"
 #include "Engine/OverlapResult.h"
+#include "DEGameplayLibrary.h"
+#include "NiagaraComponent.h"
+#include "DEAutoSkillBase.h"
+#include "NiagaraFunctionLibrary.h"
 
 // Sets default values
 ADEProjectile_AcidBolt::ADEProjectile_AcidBolt()
@@ -31,6 +35,16 @@ ADEProjectile_AcidBolt::ADEProjectile_AcidBolt()
         ExplosionSound = SoundObj.Object;
     }
     
+    static ConstructorHelpers::FObjectFinder<UNiagaraSystem> ExplosionFX(
+        TEXT("/Game/DarkEden/Data/Niagara/NS_AcidBoltExplode.NS_AcidBoltExplode")
+    );
+
+    if (ExplosionFX.Succeeded())
+    {
+        ExplosionEffect = ExplosionFX.Object;
+    }
+
+
     //Combat
     Damage = 1.0f;
     Penetration = 10;
@@ -90,7 +104,7 @@ void ADEProjectile_AcidBolt::Explode()
     FVector Center = GetActorLocation();
 
     // 1. [시각화] 폭발 범위 (초록색)
-    DrawDebugSphere(World, Center, EffectRadius, 16, FColor::Green, false, 1.0f, 0, 1.0f);
+    //DrawDebugSphere(World, Center, EffectRadius, 16, FColor::Green, false, 1.0f, 0, 1.0f);
 
     //// 2. [검출] 범위 내 몬스터 찾기
     //TArray<FOverlapResult> OverlapResults;
@@ -130,7 +144,7 @@ void ADEProjectile_AcidBolt::Explode()
     {
         // 중복 타격 방지용 (한 몬스터에 콜라이더가 여러 개일 수 있음)
         //TSet<AActor*> HitActors;
-        UE_LOG(LogTemp, Warning, TEXT("Target Hit"));
+        //UE_LOG(LogTemp, Warning, TEXT("Target Hit"));
         for (const FOverlapResult& Result : OverlapResults)
         {
             AActor* TargetActor = Result.GetActor();
@@ -138,15 +152,27 @@ void ADEProjectile_AcidBolt::Explode()
             {
                 HitActors.Add(TargetActor);
                 // 4. [시각화] 피격된 몬스터 위치에 점 찍기 (빨간색)
-                DrawDebugSphere(World, TargetActor->GetActorLocation(), 30.0f, 8, FColor::Red, false, 1.0f, 0, 1.0f);
+                //DrawDebugSphere(World, TargetActor->GetActorLocation(), 30.0f, 8, FColor::Red, false, 1.0f, 0, 1.0f);
                 // 3. [처리] 데미지 주기 (1:1 타격으로 변경)
-                UGameplayStatics::ApplyDamage(
-                    TargetActor,
-                    Damage, // 거리 비례 감소 없이 100% 데미지
-                    GetInstigatorController(),
-                    this,
-                    UDamageType::StaticClass()
-                );
+                //UGameplayStatics::ApplyDamage(
+                //    TargetActor,
+                //    Damage, // 거리 비례 감소 없이 100% 데미지
+                //    GetInstigatorController(),
+                //    this,
+                //    UDamageType::StaticClass()
+                //);
+
+                FDEDamageRequest Req;
+                Req.Instigator = GetInstigator();
+                Req.DamageCauser = this;
+                Req.SourceObject = CachedContext.SourceSkill;
+                Req.Victim = TargetActor;
+                Req.BaseDamage = Damage;
+
+                // 1. [데미지 선 적용] 라이브러리 호출
+                FDEDamageResult Res = UDEGameplayLibrary::ApplyCombatDamage(Req);
+
+
 
                // UE_LOG(LogTemp, Warning, TEXT("Hit %d Targets / acidbolt"), HitActors.Num());
 
@@ -162,6 +188,21 @@ void ADEProjectile_AcidBolt::Explode()
     else
     {
         //UE_LOG(LogTemp, Warning, TEXT("Exploded but no targets"));
+    }
+    if (ExplosionEffect)
+    {
+        UNiagaraComponent* SpawnedEffect = UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+            World,
+            ExplosionEffect,
+            Center,
+            GetActorRotation()
+        );
+
+        if (SpawnedEffect)
+        {
+            // 물리 타격 판정과 완전히 동일한 'EffectRadius'를 나이아가라로 쏴줌!
+            SpawnedEffect->SetFloatParameter(FName("SkillRadius"), EffectRadius);
+        }
     }
     // ---- 2) 소리 간헐 재생 ----
     static double LastExplosionSoundTime = 0.0;

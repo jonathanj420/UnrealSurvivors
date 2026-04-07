@@ -122,6 +122,29 @@ void ADEPlayerController::Tick(float DeltaSeconds)
 
 }
 
+void ADEPlayerController::SetupInputComponent()
+{
+    Super::SetupInputComponent();
+
+    // 입력 컴포넌트가 제대로 있는지 확인
+    if (InputComponent)
+    {
+        // "PauseGame" 액션을 눌렀을 때(IE_Pressed), 내 컨트롤러의 TogglePauseMenu 함수를 실행해라!
+        FInputActionBinding& PauseBinding = InputComponent->BindAction(
+            TEXT("PauseGame"),
+            IE_Pressed,
+            this,
+            &ADEPlayerController::TogglePauseMenu
+        );
+
+        // =========================================================
+        // ★ [핵심] 이거 안 쓰면 일시정지 후 ESC 키가 먹통이 됨!!!
+        // =========================================================
+        PauseBinding.bExecuteWhenPaused = true;
+    }
+
+}
+
 void ADEPlayerController::ShowLevelUpUI()
 {
     UE_LOG(LogTemp, Warning, TEXT("Try Show Level Up UI"));
@@ -187,4 +210,47 @@ void ADEPlayerController::ShowChestWidget(const TArray<UDELevelUpChoiceBase*>& R
 
         // (참고: SetPause(true)는 이미 상자 픽업의 ApplyEffect에서 하셨으므로 여기선 패스!)
     }
+}
+
+void ADEPlayerController::TogglePauseMenu()
+{
+    // 이미 일시정지 상태라면? -> 게임 재개
+    if (IsPaused())
+    {
+        SetPause(false); // 시간 다시 흐르게
+
+        if (PauseMenuInstance)
+        {
+            PauseMenuInstance->RemoveFromParent(); // 화면에서 UI 제거
+        }
+
+        bShowMouseCursor = false; // 마우스 숨기기
+        SetInputMode(FInputModeGameOnly()); // 키보드/마우스 입력을 다시 게임으로
+    }
+    // 게임 중이었다면? -> 일시정지
+    else
+    {
+        if (PauseMenuClass)
+        {
+            // 위젯 생성 및 화면에 띄우기
+            if (!PauseMenuInstance)
+            {
+                PauseMenuInstance = CreateWidget<UUserWidget>(this, PauseMenuClass);
+            }
+
+            if (PauseMenuInstance)
+            {
+                PauseMenuInstance->AddToViewport(100); // ZOrder 높게 줘서 맨 위에 뜨게
+
+                SetPause(true); // 시간 멈춰!
+
+                bShowMouseCursor = true; // 마우스 커서 짠
+
+                FInputModeGameAndUI InputMode;
+                InputMode.SetWidgetToFocus(PauseMenuInstance->TakeWidget()); // 포커스를 메뉴로
+                SetInputMode(InputMode);
+            }
+        }
+    }
+
 }

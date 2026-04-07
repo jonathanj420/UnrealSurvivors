@@ -18,6 +18,17 @@ void UDEAutoSkillBase::Activate()
 
 	BuildContext(CachedContext);
 
+    // =========================================================
+    // ★ [핵심 1] 지속형 스킬(성서)이라면 '시전 중' 상태로 돌입!
+    // =========================================================
+    if (bCooldownAfterDuration && CachedContext.Duration > 0.0f)
+    {
+        bIsRunning = true; // 이걸 true로 하면 매니저가 쿨타임을 안 깎고 기다림
+
+        // 지속시간(Duration) 뒤에 FinishSkill을 실행하는 타이머 작동!
+        SkillOwner->GetWorldTimerManager().SetTimer(DurationTimerHandle, this, &UDEAutoSkillBase::FinishSkill, CachedContext.Duration, false);
+    }
+
     // Context를 만들었으니, 실행 로직으로 던져줍니다.
     ExecuteWithContext(CachedContext);
 }
@@ -161,6 +172,15 @@ void UDEAutoSkillBase::BuildContext(FDESkillContext& OutContext)
     // 6. 맵 데이터(옵션) 통째로 복사
     // (특수 기믹을 위한 커스텀 데이터)
     OutContext.CustomValues = SkillData->OptionValues;
+}
+
+
+void UDEAutoSkillBase::FinishSkill()
+{
+    bIsRunning = false; // 이제 끝났으니 매니저한테 "쿨타임 돌려라!" 라고 허락함
+
+    // 네가 기존에 잘 만들어둔 AOE 정리(해골 지우기) 함수를 재활용!
+    EndSkill();
 }
 
 void UDEAutoSkillBase::EndSkill()
