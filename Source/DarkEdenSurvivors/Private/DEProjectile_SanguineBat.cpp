@@ -13,7 +13,7 @@ ADEProjectile_SanguineBat::ADEProjectile_SanguineBat()
     {
         SkeletalMesh->SetSkeletalMeshAsset(SK_BAT.Object);
         SkeletalMesh->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
-        UE_LOG(LogTemp, Warning, TEXT("Bat Set"));
+        //UE_LOG(LogTemp, Warning, TEXT("Bat Set"));
     }
 
     // 2. 부모 클래스에 있는 루트 컴포넌트(CollisionComponent)에 딱 붙여줍니다.
@@ -51,6 +51,6 @@ void ADEProjectile_SanguineBat::OnOverlap(UPrimitiveComponent* OverlappedComp, A
 
     // 4. 무한 다단 히트 초기화
     // 다음 번 튕겨서 얘한테 또 왔을 때 다시 때릴 수 있게 세팅을 비워줍니다.
-    HitActors.Empty();
+    HitActors.Reset();
 
 }

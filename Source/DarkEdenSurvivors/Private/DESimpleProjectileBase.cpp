@@ -3,6 +3,7 @@
 
 #include "DESimpleProjectileBase.h"
 #include "Components/SphereComponent.h"
+#include "GameFramework/RotatingMovementComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "DEPoolSubsystem.h"
@@ -46,6 +47,15 @@ ADESimpleProjectileBase::ADESimpleProjectileBase()
 	MovementComponent->ProjectileGravityScale = 0.0f; // 기본 무중력
 	MovementComponent->bSweepCollision = false; // [최적화 핵심] 이거 끄세요!
 
+	RotatingMovementComponent = CreateDefaultSubobject<URotatingMovementComponent>(TEXT("RotatingMovement"));
+	RotatingMovementComponent->SetUpdatedComponent(Mesh); // 루트(충돌체)를 돌림
+
+	// 2. ★ [최적화 핵심] 기본적으로는 아예 꺼둡니다! ★
+	RotatingMovementComponent->RotationRate = FRotator::ZeroRotator;
+	RotatingMovementComponent->bAutoActivate = false;
+	RotatingMovementComponent->SetComponentTickEnabled(false);
+
+
 	NiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComponent"));
 	NiagaraComponent->SetupAttachment(RootComponent); // 충돌체에 딱 달라붙어라
 	NiagaraComponent->SetAutoActivate(true);          // 생성되자마자 이펙트 재생해라
@@ -70,12 +80,6 @@ void ADESimpleProjectileBase::BeginPlay()
 void ADESimpleProjectileBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	LifeTimeCounter += DeltaTime;
-	if (LifeTimeCounter >= LifeTime)
-	{
-		OnLifeTimeExpired();
-		return;
-	}
 
 	UpdateMovement(DeltaTime);
 
@@ -117,7 +121,7 @@ void ADESimpleProjectileBase::ResetState()
 	SetActorTickEnabled(true);
 	SetActorHiddenInGame(false);
 	HitActors.Empty();
-	LifeTimeCounter = 0.f;
+//	LifeTimeCounter = 0.f;
 
 	// 2. [중요] 충돌 다시 켜기
 	if (CollisionComponent)
@@ -138,10 +142,29 @@ void ADESimpleProjectileBase::ResetState()
 		MovementComponent->Activate();
 		MovementComponent->SetUpdatedComponent(CollisionComponent); // 혹시 연결 끊겼을까봐
 	}
+
+	if (RotatingMovementComponent)
+	{
+		if (bEnableRotation)
+		{
+			RotatingMovementComponent->RotationRate = CustomRotationRate;
+			RotatingMovementComponent->SetComponentTickEnabled(true);
+			RotatingMovementComponent->Activate();
+		}
+		else
+		{
+			RotatingMovementComponent->RotationRate = FRotator::ZeroRotator;
+			RotatingMovementComponent->SetComponentTickEnabled(false);
+			RotatingMovementComponent->Deactivate();
+		}
+	}
+	GetWorldTimerManager().SetTimer(LifeTimeTimerHandle, this, &ADESimpleProjectileBase::OnLifeTimeExpired, LifeTime, false);
 }
 
 void ADESimpleProjectileBase::ReturnToPool()
 {
+	GetWorldTimerManager().ClearTimer(LifeTimeTimerHandle);
+
 	// 1. [중요] 나이아가라 끄기 (안 끄면 풀 안에서 계속 번쩍거림)
 	if (NiagaraComponent)
 	{

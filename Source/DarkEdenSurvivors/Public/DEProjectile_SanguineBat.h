@@ -14,6 +14,7 @@ class DARKEDENSURVIVORS_API ADEProjectile_SanguineBat : public ADESimpleProjecti
 {
 	GENERATED_BODY()
 	
+public:
 	ADEProjectile_SanguineBat();
 
 private:

@@ -40,6 +40,17 @@ protected:
     UPROPERTY(VisibleAnywhere)
     class UProjectileMovementComponent* MovementComponent;
 
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    class URotatingMovementComponent* RotatingMovementComponent;
+
+    // 회전 기능을 사용할지 여부 (기본값: false)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile|Movement")
+    bool bEnableRotation = false;
+
+    // 회전 속도 (bEnableRotation이 true일 때만 에디터에서 활성화됨!)
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile|Movement", meta = (EditCondition = "bEnableRotation"))
+    FRotator CustomRotationRate = FRotator(0.f, 720.f, 0.f);
+
 
     // ***************** Projectile Stats ******************
 protected:
@@ -64,8 +75,7 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
     float LifeTime;
 
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-    float LifeTimeCounter;
+    FTimerHandle LifeTimeTimerHandle;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
     float Speed;

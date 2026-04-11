@@ -16,7 +16,7 @@
 
 UDESkill_VenomCircle::UDESkill_VenomCircle()
 {
-	static ConstructorHelpers::FObjectFinder<UNiagaraSystem> CastRef(TEXT("/Game/DarkEden/Data/Niagara/NS_VenomCircle.NS_VenomCircle"));
+	static ConstructorHelpers::FObjectFinder<UNiagaraSystem> CastRef(TEXT("/Game/DarkEden/Data/Niagara/NS_VenomCircle"));
 	if (CastRef.Succeeded())
 	{
 		CastEffectAsset = CastRef.Object;
@@ -50,7 +50,7 @@ void UDESkill_VenomCircle::InitBehaviors()
 		CastVFX->TargetType = EEffectTargetType::Instigator; // 시전자 위치
 		CastVFX->bAttachToActor = false; // 바닥에 퍼지고 끝남 (따라오지 않음)
 		CastVFX->NiagaraEffect = CastEffectAsset; // 위에서 로드한 에셋 연결
-		CastVFX->SizeVariableName = TEXT("User.CircleRadius");
+		CastVFX->SizeVariableName = TEXT("User.SkillRadius");
 		Behaviors.Add(CastVFX);
 	}
 

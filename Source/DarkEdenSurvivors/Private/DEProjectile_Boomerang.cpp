@@ -31,9 +31,10 @@ void ADEProjectile_Boomerang::ResetState()
 void ADEProjectile_Boomerang::UpdateMovement(float DeltaTime)
 {
     // 공통 회전 로직 (중복 제거)
-    FRotator CurrentRot = GetActorRotation();
-    CurrentRot.Yaw += 720.f * DeltaTime; // 부메랑은 좀 더 빨리 돌아야 제맛!
-    SetActorRotation(CurrentRot);
+    //FRotator CurrentRot = GetActorRotation();
+    //CurrentRot.Yaw += 720.f * DeltaTime; // 부메랑은 좀 더 빨리 돌아야 제맛!
+    //SetActorRotation(CurrentRot);
+
 
     switch (Phase)
     {
