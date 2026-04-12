@@ -27,7 +27,7 @@ void UDESkillManagerComponent::BeginPlay()
 {
     Super::BeginPlay();
     InitSkills();
-    
+
 }
 
 void UDESkillManagerComponent::ApplyCharacterDamageMultiplier(float Multiplier)
@@ -45,17 +45,17 @@ void UDESkillManagerComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
         return;
 
     // =========================================================
-    // 2. 실시간 쿨타임 감소(CDR) 수치 가져오기
+    // 2. 실시간 쿨타임 감소(CDR) 수치 가져오기 NOW CACHED
     // =========================================================
-    float CurrentCDR = 0.0f;
-    if (CachedStatComp)
-    {
-        // 스탯 컴포넌트에서 실시간 쿨감 수치를 가져옵니다 (예: 0.15 = 15%)
-        CurrentCDR = CachedStatComp->GetStatValue(EDEStatType::Cooldown);
-    }
+    //float CurrentCDR = 0.0f;
+    //if (CachedStatComp)
+    //{
+    //    // 스탯 컴포넌트에서 실시간 쿨감 수치를 가져옵니다 (예: 0.15 = 15%)
+    //    CurrentCDR = CachedStatComp->GetStatValue(EDEStatType::Cooldown);
+    //}
 
-    // 쿨감 최대치 90% 캡(Cap) 적용 (무한 발사로 인한 게임 크래시 방지)
-    CurrentCDR = FMath::Clamp(CurrentCDR, 0.0f, 0.9f);
+    //// 쿨감 최대치 90% 캡(Cap) 적용 (무한 발사로 인한 게임 크래시 방지)
+    //CurrentCDR = FMath::Clamp(CurrentCDR, 0.0f, 0.9f);
     
     // =========================================================
     // 3. 스킬 루프 및 발동
@@ -87,7 +87,8 @@ void UDESkillManagerComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
             // ★ [수정 1] 먼저! 다음 발사를 위한 새 쿨타임부터 장전합니다.
             // =========================================================
             float BaseCooldown = Active.RowData->Cooldown;
-            float FinalCooldown = FMath::Max(0.1f, BaseCooldown * (1.0f - CurrentCDR));
+            float FinalCooldown = FMath::Max(0.1f, BaseCooldown * (1.0f - CachedCDR));
+            //UE_LOG(LogTemp, Error, TEXT("Final Cooldown for Skill : %s = %f"),*Active.SkillObject->GetName(),FinalCooldown);
 
             // (아까 만든 영수증 발급)
            // Active.CalculatedMaxCooldown = FinalCooldown;
@@ -609,6 +610,18 @@ void UDESkillManagerComponent::ResumeAutoSkills()
     bAutoSkillPaused = false;
 }
 
+void UDESkillManagerComponent::InitStatComp(UDEStatComponent* InStatComp)
+{
+    CachedStatComp = InStatComp;
+
+    if (CachedStatComp)
+    {
+        CachedStatComp->OnStatChanged.AddUObject(this, &UDESkillManagerComponent::OnStatChanged);
+        CachedCDR = FMath::Clamp(CachedStatComp->GetStatValue(EDEStatType::Cooldown), 0.0f, 0.9f);
+        UE_LOG(LogTemp, Warning, TEXT("Stat Comp Bound to Skill Manager Successfully . . . "));
+    }
+}
+
 // 1. 즉시 초기화
 void UDESkillManagerComponent::ResetCooldownInstant(int32 SkillID)
 {
@@ -685,5 +698,15 @@ void UDESkillManagerComponent::ReduceAllCooldowns(float ReduceAmount)
     {
         FActiveSkill& Active = Pair.Value;
         Active.CurrentCooldown = FMath::Max(0.0f, Active.CurrentCooldown - ReduceAmount);
+    }
+}
+
+void UDESkillManagerComponent::OnStatChanged(EDEStatType StatType, float NewValue)
+{
+    // CDR 관련 스탯이 바뀔 때만 갱신
+    if (StatType == EDEStatType::Cooldown)
+    {
+        CachedCDR = FMath::Clamp(NewValue, 0.0f, 0.9f);
+        UE_LOG(LogTemp, Error, TEXT("CDR Changed ! : %f"), CachedCDR);
     }
 }

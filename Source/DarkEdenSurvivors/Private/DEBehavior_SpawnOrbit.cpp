@@ -73,12 +73,14 @@ void UDEBehavior_SpawnOrbit::Execute(FDESkillContext& Context)
 
         // 시작 각도 설정
         OrbitActor->InitOrbit(StartAngle);
+        OrbitActor->InitializeFromContext(Context);
 
-        // 데미지 / 범위 / 속도 등 컨텍스트 적용
-        OrbitActor->ApplyContext(Context);
+        //// 데미지 / 범위 / 속도 등 컨텍스트 적용
+        //OrbitActor->ApplyContext(Context);
 
-        // 활성화 (틱, 충돌 등)
-        OrbitActor->ActivateAOE(true);
+        //// 활성화 (틱, 충돌 등)
+        //OrbitActor->ActivateAOE(true);
+        // 
         //UE_LOG(LogTemp, Warning, TEXT("%s Orbit Activated AOE"), *GetName());
         // 스킬 컨텍스트 관리 목록에 등록
         Context.SpawnedAOEs.Add(OrbitActor);

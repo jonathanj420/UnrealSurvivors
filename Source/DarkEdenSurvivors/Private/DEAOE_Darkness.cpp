@@ -11,7 +11,7 @@ ADEAOE_Darkness::ADEAOE_Darkness()
 	static ConstructorHelpers::FObjectFinder<UNiagaraSystem>NiagaraRef(TEXT("/Game/DarkEden/Data/Niagara/NS_Darkness.NS_Darkness"));
 	if (NiagaraRef.Succeeded())
 	{
-		NiagaraComp->SetAsset(NiagaraRef.Object);
+		NiagaraComponent->SetAsset(NiagaraRef.Object);
 
 	}
 	// Darkness는 기본적으로 무한 지속 Aura

@@ -43,33 +43,3 @@ ADEProjectile_BloodyKnife::ADEProjectile_BloodyKnife()
     
 }
 
-// Called when the game starts or when spawned
-void ADEProjectile_BloodyKnife::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void ADEProjectile_BloodyKnife::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-
-void ADEProjectile_BloodyKnife::InitializeProjectile(float InDamage, float InSpeed, int32 InPenetration, const FVector& Direction)
-{
-    Super::InitializeProjectile(InDamage, InSpeed, InPenetration, Direction);
-
-}
-
-void ADEProjectile_BloodyKnife::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-    UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-    bool bFromSweep, const FHitResult& SweepResult)
-{
-
-    Super::OnOverlap(OverlappedComp,OtherActor,
-        OtherComp,OtherBodyIndex,
-        bFromSweep,SweepResult);
-}

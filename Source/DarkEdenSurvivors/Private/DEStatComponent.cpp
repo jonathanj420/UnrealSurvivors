@@ -74,6 +74,7 @@ void UDEStatComponent::ApplyModifier(const FDEStatModifier& Mod)
 	{
 		(*FoundStat)->ApplyModifier(Mod);
 		RefreshDerivedStats(Mod.StatType);
+		OnStatChanged.Broadcast(Mod.StatType, (*FoundStat)->GetValue()); // ← 추가
 	}
 }
 

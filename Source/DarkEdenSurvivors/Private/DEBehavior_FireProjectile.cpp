@@ -110,7 +110,7 @@ void UDEBehavior_FireProjectile::FireOneShot()
 	if (auto* Proj = Cast<ADESimpleProjectileBase>(PooledActor))
 	{
 		FVector FinalDir = SpawnRot.Vector();
-		Proj->InitializeFromContext(CachedContext, FinalDir);
+		Proj->InitializeProjectile(CachedContext, FinalDir);
 		//UE_LOG(LogTemp, Warning, TEXT("Shot Fired, Damage : %f"), CachedContext.Damage);
 	}
 

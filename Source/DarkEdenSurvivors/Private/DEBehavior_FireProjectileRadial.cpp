@@ -77,7 +77,7 @@ void UDEBehavior_FireProjectileRadial::Execute(FDESkillContext& Context)
 		// √ ±‚»≠
 		if (auto* Proj = Cast<ADESimpleProjectileBase>(PooledActor))
 		{
-			Proj->InitializeFromContext(Context, FireDir);
+			Proj->InitializeProjectile(Context, FireDir);
 		}
 	}
 

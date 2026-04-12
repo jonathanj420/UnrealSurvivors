@@ -31,6 +31,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Summon")
     float SpawnDistanceOffset = 100.0f;
 
-    bool bIgnoreAmount = true;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Summon")
+    bool bUseBaseAmountOnly = true;
 
 };

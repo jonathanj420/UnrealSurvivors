@@ -70,6 +70,6 @@ public:
 public:
 	// ★ 인터페이스 함수 선언 (기본적으로는 아무것도 안 함)
 	virtual void OnTargetKilled(const FDEDamageResult& Result) override;
-
+	int32 GetBaseAmount() const;
 
 };

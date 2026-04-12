@@ -81,31 +81,8 @@ void ADESummon_GoreGland::PerformBloodPulse()
     // (나이아가라 내부에서 'TriggerPulse'라는 int32 변수를 만들어두고 User Parameter로 받게 세팅하시면 됩니다)
     
 
-    //// --- 광역 타격 스캔 ---
-    //TArray<FOverlapResult> OverlapResults;
-    //FCollisionShape SphereShape = FCollisionShape::MakeSphere(EffectRadius);
-    //FCollisionQueryParams QueryParams;
-    //QueryParams.AddIgnoredActor(this);
-    //if (CachedContext.Instigator) QueryParams.AddIgnoredActor(CachedContext.Instigator);
 
-    //GetWorld()->OverlapMultiByProfile(OverlapResults, Center, FQuat::Identity, TEXT("Monster"), SphereShape, QueryParams);
-
-    //// 이번 펄스에서 이미 맞은 놈은 두 번 맞지 않게 방지
-    //TSet<AActor*> DamagedActors;
-
-    //for (const FOverlapResult& Result : OverlapResults)
-    //{
-    //    AActor* Victim = Result.GetActor();
-    //    if (Victim && !DamagedActors.Contains(Victim))
-    //    {
-    //        DamagedActors.Add(Victim);
-
-    //        // 부모(SummonBase)에 만들어둔 갓벽한 데미지 함수 호출!
-    //        TryDealDamage(Victim);
-    //    }
-    //}
-
-    FCollisionShape SphereShape = FCollisionShape::MakeSphere(EffectRadius);
+    FCollisionShape SphereShape = FCollisionShape::MakeSphere(Radius);
     //DrawDebugSphere(World, Center, EffectRadius, 12, FColor::Green, false, 1.0f, 0, 1.0f);
 
     FCollisionQueryParams QueryParams;
@@ -167,9 +144,8 @@ void ADESummon_GoreGland::PerformBloodPulse()
 
         if (SpawnedEffect)
         {
-            UE_LOG(LogTemp, Warning, TEXT("tje fuck? : %f "), EffectRadius);
             // 물리 타격 판정과 완전히 동일한 'EffectRadius'를 나이아가라로 쏴줌!
-            SpawnedEffect->SetFloatParameter(FName("SkillRadius"), EffectRadius);
+            SpawnedEffect->SetFloatParameter(FName("SkillRadius"), Radius);
         }
     }
 }

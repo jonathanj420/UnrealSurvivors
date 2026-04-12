@@ -139,7 +139,7 @@ protected:
 	class UDEInventoryComponent* CachedInventoryComp;
 
 public:
-	void InitStatComp(class UDEStatComponent* InStatComp) { CachedStatComp = InStatComp; }
+	void InitStatComp(class UDEStatComponent* InStatComp);
 	void InitInventoryComp(class UDEInventoryComponent* InInventoryComp) { CachedInventoryComp = InInventoryComp; }
 
 
@@ -158,6 +158,10 @@ public:
 protected:
 	float TotalReducedCooldownAmount = 0.0f;
 
+	float CachedCDR = 0.0f; // Ä³½ÌµÈ CDR °ª
+
+	UFUNCTION()
+	void OnStatChanged(EDEStatType StatType, float NewValue); // ½ºÅÈ º¯°æ ÄÝ¹é
 
 
 };

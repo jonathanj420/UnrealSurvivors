@@ -38,8 +38,7 @@ void UDEBehavior_SpawnAOE::Execute(FDESkillContext& Context)
                 ADESimpleAOEBase* ExistingAOE = Found->Get();
 
                 // 이미 존재하므로 풀에서 안 꺼내고, 갓 레벨업된 최신 Context만 덮어씌웁니다!
-                ExistingAOE->ApplyContext(Context);
-                ExistingAOE->ActivateAOE(/*bIsNewSpawn=*/false);
+                ExistingAOE->InitializeFromContext(Context);
 
                 return; // 스폰은 필요 없으니 여기서 깔끔하게 칼퇴근!
             }
@@ -96,8 +95,7 @@ void UDEBehavior_SpawnAOE::Execute(FDESkillContext& Context)
         }
 
         // 스탯 주입 및 활성화
-        AOE->ApplyContext(Context);
-        AOE->ActivateAOE(/*bIsNewSpawn=*/true);
+        AOE->InitializeFromContext(Context);
 
         // =========================================================
         // 4. 수명 관리를 위해 스킬 본체에 명부 등록

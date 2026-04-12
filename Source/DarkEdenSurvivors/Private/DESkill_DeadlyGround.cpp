@@ -1,15 +1,15 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "DESkill_SummonGoreGland.h"
+#include "DESkill_DeadlyGround.h"
 #include "UObject/ConstructorHelpers.h"
 #include "DEBehavior_SpawnSummon.h"
 #include "DEBehavior_SelectNearestTarget.h"
 
-UDESkill_SummonGoreGland::UDESkill_SummonGoreGland()
+UDESkill_DeadlyGround::UDESkill_DeadlyGround()
 {
     // 1. 경로 설정 (블루프린트 에셋 우클릭 -> '레퍼런스 복사' 후 _C를 꼭 붙여주세요)
-    static ConstructorHelpers::FClassFinder<AActor> SummonBP(TEXT("/Game/DarkEden/Blueprint/SkillProjectiles/DESummon_GoreGland.DESummon_GoreGland_C"));
+    static ConstructorHelpers::FClassFinder<AActor> SummonBP(TEXT("/Game/DarkEden/Blueprint/SkillProjectiles/DESummon_DeadlyGround.DESummon_DeadlyGround_C"));
 
     // 2. 에셋을 성공적으로 찾았는지 확인 후 변수에 할당
     if (SummonBP.Succeeded())
@@ -19,7 +19,7 @@ UDESkill_SummonGoreGland::UDESkill_SummonGoreGland()
     }
 
     static ConstructorHelpers::FObjectFinder<USoundBase> SoundObj(
-        TEXT("/Game/DarkEden/Data/Sound/SkillSoundEffect/Vampire_SummonGoreGrand.Vampire_SummonGoreGrand")
+        TEXT("/Game/DarkEden/Data/Sound/SkillSoundEffect/Vampire_Doom.Vampire_Doom")
     );
 
     if (SoundObj.Succeeded())
@@ -29,7 +29,7 @@ UDESkill_SummonGoreGland::UDESkill_SummonGoreGland()
     bCooldownAfterDuration = true;
 }
 
-void UDESkill_SummonGoreGland::InitBehaviors()
+void UDESkill_DeadlyGround::InitBehaviors()
 {
     Super::InitBehaviors();
 
@@ -43,5 +43,6 @@ void UDESkill_SummonGoreGland::InitBehaviors()
     UDEBehavior_SpawnSummon* Spawner = NewObject<UDEBehavior_SpawnSummon>(this);
     Spawner->SummonClass = this->SummonClass; // 고어글랜드 클래스 할당
     Spawner->SpawnSound = this->SummonSound;
+    Spawner->bUseBaseAmountOnly = false;
     Behaviors.Add(Spawner);
 }

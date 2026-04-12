@@ -11,7 +11,7 @@
 //DECLARE_MULTICAST_DELEGATE(FOnLevelUp);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnSpeedChanged, float /*NewSpeed*/);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnMagnetChanged, float /*NewRadius*/);
-
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnStatChanged, EDEStatType /*StatType*/, float /*NewValue*/);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class DARKEDENSURVIVORS_API UDEStatComponent : public UActorComponent
@@ -127,6 +127,7 @@ protected:
     void ApplyMetaUpgrades();
 
 public:
+	FOnStatChanged OnStatChanged;
 		// �ܺο��� Ư�� ������ ����(����) ���� ���� �������� �Լ�
 		UFUNCTION(BlueprintCallable, Category = "Stats")
 		float GetStatValue(EDEStatType StatType) const;

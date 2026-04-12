@@ -191,9 +191,21 @@ void UDEAutoSkillBase::EndSkill()
         if (Pair.Value.IsValid())
             Pair.Value->ReturnToPool();
     }
-    OwnedAOEMap.Empty();
+    OwnedAOEMap.Reset();
 }
 
 void UDEAutoSkillBase::OnTargetKilled(const FDEDamageResult& Result)
 {
+}
+
+int32 UDEAutoSkillBase::GetBaseAmount() const
+{
+    // 스킬 데이터가 캐싱되어 있다면 그 값을 그대로 돌려줌
+    if (SkillData)
+    {
+        return SkillData->Amount;
+    }
+
+    // 데이터가 세팅되지 않았을 경우의 안전장치
+    return 1;
 }

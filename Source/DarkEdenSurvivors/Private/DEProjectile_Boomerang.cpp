@@ -52,7 +52,7 @@ void ADEProjectile_Boomerang::UpdateMovement(float DeltaTime)
         if (CurrentSpeed <= 0.0f)
         {
             Phase = EBoomerangPhase::Returning;
-            HitActors.Empty();
+            HitActors.Reset();
             CurrentSpeed = 0.0f; // 0부터 다시 가속 시작하기 위해 초기화
         }
         break;

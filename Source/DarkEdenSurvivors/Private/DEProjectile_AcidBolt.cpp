@@ -54,7 +54,6 @@ ADEProjectile_AcidBolt::ADEProjectile_AcidBolt()
     Size = 30.0f;
     CritChance = 0.5f;
     bCanCrit = false;
-    bIsCrit = false;
 
 
 }
@@ -75,24 +74,18 @@ void ADEProjectile_AcidBolt::Tick(float DeltaTime)
 }
 
 
-
-void ADEProjectile_AcidBolt::InitializeProjectile(float InDamage, float InSpeed, int32 InPenetration, const FVector& Direction)
-{
-    Super::InitializeProjectile(InDamage, InSpeed, InPenetration, Direction);
-
-}
-
 void ADEProjectile_AcidBolt::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
     bool bFromSweep, const FHitResult& SweepResult)
 {
 
-    if (ADEMonsterBase* Monster = Cast<ADEMonsterBase>(OtherActor))
-    {
-        UGameplayStatics::ApplyDamage(Monster, Damage, GetInstigatorController(), this, UDamageType::StaticClass());
-        //UE_LOG(LogTemp, Warning, TEXT("CALLED ONOVERLAP"));
-        Explode();
-    }
+    Explode();
+    //if (ADEMonsterBase* Monster = Cast<ADEMonsterBase>(OtherActor))
+    //{
+    //    UGameplayStatics::ApplyDamage(Monster, Damage, GetInstigatorController(), this, UDamageType::StaticClass());
+    //    //UE_LOG(LogTemp, Warning, TEXT("CALLED ONOVERLAP"));
+    //    Explode();
+    //}
 }
 
 void ADEProjectile_AcidBolt::Explode()
@@ -136,7 +129,7 @@ void ADEProjectile_AcidBolt::Explode()
         Center,
         FQuat::Identity,
         ObjectQueryParams, // ★ 채널 대신 오브젝트 쿼리 파라미터가 들어감
-        FCollisionShape::MakeSphere(EffectRadius),
+        FCollisionShape::MakeSphere(Radius),
         QueryParams
     );
 
@@ -151,36 +144,9 @@ void ADEProjectile_AcidBolt::Explode()
             if (TargetActor && !HitActors.Contains(TargetActor))
             {
                 HitActors.Add(TargetActor);
-                // 4. [시각화] 피격된 몬스터 위치에 점 찍기 (빨간색)
-                //DrawDebugSphere(World, TargetActor->GetActorLocation(), 30.0f, 8, FColor::Red, false, 1.0f, 0, 1.0f);
-                // 3. [처리] 데미지 주기 (1:1 타격으로 변경)
-                //UGameplayStatics::ApplyDamage(
-                //    TargetActor,
-                //    Damage, // 거리 비례 감소 없이 100% 데미지
-                //    GetInstigatorController(),
-                //    this,
-                //    UDamageType::StaticClass()
-                //);
+                
+                TryDealDamage(TargetActor);
 
-                FDEDamageRequest Req;
-                Req.Instigator = GetInstigator();
-                Req.DamageCauser = this;
-                Req.SourceObject = CachedContext.SourceSkill;
-                Req.Victim = TargetActor;
-                Req.BaseDamage = Damage;
-
-                // 1. [데미지 선 적용] 라이브러리 호출
-                FDEDamageResult Res = UDEGameplayLibrary::ApplyCombatDamage(Req);
-
-
-
-               // UE_LOG(LogTemp, Warning, TEXT("Hit %d Targets / acidbolt"), HitActors.Num());
-
-                // (옵션) 여기서 넉백(ApplyKnockback)도 직접 호출 가능!
-                /*
-                ADEMonsterBase* Monster = Cast<ADEMonsterBase>(TargetActor);
-                if(Monster) { ... }
-                */
             }
         }
         
@@ -201,7 +167,7 @@ void ADEProjectile_AcidBolt::Explode()
         if (SpawnedEffect)
         {
             // 물리 타격 판정과 완전히 동일한 'EffectRadius'를 나이아가라로 쏴줌!
-            SpawnedEffect->SetFloatParameter(FName("SkillRadius"), EffectRadius);
+            SpawnedEffect->SetFloatParameter(FName("SkillRadius"), Radius);
         }
     }
     // ---- 2) 소리 간헐 재생 ----

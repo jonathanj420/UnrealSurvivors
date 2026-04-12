@@ -8,9 +8,9 @@ ADEAOE_Orbit_DanseMacabre::ADEAOE_Orbit_DanseMacabre()
 
     static ConstructorHelpers::FObjectFinder<UStaticMesh> SkullMeshAsset(TEXT("/Game/DarkEden/StaticMesh/Skull/human_skull.human_skull"));
 
-    if (SkullMeshAsset.Succeeded() && MeshComp)
+    if (SkullMeshAsset.Succeeded() && Mesh)
     {
-        MeshComp->SetStaticMesh(SkullMeshAsset.Object);
+        Mesh->SetStaticMesh(SkullMeshAsset.Object);
 
     }
 }

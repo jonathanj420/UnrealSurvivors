@@ -25,24 +25,3 @@ ADEProjectile_Inferno::ADEProjectile_Inferno()
 	SetKnockbackForce(100.0f);
 
 }
-
-void ADEProjectile_Inferno::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-void ADEProjectile_Inferno::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-void ADEProjectile_Inferno::InitializeProjectile(float InDamage, float InSpeed, int32 InPenetration, const FVector& Direction)
-{
-	Super::InitializeProjectile(InDamage, InSpeed, InPenetration, Direction);
-}
-
-void ADEProjectile_Inferno::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	Super::OnOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
-}
