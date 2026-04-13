@@ -32,6 +32,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect|Core")
 	int32 MaxStacks;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Status Effect|Core")
+	bool bRefreshDurationOnStack = true;
+
 	// (선택) 시각 효과: 다크에덴 특유의 세피아 톤, 테두리 없는(Borderless) 고딕 이펙트 등
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect|Visual")
 	class UNiagaraSystem* EffectParticle;

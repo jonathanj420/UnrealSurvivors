@@ -4,19 +4,29 @@
 #include "DEBehavior_FireProjectile.h"
 #include "DEPoolSubsystem.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "DESimpleProjectileBase.h" // 투사체 헤더
+#include "DESkillActorBase.h" // 투사체 헤더
+#include "DEAutoSkillBase.h"
 #include "Kismet/GameplayStatics.h"
 
 
 void UDEBehavior_FireProjectile::Execute(FDESkillContext& Context)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Behavior : FireProjectile Excuted"));
-	if (!Context.Instigator) return;
+	if (!Context.Instigator || !Context.SourceSkill) return;
 
 	int32 Count = FMath::Max(1, Context.Amount);
+	float ActualBurstInterval = BurstInterval;
+
+	// ★ Context 안에 변수를 욱여넣지 않고, 명함(SourceSkill)을 통해 본체에게 직접 물어봄!
+	float CurrentSkillCooldown = Context.SourceSkill->GetCurrentFinalCooldown();
+
+	// 마진율 0.95 적용하여 기관총 모드 (동적 압축) 발동
+	if ((Count * ActualBurstInterval) >= CurrentSkillCooldown)
+	{
+		ActualBurstInterval = (CurrentSkillCooldown * 0.95f) / Count;
+	}
 
 	// [Case A: 동시 발사 (기존)]
-	if (BurstInterval <= 0.f)
+	if (ActualBurstInterval <= 0.f)
 	{
 		// Context를 복사할 필요 없이 그냥 반복문으로 쏨
 		// (Execute 함수 안에서 잠시 쓸 용도로 CachedContext 활용)
@@ -48,7 +58,7 @@ void UDEBehavior_FireProjectile::Execute(FDESkillContext& Context)
 				BurstTimerHandle,
 				this,
 				&UDEBehavior_FireProjectile::FireOneShot,
-				BurstInterval,
+				ActualBurstInterval,
 				true // 반복
 			);
 		}
@@ -107,10 +117,10 @@ void UDEBehavior_FireProjectile::FireOneShot()
 
 	// 3. 스폰
 	AActor* PooledActor = Pool->GetPooledActor(ProjectileClass, SpawnLoc, SpawnRot, false);
-	if (auto* Proj = Cast<ADESimpleProjectileBase>(PooledActor))
+	if (auto* Proj = Cast<ADESkillActorBase>(PooledActor))
 	{
-		FVector FinalDir = SpawnRot.Vector();
-		Proj->InitializeProjectile(CachedContext, FinalDir);
+		CachedContext.TargetDirection = SpawnRot.Vector();
+		Proj->InitializeFromContext(CachedContext);
 		//UE_LOG(LogTemp, Warning, TEXT("Shot Fired, Damage : %f"), CachedContext.Damage);
 	}
 

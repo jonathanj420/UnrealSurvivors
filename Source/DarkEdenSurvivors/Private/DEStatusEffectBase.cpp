@@ -35,12 +35,14 @@ void UDEStatusEffectBase::Tick(AActor* Target, FActiveStatusEffect& EffectData, 
 
 void UDEStatusEffectBase::OnApply(AActor* Target, FActiveStatusEffect& EffectData) const
 {
+	UE_LOG(LogTemp, Warning, TEXT("Status Effect : %s On Apply !"), *GetName());
 	// 자식 클래스(UDEStatusEffect_CC 등)에서 Super::OnApply_Implementation() 호출 후 로직 작성
 	// (예: 여기서 EffectParticle을 Target에 Attach 시키는 공통 로직을 넣기 좋습니다.)
 }
 
 void UDEStatusEffectBase::OnRemove(AActor* Target, FActiveStatusEffect& EffectData) const
 {
+	UE_LOG(LogTemp, Warning, TEXT("Status Effect : %s On Remove !"), *GetName());
 	// 자식 클래스에서 스탯 원복 등의 로직 작성
 }
 

@@ -1,23 +1,23 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "DESkill_BloodySpear.h"
+#include "DESkill_BloodyScarify.h"
 #include "DEBehavior_SelectTargetsInRadius.h"
 #include "DEBehavior_PlayEffect.h"
 #include "DEBehavior_InstantDamage.h"
 #include "DEBehavior_FilterTargets.h"
 #include "NiagaraSystem.h"
+#include "DECombatEffect_ApplyStatusEffect.h"
+#include "DEStatusEffectBase.h"
 
-
-
-UDESkill_BloodySpear::UDESkill_BloodySpear()
+UDESkill_BloodyScarify::UDESkill_BloodyScarify()
 {
 	static ConstructorHelpers::FObjectFinder<UNiagaraSystem> NiagaraRef(TEXT("/Game/DarkEden/Data/Niagara/NS_BloodyScarify.NS_BloodyScarify"));
 	//static ConstructorHelpers::FObjectFinder<UNiagaraSystem> NiagaraRef(TEXT("/Game/DarkEden/Data/Niagara/NS_BloodySpear.NS_BloodySpear"));
 	if (NiagaraRef.Succeeded())
 	{
 		NiagaraFx = NiagaraRef.Object;
-		//UE_LOG(LogTemp, Warning, TEXT("Bloody spear niagara set"));
+		UE_LOG(LogTemp, Warning, TEXT("Bloody spear niagara set"));
 	}
 
 	// 1-2. 타격 이펙트 (피격 시)
@@ -26,14 +26,23 @@ UDESkill_BloodySpear::UDESkill_BloodySpear()
 	{
 		SoundFx = SoundRef.Object;
 	}
+
+	static ConstructorHelpers::FClassFinder<UDEStatusEffectBase> StatusEffectBP(TEXT("/Game/DarkEden/Blueprint/StatusEffects/BP_StatusEffect_BloodyScarifyExplosion.BP_StatusEffect_BloodyScarifyExplosion_C"));
+
+	// 2. 에셋을 성공적으로 찾았는지 확인 후 변수에 할당
+	if (StatusEffectBP.Succeeded())
+	{
+		// SummonClass 는 보통 헤더에 TSubclassOf<AActor>로 선언합니다.
+		StatusEffectClass = StatusEffectBP.Class;
+	}
+
 }
 
-
-void UDESkill_BloodySpear::InitBehaviors()
+void UDESkill_BloodyScarify::InitBehaviors()
 {
-    Super::InitBehaviors();
+	Super::InitBehaviors();
 
-	
+
 
 	UDEBehavior_SelectTargetsInRadius* Targeting = NewObject<UDEBehavior_SelectTargetsInRadius>(this);
 	Targeting->Radius = -1.0f;
@@ -66,6 +75,15 @@ void UDESkill_BloodySpear::InitBehaviors()
 		Behaviors.Add(Damage);
 	}
 
+	UDECombatEffect_ApplyStatusEffect* ApplyStatusEffect = NewObject<UDECombatEffect_ApplyStatusEffect>(this);
+	ApplyStatusEffect->TriggerCondition = ECombatEventTrigger::OnHit;
 
+	// ★ 핵심: 하드코딩 10 대신, 블루프린트에서 세팅한 내 ID를 동적으로 가져옴!
+	ApplyStatusEffect->StatusEffectClass = StatusEffectClass;
+	ApplyStatusEffect->Interval = 0.0f;
+	ApplyStatusEffect->Duration = 0.0f;
+	//CooldownResetEffect->bInstantReset = true;
+
+	LocalEffects.Add(ApplyStatusEffect);
 
 }

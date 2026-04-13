@@ -44,6 +44,7 @@ void UDEBehavior_InstantDamage::Execute(FDESkillContext& Context)
             PreHitData.Instigator = Context.Instigator;
             PreHitData.Target = Target;
             PreHitData.DamageMultiplier = 1.0f; // 오염되지 않은 기본 1배수
+            PreHitData.SourceContext = Context;
 
             if (Context.SourceSkill)
             {
@@ -78,6 +79,7 @@ void UDEBehavior_InstantDamage::Execute(FDESkillContext& Context)
             PostHitData.Instigator = Context.Instigator;
             PostHitData.Target = Target;
             PostHitData.DamageAmount = Res.FinalDamage; // 실제 들어간 찐 데미지 기록
+            PostHitData.SourceContext = Context;
             // PostHitData.DamageMultiplier는 건드리지 않았으니 안전한 1.0 상태!
 
             if (Res.bIsDead)

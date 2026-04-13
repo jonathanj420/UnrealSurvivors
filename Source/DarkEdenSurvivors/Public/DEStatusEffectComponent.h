@@ -7,6 +7,7 @@
 #include "Data/DEStatusEffectTypes.h"
 #include "DEStatusEffectBase.h"
 #include "GameplayTagContainer.h"
+#include "DESkillContext.h"
 #include "DEStatusEffectComponent.generated.h"
 
 
@@ -24,19 +25,16 @@ protected:
 public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	UFUNCTION(BlueprintCallable, Category = "Status Effect")
-	void AddEffect(TSubclassOf<UDEStatusEffectBase> EffectClass, AActor* Instigator, float Duration, float Power, float Interval);
+	//UFUNCTION(BlueprintCallable, Category = "Status Effect")
+	void AddEffect(TSubclassOf<UDEStatusEffectBase> EffectClass, AActor* Instigator, float Duration, float Power, float Interval, const FDESkillContext& InContext);
 
 	// =========================================================
 	// ★ [수정됨] EEffectTag -> FGameplayTag 로 모두 교체!
 	// =========================================================
-	UFUNCTION(BlueprintCallable, Category = "Status Effect")
 	void RemoveEffectsByTag(FGameplayTag Tag);
 
-	UFUNCTION(BlueprintCallable, Category = "Status Effect")
 	void RemoveAllEffects();
 
-	UFUNCTION(BlueprintPure, Category = "Status Effect")
 	bool HasEffectWithTag(FGameplayTag Tag) const;
 
 	void ProcessIncomingDamageModifiers(struct FDEDamageRequest& InOutRequest);

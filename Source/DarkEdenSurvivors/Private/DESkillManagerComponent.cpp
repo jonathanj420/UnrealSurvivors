@@ -107,6 +107,7 @@ void UDESkillManagerComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
             // =========================================================
             // 이제 이 안에서 OnKill이 터져서 ReduceCooldown이 불려도,
             // 방금 세팅된 '새 쿨타임'에서 정상적으로 깎이게 됩니다!
+            Active.SkillObject->SetCurrentFinalCooldown(FinalCooldown);
             Active.SkillObject->Activate();
 
             //// 데미지 합산, 스냅샷 등 복잡한 로직은 스킬 내부(BuildContext)가 알아서 함!

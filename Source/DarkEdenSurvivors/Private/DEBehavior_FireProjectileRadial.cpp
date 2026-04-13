@@ -21,6 +21,7 @@ void UDEBehavior_FireProjectileRadial::Execute(FDESkillContext& Context)
 	UDEPoolSubsystem* Pool = World->GetSubsystem<UDEPoolSubsystem>();
 	if (!Pool) return;
 
+
 	// 2. 발사 원점 설정
 	FVector Origin = Context.Instigator->GetActorLocation();
 
@@ -64,8 +65,6 @@ void UDEBehavior_FireProjectileRadial::Execute(FDESkillContext& Context)
 		float CurrentYawStep = StartYawOffset + (AngleStep * i);
 		SpawnRot.Yaw += CurrentYawStep;
 
-		FVector FireDir = SpawnRot.Vector();
-
 		// 풀에서 꺼내기
 		AActor* PooledActor = Pool->GetPooledActor(
 			ProjectileClass,
@@ -77,7 +76,9 @@ void UDEBehavior_FireProjectileRadial::Execute(FDESkillContext& Context)
 		// 초기화
 		if (auto* Proj = Cast<ADESimpleProjectileBase>(PooledActor))
 		{
-			Proj->InitializeProjectile(Context, FireDir);
+			Context.TargetDirection = SpawnRot.Vector();
+			Proj->InitializeFromContext(Context);
+		
 		}
 	}
 

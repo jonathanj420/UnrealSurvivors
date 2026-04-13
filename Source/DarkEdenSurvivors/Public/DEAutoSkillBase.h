@@ -59,6 +59,8 @@ protected:
 	// 현재 스킬 스펙 (포인터만 참조)
 	const FDESkillData* SkillData = nullptr;
 
+	float CurrentFinalCooldown = 0.0f;
+
 public:
 	UPROPERTY(EditAnywhere, Instanced, Category = "Combat Effects")
 	TArray<UDECombatEffect*> LocalEffects;
@@ -71,5 +73,13 @@ public:
 	// ★ 인터페이스 함수 선언 (기본적으로는 아무것도 안 함)
 	virtual void OnTargetKilled(const FDEDamageResult& Result) override;
 	int32 GetBaseAmount() const;
+
+	// 매니저가 발사 직전에 쿨타임을 꽂아주는 함수
+	void SetCurrentFinalCooldown(float InCooldown) { CurrentFinalCooldown = InCooldown; }
+
+	// 비헤이비어가 나중에 쿨타임을 물어볼 때 대답해주는 함수
+	float GetCurrentFinalCooldown() const { return CurrentFinalCooldown; }
+
+
 
 };

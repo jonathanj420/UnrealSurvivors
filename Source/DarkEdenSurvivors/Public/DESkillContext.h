@@ -65,6 +65,8 @@ public:
 		return DefaultValue;
 	}
 
+	FVector TargetDirection = FVector::ZeroVector;
+
 	UPROPERTY(Transient)
 	TArray<FVector> CustomLocations; // 다중 좌표 저장용
 };

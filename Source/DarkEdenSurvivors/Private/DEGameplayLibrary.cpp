@@ -136,6 +136,47 @@ FDEDamageResult UDEGameplayLibrary::ApplyCombatDamage(
 	//return Result;
 }
 
+void UDEGameplayLibrary::ApplyAoEDamage(UWorld* World, const FVector& Origin, float Radius, const FDEDamageRequest& BaseRequest, const TArray<AActor*>& IgnoredActors)
+{
+	if (!World) return;
+
+	// 1. 최적화된 다이렉트 물리 엔진 호출
+	TArray<FOverlapResult> OverlapResults;
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActors(IgnoredActors);
+
+	// ★ 핵심 변경: ObjectType으로 검색하기 위한 설정
+	FCollisionObjectQueryParams ObjectQueryParams;
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_GameTraceChannel5); // 몬스터 채널(5번)만 콕 집어서 검색
+
+	// 함수 변경: OverlapMultiByChannel -> OverlapMultiByObjectType
+	bool bHit = World->OverlapMultiByObjectType(
+		OverlapResults,
+		Origin,
+		FQuat::Identity,
+		ObjectQueryParams, // ★ 채널 대신 오브젝트 쿼리 파라미터가 들어감
+		FCollisionShape::MakeSphere(Radius),
+		QueryParams
+	);
+	DrawDebugSphere(World, Origin, Radius, 16, FColor::Green, false, 1.0f, 0, 1.0f);
+	if (!bHit) return;
+
+	// 2. 찾은 대상들에게 데미지 꽂아넣기
+	for (const FOverlapResult& Hit : OverlapResults)
+	{
+		AActor* Victim = Hit.GetActor();
+		if (!Victim) continue;
+
+		// ★ BaseRequest를 복사해서, Victim만 갈아끼운 뒤 기존 라이브러리 함수 재활용!
+		FDEDamageRequest TargetReq = BaseRequest;
+		TargetReq.Victim = Victim;
+
+		// 단일 데미지 로직 호출 (이 안에서 피흡, 치명타, 회피 등이 다 알아서 계산됨)
+		ApplyCombatDamage(TargetReq);
+	}
+
+}
+
 AActor* UDEGameplayLibrary::GetNearestTarget(AActor* Instigator, float Radius)
 {
 	if (!Instigator) return nullptr;

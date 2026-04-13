@@ -22,7 +22,8 @@ void UDEBehavior_ApplyStatusEffect::Execute(FDESkillContext& Context)
 				Context.Instigator,
 				Duration,
 				Power,
-				Interval
+				Interval,
+				Context
 			);
 		}
 	}

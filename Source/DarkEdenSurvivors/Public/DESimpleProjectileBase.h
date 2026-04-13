@@ -18,7 +18,7 @@ public:
     ADESimpleProjectileBase();
     virtual void Tick(float DeltaTime) override;
 
-    virtual void InitializeProjectile(const FDESkillContext& Context, const FVector& Direction);
+    virtual void InitializeFromContext(const FDESkillContext& Context) override;
 
 protected:
     virtual void ResetState() override;

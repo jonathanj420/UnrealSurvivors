@@ -60,8 +60,9 @@ void UDEStatusEffectComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	}
 }
 
-void UDEStatusEffectComponent::AddEffect(TSubclassOf<UDEStatusEffectBase> EffectClass, AActor* Instigator, float Duration, float Power, float Interval)
+void UDEStatusEffectComponent::AddEffect(TSubclassOf<UDEStatusEffectBase> EffectClass, AActor* Instigator, float Duration, float Power, float Interval, const FDESkillContext& InContext)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Try To Add Status Effect : %s"),*EffectClass->GetName());
 	if (!EffectClass || !OwnerActor.IsValid()) return;
 
 	const UDEStatusEffectBase* CDO = GetDefault<UDEStatusEffectBase>(EffectClass);
@@ -78,12 +79,15 @@ void UDEStatusEffectComponent::AddEffect(TSubclassOf<UDEStatusEffectBase> Effect
 	// 이제 Enum 대신, "이미 내 몸에 똑같은 스킬(Class)이 묻어있는가?"로 검사합니다.
 	// =========================================================
 	FActiveStatusEffect* Existing = nullptr;
-	for (FActiveStatusEffect& Effect : ActiveEffects)
+	if (CDO->StackPolicy != EStackPolicy::Independent)
 	{
-		if (Effect.EffectDef && Effect.EffectDef->GetClass() == EffectClass)
+		for (FActiveStatusEffect& Effect : ActiveEffects)
 		{
-			Existing = &Effect;
-			break;
+			if (Effect.EffectDef && Effect.EffectDef->GetClass() == EffectClass)
+			{
+				Existing = &Effect;
+				break;
+			}
 		}
 	}
 
@@ -101,11 +105,24 @@ void UDEStatusEffectComponent::AddEffect(TSubclassOf<UDEStatusEffectBase> Effect
 
 		case EStackPolicy::Stack:
 			// (참고: CDO에 MaxStacks 변수가 있다고 가정합니다)
-			if (Existing->CurrentStacks < CDO->MaxStacks)
+			// ★ MaxStacks가 0 이하면 무한 중첩, 양수면 제한 검사
+			if (CDO->MaxStacks <= 0 || Existing->CurrentStacks < CDO->MaxStacks)
 			{
 				Existing->CurrentStacks++;
+				if (CDO->bRefreshDurationOnStack)
+				{
+					Existing->ElapsedTime = 0.0f;
+				}
 				CDO->OnStacked(OwnerActor.Get(), *Existing, Existing->CurrentStacks);
 			}
+			else
+			{
+				// (선택 사항) 최대 스택에 도달한 상태에서 또 때렸을 때, 
+				// 스택은 안 오르더라도 지속시간은 계속 갱신되게 할 것인가?
+				// 기획 의도에 따라 아래 줄을 추가할지 말지 결정하세요.
+				//Existing->ElapsedTime = 0.0f;
+			}
+			UE_LOG(LogTemp, Warning, TEXT("Status Effect : %s Stacked : %d"), *EffectClass->GetName(),Existing->CurrentStacks);
 			return;
 
 		case EStackPolicy::Replace:
@@ -134,11 +151,25 @@ void UDEStatusEffectComponent::AddEffect(TSubclassOf<UDEStatusEffectBase> Effect
 	NewEffect.ElapsedTime = 0.f;
 	NewEffect.TickTimer = 0.f;
 	NewEffect.CurrentStacks = 1;
+	NewEffect.SourceContext = InContext;
+
+	if (Duration == 0.f)
+	{
+		// 1. 적용 즉시
+		CDO->OnApply(OwnerActor.Get(), NewEffect);
+
+		// 2. 해제 로직(폭발, 즉발 힐 등) 바로 실행!
+		CDO->OnRemove(OwnerActor.Get(), NewEffect);
+
+		// 3. 배열에 넣지 않고 여기서 깔끔하게 퇴근!
+		return;
+	}
 
 	CDO->OnApply(OwnerActor.Get(), NewEffect);
 	ActiveEffects.Add(NewEffect);
 
 	SetComponentTickEnabled(true);
+	UE_LOG(LogTemp, Warning, TEXT("Status Effect : %s Added for %f seconds"), *EffectClass->GetName(), Duration);
 }
 
 void UDEStatusEffectComponent::RemoveEffectsByTag(FGameplayTag Tag)

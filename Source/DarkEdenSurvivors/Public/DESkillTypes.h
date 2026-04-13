@@ -15,3 +15,11 @@ enum class ECooldownReduceType : uint8
     PercentageOfMax         UMETA(DisplayName = "최대 쿨타임 비례 감소 (%)"),
     PercentageOfRemaining   UMETA(DisplayName = "현재 남은 쿨타임 비례 감소 (%)") // ★ 추가됨!
 };
+
+UENUM(BlueprintType)
+enum class ESkillExecutionType : uint8
+{
+    Instant             UMETA(DisplayName = "즉발 (투사체, 근접)"),
+    Duration            UMETA(DisplayName = "지속형 (쿨타임 after duration)"),
+    Permanent    UMETA(DisplayName = "영구 (오라, 소환수, 버프)"),
+};

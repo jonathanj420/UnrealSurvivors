@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DESkillContext.h"
 #include "DECombatTypes.generated.h"
 
 /**
@@ -43,6 +44,8 @@ struct FCombatEventData
     UPROPERTY(BlueprintReadWrite, Category = "CombatEvent")
     UObject* SourceObject;
 
+    // Context 통째로 복사 X, 포인터만
+    const FDESkillContext* SourceContext = nullptr;
     // 기본 생성자
     FCombatEventData() : Instigator(nullptr), Target(nullptr), DamageAmount(0.0f), SourceObject(nullptr) {}
 };

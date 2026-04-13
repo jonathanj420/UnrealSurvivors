@@ -83,6 +83,7 @@ void ADESkillActorBase::ResetState()
     if (NiagaraComponent)
     {
         NiagaraComponent->SetVisibility(true);
+        NiagaraComponent->ReinitializeSystem();
         NiagaraComponent->Activate(true);
     }
 
@@ -148,6 +149,7 @@ bool ADESkillActorBase::TryDealDamage(AActor* Victim)
     EventData.Instigator = GetInstigator();
     EventData.Target = Victim;
     EventData.DamageAmount = Res.FinalDamage;
+    EventData.SourceContext = &CachedContext;
 
     for (UDECombatEffect* Effect : LocalEffects)
     {

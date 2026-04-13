@@ -90,23 +90,23 @@ void ADESimpleProjectileBase::Tick(float DeltaTime)
 	//}
 }
 
-void ADESimpleProjectileBase::InitializeProjectile(const FDESkillContext& Context, const FVector& Direction)
+void ADESimpleProjectileBase::InitializeFromContext(const FDESkillContext& Context)
 {
-	// 1. 공통 스탯(데미지, 크리티컬, 수명 등) 설정은 부모에게 짬처리!
-	Super::InitializeFromContext(Context);
 
-	// 2. 투사체 전용 속도/방향 세팅
+	// 1. 투사체 고유 데이터 세팅 (상자에서 방향 꺼내기!)
+	ShootDirection = Context.TargetDirection.GetSafeNormal();
 	Speed = Context.Speed;
-	ShootDirection = Direction.GetSafeNormal();
 	CurrentSpeed = (Speed == 0.0f) ? 1200.0f : Speed;
 	Penetration = Context.Penetration;
+
+	// 2. 속도 미리 주입
 	if (MovementComponent)
 	{
 		MovementComponent->Velocity = ShootDirection * CurrentSpeed;
 	}
 
-	ResetState();
-
+	// 3. ★ 부모 초기화 호출 (이 안에서 가상 함수인 ResetState()가 호출되며 깔끔하게 1번만 켜짐)
+	Super::InitializeFromContext(Context);
 }
 
 void ADESimpleProjectileBase::ResetState()

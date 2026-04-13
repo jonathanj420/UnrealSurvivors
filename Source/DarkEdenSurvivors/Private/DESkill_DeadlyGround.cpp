@@ -34,10 +34,10 @@ void UDESkill_DeadlyGround::InitBehaviors()
     Super::InitBehaviors();
 
     // 1. [탐색 행동] 스폰할 위치(적) 찾기
-    UDEBehavior_SelectNearestTarget* Targeting = NewObject<UDEBehavior_SelectNearestTarget>(this);
+  /*  UDEBehavior_SelectNearestTarget* Targeting = NewObject<UDEBehavior_SelectNearestTarget>(this);
     Targeting->DefaultSearchRadius = 1000.f;
     Targeting->EnemyTag = TEXT("Enemy");
-    Behaviors.Add(Targeting);
+    Behaviors.Add(Targeting);*/
 
     // 2. [소환 행동] 찾은 적 위치에 고어 글랜드 스폰!
     UDEBehavior_SpawnSummon* Spawner = NewObject<UDEBehavior_SpawnSummon>(this);

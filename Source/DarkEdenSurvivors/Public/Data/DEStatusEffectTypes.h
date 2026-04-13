@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DESkillContext.h"
 #include "DEStatusEffectTypes.generated.h"
 class UDEStatusEffectBase;
 
@@ -37,6 +38,10 @@ struct FActiveStatusEffect
 	UPROPERTY()
 	int32 CurrentStacks = 1;
 
+	// 상태이상은 지속시간 동안 들고 있어야 하니까 복사가 맞음
+	FDESkillContext SourceContext;
+
+
 	// 구조체 초기화를 위한 편의 생성자
 	FActiveStatusEffect() {}
 };
@@ -45,8 +50,9 @@ struct FActiveStatusEffect
 UENUM(BlueprintType)
 enum class EStackPolicy : uint8
 {
-    Replace   UMETA(DisplayName = "Replace"),
-    Refresh   UMETA(DisplayName = "Refresh"),
-    Stack     UMETA(DisplayName = "Can Stack"),
-    Ignore    UMETA(DisplayName = "Ignore")
+	Replace   UMETA(DisplayName = "Replace"),
+	Refresh   UMETA(DisplayName = "Refresh"),
+	Stack     UMETA(DisplayName = "Can Stack"),
+	Ignore    UMETA(DisplayName = "Ignore"),
+	Independent	UMETA(DisplayName = "Independent")
 };

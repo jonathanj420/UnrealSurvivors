@@ -30,8 +30,11 @@ void UDEBehavior_SpawnSummon::Execute(FDESkillContext& Context)
     else
     {
         // 타겟이 없다면 내 앞쪽으로 살짝 띄워서 스폰
-        FVector ForwardDir = Context.Instigator->GetActorForwardVector();
-        SpawnLoc = OwnerLoc + (ForwardDir * SpawnDistanceOffset);
+        FVector2D RandomOffset2D = FMath::RandPointInCircle(SpawnDistanceOffset);
+
+        //FVector ForwardDir = Context.Instigator->GetActorForwardVector();
+        SpawnLoc = OwnerLoc + FVector(RandomOffset2D.X, RandomOffset2D.Y, 0.0f);
+
     }
 
     // Z축은 바닥으로 고정 (필요 시)
