@@ -81,7 +81,7 @@ void UDESkill_BloodyScarify::InitBehaviors()
 	// ★ 핵심: 하드코딩 10 대신, 블루프린트에서 세팅한 내 ID를 동적으로 가져옴!
 	ApplyStatusEffect->StatusEffectClass = StatusEffectClass;
 	ApplyStatusEffect->Interval = 0.0f;
-	ApplyStatusEffect->Duration = 0.0f;
+	ApplyStatusEffect->Duration = 100.0f;
 	//CooldownResetEffect->bInstantReset = true;
 
 	LocalEffects.Add(ApplyStatusEffect);

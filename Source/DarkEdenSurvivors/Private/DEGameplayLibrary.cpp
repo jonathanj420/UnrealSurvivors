@@ -158,7 +158,7 @@ void UDEGameplayLibrary::ApplyAoEDamage(UWorld* World, const FVector& Origin, fl
 		FCollisionShape::MakeSphere(Radius),
 		QueryParams
 	);
-	DrawDebugSphere(World, Origin, Radius, 16, FColor::Green, false, 1.0f, 0, 1.0f);
+	//DrawDebugSphere(World, Origin, Radius, 16, FColor::Green, false, 1.0f, 0, 1.0f);
 	if (!bHit) return;
 
 	// 2. 찾은 대상들에게 데미지 꽂아넣기

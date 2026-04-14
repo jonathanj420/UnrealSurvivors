@@ -62,7 +62,7 @@ void UDEStatusEffectComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 
 void UDEStatusEffectComponent::AddEffect(TSubclassOf<UDEStatusEffectBase> EffectClass, AActor* Instigator, float Duration, float Power, float Interval, const FDESkillContext& InContext)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Try To Add Status Effect : %s"),*EffectClass->GetName());
+	//UE_LOG(LogTemp, Warning, TEXT("Try To Add Status Effect : %s"),*EffectClass->GetName());
 	if (!EffectClass || !OwnerActor.IsValid()) return;
 
 	const UDEStatusEffectBase* CDO = GetDefault<UDEStatusEffectBase>(EffectClass);
@@ -122,7 +122,7 @@ void UDEStatusEffectComponent::AddEffect(TSubclassOf<UDEStatusEffectBase> Effect
 				// 기획 의도에 따라 아래 줄을 추가할지 말지 결정하세요.
 				//Existing->ElapsedTime = 0.0f;
 			}
-			UE_LOG(LogTemp, Warning, TEXT("Status Effect : %s Stacked : %d"), *EffectClass->GetName(),Existing->CurrentStacks);
+			//UE_LOG(LogTemp, Warning, TEXT("Status Effect : %s Stacked : %d"), *EffectClass->GetName(),Existing->CurrentStacks);
 			return;
 
 		case EStackPolicy::Replace:
@@ -169,7 +169,7 @@ void UDEStatusEffectComponent::AddEffect(TSubclassOf<UDEStatusEffectBase> Effect
 	ActiveEffects.Add(NewEffect);
 
 	SetComponentTickEnabled(true);
-	UE_LOG(LogTemp, Warning, TEXT("Status Effect : %s Added for %f seconds"), *EffectClass->GetName(), Duration);
+	//UE_LOG(LogTemp, Warning, TEXT("Status Effect : %s Added for %f seconds"), *EffectClass->GetName(), Duration);
 }
 
 void UDEStatusEffectComponent::RemoveEffectsByTag(FGameplayTag Tag)
@@ -197,8 +197,9 @@ void UDEStatusEffectComponent::RemoveEffectsByTag(FGameplayTag Tag)
 
 void UDEStatusEffectComponent::RemoveAllEffects()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Try RemoveAllEffects"));
 	if (!OwnerActor.IsValid()) return;
-
+	UE_LOG(LogTemp, Warning, TEXT("RemoveAllEffects executed at least"));
 	// 캐릭터 사망, 혹은 보스의 페이즈 전환(완전 정화) 패턴 시 호출됩니다.
 	for (int32 i = ActiveEffects.Num() - 1; i >= 0; --i)
 	{
@@ -207,6 +208,7 @@ void UDEStatusEffectComponent::RemoveAllEffects()
 		{
 			// 싹 다 원상복구 로직 실행
 			EffectData.EffectDef->OnRemove(OwnerActor.Get(), EffectData);
+			UE_LOG(LogTemp, Warning, TEXT("Status Effect : %s Removed by RemoveAllEffects"), *EffectData.EffectDef->GetName());
 		}
 	}
 

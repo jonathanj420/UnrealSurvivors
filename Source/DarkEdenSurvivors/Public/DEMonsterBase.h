@@ -141,6 +141,10 @@ private:
 
 protected:
 	void Die();
+	void StartDying();
+	public:
+
+	void ExecuteFinalDeath();
 
 
 protected:

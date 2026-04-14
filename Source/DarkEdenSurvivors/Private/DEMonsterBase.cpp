@@ -56,7 +56,8 @@ void ADEMonsterBase::BeginPlay()
 	if (HealthComponent)
 	{
 		HealthComponent->ResetHealth();
-		HealthComponent->OnDeath.AddUObject(this, &ADEMonsterBase::Die);
+		HealthComponent->OnDying.AddUObject(this, &ADEMonsterBase::StartDying);
+		//HealthComponent->OnDeath.AddUObject(this, &ADEMonsterBase::FinishDeath);
 
 	}
 	
@@ -333,15 +334,49 @@ void ADEMonsterBase::ResetForPool()
 
 void ADEMonsterBase::Die()
 {
-
+	UE_LOG(LogTemp, Warning, TEXT("Calling Monster Die"));
 	if (bIsDying) return;  // 이중 죽음 방지
 	bIsDying = true;
 	bIsAlive = false;
 
+	StatusEffectComponent->RemoveAllEffects();
+	SetActorEnableCollision(false);
 	//DropExp();
 
 	OnMonsterDeath.Broadcast(this);
 }
+
+void ADEMonsterBase::StartDying()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Monster Starts Dying"));
+	if (bIsDying) return;  // 이중 죽음 방지
+	bIsDying = true;
+	bIsAlive = false;
+	SetActorEnableCollision(false);
+
+	OnMonsterDeath.Broadcast(this);
+
+
+	//FinishDeath();
+
+}
+
+void ADEMonsterBase::ExecuteFinalDeath()
+{
+	// 1. 내부 로직: 묻어있던 폭탄 기폭!
+	if (StatusEffectComponent)
+	{
+		StatusEffectComponent->RemoveAllEffects();
+	}
+
+	// 2. ★ 기획자님이 찾으시던 OnDeath 방송 위치가 바로 여기입니다! ★
+	// UI, 업적 시스템, 통계 시스템 등에 "나 진짜 시스템적으로 완전히 죽었음"을 알림
+	if (HealthComponent)
+	{
+		HealthComponent->OnDeath.Broadcast();
+	}
+}
+
 
 bool ADEMonsterBase::IsAlive()
 {

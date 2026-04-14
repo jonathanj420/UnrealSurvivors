@@ -18,10 +18,10 @@ public:
     UPROPERTY(EditAnywhere, Category = "StatusEffect")
     TSubclassOf<class UDEStatusEffectBase> StatusEffectClass;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect")
+    UPROPERTY(EditDefaultsOnly, Category = "Status Effect")
     float Duration = 3.0f;
 
-    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect")
+    UPROPERTY(EditDefaultsOnly, Category = "Status Effect")
     float Interval = 1.0f;
 
     virtual void OnExecuteEffect(FCombatEventData& EventData) override;

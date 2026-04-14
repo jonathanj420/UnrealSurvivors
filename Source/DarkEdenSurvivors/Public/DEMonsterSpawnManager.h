@@ -65,7 +65,7 @@ public:
     bool bIsResolvingOverlaps = false;
 
     TArray<ADEMonsterBase*> PendingRemoveMonsters;
-
+    TArray<ADEMonsterBase*> MonstersToProcess;
 
     ADEMonsterBase* SpawnFromPool(FVector& Location, const struct FDEMonsterData* DataToApply, FName MonsterID);
     UFUNCTION()

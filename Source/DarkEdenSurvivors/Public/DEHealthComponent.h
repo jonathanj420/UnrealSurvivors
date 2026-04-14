@@ -10,7 +10,9 @@
 // 체력 변경 (현재 HP, 최대 HP)
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHPChanged, float /*CurrentHP*/, float /*MaxHP*/);
 
+
 // 사망 이벤트
+DECLARE_MULTICAST_DELEGATE(FOnDying);
 DECLARE_MULTICAST_DELEGATE(FOnDeath);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -55,6 +57,7 @@ public:
     // =====================
 
     FOnHPChanged OnHPChanged;
+    FOnDying OnDying;
     FOnDeath OnDeath;
 
 private:

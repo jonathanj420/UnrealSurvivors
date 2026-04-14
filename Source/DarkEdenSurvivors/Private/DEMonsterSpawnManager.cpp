@@ -111,13 +111,23 @@ void ADEMonsterSpawnManager::Tick(float DeltaTime)
     bIsResolvingOverlaps = false;
 
     // 예약된 몬스터 처리
-    for (ADEMonsterBase* Dead : PendingRemoveMonsters)
+    if (PendingRemoveMonsters.Num() > 0)
     {
-        ActiveMonsters.RemoveSwap(Dead);
-        InactiveMonsters.Add(Dead);
-        ReturnMonsterToPool(Dead);
+        // 1. 이번 프레임에 치울 애들만 따로 복사해 둠
+        MonstersToProcess = PendingRemoveMonsters;
+
+        // 2. 원본 수레는 먼저 깨끗하게 비움 (폭발로 누가 새로 죽어도 안전하게 새로 담김)
+        PendingRemoveMonsters.Reset();
+
+        // 3. 복사해둔 리스트를 돌면서 사형 집행!
+        for (ADEMonsterBase* Dead : MonstersToProcess)
+        {
+            Dead->ExecuteFinalDeath();
+            ActiveMonsters.RemoveSwap(Dead);
+            InactiveMonsters.Add(Dead);
+            ReturnMonsterToPool(Dead);
+        }
     }
-    PendingRemoveMonsters.Reset();
 
     //Super::Tick(DeltaTime);
 
@@ -569,7 +579,7 @@ void ADEMonsterSpawnManager::ReturnMonsterToPool(ADEMonsterBase* Monster)
     Monster->ResetForPool();
 
     Monster->SetActorLocation(FVector::ZeroVector);
- //   UE_LOG(LogTemp, Warning, TEXT("%s Returned to Pool"),*Monster->GetName());
+    UE_LOG(LogTemp, Warning, TEXT("%s Returned to Pool"),*Monster->GetName());
 }
 
 
@@ -594,6 +604,7 @@ FVector ADEMonsterSpawnManager::GetRandomSpawnLocation()
 
 void ADEMonsterSpawnManager::OnMonsterDied(ADEMonsterBase* Monster)
 {
+    UE_LOG(LogTemp, Warning, TEXT("Calling On Monster Died in Manager"));
     if (!Monster) return;
 
     if (UDEPickupManager* PickupMgr = GetWorld()->GetSubsystem<UDEPickupManager>())
@@ -628,7 +639,9 @@ void ADEMonsterSpawnManager::OnMonsterDied(ADEMonsterBase* Monster)
     }
     KillCount++;
 
-    if (bIsResolvingOverlaps)
+    PendingRemoveMonsters.Add(Monster);
+    UE_LOG(LogTemp, Warning, TEXT("Monster Added to Pending Remove List"));
+    /*if (bIsResolvingOverlaps)
     {
         PendingRemoveMonsters.Add(Monster);
     }
@@ -637,7 +650,7 @@ void ADEMonsterSpawnManager::OnMonsterDied(ADEMonsterBase* Monster)
         ActiveMonsters.RemoveSwap(Monster);
         InactiveMonsters.Add(Monster);
         ReturnMonsterToPool(Monster);
-    }
+    }*/
 
     //// 1. 활성 목록에서 제거
     //ActiveMonsters.RemoveSwap(Monster);

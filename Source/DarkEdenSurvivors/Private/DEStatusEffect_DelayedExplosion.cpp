@@ -9,7 +9,7 @@
 
 void UDEStatusEffect_DelayedExplosion::ExecuteAction(AActor* Target, FActiveStatusEffect& EffectData) const
 {
-    UE_LOG(LogTemp, Warning, TEXT("Try Delayed Explosion : %s"), *GetName());
+    //UE_LOG(LogTemp, Warning, TEXT("Try Delayed Explosion : %s"), *GetName());
     UWorld* World = Target->GetWorld();
     if (!World) return;
 
