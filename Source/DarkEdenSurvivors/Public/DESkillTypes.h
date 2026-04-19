@@ -19,7 +19,7 @@ enum class ECooldownReduceType : uint8
 UENUM(BlueprintType)
 enum class ESkillExecutionType : uint8
 {
-    Instant             UMETA(DisplayName = "즉발 (투사체, 근접)"),
-    Duration            UMETA(DisplayName = "지속형 (쿨타임 after duration)"),
-    Permanent    UMETA(DisplayName = "영구 (오라, 소환수, 버프)"),
+    Instant             UMETA(DisplayName = "Instant"),
+    Duration            UMETA(DisplayName = "Duration(Cooldown After Duration"),
+    Permanent    UMETA(DisplayName = "Permanent"),
 };

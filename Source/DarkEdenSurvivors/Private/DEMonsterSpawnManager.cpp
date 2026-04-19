@@ -579,7 +579,7 @@ void ADEMonsterSpawnManager::ReturnMonsterToPool(ADEMonsterBase* Monster)
     Monster->ResetForPool();
 
     Monster->SetActorLocation(FVector::ZeroVector);
-    UE_LOG(LogTemp, Warning, TEXT("%s Returned to Pool"),*Monster->GetName());
+   // UE_LOG(LogTemp, Warning, TEXT("%s Returned to Pool"),*Monster->GetName());
 }
 
 
@@ -604,7 +604,7 @@ FVector ADEMonsterSpawnManager::GetRandomSpawnLocation()
 
 void ADEMonsterSpawnManager::OnMonsterDied(ADEMonsterBase* Monster)
 {
-    UE_LOG(LogTemp, Warning, TEXT("Calling On Monster Died in Manager"));
+    //UE_LOG(LogTemp, Warning, TEXT("Calling On Monster Died in Manager"));
     if (!Monster) return;
 
     if (UDEPickupManager* PickupMgr = GetWorld()->GetSubsystem<UDEPickupManager>())
@@ -640,26 +640,7 @@ void ADEMonsterSpawnManager::OnMonsterDied(ADEMonsterBase* Monster)
     KillCount++;
 
     PendingRemoveMonsters.Add(Monster);
-    UE_LOG(LogTemp, Warning, TEXT("Monster Added to Pending Remove List"));
-    /*if (bIsResolvingOverlaps)
-    {
-        PendingRemoveMonsters.Add(Monster);
-    }
-    else
-    {
-        ActiveMonsters.RemoveSwap(Monster);
-        InactiveMonsters.Add(Monster);
-        ReturnMonsterToPool(Monster);
-    }*/
-
-    //// 1. 활성 목록에서 제거
-    //ActiveMonsters.RemoveSwap(Monster);
-
-    //// 2. 비활성(풀) 목록으로 이동
-    //InactiveMonsters.Add(Monster);
-
-    ////UE_LOG(LogTemp, Warning, TEXT("Monster Died, Instantly Removed // TO FIX"));
-    //ReturnMonsterToPool(Monster);
+   // UE_LOG(LogTemp, Warning, TEXT("Monster Added to Pending Remove List"));
 
 }
 

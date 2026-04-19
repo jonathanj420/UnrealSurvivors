@@ -197,9 +197,9 @@ void UDEStatusEffectComponent::RemoveEffectsByTag(FGameplayTag Tag)
 
 void UDEStatusEffectComponent::RemoveAllEffects()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Try RemoveAllEffects"));
+	//UE_LOG(LogTemp, Warning, TEXT("Try RemoveAllEffects"));
 	if (!OwnerActor.IsValid()) return;
-	UE_LOG(LogTemp, Warning, TEXT("RemoveAllEffects executed at least"));
+	//UE_LOG(LogTemp, Warning, TEXT("RemoveAllEffects executed at least"));
 	// 캐릭터 사망, 혹은 보스의 페이즈 전환(완전 정화) 패턴 시 호출됩니다.
 	for (int32 i = ActiveEffects.Num() - 1; i >= 0; --i)
 	{

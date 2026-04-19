@@ -334,7 +334,7 @@ void ADEMonsterBase::ResetForPool()
 
 void ADEMonsterBase::Die()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Calling Monster Die"));
+	//UE_LOG(LogTemp, Warning, TEXT("Calling Monster Die"));
 	if (bIsDying) return;  // 이중 죽음 방지
 	bIsDying = true;
 	bIsAlive = false;
@@ -348,7 +348,7 @@ void ADEMonsterBase::Die()
 
 void ADEMonsterBase::StartDying()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Monster Starts Dying"));
+	//UE_LOG(LogTemp, Warning, TEXT("Monster Starts Dying"));
 	if (bIsDying) return;  // 이중 죽음 방지
 	bIsDying = true;
 	bIsAlive = false;

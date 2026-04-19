@@ -653,3 +653,8 @@ void ADECharacterBase::ForceLevelUp()
     ProgressionComponent->LevelUp();
 
 }
+
+void ADECharacterBase::ForceLevelUpSkill(int32 SkillId)
+{
+    SkillManager->LevelUpSkill(SkillId);
+}

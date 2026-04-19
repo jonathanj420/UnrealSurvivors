@@ -22,4 +22,6 @@ class DARKEDENSURVIVORS_API UDESkillBehavior : public UObject
 public:
     /** 실제 행동 실행 */
     virtual void Execute(FDESkillContext& Context) PURE_VIRTUAL(UDESkillBehavior::Execute, );
+    virtual void OnContextRefreshed(const FDESkillContext& Context) {}
+
 };

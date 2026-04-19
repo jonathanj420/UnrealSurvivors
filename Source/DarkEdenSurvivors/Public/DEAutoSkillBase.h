@@ -6,6 +6,7 @@
 #include "DESkillBase.h"
 #include "Data/DESkillData.h"
 #include "DESkillContext.h"
+#include "DESkillTypes.h"
 #include "DECombatEffect.h"
 #include "DEDamageInstigatorInterface.h"
 #include "DEAutoSkillBase.generated.h"
@@ -66,7 +67,7 @@ public:
 	TArray<UDECombatEffect*> LocalEffects;
 
 public:
-	TMap<FName, TWeakObjectPtr<class ADESimpleAOEBase>> OwnedAOEMap;
+	TMap<FName, TWeakObjectPtr<class ADESkillActorBase>> OwnedSkillActorMap;
 public:
 	virtual void EndSkill();
 public:
@@ -80,6 +81,7 @@ public:
 	// 비헤이비어가 나중에 쿨타임을 물어볼 때 대답해주는 함수
 	float GetCurrentFinalCooldown() const { return CurrentFinalCooldown; }
 
-
+	ESkillExecutionType GetExecutionType() const;
+	void RefreshContext();
 
 };

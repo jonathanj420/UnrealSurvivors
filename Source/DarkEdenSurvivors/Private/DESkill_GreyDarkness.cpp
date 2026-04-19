@@ -34,6 +34,7 @@ void UDESkill_GreyDarkness::OnTargetKilled(const FDEDamageResult& Result)
     {
         AccumulatedDamage = FMath::Min(AccumulatedDamage + BonusDamagePerKill, MaxBonusDamage);
         AccumulatedRadius = FMath::Min(AccumulatedRadius + BonusRadiusPerKill, MaxBonusRadius);
+        RefreshContext();
         UE_LOG(LogTemp, Warning, TEXT("Grey Darkness Damage Increased"));
     }
 

@@ -10,6 +10,7 @@
 #include "Kismet/GameplayStatics.h"
 void UDEBehavior_SpawnAOE::Execute(FDESkillContext& Context)
 {
+    UE_LOG(LogTemp, Warning, TEXT("Spawn AOE Behavior Executed"));
     // =========================================================
         // 0. 유효성 체크 및 풀링 매니저 확보
         // =========================================================
@@ -31,14 +32,18 @@ void UDEBehavior_SpawnAOE::Execute(FDESkillContext& Context)
     // 시전자(Player)에게 붙는 단일 오라이면서 Key가 있는 경우
     if (bHasKey && SourceSkill && SpawnTarget == EAOESpawnTarget::Instigator)
     {
-        if (TWeakObjectPtr<ADESimpleAOEBase>* Found = SourceSkill->OwnedAOEMap.Find(AOEKey))
+
+        if (auto* Found = SourceSkill->OwnedSkillActorMap.Find(AOEKey))
         {
             if (Found->IsValid())
             {
-                ADESimpleAOEBase* ExistingAOE = Found->Get();
-
-                // 이미 존재하므로 풀에서 안 꺼내고, 갓 레벨업된 최신 Context만 덮어씌웁니다!
-                ExistingAOE->InitializeFromContext(Context);
+                // 3. 알맹이(Get)를 꺼내서, 내가 원하는 자식 타입(ADESimpleAOEBase)으로 캐스팅!
+                if (ADESimpleAOEBase* AOEActor = Cast<ADESimpleAOEBase>(Found->Get()))
+                {
+                    // 이제 여기서 AOEActor를 가지고 지지고 볶으면 됨!
+                    // 예: AOEActor->SetSize(...);
+                    AOEActor->InitializeFromContext(Context);
+                }
 
                 return; // 스폰은 필요 없으니 여기서 깔끔하게 칼퇴근!
             }
@@ -102,11 +107,27 @@ void UDEBehavior_SpawnAOE::Execute(FDESkillContext& Context)
         // =========================================================
         if (bHasKey && SourceSkill && SpawnTarget == EAOESpawnTarget::Instigator)
         {
-            SourceSkill->OwnedAOEMap.Add(AOEKey, AOE);
+            SourceSkill->OwnedSkillActorMap.Add(AOEKey, AOE);
         }
 
         // 혹시 뒷단 비헤이비어에서 쓸지 모르니 가볍게 기록만 남김
         Context.SpawnedAOEs.Add(AOE);
     }
 
+}
+
+void UDEBehavior_SpawnAOE::OnContextRefreshed(const FDESkillContext& Context)
+{
+    if (!Context.SourceSkill) return;
+
+    // OwnedActorMap에서 이 Behavior 키에 해당하는 AOE 찾아서 갱신
+    if (AOEKey.IsNone()) return;
+
+    if (TWeakObjectPtr<ADESkillActorBase>* Found =
+        Context.SourceSkill->OwnedSkillActorMap.Find(AOEKey))
+    {
+        if (Found->IsValid())
+            Found->Get()->InitializeFromContext(Context);
+    }
+    UE_LOG(LogTemp, Warning, TEXT("Context refreshed for Permanent AOE . . . "));
 }

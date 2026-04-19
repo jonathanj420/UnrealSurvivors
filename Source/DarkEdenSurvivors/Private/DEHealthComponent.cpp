@@ -173,7 +173,7 @@ void UDEHealthComponent::HandleDeath(AActor* DamageCauser)
     CurrentHP = 0.f;
 
     OnHPChanged.Broadcast(CurrentHP, MaxHP);
-    UE_LOG(LogTemp, Warning, TEXT("Broadcasting OnDying by HealthComponent "));
+    //UE_LOG(LogTemp, Warning, TEXT("Broadcasting OnDying by HealthComponent "));
     OnDying.Broadcast();
     //UE_LOG(LogTemp, Warning, TEXT("Broadcasting OnDeath by HealthComponent "));
     //OnDeath.Broadcast();

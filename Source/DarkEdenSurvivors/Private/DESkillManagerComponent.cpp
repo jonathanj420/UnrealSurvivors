@@ -63,6 +63,7 @@ void UDESkillManagerComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
     for (auto& Pair : ActiveSkills)
     {
         FActiveSkill& Active = Pair.Value;
+        if (!Active.RowData) continue;
 
         // =========================================================
         // ★ [핵심 2] 스킬이 아직 공전(유지) 중이라면 쿨타임을 깎지 않고 스킵!
@@ -359,6 +360,18 @@ void UDESkillManagerComponent::LevelUpSkill(int32 SkillID)
         // (참고) 만약 레벨업할 때 스킬 메커니즘이 완전히 바뀐다면(예: 투사체->장판) 
         // 여기서 InitBehaviors()를 다시 호출해야 할 수도 있습니다. 
         // 지금은 데이터만 바뀌므로 호출 안 해도 됩니다.
+
+        // ★ Permanent 스킬은 재발동 없이 컨텍스트만 갱신
+        ESkillExecutionType Type = Active.SkillObject->GetExecutionType();
+        if (Type == ESkillExecutionType::Permanent)
+        {
+            Active.SkillObject->RefreshContext();
+        }
+        else
+        {
+            // 즉발/지속형은 쿨타임 0으로 만들어서 다음 틱에 바로 재발동
+            Active.CurrentCooldown = 0.f;
+        }
     }
 
     OnSkillUpdated.Broadcast(SkillID);
@@ -704,10 +717,24 @@ void UDESkillManagerComponent::ReduceAllCooldowns(float ReduceAmount)
 
 void UDESkillManagerComponent::OnStatChanged(EDEStatType StatType, float NewValue)
 {
+    UE_LOG(LogTemp, Error, TEXT("On Stat Changed In Skill Manager"));
     // CDR 관련 스탯이 바뀔 때만 갱신
     if (StatType == EDEStatType::Cooldown)
     {
         CachedCDR = FMath::Clamp(NewValue, 0.0f, 0.9f);
         UE_LOG(LogTemp, Error, TEXT("CDR Changed ! : %f"), CachedCDR);
     }
+
+    for (auto& Pair : ActiveSkills)
+    {
+        UDEAutoSkillBase* Skill = Pair.Value.SkillObject;
+        if (!Skill || !Skill->IsRunning()) continue;
+
+        ESkillExecutionType Type = Skill->GetExecutionType();
+        if (Type == ESkillExecutionType::Permanent)
+        {
+            Skill->RefreshContext();
+        }
+    }
+
 }

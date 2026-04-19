@@ -18,6 +18,7 @@ class DARKEDENSURVIVORS_API UDEBehavior_SpawnSummon : public UDESkillBehavior
 
 public:
     virtual void Execute(FDESkillContext& Context) override;
+    virtual void OnContextRefreshed(const FDESkillContext& Context);
 
     // 소환할 클래스
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Summon")

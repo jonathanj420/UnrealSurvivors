@@ -28,8 +28,12 @@ public:
     virtual void InitializeFromContext(const FDESkillContext& Context);
 
 protected:
+    virtual void BeginPlay() override;
     virtual void ResetState();
+public:
+
     virtual void ReturnToPool();
+protected:
 
     UFUNCTION()
     virtual void OnLifeTimeExpired();
@@ -51,6 +55,9 @@ protected:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     UNiagaraComponent* NiagaraComponent;
+
+    UPROPERTY(Transient)
+    TArray<UNiagaraComponent*> CachedNiagaraComps;
 
     // ---------------------------------------------------
     // [공통 데이터 (Stats)]

@@ -63,48 +63,87 @@ void ADESkillActorBase::InitializeFromContext(const FDESkillContext& Context)
     LifeTime = Context.Duration;
 
     // 크기 조절
-    float NewSize = Context.GetValue(TEXT("Size"), -1.f);
+    if (Radius > 0.f)
+    {
+        SetSize(Radius);
+    }
+    /*float NewSize = Context.GetValue(TEXT("Size"), -1.f);
     if (NewSize > 0.f)
     {
         SetActorScale3D(FVector(NewSize / 30.0f));
-    }
+    }*/
 
     ResetState();
 }
 
+void ADESkillActorBase::BeginPlay()
+{
+    Super::BeginPlay();
+
+    // ★ 게임 시작할 때 딱 1번만 모든 나이아가라를 뒤져서 명부에 적어둔다!
+    GetComponents<UNiagaraComponent>(CachedNiagaraComps);
+}
+
 void ADESkillActorBase::ResetState()
 {
-    SetActorHiddenInGame(false);
-    SetActorTickEnabled(true);
+
 
     if (CollisionComponent)
         CollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
-    if (NiagaraComponent)
+
+    for (UNiagaraComponent* NComp : CachedNiagaraComps)
     {
-        NiagaraComponent->SetVisibility(true);
-        NiagaraComponent->ReinitializeSystem();
-        NiagaraComponent->Activate(true);
+        if (NComp)
+        {
+            NComp->SetVisibility(true);
+
+            // 즉시 파티클 킬 (이전 위치의 잔상 완벽 제거)
+            //NComp->DeactivateImmediate();
+
+            // 리셋(true)과 함께 재가동
+            NComp->Activate(true);
+        }
     }
 
+    //if (NiagaraComponent)
+    //{
+    //    NiagaraComponent->DeactivateImmediate(); // 트레일 히스토리 즉시 끊기
+    //    NiagaraComponent->ResetSystem();         // 파티클 완전 초기화
+    //    NiagaraComponent->SetVisibility(true);
+    //    NiagaraComponent->Activate(true);
+    //}
+
     GetWorldTimerManager().SetTimer(LifeTimeTimerHandle, this, &ADESkillActorBase::OnLifeTimeExpired, LifeTime, false);
+    SetActorHiddenInGame(false);
+    SetActorTickEnabled(true);
 }
 
 void ADESkillActorBase::ReturnToPool()
 {
+    SetActorHiddenInGame(true);
+    SetActorTickEnabled(false);
     GetWorldTimerManager().ClearTimer(LifeTimeTimerHandle);
 
-    if (NiagaraComponent)
+    for (UNiagaraComponent* NComp : CachedNiagaraComps)
+    {
+        if (NComp)
+        {
+            NComp->DeactivateImmediate();
+            NComp->SetVisibility(false);
+        }
+    }
+
+    /*if (NiagaraComponent)
     {
         NiagaraComponent->Deactivate();
         NiagaraComponent->SetVisibility(false);
-    }
+    }*/
 
     if (CollisionComponent)
         CollisionComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-    SetActorHiddenInGame(true);
-    SetActorTickEnabled(false);
+    
 
     if (UWorld* World = GetWorld())
     {
@@ -169,24 +208,6 @@ bool ADESkillActorBase::TryDealDamage(AActor* Victim)
 
 void ADESkillActorBase::SetSize(float NewSize)
 {
-    // 1. 데이터 갱신
-    Size = NewSize;
-
-    // 2. 스케일 계산 (기본 반지름을 30.0f라고 가정했을 때 비율 계산)
-    // 만약 기본 반지름이 30인데 33이 들어오면 -> 1.1배 커짐 (+10%)
-    const float DefaultRadius = 30.0f;
-    float NewScale = NewSize / DefaultRadius;
-
-    // 3. 액터 전체 크기 변경 (충돌체 + 나이아가라 모두 커짐)
-    // 이렇게 하면 따로 나이아가라 파라미터를 건드릴 필요 없이 다 같이 커집니다.
-    SetActorScale3D(FVector(NewScale));
-
-    // (참고) 만약 스케일 말고 충돌체만 정밀하게 조절하고 싶다면 아래 코드를 씁니다.
-    // 하지만 뱀서류는 그냥 SetActorScale3D 쓰는 게 성능도 좋고 관리도 편합니다.
-    /*
-    if (CollisionComponent)
-    {
-        CollisionComponent->SetSphereRadius(Size);
-    }
-    */
+    Radius = NewSize;
+    SetActorScale3D(FVector(NewSize / 100.0f));
 }

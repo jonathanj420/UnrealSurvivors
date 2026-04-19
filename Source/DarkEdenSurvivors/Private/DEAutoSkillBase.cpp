@@ -4,7 +4,7 @@
 #include "DEAutoSkillBase.h"
 #include "DECombatComponent.h"
 #include "DESkillBehavior.h"
-#include "DESimpleAOEBase.h"
+#include "DESkillActorBase.h"
 
 void UDEAutoSkillBase::Activate()
 {
@@ -18,19 +18,50 @@ void UDEAutoSkillBase::Activate()
 
 	BuildContext(CachedContext);
 
-    // =========================================================
-    // ★ [핵심 1] 지속형 스킬(성서)이라면 '시전 중' 상태로 돌입!
-    // =========================================================
-    if (bCooldownAfterDuration && CachedContext.Duration > 0.0f)
-    {
-        bIsRunning = true; // 이걸 true로 하면 매니저가 쿨타임을 안 깎고 기다림
+    if (!SkillData) return;
 
-        // 지속시간(Duration) 뒤에 FinishSkill을 실행하는 타이머 작동!
-        SkillOwner->GetWorldTimerManager().SetTimer(DurationTimerHandle, this, &UDEAutoSkillBase::FinishSkill, CachedContext.Duration, false);
+    switch (SkillData->ExecutionType)
+    {
+    case ESkillExecutionType::Instant:
+        // 아무것도 안 함, 발동 후 바로 쿨타임
+        break;
+
+    case ESkillExecutionType::Duration:
+        if (CachedContext.Duration > 0.0f)
+        {
+            bIsRunning = true;
+            SkillOwner->GetWorldTimerManager().SetTimer(
+                DurationTimerHandle, this,
+                &UDEAutoSkillBase::FinishSkill,
+                CachedContext.Duration, false);
+        }
+        break;
+
+    case ESkillExecutionType::Permanent:
+        if (bIsRunning) return; // 중복 발동 방지
+        bIsRunning = true;
+        // 타이머 없음, FinishSkill 호출 안 됨
+        break;
     }
 
-    // Context를 만들었으니, 실행 로직으로 던져줍니다.
     ExecuteWithContext(CachedContext);
+    //// =========================================================
+    //// ★ [핵심 1] 지속형 스킬(성서)이라면 '시전 중' 상태로 돌입!
+    //// =========================================================
+    //if (bCooldownAfterDuration && CachedContext.Duration > 0.0f)
+    //{
+    //    bIsRunning = true; // 이걸 true로 하면 매니저가 쿨타임을 안 깎고 기다림
+
+    //    // 지속시간(Duration) 뒤에 FinishSkill을 실행하는 타이머 작동!
+    //    SkillOwner->GetWorldTimerManager().SetTimer(DurationTimerHandle, this, &UDEAutoSkillBase::FinishSkill, CachedContext.Duration, false);
+    //}
+
+    //// Context를 만들었으니, 실행 로직으로 던져줍니다.
+    //ExecuteWithContext(CachedContext);
+
+
+ 
+
 }
 
 void UDEAutoSkillBase::ExecuteWithContext(FDESkillContext& Context)
@@ -186,12 +217,12 @@ void UDEAutoSkillBase::FinishSkill()
 void UDEAutoSkillBase::EndSkill()
 {
     // AOE 정리
-    for (auto& Pair : OwnedAOEMap)
+    for (auto& Pair : OwnedSkillActorMap)
     {
         if (Pair.Value.IsValid())
             Pair.Value->ReturnToPool();
     }
-    OwnedAOEMap.Reset();
+    OwnedSkillActorMap.Reset();
 }
 
 void UDEAutoSkillBase::OnTargetKilled(const FDEDamageResult& Result)
@@ -208,4 +239,19 @@ int32 UDEAutoSkillBase::GetBaseAmount() const
 
     // 데이터가 세팅되지 않았을 경우의 안전장치
     return 1;
+}
+
+ESkillExecutionType UDEAutoSkillBase::GetExecutionType() const
+{
+    if (!SkillData) return ESkillExecutionType::Instant;
+    return SkillData->ExecutionType;
+}
+
+void UDEAutoSkillBase::RefreshContext()
+{
+    BuildContext(CachedContext);
+    for (UDESkillBehavior* Behavior : Behaviors)
+    {
+        if (Behavior) Behavior->OnContextRefreshed(CachedContext);
+    }
 }

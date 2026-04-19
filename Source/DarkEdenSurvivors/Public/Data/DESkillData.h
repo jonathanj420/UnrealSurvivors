@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "DESkillTypes.h"
 #include "DESkillData.generated.h"
 
 //USTRUCT(BlueprintType)
@@ -71,6 +72,10 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float Duration;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    ESkillExecutionType ExecutionType = ESkillExecutionType::Instant;
+
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float Speed;

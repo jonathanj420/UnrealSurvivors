@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "DEAutoSkillBase.h"
-#include "NiagaraSystem.h"
 #include "DESkill_VenomCircle.generated.h"
 
 /**
@@ -23,10 +22,10 @@ public:
 
 private:
 	// 하드코딩으로 로드한 에셋을 들고 있을 포인터
-	UPROPERTY(Transient)
-	TObjectPtr<UNiagaraSystem> CastEffectAsset;
+	UPROPERTY()
+	class UNiagaraSystem* CastEffectAsset;
 
-	UPROPERTY(Transient)
-	TObjectPtr<UNiagaraSystem> HitEffectAsset;
+	UPROPERTY()
+	class USoundBase* SoundFx;
 
 };

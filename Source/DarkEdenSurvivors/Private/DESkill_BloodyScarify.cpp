@@ -20,7 +20,7 @@ UDESkill_BloodyScarify::UDESkill_BloodyScarify()
 		UE_LOG(LogTemp, Warning, TEXT("Bloody spear niagara set"));
 	}
 
-	// 1-2. 타격 이펙트 (피격 시)
+	// 1-2. sound 이펙트
 	static ConstructorHelpers::FObjectFinder<USoundBase> SoundRef(TEXT("/Game/DarkEden/Data/Sound/SkillSoundEffect/SC_BloodySpear.SC_BloodySpear"));
 	if (SoundRef.Succeeded())
 	{

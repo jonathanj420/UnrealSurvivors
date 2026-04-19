@@ -201,6 +201,8 @@ public:
 	void MyAnotherDebugCheat();
 	UFUNCTION(Exec)
 	void ForceLevelUp();
+	UFUNCTION(Exec)
+	void ForceLevelUpSkill(int32 SkillId);
 
 	public:
 		// ¡Ú µð¹ö±×¿ë ¾Ç¼¼¼­¸® ÀåÂø ½½·Ô

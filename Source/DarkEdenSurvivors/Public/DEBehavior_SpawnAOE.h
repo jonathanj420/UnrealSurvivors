@@ -39,4 +39,6 @@ public:
     FName AOEKey = NAME_None;
 
     virtual void Execute(FDESkillContext& Context) override;
+    virtual void OnContextRefreshed(const FDESkillContext& Context) override;
+
 };

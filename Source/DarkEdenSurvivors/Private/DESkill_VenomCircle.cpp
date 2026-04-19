@@ -6,6 +6,7 @@
 #include "DEBehavior_SelectTargetsInRadius.h"
 #include "DEBehavior_PlayEffect.h"
 #include "DEBehavior_ApplyStatusEffect.h"
+#include "NiagaraSystem.h"
 #include "DEBehavior_ApplyKnockback.h"
 
 
@@ -16,7 +17,7 @@
 
 UDESkill_VenomCircle::UDESkill_VenomCircle()
 {
-	static ConstructorHelpers::FObjectFinder<UNiagaraSystem> CastRef(TEXT("/Game/DarkEden/Data/Niagara/NS_VenomCircle"));
+	static ConstructorHelpers::FObjectFinder<UNiagaraSystem> CastRef(TEXT("/Game/DarkEden/Data/Niagara/NS_VenomCircleMk2.NS_VenomCircleMk2"));
 	if (CastRef.Succeeded())
 	{
 		CastEffectAsset = CastRef.Object;
@@ -26,11 +27,11 @@ UDESkill_VenomCircle::UDESkill_VenomCircle()
 		UE_LOG(LogTemp, Warning, TEXT("VenomCircle: Failed to load Cast VFX!"));
 	}
 
-	// 1-2. 타격 이펙트 (피격 시)
-	static ConstructorHelpers::FObjectFinder<UNiagaraSystem> HitRef(TEXT("/Game/VFX/Skills/Common/NS_PoisonHit.NS_PoisonHit"));
-	if (HitRef.Succeeded())
+	// 1-2. sound 이펙트
+	static ConstructorHelpers::FObjectFinder<USoundBase> SoundRef(TEXT("/Game/DarkEden/Data/Sound/SkillSoundEffect/venom_circle.venom_circle"));
+	if (SoundRef.Succeeded())
 	{
-		HitEffectAsset = HitRef.Object;
+		SoundFx = SoundRef.Object;
 	}
 }
 
@@ -51,6 +52,7 @@ void UDESkill_VenomCircle::InitBehaviors()
 		CastVFX->bAttachToActor = false; // 바닥에 퍼지고 끝남 (따라오지 않음)
 		CastVFX->NiagaraEffect = CastEffectAsset; // 위에서 로드한 에셋 연결
 		CastVFX->SizeVariableName = TEXT("User.SkillRadius");
+		CastVFX->SoundEffect = SoundFx; // 방금 만드신 피 터지는 사운드 큐 에셋!
 		Behaviors.Add(CastVFX);
 	}
 

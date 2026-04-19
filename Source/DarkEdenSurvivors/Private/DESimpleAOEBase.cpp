@@ -58,7 +58,7 @@ void ADESimpleAOEBase::InitializeFromContext(const FDESkillContext& Context)
     if (NiagaraComponent)
     {
         // 부모가 세팅해둔 Size(또는 Context.Radius) 활용
-        NiagaraComponent->SetFloatParameter(FName("SkillRadius"), Size * 30.0f);
+        NiagaraComponent->SetFloatParameter(FName("SkillRadius"), Context.Radius);
     }
 
     CollisionComponent->SetSphereRadius(Radius);

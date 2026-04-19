@@ -63,6 +63,12 @@ void UDEBehavior_SpawnSummon::Execute(FDESkillContext& Context)
         {
             // 3. [초기화] (여기서 Context.Duration 등의 정보가 넘어감)
             Summon->InitializeFromContext(Context);
+            // ★ OwnedActorMap에 등록
+            if (Context.SourceSkill)
+            {
+                FName Key = FName(*FString::Printf(TEXT("%s_%d"), *SummonClass->GetName(), i));
+                Context.SourceSkill->OwnedSkillActorMap.Add(Key, Summon);
+            }
         }
     }
 
@@ -73,3 +79,72 @@ void UDEBehavior_SpawnSummon::Execute(FDESkillContext& Context)
     }
 }
 
+
+void UDEBehavior_SpawnSummon::OnContextRefreshed(const FDESkillContext& Context)
+{
+    if (!Context.SourceSkill || !Context.Instigator) return;
+
+    // 1. 필요한 포인터들 미리 확보
+    UWorld* World = Context.Instigator->GetWorld();
+    if (!World) return;
+
+    UDEPoolSubsystem* Pool = World->GetSubsystem<UDEPoolSubsystem>();
+    if (!Pool) return;
+
+    // 2. 현재 살아있는 소환수 카운트 및 갱신
+    int32 CurrentCount = 0;
+    for (auto& Pair : Context.SourceSkill->OwnedSkillActorMap)
+    {
+        if (Pair.Value.IsValid())
+        {
+            // 인터페이스나 캐스팅을 통해 컨텍스트 갱신
+            if (auto* Summon = Cast<ADESimpleSummonBase>(Pair.Value.Get()))
+            {
+                Summon->InitializeFromContext(Context);
+                CurrentCount++;
+            }
+        }
+    }
+    UE_LOG(LogTemp, Error, TEXT("Context Refreshed for Perma Summons"));
+
+    // 3. 목표 수치 계산
+    int32 TargetCount = bUseBaseAmountOnly
+        ? Context.SourceSkill->GetBaseAmount()
+        : Context.Amount;
+
+    int32 AdditionalCount = TargetCount - CurrentCount;
+    if (AdditionalCount <= 0) return;
+
+    // 4. [중요] SpawnLoc 재계산 (Execute 로직 복사)
+    FVector OwnerLoc = Context.Instigator->GetActorLocation();
+    FVector BaseSpawnLoc = OwnerLoc;
+
+    if (Context.Targets.Num() > 0 && Context.Targets[0])
+    {
+        BaseSpawnLoc = Context.Targets[0]->GetActorLocation();
+    }
+    else
+    {
+        FVector2D RandomOffset2D = FMath::RandPointInCircle(SpawnDistanceOffset);
+        BaseSpawnLoc = OwnerLoc + FVector(RandomOffset2D.X, RandomOffset2D.Y, 0.0f);
+    }
+    BaseSpawnLoc.Z = OwnerLoc.Z;
+
+    // 5. 추가 소환 실행
+    for (int32 i = 0; i < AdditionalCount; i++)
+    {
+        FVector FinalLoc = BaseSpawnLoc + FVector(FMath::RandRange(-50.f, 50.f), FMath::RandRange(-50.f, 50.f), 0.f);
+        AActor* PooledActor = Pool->GetPooledActor(SummonClass, FinalLoc, FRotator::ZeroRotator, false);
+
+        if (auto* Summon = Cast<ADESimpleSummonBase>(PooledActor))
+        {
+            Summon->InitializeFromContext(Context);
+        }
+    }
+
+    if (SpawnSound)
+    {
+        UGameplayStatics::PlaySoundAtLocation(World, SpawnSound, BaseSpawnLoc);
+    }
+    UE_LOG(LogTemp, Error, TEXT("And Summoned : %d additional Summons . . ."), AdditionalCount);
+}
