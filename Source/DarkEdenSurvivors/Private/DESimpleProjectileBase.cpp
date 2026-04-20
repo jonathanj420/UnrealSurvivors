@@ -150,57 +150,6 @@ void ADESimpleProjectileBase::ReturnToPool()
 	Super::ReturnToPool();
 }
 
-//void ADESimpleProjectileBase::InitializeProjectile(float InDamage, float InSpeed, int32 InPenetration, const FVector& Direction)
-//{
-//	
-//
-//	Damage = InDamage;
-//	ShootDirection = Direction.GetSafeNormal(); // 처음에 딱 한 번만 정규화
-//	CurrentSpeed = (InSpeed == 0.0f) ? 1200.0f : InSpeed;
-//	Penetration = InPenetration;
-//
-//	MovementComponent->Velocity = ShootDirection * CurrentSpeed;
-//	MovementComponent->bRotationFollowsVelocity = true;
-//	ResetState();
-//}
-
-//void ADESimpleProjectileBase::InitializeFromContext(const FDESkillContext& Context, const FVector& Direction)
-//{
-//	// 1. 멤버 변수에 저장 (캐싱)
-//	if (APawn* InstigatorPawn = Cast<APawn>(Context.Instigator))
-//	{
-//		SetInstigator(InstigatorPawn);
-//	}
-//	CachedContext = Context;
-//	Snapshot = Context.FinalSnapshot;
-//	Damage = Context.Damage;             // ★ 중요: 곱하기 하지 마세요! 순수 데미지 저장
-//	CritChance = Context.CritChance;
-//	CritDamageMultiplier = Context.CritDamageMultiplier; // ★ 저장
-//	KnockbackForce = Context.KnockbackForce;
-//	Penetration = Context.Penetration;
-//	Speed = Context.Speed;
-//	LifeTime = Context.Duration;         // Duration을 LifeTime으로 매핑
-//	EffectRadius = Context.Radius;
-//
-//	// 2. 물리적 초기화
-//	// (InitializeProjectile 함수 내부도 멤버 변수 쓰는 걸로 바꾸거나, 여기 있는 값을 넘김)
-//	InitializeProjectile(Damage, Speed, Penetration, Direction);
-//
-//	// 3. 크기 조절 (옵션)
-//	float NewSize = Context.GetValue(TEXT("Size"), -1.f);
-//	if (NewSize > 0.f)
-//	{
-//		SetSize(NewSize);
-//		// 여기서 실제 Mesh 스케일 조절 로직 호출
-//	}
-//	/*if (EffectRadius > 0.0f)
-//	{
-//		SetSize(EffectRadius);
-//	}*/
-//
-//
-//}
-
 void ADESimpleProjectileBase::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult& SweepResult)
@@ -221,85 +170,7 @@ void ADESimpleProjectileBase::OnOverlap(UPrimitiveComponent* OverlappedComp, AAc
 	}
 
 }
-//bool ADESimpleProjectileBase::TryDealDamage(AActor* Victim)
-//{
-//	if (!Victim) return false;
-//
-//	//FVector KBDir = Victim->GetActorLocation() - GetActorLocation();
-//	FVector KBDir = GetActorForwardVector().GetSafeNormal2D();
-//
-//	FDEDamageRequest Req;
-//	Req.Instigator = GetInstigator();
-//	Req.DamageCauser = this;
-//	Req.SourceObject = CachedContext.SourceSkill;
-//	Req.Victim = Victim;
-//	Req.BaseDamage = Damage;
-//	Req.CritChance = CritChance;
-//	Req.CritDamageMultiplier = CritDamageMultiplier;
-//
-//	// 1. [데미지 선 적용] 라이브러리 호출
-//	FDEDamageResult Res = UDEGameplayLibrary::ApplyCombatDamage(Req);
-//
-//	// 데미지가 아예 안 들어갔으면(무적 등) 여기서 컷!
-//	if (Res.FinalDamage <= 0.0f)
-//	{
-//		return false;
-//	}
-//
-//	if (Res.FinalDamage > 0.0f && this->KnockbackForce > 0.0f)
-//	{
-//		if (ADEMonsterBase* Monster = Cast<ADEMonsterBase>(Req.Victim))
-//			Monster->ApplyKnockback(KBDir, this->KnockbackForce);
-//	}
-//
-//	// ---------------------------------------------------------
-//	// 몹이 죽었다고 바로 return true 해버리던 바보 같은 최적화 제거!
-//	// 죽었더라도 '적중(OnHit)'은 한 거니까 이펙트는 끝까지 책임지고 터뜨린다!
-//	// ---------------------------------------------------------
-//
-//	// 2. [로컬 이펙트 발동] (투사체 고유 기믹: 피흡, 처형 등)
-//	FCombatEventData EventData;
-//	EventData.Instigator = GetInstigator();
-//	EventData.Target = Victim;
-//	EventData.DamageAmount = Res.FinalDamage; // 실제 들어간 데미지
-//
-//	for (UDECombatEffect* Effect : LocalEffects)
-//	{
-//		if (!Effect) continue;
-//
-//		// 케이스 A: "나는 때릴 때마다 터질래!" (OnHit)
-//		if (Effect->TriggerCondition == ECombatEventTrigger::OnHit)
-//		{
-//			Effect->ExecuteEffect(EventData);
-//		}
-//		// 케이스 B: "나는 쟤가 죽었을 때만 터질래!" (OnKill)
-//		else if (Effect->TriggerCondition == ECombatEventTrigger::OnKill && Res.bIsDead)
-//		{
-//			// Res.bIsDead가 true일 때만 진입! 막타를 쳤을 때만 실행됨.
-//			Effect->ExecuteEffect(EventData);
-//		}
-//	}
-//
-//	return true;
-//
-//	//if (!Victim) return false;
-//
-//	//FVector KBDir = Victim->GetActorLocation() - GetActorLocation();
-//
-//	//FDEDamageRequest Req;
-//	//Req.Instigator = GetInstigator();
-//	//Req.DamageCauser = this;
-//	//Req.Victim = Victim;
-//	//Req.BaseDamage = Damage;
-//	//Req.CritChance = CritChance;
-//	//Req.CritDamageMultiplier = CritDamageMultiplier;
-//
-//	//// 라이브러리 호출
-//	//FDEDamageResult Res = UDEGameplayLibrary::ApplyCombatDamage(Req, this->Snapshot, KBDir, this->KnockbackForce);
-//
-//	//// 데미지가 성공적으로 들어갔는지 반환
-//	//return Res.FinalDamage > 0.0f;
-//}
+
 void ADESimpleProjectileBase::UpdateMovement(float DeltaTime)
 {
 	// [최적화] 가속도가 있을 때만 연산
@@ -338,3 +209,4 @@ void ADESimpleProjectileBase::SetSpeed(float NewSpeed)
 	}
 
 }
+

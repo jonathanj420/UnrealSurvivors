@@ -66,7 +66,8 @@ void UDEBehavior_SpawnSummon::Execute(FDESkillContext& Context)
             // ¡Ú OwnedActorMap¿¡ µî·Ï
             if (Context.SourceSkill)
             {
-                FName Key = FName(*FString::Printf(TEXT("%s_%d"), *SummonClass->GetName(), i));
+                FString UniqueStr = FGuid::NewGuid().ToString();
+                FName Key = FName(*FString::Printf(TEXT("%s_%s"), *SummonClass->GetName(), *UniqueStr));
                 Context.SourceSkill->OwnedSkillActorMap.Add(Key, Summon);
             }
         }
@@ -139,6 +140,9 @@ void UDEBehavior_SpawnSummon::OnContextRefreshed(const FDESkillContext& Context)
         if (auto* Summon = Cast<ADESimpleSummonBase>(PooledActor))
         {
             Summon->InitializeFromContext(Context);
+            FString UniqueStr = FGuid::NewGuid().ToString();
+            FName Key = FName(*FString::Printf(TEXT("%s_%s"), *SummonClass->GetName(), *UniqueStr));
+            Context.SourceSkill->OwnedSkillActorMap.Add(Key, Summon);
         }
     }
 

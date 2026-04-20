@@ -98,11 +98,12 @@ void ADESkillActorBase::ResetState()
         {
             NComp->SetVisibility(true);
 
-            // 즉시 파티클 킬 (이전 위치의 잔상 완벽 제거)
-            //NComp->DeactivateImmediate();
-
-            // 리셋(true)과 함께 재가동
-            NComp->Activate(true);
+            // ★ [핵심] 파티클이 꺼져 있을 때만 켭니다.
+            // (영구 지속 오라가 스탯 갱신을 위해 ResetState를 탈 때는 깜빡이지 않고 부드럽게 유지됨!)
+            if (!NComp->IsActive())
+            {
+                NComp->Activate(true);
+            }
         }
     }
 
@@ -114,7 +115,14 @@ void ADESkillActorBase::ResetState()
     //    NiagaraComponent->Activate(true);
     //}
 
-    GetWorldTimerManager().SetTimer(LifeTimeTimerHandle, this, &ADESkillActorBase::OnLifeTimeExpired, LifeTime, false);
+    if (LifeTime > 0.f)
+    {
+        GetWorldTimerManager().SetTimer(
+            LifeTimeTimerHandle, this,
+            &ADESkillActorBase::OnLifeTimeExpired,
+            LifeTime, false);
+    }
+
     SetActorHiddenInGame(false);
     SetActorTickEnabled(true);
 }
@@ -208,6 +216,8 @@ bool ADESkillActorBase::TryDealDamage(AActor* Victim)
 
 void ADESkillActorBase::SetSize(float NewSize)
 {
+    
+    SetActorScale3D(FVector(NewSize / Radius));
     Radius = NewSize;
-    SetActorScale3D(FVector(NewSize / 100.0f));
+
 }
