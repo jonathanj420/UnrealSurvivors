@@ -88,10 +88,6 @@ void ADESkillActorBase::ResetState()
 {
 
 
-    if (CollisionComponent)
-        CollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-
-
     for (UNiagaraComponent* NComp : CachedNiagaraComps)
     {
         if (NComp)
@@ -125,10 +121,18 @@ void ADESkillActorBase::ResetState()
 
     SetActorHiddenInGame(false);
     SetActorTickEnabled(true);
+
+
+
+    if (CollisionComponent)
+        CollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
 }
 
 void ADESkillActorBase::ReturnToPool()
 {
+    if (CollisionComponent)
+        CollisionComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     SetActorHiddenInGame(true);
     SetActorTickEnabled(false);
     GetWorldTimerManager().ClearTimer(LifeTimeTimerHandle);
@@ -148,8 +152,7 @@ void ADESkillActorBase::ReturnToPool()
         NiagaraComponent->SetVisibility(false);
     }*/
 
-    if (CollisionComponent)
-        CollisionComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    
 
     
 

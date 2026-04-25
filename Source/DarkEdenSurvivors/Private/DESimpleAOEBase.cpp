@@ -35,12 +35,13 @@ void ADESimpleAOEBase::BeginPlay()
 
 void ADESimpleAOEBase::InitializeFromContext(const FDESkillContext& Context)
 {
+    // 2. 장판(AOE) 전용 데이터 세팅
+    HitCooldown = Context.GetValue(TEXT("HitInterval"), 0.5f);
     //UE_LOG(LogTemp, Warning, TEXT("%s Try Init from ContXXt"), *GetName());
     // 1. 공통 스탯(데미지, 범위, 오너, 수명, 풀링 리셋 등)은 부모에게 짬처리!
     Super::InitializeFromContext(Context);
 
-    // 2. 장판(AOE) 전용 데이터 세팅
-    HitCooldown = Context.GetValue(TEXT("HitInterval"), 0.5f);
+   
 
     // 3. 영구 지속 장판 처리 (독 장판, 마늘 등)
     if (LifeTime < 0.0f)
@@ -112,15 +113,14 @@ void ADESimpleAOEBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActo
     {
         return;
     }
-    //UE_LOG(LogTemp, Warning, TEXT("%s OnOverlapBegin"), *GetName());
+    UE_LOG(LogTemp, Warning, TEXT("%s OnOverlapBegin"), *GetName());
     // 들어오자마자 쿨타임 체크 후 즉시 타격 (반응성 UP)
     if (CanHitTarget(OtherActor))
     {
         OnHitTarget(OtherActor);
-
-        // 다음 타격 시간 기록
-        double CurrentTime = GetWorld()->GetTimeSeconds();
-        HitCooldownMap.Add(OtherActor, CurrentTime + HitCooldown);
+        // 다음 타격 시간 기록 but y here? ?
+        /*double CurrentTime = GetWorld()->GetTimeSeconds();
+        HitCooldownMap.Add(OtherActor, CurrentTime + HitCooldown);*/
     }
 }
 
@@ -142,6 +142,7 @@ void ADESimpleAOEBase::Tick(float DeltaTime)
         if (CanHitTarget(Target))
         {
             OnHitTarget(Target);
+            UE_LOG(LogTemp, Warning, TEXT("OnHitTarget to : %s Called in Tick"), *Target->GetName());
             HitCooldownMap.Add(Target, CurrentTime + HitCooldown);
         }
     }
@@ -172,7 +173,10 @@ bool ADESimpleAOEBase::CanHitTarget(AActor* Target) const
 
 void ADESimpleAOEBase::OnHitTarget(AActor* Target)
 {
+    double CurrentTime = GetWorld()->GetTimeSeconds();
+    HitCooldownMap.Add(Target, CurrentTime + HitCooldown);
     TryDealDamage(Target);
+    UE_LOG(LogTemp, Warning, TEXT("AOE %s Hit : %s"), *GetName(), *Target->GetName());
     //UE_LOG(LogTemp, Warning, TEXT("%s got hit by : %s"), *Target->GetName(), *GetName());
     // [확장 포인트]
     // 여기서 넉백(Knockback)이나 상태이상(ApplyStatus) 로직을 추가하면 됩니다.
@@ -189,14 +193,16 @@ void ADESimpleAOEBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void ADESimpleAOEBase::ResetState()
 {
+    
     Super::ResetState();
 
     // 맵 초기화
-    HitCooldownMap.Empty();
-    HitCountMap.Empty();
+    
 }
 
 void ADESimpleAOEBase::ReturnToPool()
 {
     Super::ReturnToPool();
+    HitCooldownMap.Empty();
+    HitCountMap.Empty();
 }

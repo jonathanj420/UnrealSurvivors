@@ -38,7 +38,7 @@ void UDEBehavior_SpawnSummon::Execute(FDESkillContext& Context)
     }
 
     // Z축은 바닥으로 고정 (필요 시)
-    SpawnLoc.Z = OwnerLoc.Z;
+    SpawnLoc.Z = 0.0f;
 
     // 2. [오브젝트 풀에서 꺼내기]
     int32 TargetCount = Context.Amount; // 기본적으로는 최종 스탯 보따리의 값을 쓴다.
@@ -129,7 +129,7 @@ void UDEBehavior_SpawnSummon::OnContextRefreshed(const FDESkillContext& Context)
         FVector2D RandomOffset2D = FMath::RandPointInCircle(SpawnDistanceOffset);
         BaseSpawnLoc = OwnerLoc + FVector(RandomOffset2D.X, RandomOffset2D.Y, 0.0f);
     }
-    BaseSpawnLoc.Z = OwnerLoc.Z;
+    BaseSpawnLoc.Z = 0.0f;
 
     // 5. 추가 소환 실행
     for (int32 i = 0; i < AdditionalCount; i++)

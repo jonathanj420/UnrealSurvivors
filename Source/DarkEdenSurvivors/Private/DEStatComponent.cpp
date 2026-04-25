@@ -87,6 +87,7 @@ void UDEStatComponent::RefreshDerivedStats(EDEStatType StatType)
 		{
 			OwnedChar->GetCharacterMovement()->MaxWalkSpeed = MoveSpeed.GetValue();
 			OnSpeedChanged.Broadcast(OwnedChar->GetCharacterMovement()->MaxWalkSpeed);
+			UE_LOG(LogTemp, Warning, TEXT("Movespeed Changed : %f"), MoveSpeed.GetValue());
 		}
 		break;
 
@@ -141,12 +142,12 @@ void UDEStatComponent::ApplyMetaUpgrades()
         if (Stat == EDEStatType::Amount)
         {
             MetaMod.Additive = BonusValue;
-            MetaMod.Multiplier = 1.0f;
+            //MetaMod.Multiplier = 1.0f;
         }
         else
         {
             MetaMod.Additive = 0.0f;
-            MetaMod.Multiplier = 1.0f + BonusValue;
+            MetaMod.Multiplier = BonusValue;
         }
 
         ApplyModifier(MetaMod);

@@ -9,7 +9,7 @@
 void UDEAutoSkillBase::Activate()
 {
 	if (!SkillOwner) return;
-    //UE_LOG(LogTemp, Warning, TEXT("%s Activated"), *GetNameSafe(this));
+    UE_LOG(LogTemp, Warning, TEXT("%s Activated"), *GetNameSafe(this));
 	//FDESkillContext Context;
 
     //zis no = game boom
@@ -92,7 +92,7 @@ void UDEAutoSkillBase::SetSkillData(const FDESkillData* NewData)
 
 void UDEAutoSkillBase::InitBehaviors()
 {
-	Behaviors.Empty();
+	//Behaviors.Empty();
 }
 
 void UDEAutoSkillBase::BuildContext(FDESkillContext& OutContext)
@@ -223,6 +223,14 @@ void UDEAutoSkillBase::EndSkill()
             Pair.Value->ReturnToPool();
     }
     OwnedSkillActorMap.Reset();
+
+    for (UDESkillBehavior* Behavior : Behaviors)
+    {
+        if (Behavior)
+        {
+            Behavior->EndBehavior(); // 다형성에 의해 SpawnOnMove는 타이머를 끄게 됨
+        }
+    }
 }
 
 void UDEAutoSkillBase::OnTargetKilled(const FDEDamageResult& Result)

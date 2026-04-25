@@ -15,7 +15,7 @@
 /**
  * 
  */
-UCLASS(Abstract)
+UCLASS(Abstract, Blueprintable, BlueprintType)
 class DARKEDENSURVIVORS_API UDEAutoSkillBase : public UDESkillBase, public IDEDamageInstigatorInterface
 {
 	GENERATED_BODY()
@@ -49,12 +49,12 @@ public:	// 데이터 주입 (레벨업 시 호출)
 	// 자식 클래스에서 Behavior 조립
 	virtual void InitBehaviors();
 
-protected:
+public:
 	virtual void BuildContext(FDESkillContext& OutContext);
 
 
 protected:
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly, Instanced, Category = "Skill Behaviors")
 	TArray<class UDESkillBehavior*> Behaviors;
 
 	// 현재 스킬 스펙 (포인터만 참조)

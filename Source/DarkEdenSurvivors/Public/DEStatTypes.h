@@ -91,31 +91,33 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	float Multiplier; // +10% (1.1)
 
-	FGameplayStat() : BaseValue(0.f), Additive(0.f), Multiplier(1.f) {}
-	FGameplayStat(float InBase) : BaseValue(InBase), Additive(0.f), Multiplier(1.f) {}
+	FGameplayStat() : BaseValue(0.f), Additive(0.f), Multiplier(0.f) {}
+	FGameplayStat(float InBase) : BaseValue(InBase), Additive(0.f), Multiplier(0.f) {}
 
     void ApplyModifier(const FDEStatModifier& Mod)
     {
         Additive += Mod.Additive;
-        Multiplier *= Mod.Multiplier;
+        Multiplier += Mod.Multiplier;
     }
 
     void RemoveModifier(const FDEStatModifier& Mod)
     {
         Additive -= Mod.Additive;
-        Multiplier /= Mod.Multiplier;
+        Multiplier -= Mod.Multiplier;
     }
 
 	float GetValue() const
 	{
-		// (기본 + 추가) * 배율
-		return (BaseValue + Additive) * Multiplier;
+        // (기본값 + 고정 추가치) * (100% + 퍼센트 추가치 합산)
+        // 예: (10 + 5) * (1.0 + 0.1 + 0.1) = 15 * 1.2 = 18
+        float FinalValue = (BaseValue + Additive) * (1.0f + Multiplier);
+        return FMath::Max(0.0f, FinalValue); // 스탯이 음수가 되는 것을 방지 (기획에 따라 생략 가능)
 	}
 
 	void ResetModifiers()
 	{
 		Additive = 0.f;
-		Multiplier = 1.f;
+		Multiplier = 0.f;
 	}
 };
 
