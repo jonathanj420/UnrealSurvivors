@@ -67,11 +67,11 @@ void UDEAutoSkillBase::Activate()
 void UDEAutoSkillBase::ExecuteWithContext(FDESkillContext& Context)
 {
 
-    for (UDESkillBehavior* Behavior : Behaviors)
-    {
-        if (Behavior) Behavior->Execute(Context);
-    }
+    // 파이프라인 시작 전 인덱스 초기화
+    CurrentBehaviorIndex = 0;
 
+    // 파이프라인 가동!
+    ExecutePipeline();
 
 
     //here could be other skills' own logics
@@ -215,7 +215,7 @@ void UDEAutoSkillBase::BuildContext(FDESkillContext& OutContext)
 
 void UDEAutoSkillBase::FinishSkill()
 {
-    CurrentBehaviorIndex = 0;
+   // CurrentBehaviorIndex = 0;
 
     bIsRunning = false; // 매니저한테 "쿨타임 돌려라!" 라고 허락함
 
@@ -224,13 +224,13 @@ void UDEAutoSkillBase::FinishSkill()
 
 void UDEAutoSkillBase::EndSkill()
 {
-    // AOE 정리
-    for (auto& Pair : OwnedSkillActorMap)
-    {
-        if (Pair.Value.IsValid())
-            Pair.Value->ReturnToPool();
-    }
-    OwnedSkillActorMap.Reset();
+    //// AOE 정리
+    //for (auto& Pair : OwnedSkillActorMap)
+    //{
+    //    if (Pair.Value.IsValid())
+    //        Pair.Value->ReturnToPool();
+    //}
+    //OwnedSkillActorMap.Reset(); no need enimoar
 
     for (UDESkillBehavior* Behavior : Behaviors)
     {
@@ -284,7 +284,7 @@ void UDEAutoSkillBase::ExecutePipeline()
 
         // 1. 비헤이비어 본연의 역할 실행 (데미지, 사운드 등)
         CurrentBehavior->Execute(CachedContext);
-
+        UE_LOG(LogTemp, Error, TEXT("Behavior : %s Executed, Current Behavior Index : %d"),*CurrentBehavior->GetName(),CurrentBehaviorIndex);
         // 2. 파이프라인을 멈춰야 하는 딜레이가 있는지 확인 (다형성 활용)
         float PipelineDelay = CurrentBehavior->GetPipelineDelay();
         if (PipelineDelay > 0.0f)
@@ -320,6 +320,13 @@ void UDEAutoSkillBase::CancelSkill()
 
     CurrentBehaviorIndex = 0;
     bIsRunning = false;
+
+    for (auto& Pair : OwnedSkillActorMap)
+    {
+        if (Pair.Value.IsValid())
+            Pair.Value->ReturnToPool();
+    }
+    OwnedSkillActorMap.Reset(); // this for player death maybe
 
     EndSkill(); // 스폰된 이펙트나 장판 치우기
 }

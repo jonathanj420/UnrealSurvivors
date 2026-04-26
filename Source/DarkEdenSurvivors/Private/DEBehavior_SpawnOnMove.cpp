@@ -11,9 +11,7 @@
 
 void UDEBehavior_SpawnOnMove::Execute(FDESkillContext& Context)
 {
-    UE_LOG(LogTemp, Warning, TEXT("Try Green Poison Execution"));
     if (!Context.Instigator || !Context.SourceSkill) return;
-    UE_LOG(LogTemp, Warning, TEXT("Green Poison Checked Instigator"));
     // 1. 안전한 포인터 캐싱
     CachedInstigator = Context.Instigator;
     CachedSourceSkill = Context.SourceSkill;

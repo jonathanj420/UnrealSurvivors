@@ -94,6 +94,15 @@ void ADESkillActorBase::ResetState()
         {
             NComp->SetVisibility(true);
 
+            // 1. 표준화된 파라미터 무지성 주입 (이펙트에 해당 파라미터가 없어도 에러 안 남!)
+            NComp->SetFloatParameter(FName("SkillRadius"), Radius);
+
+            // 수명도 파라미터로 넘겨주면, 파티클 루프 시간이나 색상 페이드아웃 등에 연동하기 매우 좋습니다.
+            if (LifeTime > 0.0f)
+            {
+                NComp->SetFloatParameter(FName("SkillDuration"), LifeTime);
+            }
+
             // ★ [핵심] 파티클이 꺼져 있을 때만 켭니다.
             // (영구 지속 오라가 스탯 갱신을 위해 ResetState를 탈 때는 깜빡이지 않고 부드럽게 유지됨!)
             if (!NComp->IsActive())

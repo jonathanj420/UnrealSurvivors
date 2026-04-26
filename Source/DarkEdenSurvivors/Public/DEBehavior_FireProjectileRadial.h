@@ -18,14 +18,14 @@ public:
 	virtual void Execute(FDESkillContext& Context) override;
 
 public:
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	USoundBase* FireSound;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<AActor> ProjectileClass;
 
 	// (옵션) 360도 전체가 아니라 180도만 쏘고 싶을 때를 대비해 변수화 가능
 	// 기본값 360.0f
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	float ArcAngle = 360.f;
 };

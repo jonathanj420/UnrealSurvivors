@@ -23,25 +23,25 @@ protected:
 	void FireOneShot();
 
 public:
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	USoundBase* FireSound;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<AActor> ProjectileClass;
 
 	// random offset,,, 0=zero
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	float RandomPositionRange = 0.f;
 
 	// random angle,,, 0=zero
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	float FireConeAngle = 0.f;
 
 	// burst delay,,, 0=zero
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	float BurstInterval = 0.f;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	float AngleOffset = 0.0f;
 
 private:

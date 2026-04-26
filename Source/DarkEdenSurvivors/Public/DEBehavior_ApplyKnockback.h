@@ -24,11 +24,11 @@ public:
 public:
 	// 넉백 힘 배율 (기본 1.0)
 	// 예: 기본 수치는 1000인데, 이 스킬만 1.5배로 더 세게 밀고 싶을 때 사용
-	UPROPERTY(EditAnywhere, Category = "Config")
+	UPROPERTY(EditAnywhere, Category = "Knockback")
 	float ForceMultiplier = 1.0f;
 
 	// Z축(위아래) 힘을 무시하고 수평으로만 밀지 여부 (기본 true)
 	// true: 몬스터가 하늘로 뜨지 않고 바닥에서 미끄러짐
-	UPROPERTY(EditAnywhere, Category = "Config")
+	UPROPERTY(EditAnywhere, Category = "Knockback")
 	bool bFlattenZ = true;
 };
