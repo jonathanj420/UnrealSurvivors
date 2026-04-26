@@ -84,4 +84,20 @@ public:
 	ESkillExecutionType GetExecutionType() const;
 	void RefreshContext();
 
+protected:
+	// 파이프라인 진행 상태를 기억할 인덱스
+	int32 CurrentBehaviorIndex = 0;
+
+	// 파이프라인 일시정지(대기)용 타이머 핸들
+	FTimerHandle PipelineTimerHandle;
+
+	// 파이프라인을 실제로 한 칸씩 진행시키는 함수
+	UFUNCTION()
+	void ExecutePipeline();
+
+public:
+	// 스킬 강제 취소 함수 (이미 있다면 내용만 보강)
+	UFUNCTION(BlueprintCallable, Category = "Skill")
+	virtual void CancelSkill();
+
 };

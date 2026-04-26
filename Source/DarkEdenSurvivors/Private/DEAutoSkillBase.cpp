@@ -67,16 +67,23 @@ void UDEAutoSkillBase::Activate()
 void UDEAutoSkillBase::ExecuteWithContext(FDESkillContext& Context)
 {
 
-    //here could be other skills' own logics
-
-
-
-    // 기본 역할: Behavior들 실행
     for (UDESkillBehavior* Behavior : Behaviors)
     {
         if (Behavior) Behavior->Execute(Context);
     }
 
+
+
+    //here could be other skills' own logics
+
+
+
+    // 기본 역할: Behavior들 실행
+  /*  for (UDESkillBehavior* Behavior : Behaviors)
+    {
+        if (Behavior) Behavior->Execute(Context);
+    }
+*/
 
 
     //or maybe here
@@ -208,10 +215,11 @@ void UDEAutoSkillBase::BuildContext(FDESkillContext& OutContext)
 
 void UDEAutoSkillBase::FinishSkill()
 {
-    bIsRunning = false; // 이제 끝났으니 매니저한테 "쿨타임 돌려라!" 라고 허락함
+    CurrentBehaviorIndex = 0;
 
-    // 네가 기존에 잘 만들어둔 AOE 정리(해골 지우기) 함수를 재활용!
-    EndSkill();
+    bIsRunning = false; // 매니저한테 "쿨타임 돌려라!" 라고 허락함
+
+    EndSkill(); // 기존 AOE, 이펙트 풀링 정리 함수 재활용
 }
 
 void UDEAutoSkillBase::EndSkill()
@@ -262,4 +270,56 @@ void UDEAutoSkillBase::RefreshContext()
     {
         if (Behavior) Behavior->OnContextRefreshed(CachedContext);
     }
+}
+
+void UDEAutoSkillBase::ExecutePipeline()
+{
+    // 배열 끝까지 돌 때까지 반복
+    while (CurrentBehaviorIndex < Behaviors.Num())
+    {
+        UDESkillBehavior* CurrentBehavior = Behaviors[CurrentBehaviorIndex];
+        CurrentBehaviorIndex++; // 다음 인덱스로 선 이동 (타이머 재개 시 여기서부터 시작)
+
+        if (!CurrentBehavior) continue;
+
+        // 1. 비헤이비어 본연의 역할 실행 (데미지, 사운드 등)
+        CurrentBehavior->Execute(CachedContext);
+
+        // 2. 파이프라인을 멈춰야 하는 딜레이가 있는지 확인 (다형성 활용)
+        float PipelineDelay = CurrentBehavior->GetPipelineDelay();
+        if (PipelineDelay > 0.0f)
+        {
+            if (SkillOwner)
+            {
+                // 3. 딜레이가 있다면, 타이머 세팅 후 while 루프를 즉시 빠져나감 (일시정지)
+                SkillOwner->GetWorldTimerManager().SetTimer(
+                    PipelineTimerHandle,
+                    this,
+                    &UDEAutoSkillBase::ExecutePipeline, // 시간이 되면 알아서 다시 들어와서 재개됨
+                    PipelineDelay,
+                    false
+                );
+            }
+            return; // ★ 루프 강제 탈출 (매우 중요)
+        }
+    }
+
+    // (참고) while 문을 모두 통과했다 = 배열 끝까지 다 돌았다.
+    // 만약 파이프라인이 끝나는 시점에 스킬을 완전 종료하고 싶다면 여기서 처리할 수 있습니다.
+    // 하지만 현재 유저분 구조는 Activate()의 ExecutionType 타이머가 FinishSkill을 부르므로 생략해도 무방합니다.
+}
+
+void UDEAutoSkillBase::CancelSkill()
+{
+    // ★ 허공에 스킬 나가는 '유령 스킬' 버그 완벽 차단
+    if (SkillOwner)
+    {
+        SkillOwner->GetWorldTimerManager().ClearTimer(PipelineTimerHandle);
+        SkillOwner->GetWorldTimerManager().ClearTimer(DurationTimerHandle); // 혹시 모를 지속시간 타이머도 해제
+    }
+
+    CurrentBehaviorIndex = 0;
+    bIsRunning = false;
+
+    EndSkill(); // 스폰된 이펙트나 장판 치우기
 }

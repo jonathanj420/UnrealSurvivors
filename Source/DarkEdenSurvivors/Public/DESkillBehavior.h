@@ -25,5 +25,9 @@ public:
     virtual void OnContextRefreshed(const FDESkillContext& Context) {}
     // 새롭게 추가! 스킬이 끝날 때 비헤이비어 자신이 정리할 게 있다면 여기서 하도록 뚫어줌
     virtual void EndBehavior() {}
+public:
+    // 파이프라인 루프를 멈춰야 하는 시간이 있는지 반환합니다.
+    // 기본값은 0.0f 이며, 딜레이가 없는 일반 비헤이비어들은 오버라이드 할 필요가 없습니다.
+    virtual float GetPipelineDelay() const { return 0.0f; }
 
 };
