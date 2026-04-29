@@ -119,8 +119,10 @@ protected:
 	void LoadEvolutionDataTable();
 public:
 
-	bool CheckEvolution(int32& OutBaseSkillID, int32& OutResultSkillID);
-	void EvolveSkill(int32 BaseSkillID, int32 ResultSkillID);
+	//bool CheckEvolution(int32& OutBaseSkillID, int32& OutResultSkillID);
+	bool CheckEvolution(TArray<int32>& OutConsumedSkillIDs, int32& OutResultSkillID);
+	void EvolveSkill(const TArray<int32>& ConsumedSkillIDs, int32 ResultSkillID);
+	//void EvolveSkill(int32 BaseSkillID, int32 ResultSkillID);
 
 
 protected:

@@ -66,6 +66,7 @@ void UDEStatComponent::BeginPlay()
 void UDEStatComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	UE_LOG(LogTemp, Warning, TEXT("y t fuck tick on?"));
 }
 
 void UDEStatComponent::ApplyModifier(const FDEStatModifier& Mod)

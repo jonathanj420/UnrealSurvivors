@@ -29,6 +29,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AActor> ProjectileClass;
 
+
 	// random offset,,, 0=zero
 	UPROPERTY(EditAnywhere)
 	float RandomPositionRange = 0.f;

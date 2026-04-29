@@ -14,10 +14,10 @@ class USoundBase;
 UENUM(BlueprintType)
 enum class EEffectTargetType : uint8
 {
-    Instigator   UMETA(DisplayName = "시전자 위치"),
-    AllTargets   UMETA(DisplayName = "모든 타겟 위치"),
-    TargetCenter UMETA(DisplayName = "타겟 중앙"),
-    CustomLocations UMETA(DisplayName = "커스텀 위치")
+    Instigator   UMETA(DisplayName = "Instigator"),
+    AllTargets   UMETA(DisplayName = "All Targets"),
+    TargetCenter UMETA(DisplayName = "TargetCenter"),
+    CustomLocations UMETA(DisplayName = "CustomLocations")
 };
 
 UENUM(BlueprintType)

@@ -54,11 +54,13 @@ void ADESkillActorBase::InitializeFromContext(const FDESkillContext& Context)
     Snapshot = Context.FinalSnapshot;
     Damage = Context.Damage;
     Radius = Context.Radius;
-    if (bCanCrit)
+    CritChance = Context.CritChance;
+    CritDamageMultiplier = Context.CritDamageMultiplier;
+    /*if (bCanCrit)
     {
         CritChance = Context.CritChance;
         CritDamageMultiplier = Context.CritDamageMultiplier;
-    }
+    }*/
     KnockbackForce = Context.KnockbackForce;
     LifeTime = Context.Duration;
 

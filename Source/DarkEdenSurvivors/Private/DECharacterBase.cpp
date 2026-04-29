@@ -584,20 +584,21 @@ void ADECharacterBase::MyAnotherDebugCheat()
     {
         GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("Cheat Activated"));
     }
-    int32 BaseID = -1;
+    TArray<int32> ConsumedSkillIDs;
+    //int32 BaseID = -1;
     int32 ResultID = -1;
 
     // 1. 진화 조건을 만족하는 무기가 있는지 검사!
-    if (SkillManager->CheckEvolution(BaseID, ResultID))
+    if (SkillManager->CheckEvolution(ConsumedSkillIDs, ResultID))
     {
-        UE_LOG(LogTemp, Warning, TEXT("[Cheat] 진화 조건 달성! %d번 무기를 %d번으로 진화시킵니다!"), BaseID, ResultID);
+        //UE_LOG(LogTemp, Warning, TEXT("[Cheat] 진화 조건 달성! %d번 무기를 %d번으로 진화시킵니다!"), BaseID, ResultID);
 
         // 2. 조건 맞으면 바로 진화 폭탄 투하!
-        SkillManager->EvolveSkill(BaseID, ResultID);
+        SkillManager->EvolveSkill(ConsumedSkillIDs, ResultID);
     }
     else
     {
-        UE_LOG(LogTemp, Error, TEXT("[Cheat] 꽝! 진화 조건을 만족하는 무기가 없습니다. (만렙 무기나 악세서리가 있는지 확인하세요)"));
+        //UE_LOG(LogTemp, Error, TEXT("[Cheat] 꽝! 진화 조건을 만족하는 무기가 없습니다. (만렙 무기나 악세서리가 있는지 확인하세요)"));
     }
 
     //FDEStatModifier Cheat(EDEStatType::Amount, 1.0f, 0.0f);

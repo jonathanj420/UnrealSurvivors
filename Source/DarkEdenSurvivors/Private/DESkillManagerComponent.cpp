@@ -522,96 +522,203 @@ void UDESkillManagerComponent::LoadEvolutionDataTable()
         UE_LOG(LogTemp, Error, TEXT("Failed to load Evolution Data Table"));
     }
 }
-bool UDESkillManagerComponent::CheckEvolution(int32& OutBaseSkillID, int32& OutResultSkillID)
+//bool UDESkillManagerComponent::CheckEvolution(int32& OutBaseSkillID, int32& OutResultSkillID)
+bool UDESkillManagerComponent::CheckEvolution(TArray<int32>& OutConsumedSkillIDs, int32& OutResultSkillID)
 {
-    UE_LOG(LogTemp, Warning, TEXT("[Evolution] Try Check Evolution . . ."));
     if (!EvolutionDataTable) return false;
-    UE_LOG(LogTemp, Warning, TEXT("[Evolution] Passed DataTable Check . . ."));
-    // 데이터 테이블의 모든 행 가져오기
+
     TArray<FDESkillEvolutionRow*> AllEvoRows;
     EvolutionDataTable->GetAllRows<FDESkillEvolutionRow>(TEXT("CheckEvolutionContext"), AllEvoRows);
 
     bool bCanEvolve = false;
-    int32 HighestPriority = -1; // 우선순위 비교용
+    int32 HighestPriority = -1;
+
+    // 가장 우선순위가 높은 진화식의 재료들을 임시 보관할 곳
+    TArray<int32> BestConsumedSkills;
 
     for (FDESkillEvolutionRow* Row : AllEvoRows)
     {
         if (!Row) continue;
 
-        // 1. 기본 무기를 장착 중인가?
-        if (!ActiveSkills.Contains(Row->BaseSkillID)) continue;
+        bool bHasAllSkills = true;
+        TArray<int32> TempConsumedSkills; // 현재 체크 중인 레시피의 재료들
 
-        // 2. 그 무기가 요구 레벨을 달성했는가?
-        if (SkillLevels[Row->BaseSkillID] < Row->RequiredSkillLevel) continue;
+        // 1. [핵심] 레시피가 요구하는 '모든' 스킬을 장착 중이며, 요구 레벨을 만족하는가?
+        for (const FDESkillRequirement& ReqSkill : Row->RequiredSkills)
+        {
+            // 장착 안 했거나, 레벨이 딸리면 바로 이 레시피는 탈락!
+            if (!ActiveSkills.Contains(ReqSkill.SkillID) || SkillLevels[ReqSkill.SkillID] < ReqSkill.RequiredLevel)
+            {
+                bHasAllSkills = false;
+                break;
+            }
+            // 조건 만족 시 소모될 재료 리스트에 등록
+            TempConsumedSkills.Add(ReqSkill.SkillID);
+        }
 
-        UE_LOG(LogTemp, Warning, TEXT("[Evolution] %d has MAX LEVEL to Evolve . . ."), SkillLevels[Row->BaseSkillID]);
+        // 스킬 조건 못 채웠으면 다음 레시피로 패스
+        if (!bHasAllSkills) continue;
 
+        // 2. 악세서리 조건 체크 (기존과 동일)
         bool bHasAllAccessories = true;
         for (int32 AccID : Row->RequiredAccessoryIDs)
         {
             if (!CachedInventoryComp->HasAccessory(AccID))
             {
                 bHasAllAccessories = false;
-                UE_LOG(LogTemp, Warning, TEXT("[Evolution] %d has MAX LEVEL but No Acc . . ."), SkillLevels[Row->BaseSkillID]);
-                break; // 하나라도 없으면 이 레시피는 탈락!
+                break;
             }
         }
-        // 악세서리가 부족하면 다음 레시피로 패스
+
         if (!bHasAllAccessories) continue;
 
-        // 4. ★ 모든 조건을 만족했다면, 여태 찾은 진화식보다 우선순위가 높은지 체크!
+        // 3. 모든 조건을 만족했다면, 우선순위 비교!
         if (Row->Priority > HighestPriority)
         {
             HighestPriority = Row->Priority;
-            OutBaseSkillID = Row->BaseSkillID;
+            BestConsumedSkills = TempConsumedSkills; // 1개일 수도, 3개일 수도 있는 재료 목록 갱신
             OutResultSkillID = Row->ResultSkillID;
             bCanEvolve = true;
-            UE_LOG(LogTemp, Warning, TEXT("[Evolution] Can Evolve !"));
         }
     }
-    
-    return bCanEvolve;
-}
-void UDESkillManagerComponent::EvolveSkill(int32 BaseSkillID, int32 ResultSkillID)
-{
-    // 1. 기존 스킬 찢어버리기!
-    if (ActiveSkills.Contains(BaseSkillID))
+
+    // 4. 최종적으로 승리한 진화/합성식의 재료 목록을 반환
+    if (bCanEvolve)
     {
-        FActiveSkill& OldSkill = ActiveSkills[BaseSkillID];
-
-        // [★핵심] 기존 스킬 객체에게 "너 이제 해고니까, 네가 맵에 깔아둔 장판/투사체 싹 다 지워!" 라고 명령
-        if (OldSkill.SkillObject)
-        {
-            // 이 함수는 UDESkillBase나 AutoSkillBase에 하나 파두셔야 합니다.
-            // (내부에서 풀링된 투사체들을 회수하거나 Destroy 하도록 구현)
-            // OldSkill.SkillObject->DestroySkill(); 
-
-            // 메모리에서 안전하게 내려가도록 유도 (GC에게 맡김)
-            OldSkill.SkillObject->EndSkill(); // 한 줄로 끝
-            OldSkill.SkillObject = nullptr;
-        }
-
-        // 매니저의 관리 목록에서 완전히 파냅니다.
-        ActiveSkills.Remove(BaseSkillID);
-        SkillLevels.Remove(BaseSkillID);
-        CachedInventoryComp->RemoveSkill(BaseSkillID);
+        OutConsumedSkillIDs = BestConsumedSkills;
     }
 
-    // 2. 새 진화 무기 장착! (1렙부터)
+    return bCanEvolve;
+
+    //UE_LOG(LogTemp, Warning, TEXT("[Evolution] Try Check Evolution . . ."));
+    //if (!EvolutionDataTable) return false;
+    //UE_LOG(LogTemp, Warning, TEXT("[Evolution] Passed DataTable Check . . ."));
+    //// 데이터 테이블의 모든 행 가져오기
+    //TArray<FDESkillEvolutionRow*> AllEvoRows;
+    //EvolutionDataTable->GetAllRows<FDESkillEvolutionRow>(TEXT("CheckEvolutionContext"), AllEvoRows);
+
+    //bool bCanEvolve = false;
+    //int32 HighestPriority = -1; // 우선순위 비교용
+
+    //for (FDESkillEvolutionRow* Row : AllEvoRows)
+    //{
+    //    if (!Row) continue;
+
+    //    // 1. 기본 무기를 장착 중인가?
+    //    if (!ActiveSkills.Contains(Row->BaseSkillID)) continue;
+
+    //    // 2. 그 무기가 요구 레벨을 달성했는가?
+    //    if (SkillLevels[Row->BaseSkillID] < Row->RequiredSkillLevel) continue;
+
+    //    UE_LOG(LogTemp, Warning, TEXT("[Evolution] %d has MAX LEVEL to Evolve . . ."), SkillLevels[Row->BaseSkillID]);
+
+    //    bool bHasAllAccessories = true;
+    //    for (int32 AccID : Row->RequiredAccessoryIDs)
+    //    {
+    //        if (!CachedInventoryComp->HasAccessory(AccID))
+    //        {
+    //            bHasAllAccessories = false;
+    //            UE_LOG(LogTemp, Warning, TEXT("[Evolution] %d has MAX LEVEL but No Acc . . ."), SkillLevels[Row->BaseSkillID]);
+    //            break; // 하나라도 없으면 이 레시피는 탈락!
+    //        }
+    //    }
+    //    // 악세서리가 부족하면 다음 레시피로 패스
+    //    if (!bHasAllAccessories) continue;
+
+    //    // 4. ★ 모든 조건을 만족했다면, 여태 찾은 진화식보다 우선순위가 높은지 체크!
+    //    if (Row->Priority > HighestPriority)
+    //    {
+    //        HighestPriority = Row->Priority;
+    //        OutBaseSkillID = Row->BaseSkillID;
+    //        OutResultSkillID = Row->ResultSkillID;
+    //        bCanEvolve = true;
+    //        UE_LOG(LogTemp, Warning, TEXT("[Evolution] Can Evolve !"));
+    //    }
+    //}
+    //
+    //return bCanEvolve;
+}
+//void UDESkillManagerComponent::EvolveSkill(int32 BaseSkillID, int32 ResultSkillID)
+void UDESkillManagerComponent::EvolveSkill(const TArray<int32>& ConsumedSkillIDs, int32 ResultSkillID)
+{
+    // 1. 재료로 소모되는 '모든' 스킬을 순회하며 찢어버리기!
+    for (int32 TargetSkillID : ConsumedSkillIDs)
+    {
+        if (ActiveSkills.Contains(TargetSkillID))
+        {
+            FActiveSkill& OldSkill = ActiveSkills[TargetSkillID];
+
+            // [★핵심] 기존 스킬 객체에게 맵에 깔아둔 장판/투사체 정리 명령
+            if (OldSkill.SkillObject)
+            {
+                // 메모리에서 안전하게 내려가도록 유도 (GC에게 맡김)
+                OldSkill.SkillObject->EndSkill();
+                OldSkill.SkillObject = nullptr;
+            }
+
+            // 매니저의 관리 목록 및 인벤토리에서 완전히 파냅니다.
+            ActiveSkills.Remove(TargetSkillID);
+            SkillLevels.Remove(TargetSkillID);
+            CachedInventoryComp->RemoveSkill(TargetSkillID);
+
+            UE_LOG(LogTemp, Warning, TEXT("[Evolution] Consumed SkillID: %d"), TargetSkillID);
+        }
+    }
+
+    // 2. 새 진화(혹은 합성) 무기 장착! (1렙부터)
     // 아까 짜두신 '신규 스킬 획득' 함수(LevelUpSkill 등)를 그대로 재활용!
     LevelUpSkill(ResultSkillID);
 
     if (FActiveSkill* NewSkill = ActiveSkills.Find(ResultSkillID))
     {
         UE_LOG(LogTemp, Warning,
-            TEXT("[Evolution] Evolved into : %s successfully"),
-            *NewSkill->SkillObject->GetName());
+            TEXT("[Evolution] Synthesized/Evolved into : %s successfully! (Consumed %d skills)"),
+            *GetNameSafe(NewSkill->SkillObject), ConsumedSkillIDs.Num());
     }
     else
     {
         UE_LOG(LogTemp, Error,
             TEXT("[Evolution] Failed to evolve into SkillID: %d"), ResultSkillID);
     }
+
+    //// 1. 기존 스킬 찢어버리기!
+    //if (ActiveSkills.Contains(BaseSkillID))
+    //{
+    //    FActiveSkill& OldSkill = ActiveSkills[BaseSkillID];
+
+    //    // [★핵심] 기존 스킬 객체에게 "너 이제 해고니까, 네가 맵에 깔아둔 장판/투사체 싹 다 지워!" 라고 명령
+    //    if (OldSkill.SkillObject)
+    //    {
+    //        // 이 함수는 UDESkillBase나 AutoSkillBase에 하나 파두셔야 합니다.
+    //        // (내부에서 풀링된 투사체들을 회수하거나 Destroy 하도록 구현)
+    //        // OldSkill.SkillObject->DestroySkill(); 
+
+    //        // 메모리에서 안전하게 내려가도록 유도 (GC에게 맡김)
+    //        OldSkill.SkillObject->EndSkill(); // 한 줄로 끝
+    //        OldSkill.SkillObject = nullptr;
+    //    }
+
+    //    // 매니저의 관리 목록에서 완전히 파냅니다.
+    //    ActiveSkills.Remove(BaseSkillID);
+    //    SkillLevels.Remove(BaseSkillID);
+    //    CachedInventoryComp->RemoveSkill(BaseSkillID);
+    //}
+
+    //// 2. 새 진화 무기 장착! (1렙부터)
+    //// 아까 짜두신 '신규 스킬 획득' 함수(LevelUpSkill 등)를 그대로 재활용!
+    //LevelUpSkill(ResultSkillID);
+
+    //if (FActiveSkill* NewSkill = ActiveSkills.Find(ResultSkillID))
+    //{
+    //    UE_LOG(LogTemp, Warning,
+    //        TEXT("[Evolution] Evolved into : %s successfully"),
+    //        *NewSkill->SkillObject->GetName());
+    //}
+    //else
+    //{
+    //    UE_LOG(LogTemp, Error,
+    //        TEXT("[Evolution] Failed to evolve into SkillID: %d"), ResultSkillID);
+    //}
 
 }
 void UDESkillManagerComponent::PauseAutoSkills()

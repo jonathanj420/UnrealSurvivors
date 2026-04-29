@@ -13,7 +13,7 @@
 void UDEBehavior_FireProjectileRadial::Execute(FDESkillContext& Context)
 {
 	// 1. 필수 데이터 검사
-	if (!Context.Instigator || !ProjectileClass) return;
+	if (!Context.Instigator || ProjectileClasses.Num() == 0) return;
 
 	UWorld* World = Context.Instigator->GetWorld();
 	if (!World) return;
@@ -58,29 +58,71 @@ void UDEBehavior_FireProjectileRadial::Execute(FDESkillContext& Context)
 	// 5. 발사 루프
 	for (int32 i = 0; i < Count; i++)
 	{
-		// 기준 회전(BaseRot) 복사
+		// 기준 회전(BaseRot) 복사 및 Yaw 적용
 		FRotator SpawnRot = BaseRot;
-
-		// Yaw(수평 회전) 적용
 		float CurrentYawStep = StartYawOffset + (AngleStep * i);
 		SpawnRot.Yaw += CurrentYawStep;
 
-		// 풀에서 꺼내기
-		AActor* PooledActor = Pool->GetPooledActor(
-			ProjectileClass,
-			Origin,
-			SpawnRot,
-			true
-		);
+		// ==========================================================
+		// ★ [핵심] 여기서 배열을 돌며 장전할 총알 클래스를 뽑아냅니다!
+		// ==========================================================
+		TSubclassOf<ADESimpleProjectileBase> SelectedClass = nullptr;
 
-		// 초기화
-		if (auto* Proj = Cast<ADESimpleProjectileBase>(PooledActor))
+		if (FireMode == EProjectileFireMode::Random)
 		{
-			Context.TargetDirection = SpawnRot.Vector();
-			Proj->InitializeFromContext(Context);
-		
+			int32 RandomIndex = FMath::RandRange(0, ProjectileClasses.Num() - 1);
+			SelectedClass = ProjectileClasses[RandomIndex];
+		}
+		else // Sequential (순서대로)
+		{
+			SelectedClass = ProjectileClasses[CurrentFireIndex];
+			CurrentFireIndex = (CurrentFireIndex + 1) % ProjectileClasses.Num();
+		}
+
+		// 안전 장치: 뽑아낸 클래스가 유효한지 확인
+		if (SelectedClass)
+		{
+			// 뽑아낸 'SelectedClass'를 풀에 넘겨서 꺼냅니다.
+			AActor* PooledActor = Pool->GetPooledActor(
+				SelectedClass,
+				Origin,
+				SpawnRot,
+				true
+			);
+
+			// 초기화
+			if (auto* Proj = Cast<ADESimpleProjectileBase>(PooledActor))
+			{
+				Context.TargetDirection = SpawnRot.Vector();
+				Proj->InitializeFromContext(Context);
+			}
 		}
 	}
+	//for (int32 i = 0; i < Count; i++)
+	//{
+	//	// 기준 회전(BaseRot) 복사
+	//	FRotator SpawnRot = BaseRot;
+
+	//	// Yaw(수평 회전) 적용
+	//	float CurrentYawStep = StartYawOffset + (AngleStep * i);
+	//	SpawnRot.Yaw += CurrentYawStep;
+
+	//	// 풀에서 꺼내기
+	//	AActor* PooledActor = Pool->GetPooledActor(
+	//		ProjectileClass,
+	//		Origin,
+	//		SpawnRot,
+	//		true
+	//	);
+
+	//	// 초기화
+	//	if (auto* Proj = Cast<ADESimpleProjectileBase>(PooledActor))
+	//	{
+	//		Context.TargetDirection = SpawnRot.Vector();
+	//		Proj->InitializeFromContext(Context);
+	//	
+	//	}
+	//}
 
 	// 6. 사운드 재생 (한 번만)
 	if (FireSound)

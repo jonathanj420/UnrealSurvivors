@@ -6,6 +6,18 @@
 #include "Engine/DataTable.h"
 #include "DEEvolutionData.generated.h"
 
+USTRUCT(BlueprintType)
+struct FDESkillRequirement
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int32 SkillID = 0;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int32 RequiredLevel = 9; // 보통 진화/합성이면 만렙(예: 8, 9)을 요구
+};
+
 /**
  * 
  */
@@ -16,13 +28,19 @@ struct FDESkillEvolutionRow : public FTableRowBase
 
 public:
 
-    // 진화 전 스킬
-    UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    int32 BaseSkillID;
+    //// 진화 전 스킬
+    //UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    //int32 BaseSkillID;
 
-    // 필요 레벨
+    //// 필요 레벨
+    //UPROPERTY(EditAnywhere, BlueprintReadOnly)
+    //int32 RequiredSkillLevel;
+
+    // ★ BaseSkillID 하나 대신, 필요한 '모든' 스킬과 레벨을 배열로 받습니다!
+    // (예: 포이즌(9), 애시드(9), 블러디(9) 세 개를 넣으면 3단 합성 레시피가 됨)
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
-    int32 RequiredSkillLevel;
+    TArray<FDESkillRequirement> RequiredSkills;
+
 
     // 필요 악세서리들
     UPROPERTY(EditAnywhere, BlueprintReadOnly)

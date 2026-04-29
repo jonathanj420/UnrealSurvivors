@@ -54,6 +54,10 @@ public:
     bool bIsEvolution = false;
 
     UPROPERTY()
-    int32 TargetBaseSkillID = INDEX_NONE; // 찢어버릴 기존 무기의 ID
+    TArray<int32> ConsumedSkillIDs;
+    // 기존: int32 TargetBaseSkillID; 
+    // 변경: 엑조디아의 재료가 된 스킬들의 ID 배열!
+    //UPROPERTY(BlueprintReadOnly, Category = "Evolution")
+   
 	
 };
