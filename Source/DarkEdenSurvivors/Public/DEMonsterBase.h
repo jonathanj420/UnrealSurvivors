@@ -116,7 +116,10 @@ public:
 	float GetMaxHP() const;
 	FOnMonsterDeath OnMonsterDeath;
 	void ResetMonster(const struct FDEMonsterData* Data);
+	void SetCanMove(bool bNewCanMove);
 
+	// 매니저가 고속으로 읽어갈 상태 플래그
+	bool bCanMove = true;
 
 	bool IsAlive();
 protected:

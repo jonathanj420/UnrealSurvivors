@@ -8,6 +8,7 @@
 #include "Data/DEStageWaveData.h"    
 #include "Data/DEMonsterData.h"
 #include "Engine/StreamableManager.h" // 상단 인클루드 추가
+#include "Components/HierarchicalInstancedStaticMeshComponent.h"
 #include "DEMonsterSpawnManager.generated.h"
 
 
@@ -138,5 +139,10 @@ private:
     // UPROPERTY 추가
     UPROPERTY(VisibleAnywhere, Category = "Components")
     UDEMonsterUpdateComponent* MonsterUpdateComponent;
+
+protected:
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rendering")
+    UHierarchicalInstancedStaticMeshComponent* MonsterHISM;
 
 };

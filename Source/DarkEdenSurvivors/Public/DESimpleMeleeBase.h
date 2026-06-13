@@ -27,7 +27,7 @@ public:
     //************** Components ************
 protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-    USphereComponent* CollisionComponent;
+    class USphereComponent* CollisionComponent;
 
     // 실제 Niagara 컴포넌트
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Effects")

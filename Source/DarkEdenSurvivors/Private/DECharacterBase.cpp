@@ -2,6 +2,11 @@
 
 
 #include "DECharacterBase.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CapsuleComponent.h"
+
 #include "DESkillManagerComponent.h"
 #include "DEPlayerController.h"
 #include "DEActiveSkillBase.h"

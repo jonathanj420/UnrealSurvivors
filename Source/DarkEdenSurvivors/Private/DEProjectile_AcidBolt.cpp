@@ -74,18 +74,23 @@ void ADEProjectile_AcidBolt::Tick(float DeltaTime)
 }
 
 
-void ADEProjectile_AcidBolt::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-    UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-    bool bFromSweep, const FHitResult& SweepResult)
-{
+//void ADEProjectile_AcidBolt::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+//    UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+//    bool bFromSweep, const FHitResult& SweepResult)
+//{
+//
+//    Explode();
+//    //if (ADEMonsterBase* Monster = Cast<ADEMonsterBase>(OtherActor))
+//    //{
+//    //    UGameplayStatics::ApplyDamage(Monster, Damage, GetInstigatorController(), this, UDamageType::StaticClass());
+//    //    //UE_LOG(LogTemp, Warning, TEXT("CALLED ONOVERLAP"));
+//    //    Explode();
+//    //}
+//}
 
+void ADEProjectile_AcidBolt::OnTargetHit(AActor* Target)
+{
     Explode();
-    //if (ADEMonsterBase* Monster = Cast<ADEMonsterBase>(OtherActor))
-    //{
-    //    UGameplayStatics::ApplyDamage(Monster, Damage, GetInstigatorController(), this, UDamageType::StaticClass());
-    //    //UE_LOG(LogTemp, Warning, TEXT("CALLED ONOVERLAP"));
-    //    Explode();
-    //}
 }
 
 void ADEProjectile_AcidBolt::Explode()

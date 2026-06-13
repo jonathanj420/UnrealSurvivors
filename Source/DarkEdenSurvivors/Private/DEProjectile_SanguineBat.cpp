@@ -4,6 +4,8 @@
 #include "DEProjectile_SanguineBat.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Components/SphereComponent.h"
+
 ADEProjectile_SanguineBat::ADEProjectile_SanguineBat()
 {
     SkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
@@ -31,12 +33,9 @@ ADEProjectile_SanguineBat::ADEProjectile_SanguineBat()
     }
 }
 
-void ADEProjectile_SanguineBat::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ADEProjectile_SanguineBat::OnTargetHit(AActor* Target)
 {
-    
-
-    FVector ImpactNormal = (GetActorLocation() - OtherActor->GetActorLocation()).GetSafeNormal();
-    Super::OnOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
+    FVector ImpactNormal = (GetActorLocation() - Target->GetActorLocation()).GetSafeNormal();
 
     ImpactNormal.Z = 0.0f; // 튕길 때 위로 솟구치지 않게 탑다운 유지
     ImpactNormal.Normalize();
@@ -52,5 +51,4 @@ void ADEProjectile_SanguineBat::OnOverlap(UPrimitiveComponent* OverlappedComp, A
     // 4. 무한 다단 히트 초기화
     // 다음 번 튕겨서 얘한테 또 왔을 때 다시 때릴 수 있게 세팅을 비워줍니다.
     HitActors.Reset();
-
 }

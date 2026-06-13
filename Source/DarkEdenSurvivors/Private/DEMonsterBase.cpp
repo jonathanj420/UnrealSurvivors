@@ -25,7 +25,7 @@ ADEMonsterBase::ADEMonsterBase()
 	Capsule->InitCapsuleSize(42.0f, 96.0f); // 반지름, 높이
 	Capsule->SetCollisionProfileName(TEXT("Monster"));
 	Capsule->SetCastShadow(false);
-	//Capsule->SetGenerateOverlapEvents(false);
+	Capsule->SetGenerateOverlapEvents(false);
 	RootComponent = Capsule;
 
 	//SetCastShad
@@ -101,40 +101,6 @@ void ADEMonsterBase::MoveToPlayer(float DeltaTime, const FVector& PlayerLocation
 	// 3.  [핵심 최적화] 여기서 즉시 이동하지 마세요! 장바구니에 담기만 합니다!
 	PendingOverlapPush += FinalMove;
 
-	//// if (!TargetPlayer) return; <--- 매니저가 이미 널 체크 했으므로 지워도 됨! 최적화 +1
-
-	//if (!KnockbackVelocity.IsNearlyZero())
-	//{
-	//	// VInterpTo 대신 더 가벼운 감쇄 방식
-	//	KnockbackVelocity -= KnockbackVelocity * KnockbackResistance * DeltaTime;
-
-	//	if (KnockbackVelocity.SizeSquared() < 1.0f)
-	//	{
-	//		KnockbackVelocity = FVector::ZeroVector;
-	//	}
-	//}
-	///*if (KnockbackVelocity != FVector::ZeroVector)
-	//{
-	//	KnockbackVelocity = FMath::VInterpTo(
-	//		KnockbackVelocity,
-	//		FVector::ZeroVector,
-	//		DeltaTime,
-	//		KnockbackResistance);
-
-	//	if (KnockbackVelocity.SizeSquared() < 1.0f)
-	//	{
-	//		KnockbackVelocity = FVector::ZeroVector;
-	//	}
-	//}*/
-
-	//// ★ 여기가 핵심! 직접 구하지 않고, 배달받은 PlayerLocation을 바로 쓴다!
-	//FVector Dir = PlayerLocation - GetActorLocation();
-	//Dir.Z = 0.0f; // Fix Z
-
-	//FVector MoveDelta = Dir.GetSafeNormal();
-	//FVector FinalMove = (MoveDelta * MoveSpeed + KnockbackVelocity) * DeltaTime;
-
-	//AddActorWorldOffset(FinalMove, false);
 }
 
 
@@ -218,7 +184,24 @@ void ADEMonsterBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor*
 {
 }
 
+void ADEMonsterBase::SetCanMove(bool bNewCanMove)
+{
+	bCanMove = bNewCanMove;
 
+	// ★ [핵심] 상태가 변하는 이 '순간'에 시각적 처리를 몰아넣습니다!
+	if (!bCanMove) // 스턴(석화) 걸림
+	{
+		// 1. VAT 애니메이션 시간 정지 (예시)
+		// MeshComp->SetScalarParameterValueOnMaterials(TEXT("PlayRate"), 0.0f);
+
+		// 2. 돌덩이 텍스처(Lerp) 켜기 (예시)
+		// MeshComp->SetScalarParameterValueOnMaterials(TEXT("IsPetrified"), 1.0f);
+	}
+	else // 스턴 풀림
+	{
+		// 원래 색상 및 애니메이션 속도 복구
+	}
+}
 float ADEMonsterBase::GetCollisionRadius() const
 {
 	if (Capsule) return Capsule->GetScaledCapsuleRadius();

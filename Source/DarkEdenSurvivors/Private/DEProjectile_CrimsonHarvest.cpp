@@ -75,18 +75,23 @@ void ADEProjectile_CrimsonHarvest::UpdateMovement(float DeltaTime)
     }
 }
 
-// 3. 충돌 로직: 상태에 따라 다르게 처리
-void ADEProjectile_CrimsonHarvest::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ADEProjectile_CrimsonHarvest::OnTargetHit(AActor* Target)
 {
     if (CurrentPhase == EBatPhase::Hunting)
     {
         // 사냥 중일 때는 기존 SanguineBat의 튕기는 로직 실행
-        Super::OnOverlap(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
+        Super::OnTargetHit(Target);
         bHasEverDealt = true;
     }
     else if (CurrentPhase == EBatPhase::Returning)
     {
+        UE_LOG(LogTemp, Warning, TEXT("do no harm but did"));
         // 귀환 중일 때 적을 통과하며 데미지를 줄지, 무시할지 결정
         // 만약 관통하며 돌아오게 하고 싶다면 여기서 TryDealDamage(OtherActor); 호출 후 튕기기(Reflection) 로직은 생략!
     }
+}
+
+bool ADEProjectile_CrimsonHarvest::CanHit() const
+{
+    return CurrentPhase != EBatPhase::Returning;
 }

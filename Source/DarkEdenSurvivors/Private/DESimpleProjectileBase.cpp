@@ -24,11 +24,10 @@ ADESimpleProjectileBase::ADESimpleProjectileBase()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true; // 투사체는 보통 틱이 필요합니다 (이동 등)
 
-	// 1. [충돌체 생성] (공통)
 	CollisionComponent->SetCollisionProfileName(TEXT("Projectile"));
-	// ★ 중요: OnOverlap 연결은 부모에서 한 번만 하면 됩니다!
-	CollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ADESimpleProjectileBase::OnOverlap);
-
+	//CollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ADESimpleProjectileBase::OnOverlap);
+	//CollisionComponent->SetCollisionProfileName(TEXT("NoCollision"));
+	CollisionComponent->SetGenerateOverlapEvents(false);
 
 
 	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("MovementComponent"));
@@ -58,36 +57,6 @@ void ADESimpleProjectileBase::Tick(float DeltaTime)
 
 	UpdateMovement(DeltaTime);
 
-	//zis old sqrt logic = no good
-	//// 2. [가속/감속 로직]
-	//if (MovementComponent && Acceleration != 0.0f) // 가속도가 0이 아닐 때만 계산 (성능 절약)
-	//{
-	//	// 현재 속도 크기 가져오기
-	//	float CurrentSpeed = MovementComponent->Velocity.Size();
-
-	//	// 새 속도 계산 (현재 속도 + 가속도 * 시간)
-	//	float NewSpeed = CurrentSpeed + (Acceleration * DeltaTime);
-
-	//	// [중요] 감속일 때 속도가 음수가 되면 뒤로 날아갑니다. 
-	//	// 멈추게 하고 싶다면 0.0f로 막아줘야 합니다.
-	//	if (NewSpeed < 0.0f)
-	//	{
-	//		NewSpeed = 0.0f;
-	//	}
-
-	//	// [중요] 가속일 때 MaxSpeed를 뚫고 싶다면 MaxSpeed도 같이 늘려줘야 합니다.
-	//	if (NewSpeed > MovementComponent->MaxSpeed)
-	//	{
-	//		MovementComponent->MaxSpeed = NewSpeed;
-	//	}
-
-	//	// 방향은 유지하고(GetSafeNormal), 속력(Speed)만 갈아끼움
-	//	// Velocity가 0일 때 GetSafeNormal()하면 (0,0,0) 나와서 안전함
-	//	if (MovementComponent->Velocity.SizeSquared() > KINDA_SMALL_NUMBER) // 움직이고 있을 때만
-	//	{
-	//		MovementComponent->Velocity = MovementComponent->Velocity.GetSafeNormal() * NewSpeed;
-	//	}
-	//}
 }
 
 void ADESimpleProjectileBase::InitializeFromContext(const FDESkillContext& Context)
@@ -114,6 +83,7 @@ void ADESimpleProjectileBase::ResetState()
 	Super::ResetState();
 	// 4. 무브먼트 컴포넌트 활성화
 	HitActors.Reset();
+
 	if (MovementComponent)
 	{
 		MovementComponent->Activate();
@@ -135,6 +105,7 @@ void ADESimpleProjectileBase::ResetState()
 			RotatingMovementComponent->Deactivate();
 		}
 	}
+	LastFrameLocation = GetActorLocation();
 	//GetWorldTimerManager().SetTimer(LifeTimeTimerHandle, this, &ADESimpleProjectileBase::OnLifeTimeExpired, LifeTime, false);
 }
 
@@ -150,26 +121,26 @@ void ADESimpleProjectileBase::ReturnToPool()
 	Super::ReturnToPool();
 }
 
-void ADESimpleProjectileBase::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-	bool bFromSweep, const FHitResult& SweepResult)
-{
-	// 1. [유효성 검사]
-	if (!OtherActor || OtherActor == this || OtherActor == GetInstigator() || HitActors.Contains(OtherActor)) return;
-
-	// 2. 타격 기록
-	HitActors.Add(OtherActor);
-	//UE_LOG(LogTemp, Warning, TEXT("Projectile : %s , Hit : %s"), *GetName(), *OtherActor->GetName());
-	// 3. ★ 갓-벽하게 압축된 데미지 로직 & 관통 처리 ★
-	if (TryDealDamage(OtherActor))
-	{
-		if (Penetration != -1 && --Penetration <= 0)
-		{
-			ReturnToPool();
-		}
-	}
-
-}
+//void ADESimpleProjectileBase::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+//	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+//	bool bFromSweep, const FHitResult& SweepResult)
+//{
+//	// 1. [유효성 검사]
+//	if (!OtherActor || OtherActor == this || OtherActor == GetInstigator() || HitActors.Contains(OtherActor)) return;
+//
+//	// 2. 타격 기록
+//	HitActors.Add(OtherActor);
+//	//UE_LOG(LogTemp, Warning, TEXT("Projectile : %s , Hit : %s"), *GetName(), *OtherActor->GetName());
+//	// 3. ★ 갓-벽하게 압축된 데미지 로직 & 관통 처리 ★
+//	if (TryDealDamage(OtherActor))
+//	{
+//		if (Penetration != -1 && --Penetration <= 0)
+//		{
+//			ReturnToPool();
+//		}
+//	}
+//
+//}
 
 void ADESimpleProjectileBase::UpdateMovement(float DeltaTime)
 {
@@ -187,6 +158,70 @@ void ADESimpleProjectileBase::UpdateMovement(float DeltaTime)
 		// 3. [핵심] 제곱근 연산(sqrt) 없이 단순 곱셈으로 속도 적용
 		MovementComponent->Velocity = ShootDirection * CurrentSpeed;
 	}
+}
+
+void ADESimpleProjectileBase::PerformCollisionDetection(float DeltaTime)
+{
+	if (!CanHit()) return;
+
+	if (Penetration == 0) return; // 관통력 다 썼으면 멈춤
+
+	UWorld* World = GetWorld();
+	if (!World) return;
+
+	FVector StartLoc = LastFrameLocation;
+	FVector EndLoc = GetActorLocation();
+
+	TArray<FHitResult> HitResults;
+	FCollisionShape SphereShape = FCollisionShape::MakeSphere(Radius);
+
+	// 1. 엔진에 스캐너 발사 (ECC_GameTraceChannel1은 본인의 몬스터 채널 매크로로 변경)
+	bool bHit = World->SweepMultiByChannel(
+		HitResults,
+		StartLoc,
+		EndLoc,
+		FQuat::Identity,
+		ECC_GameTraceChannel6,
+		SphereShape
+	);
+
+	/*if (HitResults.Num() > 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Target Hit : %s"),*HitResults[0].GetActor()->GetName());
+	}*/
+	if (bHit)
+	{
+		for (const FHitResult& Hit : HitResults)
+		{
+			AActor* Target = Hit.GetActor();
+
+			// 2. 유효성 검사 (나 자신, 주인 무시)
+			if (!Target || Target == this || Target == GetInstigator()) continue;
+
+			// 3. ★ [투사체 핵심 룰] 명부에 이름이 있다면 시간 무시하고 무조건 통과 (관통 버그 방지)
+			if (HitCooldownMap.Contains(Target)) continue;
+
+			// 4. 타격 처리
+			if (TryDealDamage(Target))
+			{
+				// 타격 성공 시 명부에 이름 올리기 (투사체는 시간값을 안 쓰므로 0.0f 저장)
+				HitCooldownMap.Add(Target, 0.0f);
+
+				OnTargetHit(Target);
+
+
+				// 관통력 감소 및 소멸 처리
+				if (Penetration != -1 && --Penetration <= 0)
+				{
+					ReturnToPool();
+					return;
+				}
+			}
+		}
+	}
+
+	// 5. 다음 프레임 스캔을 위해 현재 위치를 캐싱
+	LastFrameLocation = EndLoc;
 }
 
 void ADESimpleProjectileBase::SetSpeed(float NewSpeed)

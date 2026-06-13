@@ -63,35 +63,6 @@ void UDEAccessoryComponent::LevelUpAccessory(const UDEAccessoryData* InData)
 		UE_LOG(LogTemp, Warning, TEXT("[Accessory] %s is already Max Level (%d)!"), *InData->Name.ToString(), InData->MaxLevel);
 	}
 
-	//if (!InData) return;
-
-	//// 맵에 있으면 현재 레벨을 가져오고, 없으면 0으로 시작해서 레퍼런스(&)로 가져옵니다.
-	//int32& CurrentLevel = EquippedAccessories.FindOrAdd(InData, 0);
-
-	//// 최대 레벨 검사
-	//if (CurrentLevel < InData->MaxLevel)
-	//{
-	//	// 1. 레벨 1 증가
-	//	CurrentLevel++;
-
-	//	// 2. 스탯 적용 (우리가 짠 StatComponent가 알아서 중첩 연산 해줌!)
-	//	ApplyStaticStats(InData);
-
-	//	// 3. 효과 캐시도 다시 구워줌 (Effects가 있다면)
-	//	RebuildEffectCache();
-
-	//	UE_LOG(LogTemp, Warning, TEXT("Accessory %s -> Lv.%d"), *InData->Name.ToString(), CurrentLevel);
-
-	//	CachedInventoryComp->TryAddAccessory(InData->ID);
-
-	//	// 4. UI 갱신 알람 발송!
-	//	OnAccUpdated.Broadcast(InData);
-	//}
-	//else
-	//{
-	//	UE_LOG(LogTemp, Warning, TEXT("[Accessory] %s is already Max Level (%d)!"), *InData->Name.ToString(), InData->MaxLevel);
-	//}
-
 }
 
 void UDEAccessoryComponent::RemoveAccessory(const UDEAccessoryData* InData)

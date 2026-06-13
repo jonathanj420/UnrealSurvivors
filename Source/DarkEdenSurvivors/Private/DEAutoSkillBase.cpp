@@ -23,7 +23,7 @@ void UDEAutoSkillBase::Activate()
     switch (SkillData->ExecutionType)
     {
     case ESkillExecutionType::Instant:
-        // 아무것도 안 함, 발동 후 바로 쿨타임
+        //instant cool
         break;
 
     case ESkillExecutionType::Duration:
@@ -38,39 +38,21 @@ void UDEAutoSkillBase::Activate()
         break;
 
     case ESkillExecutionType::Permanent:
-        if (bIsRunning) return; // 중복 발동 방지
+        if (bIsRunning) return;
         bIsRunning = true;
-        // 타이머 없음, FinishSkill 호출 안 됨
+        //only run once
         break;
     }
 
     ExecuteWithContext(CachedContext);
-    //// =========================================================
-    //// ★ [핵심 1] 지속형 스킬(성서)이라면 '시전 중' 상태로 돌입!
-    //// =========================================================
-    //if (bCooldownAfterDuration && CachedContext.Duration > 0.0f)
-    //{
-    //    bIsRunning = true; // 이걸 true로 하면 매니저가 쿨타임을 안 깎고 기다림
-
-    //    // 지속시간(Duration) 뒤에 FinishSkill을 실행하는 타이머 작동!
-    //    SkillOwner->GetWorldTimerManager().SetTimer(DurationTimerHandle, this, &UDEAutoSkillBase::FinishSkill, CachedContext.Duration, false);
-    //}
-
-    //// Context를 만들었으니, 실행 로직으로 던져줍니다.
-    //ExecuteWithContext(CachedContext);
-
-
- 
 
 }
 
 void UDEAutoSkillBase::ExecuteWithContext(FDESkillContext& Context)
 {
 
-    // 파이프라인 시작 전 인덱스 초기화
     CurrentBehaviorIndex = 0;
 
-    // 파이프라인 가동!
     ExecutePipeline();
 
 
@@ -230,13 +212,13 @@ void UDEAutoSkillBase::EndSkill()
     //    if (Pair.Value.IsValid())
     //        Pair.Value->ReturnToPool();
     //}
-    //OwnedSkillActorMap.Reset(); no need enimoar
+    //OwnedSkillActorMap.Reset(); no need anymore
 
     for (UDESkillBehavior* Behavior : Behaviors)
     {
         if (Behavior)
         {
-            Behavior->EndBehavior(); // 다형성에 의해 SpawnOnMove는 타이머를 끄게 됨
+            Behavior->EndBehavior(); 
         }
     }
 }
@@ -274,28 +256,25 @@ void UDEAutoSkillBase::RefreshContext()
 
 void UDEAutoSkillBase::ExecutePipeline()
 {
-    // 배열 끝까지 돌 때까지 반복
     while (CurrentBehaviorIndex < Behaviors.Num())
     {
         UDESkillBehavior* CurrentBehavior = Behaviors[CurrentBehaviorIndex];
-        CurrentBehaviorIndex++; // 다음 인덱스로 선 이동 (타이머 재개 시 여기서부터 시작)
+        CurrentBehaviorIndex++;
 
         if (!CurrentBehavior) continue;
 
-        // 1. 비헤이비어 본연의 역할 실행 (데미지, 사운드 등)
         CurrentBehavior->Execute(CachedContext);
         UE_LOG(LogTemp, Error, TEXT("Behavior : %s Executed, Current Behavior Index : %d"),*CurrentBehavior->GetName(),CurrentBehaviorIndex);
-        // 2. 파이프라인을 멈춰야 하는 딜레이가 있는지 확인 (다형성 활용)
+        //check delay
         float PipelineDelay = CurrentBehavior->GetPipelineDelay();
         if (PipelineDelay > 0.0f)
         {
             if (SkillOwner)
             {
-                // 3. 딜레이가 있다면, 타이머 세팅 후 while 루프를 즉시 빠져나감 (일시정지)
                 SkillOwner->GetWorldTimerManager().SetTimer(
                     PipelineTimerHandle,
                     this,
-                    &UDEAutoSkillBase::ExecutePipeline, // 시간이 되면 알아서 다시 들어와서 재개됨
+                    &UDEAutoSkillBase::ExecutePipeline, // execute pipeline with increased hehav index
                     PipelineDelay,
                     false
                 );

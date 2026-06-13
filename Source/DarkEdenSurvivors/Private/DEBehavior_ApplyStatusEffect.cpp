@@ -8,6 +8,23 @@
 
 void UDEBehavior_ApplyStatusEffect::Execute(FDESkillContext& Context)
 {
+	if (Context.Targets.Num() == 0 || !StatusClass) return;
+
+	float FinalDuration = (this->Duration == -1.0f) ? Context.Duration : this->Duration;
+	float FinalPower = (this->Power == -1.0f) ? Context.Damage : this->Power;
+	float FinalInterval = Context.GetValue(FName("Interval"), this->Interval);
+
+	// ----------------------------------------------------
+	// TODO: FinalDuration, FinalPower를 사용해서 타겟들에게 상태이상 부여
+	// ----------------------------------------------------
+	for (AActor* Target : Context.Targets)
+	{
+		if (Target)
+		{
+			// 예: Target->ApplyStatus(StatusClass, FinalDuration, FinalPower);
+		}
+	}
+
 	if (!StatusClass) return;
 
 	// ★ 핵심: Context에 담겨있는 타겟들에게 상태이상을 겁니다.
@@ -20,9 +37,9 @@ void UDEBehavior_ApplyStatusEffect::Execute(FDESkillContext& Context)
 			Monster->StatusEffectComponent->AddEffect(
 				StatusClass,
 				Context.Instigator,
-				Duration,
-				Power,
-				Interval,
+				FinalDuration,
+				FinalPower,
+				FinalInterval,
 				Context
 			);
 		}

@@ -40,9 +40,8 @@ protected:
 	USoundBase* ExplosionSound;
 
 public:
-	void OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-		bool bFromSweep, const FHitResult& SweepResult) override;
+protected:
+	virtual void OnTargetHit(AActor* Target) override;
 	void Explode();
 	virtual void OnLifeTimeExpired() override;
 

@@ -28,7 +28,9 @@ protected:
     virtual void ResetState() override;
     virtual void OnLifeTimeExpired() override;
     virtual void UpdateMovement(float DeltaTime) override;
-    virtual void OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
+    virtual void OnTargetHit(AActor* Target) override;
+    virtual bool CanHit() const override;
+
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Phase")
     EBatPhase CurrentPhase = EBatPhase::Hunting;

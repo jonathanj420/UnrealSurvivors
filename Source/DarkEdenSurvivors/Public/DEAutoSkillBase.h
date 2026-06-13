@@ -23,12 +23,11 @@ class DARKEDENSURVIVORS_API UDEAutoSkillBase : public UDESkillBase, public IDEDa
 public:
 	// 외부(매니저)에서 호출하는 실행 함수
 	virtual void Activate();
-	// ★ 매니저가 이 스킬이 '시전(유지) 중'인지 확인하는 용도
+	// 매니저가 이 스킬이 '시전(유지) 중'인지 확인하는 용도
 	bool IsRunning() const { return bIsRunning; }
 
 protected:
-	// ★ 이 스킬이 '지속시간이 끝난 후 쿨타임이 도는' 성서 타입인가?
-	// (나중에 성서(DanseMacabre) 자식 클래스 C++ 생성자나 블루프린트에서 이걸 true로 체크하면 됨!)
+	// cooldown after duration?
 	UPROPERTY(EditDefaultsOnly, Category = "Skill Option")
 	bool bCooldownAfterDuration = false;
 
@@ -40,7 +39,6 @@ protected:
 
 protected:
 	FDESkillContext CachedContext;
-	// ★ 새로 만든 가상 함수! 자식들이 오버라이드하기 딱 좋게 Context를 던져줍니다.
 	virtual void ExecuteWithContext(FDESkillContext& Context);
 
 public:	// 데이터 주입 (레벨업 시 호출)
@@ -71,7 +69,7 @@ public:
 public:
 	virtual void EndSkill();
 public:
-	// ★ 인터페이스 함수 선언 (기본적으로는 아무것도 안 함)
+	// 인터페이스 함수 선언 (기본적으로는 아무것도 안 함)
 	virtual void OnTargetKilled(const FDEDamageResult& Result) override;
 	int32 GetBaseAmount() const;
 
@@ -96,7 +94,7 @@ protected:
 	void ExecutePipeline();
 
 public:
-	// 스킬 강제 취소 함수 (이미 있다면 내용만 보강)
+	// 스킬 강제 취소 함수 (maybe on death?)
 	UFUNCTION(BlueprintCallable, Category = "Skill")
 	virtual void CancelSkill();
 

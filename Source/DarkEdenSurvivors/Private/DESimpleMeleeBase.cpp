@@ -4,6 +4,7 @@
 #include "DESimpleMeleeBase.h"
 #include "DEMonsterBase.h"
 #include "DEPoolSubsystem.h"
+#include "Components/SphereComponent.h"
 
 
 // Sets default values
@@ -62,7 +63,7 @@ void ADESimpleMeleeBase::PerformSweepAttack()
 			HitActors.Add(HitActor);
 
 			// 데미지 적용
-			UGameplayStatics::ApplyDamage(HitActor, Damage, nullptr, this, nullptr);
+			//UGameplayStatics::ApplyDamage(HitActor, Damage, nullptr, this, nullptr);
 
 			// 넉백 처리
 			if (ADEMonsterBase* Monster = Cast<ADEMonsterBase>(HitActor))

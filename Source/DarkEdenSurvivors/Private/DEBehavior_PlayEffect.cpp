@@ -90,6 +90,27 @@ void UDEBehavior_PlayEffect::Execute(FDESkillContext& Context)
                 // 나이아가라의 User.TargetPosition 에 몬스터의 절대 좌표를 꽂습니다!
                 SpawnedComp->SetVariableVec3(FName("TargetPosition"), TargetForRot->GetActorLocation());
             }
+            if (SpawnedComp)
+            {
+                // 1. 발사 시작점
+                FVector StartLoc = Context.Instigator->GetActorLocation();
+
+                // 2. 방향 계산 (타겟이 있으면 타겟 방향, 없으면 전방)
+                FVector Direction = Context.Instigator->GetActorForwardVector();
+                if (Context.Targets.Num() > 0 && Context.Targets[0])
+                {
+                    Direction = (Context.Targets[0]->GetActorLocation() - StartLoc).GetSafeNormal2D();
+                }
+
+                // 3. 거리 계산 (Context에 설정된 Range 사용)
+                float FinalRange = Context.GetValue(TEXT("Range"), 1000.0f); // 스킬 스펙의 Range 가져오기
+                UE_LOG(LogTemp, Warning, TEXT("Niagara Beam Range : %f"), FinalRange);
+                // 4. 최종 끝점 좌표 계산 (시작점 + (방향 * 거리))
+                FVector BeamEndLoc = StartLoc + (Direction * FinalRange);
+
+                // 5. 나이아가라에 "BeamEnd"라는 이름으로 좌표 쏴주기
+                SpawnedComp->SetVariableVec3(FName("BeamEnd"), BeamEndLoc);
+            }
         }
         //UE_LOG(LogTemp, Warning, TEXT("NiagaraLocs count: %d"), NiagaraLocs.Num());
     }

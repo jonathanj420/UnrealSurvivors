@@ -56,8 +56,6 @@ public:
 
 	// --- 핵심 로직 (모든 함수는 const로 선언되어 객체 자체의 변형을 막습니다) ---
 
-	// --- 핵심 로직 (모든 함수는 const로 선언되어 객체 자체의 변형을 막습니다) ---
-
 	// 블루프린트용 UFUNCTION, UPARAM(ref), _Implementation 꼬리표 모두 삭제!
 	virtual void OnApply(AActor* Target, FActiveStatusEffect& EffectData) const;
 

@@ -20,6 +20,11 @@ ADESkillActorBase::ADESkillActorBase()
     CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
     RootComponent = CollisionComponent;
     CollisionComponent->InitSphereRadius(30.0f);
+    if (CollisionComponent)
+    {
+        CollisionComponent->SetCollisionProfileName(TEXT("NoCollision"));
+        CollisionComponent->SetGenerateOverlapEvents(false);
+    }
 
     // 2. 공통 메시
     Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
@@ -34,6 +39,13 @@ ADESkillActorBase::ADESkillActorBase()
     NiagaraComponent->SetupAttachment(RootComponent);
     NiagaraComponent->SetAutoActivate(false);
 
+}
+
+void ADESkillActorBase::Tick(float DeltaTime)
+{
+    Super::Tick(DeltaTime);
+
+    PerformCollisionDetection(DeltaTime);
 }
 
 
@@ -56,6 +68,7 @@ void ADESkillActorBase::InitializeFromContext(const FDESkillContext& Context)
     Radius = Context.Radius;
     CritChance = Context.CritChance;
     CritDamageMultiplier = Context.CritDamageMultiplier;
+    HitInterval = Context.GetValue(TEXT("HitInterval"), 1.0f);
     /*if (bCanCrit)
     {
         CritChance = Context.CritChance;
@@ -146,6 +159,7 @@ void ADESkillActorBase::ReturnToPool()
         CollisionComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     SetActorHiddenInGame(true);
     SetActorTickEnabled(false);
+    HitCooldownMap.Empty();
     GetWorldTimerManager().ClearTimer(LifeTimeTimerHandle);
 
     for (UNiagaraComponent* NComp : CachedNiagaraComps)
@@ -156,16 +170,6 @@ void ADESkillActorBase::ReturnToPool()
             NComp->SetVisibility(false);
         }
     }
-
-    /*if (NiagaraComponent)
-    {
-        NiagaraComponent->Deactivate();
-        NiagaraComponent->SetVisibility(false);
-    }*/
-
-    
-
-    
 
     if (UWorld* World = GetWorld())
     {

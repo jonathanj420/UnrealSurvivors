@@ -46,7 +46,7 @@ void UDEMonsterUpdateComponent::UpdateMovementAndAttack(float DeltaTime, TArray<
         if (!Mob) continue;
 
         Mob->UpdateKnockback(DeltaTime);
-        if (Mob->IsStunned()) continue;
+        if (!Mob->bCanMove) continue;
 
         Mob->MoveToPlayer(DeltaTime, PlayerLocation, Mob->CachedLocation);
         Mob->ExecuteAttackLogic(CurrentWorldTime);

@@ -15,7 +15,7 @@ struct FDESkillRequirement
     int32 SkillID = 0;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int32 RequiredLevel = 9; // 보통 진화/합성이면 만렙(예: 8, 9)을 요구
+    int32 RequiredLevel = 9;
 };
 
 /**

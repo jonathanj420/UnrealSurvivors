@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "EngineMinimal.h"
+#include "CoreMinimal.h"
 
 UENUM(BlueprintType)
 enum class ECharacterState : uint8
@@ -22,3 +22,4 @@ DECLARE_LOG_CATEGORY_EXTERN(LogDarkEdenSurvivors, Log, All);
     ANSI_TO_TCHAR(__FUNCTION__), ANSI_TO_TCHAR(__FILE__), __LINE__, *GetNameSafe(this))
 
 #define ECC_Monster     ECC_GameTraceChannel2
+#define ECC_PlayerAttack		ECC_GameTraceChannel3

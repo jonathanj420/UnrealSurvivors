@@ -20,6 +20,7 @@ class DARKEDENSURVIVORS_API ADESkillActorBase : public AActor
 
 public:
     ADESkillActorBase();
+    virtual void Tick(float DeltaTime) override;
 
     // ---------------------------------------------------
     // [생명 주기 (Lifecycle)]
@@ -43,7 +44,10 @@ protected:
     // Projectile에 있던 가장 진화된 데미지 로직을 부모가 가집니다.
     // ---------------------------------------------------
     virtual bool TryDealDamage(AActor* Victim);
-
+    virtual void PerformCollisionDetection(float DeltaTime) {}
+    virtual void OnTargetHit(AActor* Target) {}
+    virtual bool CanHit() const { return true; }
+    virtual bool CanHitTarget(AActor* Target) const { return true; } // for later use maybe
     // ---------------------------------------------------
     // [컴포넌트 (Components)]
     // ---------------------------------------------------
@@ -96,6 +100,11 @@ protected:
     float CritDamageMultiplier = 1.0f;
 
     FTimerHandle LifeTimeTimerHandle;
+
+    UPROPERTY()
+    TMap<AActor*, float> HitCooldownMap;
+
+    float HitInterval = 0.5f;
 
 public:
 
