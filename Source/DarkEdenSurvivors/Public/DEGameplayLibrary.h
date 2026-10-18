@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -18,14 +18,14 @@ class DARKEDENSURVIVORS_API UDEGameplayLibrary : public UBlueprintFunctionLibrar
 
 public:
 	static FDEDamageResult ApplyCombatDamage(
-		const FDEDamageRequest& Request // ÀÌ¹Ì ¿Ï¼ºµÈ ¿µ¼öÁõ
+		const FDEDamageRequest& Request // ì´ë¯¸ ì™„ì„±ëœ ì˜ìˆ˜ì¦
 	);
 	static void ApplyAoEDamage(
 		UWorld* World,
 		const FVector& Origin,
 		float Radius,
-		const FDEDamageRequest& BaseRequest, // ´©±¸ÀÇ ¸íÀÇ·Î, µ¥¹ÌÁö ¾ó¸¶¸¦ ½ò °ÍÀÎ°¡?
-		const TArray<AActor*>& IgnoredActors // Æø¹ß¿¡ ¸ÂÁö ¾ÊÀ» ¿¹¿Ü ´ë»óµé (¿¹: º»ÀÎ)
+		const FDEDamageRequest& BaseRequest, // ëˆ„êµ¬ì˜ ëª…ì˜ë¡œ, ë°ë¯¸ì§€ ì–¼ë§ˆë¥¼ ì  ê²ƒì¸ê°€?
+		const TArray<AActor*>& IgnoredActors // í­ë°œì— ë§ì§€ ì•Šì„ ì˜ˆì™¸ ëŒ€ìƒë“¤ (ì˜ˆ: ë³¸ì¸)
 	);
 
 	//static void ApplyKnockback(AActor* TargetActor, FVector KnockbackDir, float KnockbackForce);

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -6,10 +6,10 @@
 #include "Components/ActorComponent.h"
 #include "DEProgressionComponent.generated.h"
 
-// [µ¨¸®°ÔÀÌÆ®]
-// °æÇèÄ¡ º¯°æ ¾Ë¸² (UI °»½Å¿ë: 0.0~1.0 ÆÛ¼¾Æ®, ÇöÀç°ª, ÃÖ´ë°ª)
+// [ë¸ë¦¬ê²Œì´íŠ¸]
+// ê²½í—˜ì¹˜ ë³€ê²½ ì•Œë¦¼ (UI ê°±ì‹ ìš©: 0.0~1.0 í¼ì„¼íŠ¸, í˜„ì¬ê°’, ìµœëŒ€ê°’)
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnExpChanged, float, float);
-// ·¹º§¾÷ ¾Ë¸² (½ºÅ³ ¼±ÅÃÃ¢ ÆË¾÷¿ë)
+// ë ˆë²¨ì—… ì•Œë¦¼ (ìŠ¤í‚¬ ì„ íƒì°½ íŒì—…ìš©)
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnLevelUp, int32);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -24,15 +24,15 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-	UPROPERTY(Transient) // ¼¼ÀÌºê ÆÄÀÏ¿¡ ÀúÀåÇÒ ÇÊ¿ä ¾ø´Â ÀÓ½Ã µ¥ÀÌÅÍ¶ó´Â ¶æ
+	UPROPERTY(Transient) // ì„¸ì´ë¸Œ íŒŒì¼ì— ì €ì¥í•  í•„ìš” ì—†ëŠ” ì„ì‹œ ë°ì´í„°ë¼ëŠ” ëœ»
 		class UDEStatComponent* CachedStatComp;
 
 public:
-	// °æÇèÄ¡ È¹µæ (¿ÜºÎ¿¡¼­ È£Ãâ: º¸¼® ¸Ô¾úÀ» ¶§)
+	// ê²½í—˜ì¹˜ íšë“ (ì™¸ë¶€ì—ì„œ í˜¸ì¶œ: ë³´ì„ ë¨¹ì—ˆì„ ë•Œ)
 	UFUNCTION(BlueprintCallable, Category = "Progression")
 	void AddExp(float Amount);
 
-	// ÇöÀç ·¹º§ È®ÀÎ
+	// í˜„ì¬ ë ˆë²¨ í™•ì¸
 	UFUNCTION(BlueprintPure, Category = "Progression")
 	int32 GetCurrentLevel() const { return CurrentLevel; }
 	float GetMaxExp() const { return MaxExp; }
@@ -40,17 +40,17 @@ public:
 
 
 public:
-	// UI ¹ÙÀÎµù¿ë µ¨¸®°ÔÀÌÆ®
+	// UI ë°”ì¸ë”©ìš© ë¸ë¦¬ê²Œì´íŠ¸
 	FOnExpChanged OnExpChanged;
 
 	FOnLevelUp OnLevelUp;
 
 protected:
-	// °æÇèÄ¡Åë °è»ê ·ÎÁ÷
+	// ê²½í—˜ì¹˜í†µ ê³„ì‚° ë¡œì§
 	void CalculateNextLevelExp();
 
 private:
-	// ³»ºÎ º¯¼öµé
+	// ë‚´ë¶€ ë³€ìˆ˜ë“¤
 	UPROPERTY(VisibleAnywhere, Category = "Progression")
 	int32 CurrentLevel = 1;
 
@@ -62,36 +62,36 @@ private:
 
 
 	//maybe later use?
-	// [¹ë·±½º] ·¹º§¾÷ °è¼ö
+	// [ë°¸ëŸ°ìŠ¤] ë ˆë²¨ì—… ê³„ìˆ˜
 	//UPROPERTY(EditDefaultsOnly, Category = "Balance")
 	//float BaseEXPRequirement = 100.0f;
 
 	//UPROPERTY(EditDefaultsOnly, Category = "Balance")
-	//float EXPGrowthFactor = 1.2f; // ·¹º§´ç ÇÊ¿ä °æÇèÄ¡ 20% Áõ°¡
+	//float EXPGrowthFactor = 1.2f; // ë ˆë²¨ë‹¹ í•„ìš” ê²½í—˜ì¹˜ 20% ì¦ê°€
 	
 	//vampsurv original exp calc
 	// [Phase 1: Lv 1 ~ 20]
 	UPROPERTY(EditDefaultsOnly, Category = "Balance | VS Style")
-	int32 BaseXP_Lv1 = 5;       // 1·¹º§ ±âº» ¿ä±¸·®
+	int32 BaseXP_Lv1 = 5;       // 1ë ˆë²¨ ê¸°ë³¸ ìš”êµ¬ëŸ‰
 
 	UPROPERTY(EditDefaultsOnly, Category = "Balance | VS Style")
-	int32 Inc_Lv1 = 10;         // ·¹º§´ç Áõ°¡·® (10)
+	int32 Inc_Lv1 = 10;         // ë ˆë²¨ë‹¹ ì¦ê°€ëŸ‰ (10)
 
 	// [Phase 2: Lv 21 ~ 40]
 	UPROPERTY(EditDefaultsOnly, Category = "Balance | VS Style")
-	int32 Inc_Lv21 = 13;        // 21ºÎÅÍ Áõ°¡·® (13)
+	int32 Inc_Lv21 = 13;        // 21ë¶€í„° ì¦ê°€ëŸ‰ (13)
 
 	// [Phase 3: Lv 41 ~ ]
 	UPROPERTY(EditDefaultsOnly, Category = "Balance | VS Style")
-	int32 Inc_Lv41 = 16;        // 41ºÎÅÍ Áõ°¡·® (16)
+	int32 Inc_Lv41 = 16;        // 41ë¶€í„° ì¦ê°€ëŸ‰ (16)
 
-	// [Growth Walls: ¼ºÀå º®]
-	// Æ¯Á¤ ·¹º§¿¡¼­ ¿ä±¸·®À» ÆøÁõ½ÃÄÑ ¼ºÀåÀ» ´ÊÃß´Â ±¸°£
+	// [Growth Walls: ì„±ì¥ ë²½]
+	// íŠ¹ì • ë ˆë²¨ì—ì„œ ìš”êµ¬ëŸ‰ì„ í­ì¦ì‹œì¼œ ì„±ì¥ì„ ëŠ¦ì¶”ëŠ” êµ¬ê°„
 	UPROPERTY(EditDefaultsOnly, Category = "Balance | VS Style")
-	int32 WallXP_Lv20 = 600;    // 20·¹º§ º® (+600)
+	int32 WallXP_Lv20 = 600;    // 20ë ˆë²¨ ë²½ (+600)
 
 	UPROPERTY(EditDefaultsOnly, Category = "Balance | VS Style")
-	int32 WallXP_Lv40 = 2400;   // 40·¹º§ º® (+2400)
+	int32 WallXP_Lv40 = 2400;   // 40ë ˆë²¨ ë²½ (+2400)
 
 		
 public:

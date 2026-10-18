@@ -1,9 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEHealthComponent.h"
-#include "DEDamageTextSubsystem.h" // ¼­ºê½Ã½ºÅÛ ºÒ·¯¿À±â
-#include "DEDamageTypes.h"         // µ¥ÀÌÅÍ ±¸Á¶Ã¼ ºÒ·¯¿À±â
+#include "DEDamageTextSubsystem.h" // ì„œë¸Œì‹œìŠ¤í…œ ë¶ˆëŸ¬ì˜¤ê¸°
+#include "DEDamageTypes.h"         // ë°ì´í„° êµ¬ì¡°ì²´ ë¶ˆëŸ¬ì˜¤ê¸°
 
 UDEHealthComponent::UDEHealthComponent()
 {
@@ -14,7 +14,7 @@ void UDEHealthComponent::BeginPlay()
 {
     Super::BeginPlay();
 
-    // ¾ÈÀüÀåÄ¡: ½ÃÀÛ ½Ã Ã¼·Â Á¤ÇÕ¼º º¸Àå
+    // ì•ˆì „ì¥ì¹˜: ì‹œì‘ ì‹œ ì²´ë ¥ ì •í•©ì„± ë³´ì¥
     CurrentHP = FMath::Clamp(CurrentHP, 0.f, MaxHP);
 }
 
@@ -27,31 +27,31 @@ void UDEHealthComponent::BeginPlay()
 //    CurrentHP = FMath::Clamp(CurrentHP, 0.f, MaxHP);
 //
 //
-//    // Ã¼·Â º¯°æ ÀÌº¥Æ®
+//    // ì²´ë ¥ ë³€ê²½ ì´ë²¤íŠ¸
 //    OnHPChanged.Broadcast(CurrentHP, MaxHP);
 //
-//    // [AAA ½ºÅ¸ÀÏ È£Ãâ] ¼­ºê½Ã½ºÅÛÀÌ ÀÖ´ÂÁö È®ÀÎÇÏ°í È£Ãâ
+//    // [AAA ìŠ¤íƒ€ì¼ í˜¸ì¶œ] ì„œë¸Œì‹œìŠ¤í…œì´ ìˆëŠ”ì§€ í™•ì¸í•˜ê³  í˜¸ì¶œ
 //    if (UWorld* World = GetWorld())
 //    {
-//        // ¼­ºê½Ã½ºÅÛ °¡Á®¿À±â (½Ì±ÛÅæÃ³·³ ÀÛµ¿)
+//        // ì„œë¸Œì‹œìŠ¤í…œ ê°€ì ¸ì˜¤ê¸° (ì‹±ê¸€í†¤ì²˜ëŸ¼ ì‘ë™)
 //        if (UDEDamageTextSubsystem* DmgSys = World->GetSubsystem<UDEDamageTextSubsystem>())
 //        {
-//            // 1. ÅÃ¹è »óÀÚ(±¸Á¶Ã¼) ¸¸µé±â
+//            // 1. íƒë°° ìƒì(êµ¬ì¡°ì²´) ë§Œë“¤ê¸°
 //            FDamageVisualInfo DmgInfo;
-//            DmgInfo.Amount = DamageAmount; // ½ÇÁ¦ ÀÔÈù µ¥¹ÌÁö
+//            DmgInfo.Amount = DamageAmount; // ì‹¤ì œ ì…íŒ ë°ë¯¸ì§€
 //
-//            // 2. À§Ä¡ ¼³Á¤ (¸ó½ºÅÍ ¸Ó¸® À§)
-//            // GetOwner()´Â ÀÌ ÄÄÆ÷³ÍÆ®¸¦ °¡Áø ¸ó½ºÅÍ ¾×ÅÍ
+//            // 2. ìœ„ì¹˜ ì„¤ì • (ëª¬ìŠ¤í„° ë¨¸ë¦¬ ìœ„)
+//            // GetOwner()ëŠ” ì´ ì»´í¬ë„ŒíŠ¸ë¥¼ ê°€ì§„ ëª¬ìŠ¤í„° ì•¡í„°
 //            if (GetOwner())
 //            {
 //                DmgInfo.WorldLocation = GetOwner()->GetActorLocation() + FVector(0.0f, 0.0f, 100.0f);
-//                // ZÃà +100.0f ÇØ¼­ ¸Ó¸® Âë¿¡ ¶ç¿ì±â
+//                // Zì¶• +100.0f í•´ì„œ ë¨¸ë¦¬ ì¯¤ì— ë„ìš°ê¸°
 //            }
 //
-//            // 3. Å©¸®Æ¼ÄÃ ¿©ºÎ (¸¸¾à ·ÎÁ÷ÀÌ ÀÖ´Ù¸é)
+//            // 3. í¬ë¦¬í‹°ì»¬ ì—¬ë¶€ (ë§Œì•½ ë¡œì§ì´ ìˆë‹¤ë©´)
 //            // DmgInfo.bIsCritical = bIsCritical; 
 //
-//            // 4. ¹ß»ç!
+//            // 4. ë°œì‚¬!
 //            DmgSys->ShowDamage(DmgInfo);
 //        }
 //    }
@@ -89,23 +89,23 @@ void UDEHealthComponent::Heal(float HealAmount)
 
 void UDEHealthComponent::ResetHealth(bool bHealToFull)
 {
-    // 1. »ç¸Á ÇÃ·¡±× ÃÊ±âÈ­ (°¡Àå Áß¿ä!)
+    // 1. ì‚¬ë§ í”Œë˜ê·¸ ì´ˆê¸°í™” (ê°€ì¥ ì¤‘ìš”!)
     bIsDead = false;
     //UE_LOG(LogTemp, Error, TEXT("HP Reset, bisdead NO FUCK"));
-    //// 2. ¹«Àû »óÅÂ ¹× Å¸ÀÌ¸Ó ÃÊ±âÈ­
+    //// 2. ë¬´ì  ìƒíƒœ ë° íƒ€ì´ë¨¸ ì´ˆê¸°í™”
     //bIsInvincible = false;
     //if (GetWorld())
     //{
     //    GetWorld()->GetTimerManager().ClearTimer(InvincibleTimerHandle);
     //}
 
-    // 3. Ã¼·Â º¹±¸
+    // 3. ì²´ë ¥ ë³µêµ¬
     if (bHealToFull)
     {
         CurrentHP = MaxHP;
     }
 
-    // 4. ¸®¼ÂµÈ »óÅÂ¸¦ UI µî¿¡ Áï½Ã ¾Ë¸²
+    // 4. ë¦¬ì…‹ëœ ìƒíƒœë¥¼ UI ë“±ì— ì¦‰ì‹œ ì•Œë¦¼
     OnHPChanged.Broadcast(CurrentHP, MaxHP);
 }
 
@@ -132,37 +132,37 @@ void UDEHealthComponent::IncreaseMaxHP(float Amount, bool bHealToFull)
 
 void UDEHealthComponent::SetCurrentHP(float NewHP)
 {
-    // 1. °ª º¸Á¤ (0 ~ MaxHP »çÀÌ·Î °­Á¦ °íÁ¤)
+    // 1. ê°’ ë³´ì • (0 ~ MaxHP ì‚¬ì´ë¡œ ê°•ì œ ê³ ì •)
     float ClampedHP = FMath::Clamp(NewHP, 0.0f, MaxHP);
 
-    // 2. °ªÀÌ º¯ÇÏÁö ¾Ê¾Ò´Ù¸é ±»ÀÌ ÀÌº¥Æ® ½ò ÇÊ¿ä ¾øÀ½ (ÃÖÀûÈ­)
+    // 2. ê°’ì´ ë³€í•˜ì§€ ì•Šì•˜ë‹¤ë©´ êµ³ì´ ì´ë²¤íŠ¸ ì  í•„ìš” ì—†ìŒ (ìµœì í™”)
     if (FMath::IsNearlyEqual(CurrentHP, ClampedHP))
     {
         return;
     }
 
-    // 3. °ª Àû¿ë
+    // 3. ê°’ ì ìš©
     CurrentHP = ClampedHP;
 
-    // 4. UI °»½Å ¾Ë¸² (Áß¿ä!)
-    // ÀÌ°Å ¾È ÇÏ¸é Ã¼·ÂÀº 100ÀÎµ¥ Ã¼·Â¹Ù´Â 0À¸·Î º¸ÀÌ´Â ¹ö±× »ı±è
+    // 4. UI ê°±ì‹  ì•Œë¦¼ (ì¤‘ìš”!)
+    // ì´ê±° ì•ˆ í•˜ë©´ ì²´ë ¥ì€ 100ì¸ë° ì²´ë ¥ë°”ëŠ” 0ìœ¼ë¡œ ë³´ì´ëŠ” ë²„ê·¸ ìƒê¹€
     if (OnHPChanged.IsBound())
     {
         OnHPChanged.Broadcast(CurrentHP, MaxHP);
     }
 
-    // 5. »ç¸Á Ã³¸® Ã¼Å©
-    // ¸¸¾à Ä¡Æ®Å°·Î HP¸¦ 0À¸·Î ¼³Á¤Çß´Ù¸é Á×¾î¾ß ÇÔ
+    // 5. ì‚¬ë§ ì²˜ë¦¬ ì²´í¬
+    // ë§Œì•½ ì¹˜íŠ¸í‚¤ë¡œ HPë¥¼ 0ìœ¼ë¡œ ì„¤ì •í–ˆë‹¤ë©´ ì£½ì–´ì•¼ í•¨
     if (CurrentHP <= 0.0f && !bIsDead)
     {
-        HandleDeath(nullptr); // °­Á¦ ¼³Á¤ÀÌ¶ó °¡ÇØÀÚ(DamageCauser)´Â ¾øÀ½
+        HandleDeath(nullptr); // ê°•ì œ ì„¤ì •ì´ë¼ ê°€í•´ì(DamageCauser)ëŠ” ì—†ìŒ
     }
-    // 6. ºÎÈ° Ã³¸® (¿É¼Ç)
-    // ¸¸¾à Á×Àº »óÅÂ(bIsDead)ÀÎµ¥ HP¸¦ ¾ç¼ö·Î ¼³Á¤Çß´Ù¸é? -> ºÎÈ°!
+    // 6. ë¶€í™œ ì²˜ë¦¬ (ì˜µì…˜)
+    // ë§Œì•½ ì£½ì€ ìƒíƒœ(bIsDead)ì¸ë° HPë¥¼ ì–‘ìˆ˜ë¡œ ì„¤ì •í–ˆë‹¤ë©´? -> ë¶€í™œ!
     else if (bIsDead && CurrentHP > 0.0f)
     {
         bIsDead = false;
-        // ÇÊ¿äÇÏ´Ù¸é OnResurrect °°Àº ÀÌº¥Æ® Ãß°¡ ºê·ÎµåÄ³½ºÆ®
+        // í•„ìš”í•˜ë‹¤ë©´ OnResurrect ê°™ì€ ì´ë²¤íŠ¸ ì¶”ê°€ ë¸Œë¡œë“œìºìŠ¤íŠ¸
     }
 }
 void UDEHealthComponent::HandleDeath(AActor* DamageCauser)
@@ -178,21 +178,21 @@ void UDEHealthComponent::HandleDeath(AActor* DamageCauser)
     //UE_LOG(LogTemp, Warning, TEXT("Broadcasting OnDeath by HealthComponent "));
     //OnDeath.Broadcast();
    // UE_LOG(LogTemp, Error, TEXT("Actually Died"));
-    // ¿©±â¼­´Â Destroy / ¾Ö´Ï¸ŞÀÌ¼Ç Ã³¸® ¾È ÇÔ
-    // ¼ÒÀ¯ Actor(Character/Monster)°¡ Ã¥ÀÓÁö°Ô ÇÔ (AAA ½ºÅ¸ÀÏ)
+    // ì—¬ê¸°ì„œëŠ” Destroy / ì• ë‹ˆë©”ì´ì…˜ ì²˜ë¦¬ ì•ˆ í•¨
+    // ì†Œìœ  Actor(Character/Monster)ê°€ ì±…ì„ì§€ê²Œ í•¨ (AAA ìŠ¤íƒ€ì¼)
 }
 
 FDEDamageResult UDEHealthComponent::ProcessDamage(const FDEDamageRequest& Request)
 {
     FDEDamageResult Result;
 
-    // 1. ¿äÃ»¹ŞÀº Á¤º¸µéÀ» °á°ú(Result)¿¡ ±×´ë·Î º¹»çÇØ¼­ '±â¾ï'½ÃÅ´!
+    // 1. ìš”ì²­ë°›ì€ ì •ë³´ë“¤ì„ ê²°ê³¼(Result)ì— ê·¸ëŒ€ë¡œ ë³µì‚¬í•´ì„œ 'ê¸°ì–µ'ì‹œí‚´!
     /*Result.Victim = Request.Victim;
     Result.SourceObject = Request.SourceObject;
     Result.DamageType = Request.DamageType;
     Result.bCanTriggerOnHit = Request.bCanTriggerOnHit;*/
 
-    // 2. ÀÌ¹Ì Á×¾úÀ¸¸é ¹«½Ã
+    // 2. ì´ë¯¸ ì£½ì—ˆìœ¼ë©´ ë¬´ì‹œ
     if (bIsDead)
     {
         Result.bIsDead = true;
@@ -203,23 +203,23 @@ FDEDamageResult UDEHealthComponent::ProcessDamage(const FDEDamageRequest& Reques
     bool bCriticalSuccess = false;
 
     //// =========================================================
-    //// ¡Ú 3. EnumÀ¸·Î ¿Ïº®ÇÏ°Ô ºĞ¸®µÈ µ¥¹ÌÁö ÆÄÀÌÇÁ¶óÀÎ!
+    //// â˜… 3. Enumìœ¼ë¡œ ì™„ë²½í•˜ê²Œ ë¶„ë¦¬ëœ ë°ë¯¸ì§€ íŒŒì´í”„ë¼ì¸!
     //// =========================================================
     //switch (Request.DamageType)
     //{
     //case EDEDamageType::Execution:
     //case EDEDamageType::InstantKill:
     //{
-    //    //  Ã³ÇüÀÌ³ª Áï»ç´Â ¹¯Áöµµ µûÁöÁöµµ ¾Ê°í ³²Àº ÇÇÅë¸¸Å­ µ¥¹ÌÁö!
+    //    //  ì²˜í˜•ì´ë‚˜ ì¦‰ì‚¬ëŠ” ë¬»ì§€ë„ ë”°ì§€ì§€ë„ ì•Šê³  ë‚¨ì€ í”¼í†µë§Œí¼ ë°ë¯¸ì§€!
     //    CalculatedDamage = CurrentHP;
-    //    bCriticalSuccess = true; // Ã³Çü ¿¬ÃâÀ» À§ÇØ °­Á¦ Å©¸®Æ¼ÄÃ Ãë±Ş
+    //    bCriticalSuccess = true; // ì²˜í˜• ì—°ì¶œì„ ìœ„í•´ ê°•ì œ í¬ë¦¬í‹°ì»¬ ì·¨ê¸‰
     //    break;
     //}
 
     //case EDEDamageType::Poison:
     //case EDEDamageType::Bleed:
     //{
-    //    //  µµÆ® µ¥¹ÌÁö´Â Å©¸®Æ¼ÄÃÀÌ³ª ¹æ¾î·ÂÀ» ¹«½ÃÇÏ°Ô Â© ¼öµµ ÀÖÀ½
+    //    //  ë„íŠ¸ ë°ë¯¸ì§€ëŠ” í¬ë¦¬í‹°ì»¬ì´ë‚˜ ë°©ì–´ë ¥ì„ ë¬´ì‹œí•˜ê²Œ ì§¤ ìˆ˜ë„ ìˆìŒ
     //    CalculatedDamage = Request.BaseDamage;
     //    bCriticalSuccess = false;
     //    break;
@@ -228,40 +228,40 @@ FDEDamageResult UDEHealthComponent::ProcessDamage(const FDEDamageRequest& Reques
     //case EDEDamageType::Normal:
     //default:
     //{
-    //    //  ÀÏ¹İ Å¸°İ (Ä¡¸íÅ¸ ÁÖ»çÀ§ ±¼¸®±â)
+    //    //  ì¼ë°˜ íƒ€ê²© (ì¹˜ëª…íƒ€ ì£¼ì‚¬ìœ„ êµ´ë¦¬ê¸°)
     //    if (Request.CritChance > 0.0f)
     //    {
     //        bCriticalSuccess = FMath::RandRange(0.0f, 1.0f) < Request.CritChance;
     //    }
     //    CalculatedDamage = bCriticalSuccess ? (Request.BaseDamage * Request.CritDamageMultiplier) : Request.BaseDamage;
 
-    //    // Result.FinalDamage -= MyDefense; // (È®Àå) ³ªÁß¿¡ ¹æ¾î·Â ±ğ´Â ·ÎÁ÷
+    //    // Result.FinalDamage -= MyDefense; // (í™•ì¥) ë‚˜ì¤‘ì— ë°©ì–´ë ¥ ê¹ëŠ” ë¡œì§
     //    break;
     //}
     //}
 
     // =========================================================
-    // ¡Ú 3. ÅÂ±× ±â¹İ µ¥¹ÌÁö ÆÄÀÌÇÁ¶óÀÎ ÆÇÁ¤!
+    // â˜… 3. íƒœê·¸ ê¸°ë°˜ ë°ë¯¸ì§€ íŒŒì´í”„ë¼ì¸ íŒì •!
     // =========================================================
 
-    // ÀÚÁÖ ¾²´Â ÅÂ±× Ä³½Ì (¼º´É ÃÖÀûÈ­)
+    // ìì£¼ ì“°ëŠ” íƒœê·¸ ìºì‹± (ì„±ëŠ¥ ìµœì í™”)
     static const FGameplayTag Tag_Execution = FGameplayTag::RequestGameplayTag(FName("Damage.Mechanic.Execution"));
     static const FGameplayTag Tag_InstantKill = FGameplayTag::RequestGameplayTag(FName("Damage.Mechanic.InstantKill"));
     static const FGameplayTag Tag_DoT = FGameplayTag::RequestGameplayTag(FName("Damage.Mechanic.DoT"));
 
-    // °¡¹æ ¾È¿¡ Ã³ÇüÀÌ³ª Áï»ç ÅÂ±×°¡ µé¾îÀÖ´Ù¸é?
+    // ê°€ë°© ì•ˆì— ì²˜í˜•ì´ë‚˜ ì¦‰ì‚¬ íƒœê·¸ê°€ ë“¤ì–´ìˆë‹¤ë©´?
     if (Request.DamageTags.HasTag(Tag_Execution) || Request.DamageTags.HasTag(Tag_InstantKill))
     {
         CalculatedDamage = CurrentHP;
         bCriticalSuccess = true;
     }
-    // °¡¹æ ¾È¿¡ µµÆ®(DoT) ÅÂ±×°¡ µé¾îÀÖ´Ù¸é?
+    // ê°€ë°© ì•ˆì— ë„íŠ¸(DoT) íƒœê·¸ê°€ ë“¤ì–´ìˆë‹¤ë©´?
     else if (Request.DamageTags.HasTag(Tag_DoT))
     {
         CalculatedDamage = Request.BaseDamage;
-        bCriticalSuccess = false; // µµÆ®´Â Å©¸®Æ¼ÄÃ ¾È ÅÍÁü
+        bCriticalSuccess = false; // ë„íŠ¸ëŠ” í¬ë¦¬í‹°ì»¬ ì•ˆ í„°ì§
     }
-    // ±× ¿Ü ÀÏ¹İ Å¸°İ (DirectHit µî)
+    // ê·¸ ì™¸ ì¼ë°˜ íƒ€ê²© (DirectHit ë“±)
     else
     {
         if (Request.CritChance > 0.0f)
@@ -273,13 +273,13 @@ FDEDamageResult UDEHealthComponent::ProcessDamage(const FDEDamageRequest& Reques
     Result.FinalDamage = CalculatedDamage;
     Result.bIsCritical = bCriticalSuccess;
 
-    // 4. ½ÇÁ¦ Ã¼·Â Â÷°¨ ¹× UI Ã³¸® (¿©±â¼­ Request.DamageCauser¸¦ ³Ñ±â±â ¶§¹®¿¡ Äğ°¨ ¹ö±× ÇØ°á!)
+    // 4. ì‹¤ì œ ì²´ë ¥ ì°¨ê° ë° UI ì²˜ë¦¬ (ì—¬ê¸°ì„œ Request.DamageCauserë¥¼ ë„˜ê¸°ê¸° ë•Œë¬¸ì— ì¿¨ê° ë²„ê·¸ í•´ê²°!)
     if (Result.FinalDamage > 0.0f)
     {
         ApplyFinalDamage(Result.FinalDamage, Request.DamageCauser, bCriticalSuccess, Request.DamageTags);
     }
 
-    // 5. ApplyFinalDamage¸¦ °ÅÄ¡¸é¼­ Á×¾úÀ» ¼ö ÀÖÀ¸¹Ç·Î °»½Å
+    // 5. ApplyFinalDamageë¥¼ ê±°ì¹˜ë©´ì„œ ì£½ì—ˆì„ ìˆ˜ ìˆìœ¼ë¯€ë¡œ ê°±ì‹ 
     Result.bIsDead = bIsDead;
 
     return Result;
@@ -291,10 +291,10 @@ void UDEHealthComponent::ApplyFinalDamage(float InDamage, AActor* InCauser, bool
 
     CurrentHP = FMath::Clamp(CurrentHP - InDamage, 0.0f, MaxHP);
 
-    // Ã¼·Â¹Ù °»½Å
+    // ì²´ë ¥ë°” ê°±ì‹ 
     OnHPChanged.Broadcast(CurrentHP, MaxHP);
 
-    // µ¥¹ÌÁö ÅØ½ºÆ® ¶ç¿ì±â
+    // ë°ë¯¸ì§€ í…ìŠ¤íŠ¸ ë„ìš°ê¸°
     if (UWorld* World = GetWorld())
     {
         if (UDEDamageTextSubsystem* DmgSys = World->GetSubsystem<UDEDamageTextSubsystem>())
@@ -307,41 +307,41 @@ void UDEHealthComponent::ApplyFinalDamage(float InDamage, AActor* InCauser, bool
             }
 
             // =========================================================
-            // ¡Ú ÅØ½ºÆ® Å¸ÀÔ ºĞ±â (ÅÂ±× °¡¹æ °Ë»ç!)
+            // â˜… í…ìŠ¤íŠ¸ íƒ€ì… ë¶„ê¸° (íƒœê·¸ ê°€ë°© ê²€ì‚¬!)
             // =========================================================
-            // Ä³½ÌÇØ µĞ ÅÂ±×µé
+            // ìºì‹±í•´ ë‘” íƒœê·¸ë“¤
             static const FGameplayTag Tag_Execution = FGameplayTag::RequestGameplayTag(FName("Damage.Mechanic.Execution"));
             static const FGameplayTag Tag_DoT = FGameplayTag::RequestGameplayTag(FName("Damage.Mechanic.DoT"));
             static const FGameplayTag Tag_Poison = FGameplayTag::RequestGameplayTag(FName("Damage.Affinity.Poison"));
 
-            // 1. Ã³ÇüÀÎ°¡?
+            // 1. ì²˜í˜•ì¸ê°€?
             if (InDamageTags.HasTag(Tag_Execution))
             {
                 DmgInfo.TextType = EDamageTextType::Execution; // "Executed!"
             }
-            // 2. µµÆ® µôÀÎ°¡? (±âÁ¸ »óÅÂÀÌ»ó ÅØ½ºÆ® ÀçÈ°¿ë)
+            // 2. ë„íŠ¸ ë”œì¸ê°€? (ê¸°ì¡´ ìƒíƒœì´ìƒ í…ìŠ¤íŠ¸ ì¬í™œìš©)
             else if (InDamageTags.HasTag(Tag_DoT))
             {
-                // (È®Àå) ¸¸¾à µ¶ ¼Ó¼ºÀÌ¸é ÅØ½ºÆ® »öÀ» ¹Ù²Ù°í ½Í´Ù¸é?
-                // ¼­ºê½Ã½ºÅÛ ÂÊ¿¡¼­ DmgInfo.TextType À» ¼¼ºĞÈ­ÇØ¼­ ³ì»ö Æ½µ© ¶ç¿ì±âµµ °¡´ÉÇÕ´Ï´Ù.
+                // (í™•ì¥) ë§Œì•½ ë… ì†ì„±ì´ë©´ í…ìŠ¤íŠ¸ ìƒ‰ì„ ë°”ê¾¸ê³  ì‹¶ë‹¤ë©´?
+                // ì„œë¸Œì‹œìŠ¤í…œ ìª½ì—ì„œ DmgInfo.TextType ì„ ì„¸ë¶„í™”í•´ì„œ ë…¹ìƒ‰ í‹±ë€ ë„ìš°ê¸°ë„ ê°€ëŠ¥í•©ë‹ˆë‹¤.
                 DmgInfo.TextType = EDamageTextType::StatusEffect;
             }
-            // 3. Å©¸®Æ¼ÄÃÀÎ°¡? (ÀÏ¹İ Å¸°İ Áß Å©¸® ÅÍÁø ³ğ)
+            // 3. í¬ë¦¬í‹°ì»¬ì¸ê°€? (ì¼ë°˜ íƒ€ê²© ì¤‘ í¬ë¦¬ í„°ì§„ ë†ˆ)
             else if (bInIsCritical)
             {
-                DmgInfo.TextType = EDamageTextType::Critical; // Å©°í »¡°£ ¼ıÀÚ
+                DmgInfo.TextType = EDamageTextType::Critical; // í¬ê³  ë¹¨ê°„ ìˆ«ì
             }
-            // 4. ÀüºÎ ¾Æ´Ï¸é ÀÏ¹İ Å¸°İ!
+            // 4. ì „ë¶€ ì•„ë‹ˆë©´ ì¼ë°˜ íƒ€ê²©!
             else
             {
-                DmgInfo.TextType = EDamageTextType::Damage; // ÀÏ¹İ ÇÏ¾á ¼ıÀÚ
+                DmgInfo.TextType = EDamageTextType::Damage; // ì¼ë°˜ í•˜ì–€ ìˆ«ì
             }
 
             DmgSys->ShowDamage(DmgInfo);
         }
     }
 
-    // »ç¸Á Ã³¸®
+    // ì‚¬ë§ ì²˜ë¦¬
     if (CurrentHP <= 0.0f)
     {
         HandleDeath(InCauser);
@@ -353,43 +353,43 @@ void UDEHealthComponent::InstantKill(AActor* Executioner, bool bShowDamage /* = 
 {
     if (bIsDead) return;
 
-    // 1. ÀÏ¹İ Áï»ç µ¥¹ÌÁö ¿¬Ãâ (ÇÔÁ¤, Æø¹ß µî)
+    // 1. ì¼ë°˜ ì¦‰ì‚¬ ë°ë¯¸ì§€ ì—°ì¶œ (í•¨ì •, í­ë°œ ë“±)
     if (bShowDamage && GetOwner())
     {
         if (UDEDamageTextSubsystem* DmgSys = GetWorld()->GetSubsystem<UDEDamageTextSubsystem>())
         {
             FDamageVisualInfo DmgInfo;
             DmgInfo.WorldLocation = GetOwner()->GetActorLocation() + FVector(0, 0, 100);
-            DmgInfo.Amount = MaxHP; // ÃÖ´ë Ã¼·Â¸¸Å­ÀÇ µ¥¹ÌÁö ¼ıÀÚ!
-            DmgInfo.TextType = EDamageTextType::Critical; // Å©°í »¡°£ ¼ıÀÚ·Î ¶ç¿ò
+            DmgInfo.Amount = MaxHP; // ìµœëŒ€ ì²´ë ¥ë§Œí¼ì˜ ë°ë¯¸ì§€ ìˆ«ì!
+            DmgInfo.TextType = EDamageTextType::Critical; // í¬ê³  ë¹¨ê°„ ìˆ«ìë¡œ ë„ì›€
 
             DmgSys->ShowDamage(DmgInfo);
         }
     }
 
-    // 2. µ¥ÀÌÅÍ Ã³¸®
+    // 2. ë°ì´í„° ì²˜ë¦¬
     CurrentHP = 0.0f;
     OnHPChanged.Broadcast(CurrentHP, MaxHP);
     HandleDeath(Executioner);
 
-    //// 1. ÀÌ¹Ì Á×Àº ³ğÀº µÎ ¹ø Á×ÀÌÁö ¾ÊÀ½
+    //// 1. ì´ë¯¸ ì£½ì€ ë†ˆì€ ë‘ ë²ˆ ì£½ì´ì§€ ì•ŠìŒ
     //if (bIsDead) return;
 
-    //// 2. ½¯µå, ¹æ¾î·Â °è»ê ´Ù ¹«½ÃÇÏ°í Ã¼·ÂÀ» °­Á¦·Î Áõ¹ß½ÃÅ´
+    //// 2. ì‰´ë“œ, ë°©ì–´ë ¥ ê³„ì‚° ë‹¤ ë¬´ì‹œí•˜ê³  ì²´ë ¥ì„ ê°•ì œë¡œ ì¦ë°œì‹œí‚´
     //CurrentHP = 0.0f;
 
-    //// 3. UI °»½Å (Ã¼·Â¹Ù Áï½Ã 0À¸·Î)
+    //// 3. UI ê°±ì‹  (ì²´ë ¥ë°” ì¦‰ì‹œ 0ìœ¼ë¡œ)
     //OnHPChanged.Broadcast(CurrentHP, MaxHP);
 
-    //// 4. (¿¬Ãâ) ¼­ºê½Ã½ºÅÛÀ» ÅëÇÑ Ã³Çü µ¥¹ÌÁö ÅØ½ºÆ® ¶ç¿ì±â
+    //// 4. (ì—°ì¶œ) ì„œë¸Œì‹œìŠ¤í…œì„ í†µí•œ ì²˜í˜• ë°ë¯¸ì§€ í…ìŠ¤íŠ¸ ë„ìš°ê¸°
     //if (UWorld* World = GetWorld())
     //{
     //    if (UDEDamageTextSubsystem* DmgSys = World->GetSubsystem<UDEDamageTextSubsystem>())
     //    {
     //        FDamageVisualInfo DmgInfo;
-    //        // ÅØ½ºÆ® ¿¬ÃâÀ» À§ÇØ ³²Àº Ã¼·ÂÀÌ³ª ÃÖ´ë Ã¼·Â¸¸Å­ ¶ç¿öÁÜ
+    //        // í…ìŠ¤íŠ¸ ì—°ì¶œì„ ìœ„í•´ ë‚¨ì€ ì²´ë ¥ì´ë‚˜ ìµœëŒ€ ì²´ë ¥ë§Œí¼ ë„ì›Œì¤Œ
     //        DmgInfo.Amount = MaxHP;
-    //        DmgInfo.bIsCritical = true; // Ã³ÇüÀÌ´Ï±î Å©¸®Æ¼ÄÃ ÀÌÆåÆ® ºô·Á ¾²±â!
+    //        DmgInfo.bIsCritical = true; // ì²˜í˜•ì´ë‹ˆê¹Œ í¬ë¦¬í‹°ì»¬ ì´í™íŠ¸ ë¹Œë ¤ ì“°ê¸°!
 
     //        if (GetOwner())
     //        {
@@ -400,7 +400,7 @@ void UDEHealthComponent::InstantKill(AActor* Executioner, bool bShowDamage /* = 
     //    }
     //}
 
-    //// 5. ÁøÂ¥ »ç¸Á Ã³¸®·Î ³Ñ±è
+    //// 5. ì§„ì§œ ì‚¬ë§ ì²˜ë¦¬ë¡œ ë„˜ê¹€
     //HandleDeath(Executioner);
 }
 

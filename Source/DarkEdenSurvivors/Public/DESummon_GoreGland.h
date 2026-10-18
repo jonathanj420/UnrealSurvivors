@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -22,14 +22,14 @@ protected:
     virtual void ResetState() override;
     virtual void ReturnToPool() override;
 
-    // --- °í¾î ±Û·£µå Àü¿ë AI ·ÎÁ÷ ---
+    // --- ê³ ì–´ ê¸€ëœë“œ ì „ìš© AI ë¡œì§ ---
     UFUNCTION()
     void FindNearestTarget();
 
     UFUNCTION()
     void PerformBloodPulse();
 
-    // --- ±âÈ¹ ÆÄ¶ó¹ÌÅÍ ---
+    // --- ê¸°íš íŒŒë¼ë¯¸í„° ---
     UPROPERTY(EditDefaultsOnly, Category = "GoreGland|Combat")
     float AttackInterval = 0.5f;
 
@@ -43,7 +43,7 @@ protected:
     float TargetSearchRadius = 1500.0f;
 
 public:
-    // ¿¡µğÅÍ¿¡¼­ Æø¹ß ³ªÀÌ¾Æ°¡¶ó ¿¡¼ÂÀ» ³ÖÀ» ½½·Ô
+    // ì—ë””í„°ì—ì„œ í­ë°œ ë‚˜ì´ì•„ê°€ë¼ ì—ì…‹ì„ ë„£ì„ ìŠ¬ë¡¯
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GoreGland|Effect")
     class UNiagaraSystem* BloodPoolFX;
 
@@ -51,7 +51,7 @@ private:
     FTimerHandle TargetSearchTimerHandle;
     FTimerHandle AttackTimerHandle;
 
-    // ÇöÀç ÂÑ°í ÀÖ´Â »ç³É°¨
+    // í˜„ì¬ ì«“ê³  ìˆëŠ” ì‚¬ëƒ¥ê°
     UPROPERTY()
     AActor* CurrentTarget;
 	

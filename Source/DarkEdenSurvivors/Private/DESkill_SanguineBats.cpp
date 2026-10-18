@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DESkill_SanguineBats.h"
@@ -25,16 +25,16 @@ void UDESkill_SanguineBats::InitBehaviors()
 	Super::InitBehaviors();
     UDEBehavior_FireProjectile* FireAction = NewObject<UDEBehavior_FireProjectile>(this);
 
-    // 2. ºÎÇ° ¼³Á¤ (ÀÌ ½ºÅ³¸¸ÀÇ Æ¯Â¡ ÁÖÀÔ)
-    FireAction->ProjectileClass = this->ProjectileClass; // "ºí·¯µð ³ªÀÌÇÁ¸¦ ´øÁ®¶ó"
-    FireAction->FireSound = this->FireSound;             // "ÀÌ ¼Ò¸®¸¦ ³»¶ó"
+    // 2. ë¶€í’ˆ ì„¤ì • (ì´ ìŠ¤í‚¬ë§Œì˜ íŠ¹ì§• ì£¼ìž…)
+    FireAction->ProjectileClass = this->ProjectileClass; // "ë¸”ëŸ¬ë”” ë‚˜ì´í”„ë¥¼ ë˜ì ¸ë¼"
+    FireAction->FireSound = this->FireSound;             // "ì´ ì†Œë¦¬ë¥¼ ë‚´ë¼"
     FireAction->BurstInterval = 0.0f;
     FireAction->RandomPositionRange = 0.0f;
     FireAction->FireConeAngle = 360.0f;
 
 
 
-    // 3. ÀåÂø
+    // 3. ìž¥ì°©
     Behaviors.Add(FireAction);
 }
 

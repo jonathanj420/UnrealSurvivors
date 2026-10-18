@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -19,12 +19,12 @@ class DARKEDENSURVIVORS_API UDEResultWidget : public UUserWidget
 public:
 	virtual void NativeConstruct() override;
 
-	// ¿ÜºÎ(GameMode)¿¡¼­ µ¥ÀÌÅÍ¸¦ ³Ö¾îÁÖ´Â ÇÔ¼ö
+	// ì™¸ë¶€(GameMode)ì—ì„œ ë°ì´í„°ë¥¼ ë„£ì–´ì£¼ëŠ” í•¨ìˆ˜
 	UFUNCTION(BlueprintCallable, Category = "Result")
 	void SetResultData(int32 EarnedGold, int32 KillCount, float DamageDealt, float SurviveTime);
 
 protected:
-	// --- ¹öÆ° Å¬¸¯ ÀÌº¥Æ® ---
+	// --- ë²„íŠ¼ í´ë¦­ ì´ë²¤íŠ¸ ---
 	UFUNCTION()
 	void OnRetryClicked();
 
@@ -32,9 +32,9 @@ protected:
 	void OnMainMenuClicked();
 
 protected:
-	// --- WBP ¹ÙÀÎµù º¯¼ö (ÀÌ¸§ ²À ¸ÂÃç¾ß ÇÔ!) ---
+	// --- WBP ë°”ì¸ë”© ë³€ìˆ˜ (ì´ë¦„ ê¼­ ë§ì¶°ì•¼ í•¨!) ---
 
-	// 1. ÅØ½ºÆ®
+	// 1. í…ìŠ¤íŠ¸
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* Text_GoldEarned;
 
@@ -48,7 +48,7 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* Text_SurviveTime;
 
-	// 2. ¹öÆ°
+	// 2. ë²„íŠ¼
 	UPROPERTY(meta = (BindWidget))
 	UButton* Btn_Retry;
 

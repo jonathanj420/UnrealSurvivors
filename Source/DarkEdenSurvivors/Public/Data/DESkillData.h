@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -83,8 +83,8 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float CritChance = 0.0f;
 
-    // (¼±ÅÃ) Ä¡¸íÅ¸ ¹èÀ²µµ ½ºÅ³¸¶´Ù ´Ù¸£°Ô ÇÏ°í ½Í´Ù¸é?
-    // 0.0f¸é ÇÃ·¹ÀÌ¾î ±âº» ¹èÀ²(1.5) µû¸§
+    // (ì„ íƒ) ì¹˜ëª…íƒ€ ë°°ìœ¨ë„ ìŠ¤í‚¬ë§ˆë‹¤ ë‹¤ë¥´ê²Œ í•˜ê³  ì‹¶ë‹¤ë©´?
+    // 0.0fë©´ í”Œë ˆì´ì–´ ê¸°ë³¸ ë°°ìœ¨(1.5) ë”°ë¦„
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float CritDamageMultiplier = 0.0f;
     // hitinterval, bleed... or smth
@@ -118,5 +118,5 @@ public:
     int32 MaxLevel=9;
 
     UPROPERTY(EditAnywhere, Category = "Evolution")
-    bool bIsEvolutionResult = false; // ÁøÈ­ °á°ú ½ºÅ³ÀÌ¸é true
+    bool bIsEvolutionResult = false; // ì§„í™” ê²°ê³¼ ìŠ¤í‚¬ì´ë©´ true
 };

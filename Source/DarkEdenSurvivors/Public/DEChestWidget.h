@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -15,10 +15,10 @@ class ADEPlayerController;
 UENUM(BlueprintType)
 enum class EChestWidgetState : uint8
 {
-    Appearing,   // ¹Ù´Ú¿¡¼­ Æ¢¾î¿À¸£´Â Áß
-    WaitClick,   // °¡¸¸È÷ À¯Àú Å¬¸¯ ´ë±â Áß
-    Shaking,     // Èçµé¸®´Â Áß
-    RewardsShown // º¸»óÀÌ È­¸é¿¡ ¶á »óÅÂ
+    Appearing,   // ë°”ë‹¥ì—ì„œ íŠ€ì–´ì˜¤ë¥´ëŠ” ì¤‘
+    WaitClick,   // ê°€ë§Œíˆ ìœ ì € í´ë¦­ ëŒ€ê¸° ì¤‘
+    Shaking,     // í”ë“¤ë¦¬ëŠ” ì¤‘
+    RewardsShown // ë³´ìƒì´ í™”ë©´ì— ëœ¬ ìƒíƒœ
 };
 
 
@@ -31,7 +31,7 @@ class DARKEDENSURVIVORS_API UDEChestWidget : public UUserWidget
     GENERATED_BODY()
 
 public:
-    // ÄÁÆ®·Ñ·¯³ª ¸Å´ÏÀú°¡ ÀÌ À§Á¬À» È­¸é¿¡ ¶ç¿ì¸é¼­ º¸»ó ¹è¿­À» ²È¾ÆÁÙ ÇÙ½É ÇÔ¼ö!
+    // ì»¨íŠ¸ë¡¤ëŸ¬ë‚˜ ë§¤ë‹ˆì €ê°€ ì´ ìœ„ì ¯ì„ í™”ë©´ì— ë„ìš°ë©´ì„œ ë³´ìƒ ë°°ì—´ì„ ê½‚ì•„ì¤„ í•µì‹¬ í•¨ìˆ˜!
     UFUNCTION(BlueprintCallable, Category = "Chest UI")
     void SetupChestRewards(const TArray<UDELevelUpChoiceBase*>& InRewards);
 
@@ -39,38 +39,38 @@ protected:
     virtual void NativeConstruct() override;
     virtual void NativeOnInitialized() override;
 
-    // ¾Æ¹« °÷ÀÌ³ª Å¬¸¯ÇßÀ» ¶§ ÀÌº¥Æ®¸¦ ¹Ş±â À§ÇÑ C++ ÇÔ¼ö ¿À¹ö¶óÀÌµå
+    // ì•„ë¬´ ê³³ì´ë‚˜ í´ë¦­í–ˆì„ ë•Œ ì´ë²¤íŠ¸ë¥¼ ë°›ê¸° ìœ„í•œ C++ í•¨ìˆ˜ ì˜¤ë²„ë¼ì´ë“œ
     virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
 
 protected:
-    // 2. ºí·çÇÁ¸°Æ® ¾Ö´Ï¸ŞÀÌ¼Ç Àç»ı¿ë (¹Ù´Ú¿¡¼­ Æ¢¾î¿À¸£±â)
+    // 2. ë¸”ë£¨í”„ë¦°íŠ¸ ì• ë‹ˆë©”ì´ì…˜ ì¬ìƒìš© (ë°”ë‹¥ì—ì„œ íŠ€ì–´ì˜¤ë¥´ê¸°)
     UFUNCTION(BlueprintImplementableEvent)
     void PlayChestAppearAnimation();
 
-    // 3. ºí·çÇÁ¸°Æ® ¾Ö´Ï¸ŞÀÌ¼Ç Àç»ı¿ë (´úÄÈ´úÄÈ Èçµé±â)
+    // 3. ë¸”ë£¨í”„ë¦°íŠ¸ ì• ë‹ˆë©”ì´ì…˜ ì¬ìƒìš© (ëœì»¹ëœì»¹ í”ë“¤ê¸°)
     UFUNCTION(BlueprintImplementableEvent)
     void PlayChestShakeAnimation();
 
-    // ½ÇÁ¦ º¸»ó µ¥ÀÌÅÍ ¹è¿­ (ºí·çÇÁ¸°Æ®¿¡¼­ Ä«µå UI¸¦ »ı¼ºÇÏ°í ±×¸± ¶§ »ç¿ë)
+    // ì‹¤ì œ ë³´ìƒ ë°ì´í„° ë°°ì—´ (ë¸”ë£¨í”„ë¦°íŠ¸ì—ì„œ ì¹´ë“œ UIë¥¼ ìƒì„±í•˜ê³  ê·¸ë¦´ ë•Œ ì‚¬ìš©)
     UPROPERTY(BlueprintReadOnly, Category = "Chest UI")
     TArray<UDELevelUpChoiceBase*> ChestRewards;
 
-    // UI¿¡¼­ À¯Àú°¡ 'È®ÀÎ(È¤Àº ´İ±â)' ¹öÆ°À» ´­·¶À» ¶§ C++¿¡¼­ ½ÇÁ¦ º¸»óÀ» Àû¿ëÇÒ ÇÔ¼ö
+    // UIì—ì„œ ìœ ì €ê°€ 'í™•ì¸(í˜¹ì€ ë‹«ê¸°)' ë²„íŠ¼ì„ ëˆŒë €ì„ ë•Œ C++ì—ì„œ ì‹¤ì œ ë³´ìƒì„ ì ìš©í•  í•¨ìˆ˜
     UFUNCTION(BlueprintCallable, Category = "Chest UI")
     void ApplyAllRewardsAndClose();
 
-    // 4. ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ ³¡³­ ÈÄ, BP¿¡¼­ È£ÃâÇØ ÁÙ "ÁøÂ¥ º¸»ó Ãâ·Â" ÇÔ¼ö
+    // 4. ì• ë‹ˆë©”ì´ì…˜ì´ ëë‚œ í›„, BPì—ì„œ í˜¸ì¶œí•´ ì¤„ "ì§„ì§œ ë³´ìƒ ì¶œë ¥" í•¨ìˆ˜
     UFUNCTION(BlueprintCallable, Category = "Chest")
     void RevealRewards();
 
     EChestWidgetState CurrentState = EChestWidgetState::Appearing;
 
-    // 1. ¿¡µğÅÍ¿¡¼­ ¹æ±İ ¸¸µç '½½·Ô À§Á¬ ºí·çÇÁ¸°Æ®(WBP_ChestRewardSlot)'¸¦ ÁöÁ¤ÇÒ º¯¼ö
+    // 1. ì—ë””í„°ì—ì„œ ë°©ê¸ˆ ë§Œë“  'ìŠ¬ë¡¯ ìœ„ì ¯ ë¸”ë£¨í”„ë¦°íŠ¸(WBP_ChestRewardSlot)'ë¥¼ ì§€ì •í•  ë³€ìˆ˜
     UPROPERTY(EditDefaultsOnly, Category = "Chest UI")
     TSubclassOf<UDEChestRewardSlotWidget> RewardSlotClass;
 
-    // 2. ½½·ÔµéÀ» °¡·Î·Î ³ª¶õÈ÷ ´ãÀ» ¹Ù±¸´Ï (UMG¿¡¼­ ¶È°°Àº ÀÌ¸§À¸·Î Horizontal Box »ı¼º ÇÊ¼ö!)
+    // 2. ìŠ¬ë¡¯ë“¤ì„ ê°€ë¡œë¡œ ë‚˜ë€íˆ ë‹´ì„ ë°”êµ¬ë‹ˆ (UMGì—ì„œ ë˜‘ê°™ì€ ì´ë¦„ìœ¼ë¡œ Horizontal Box ìƒì„± í•„ìˆ˜!)
     UPROPERTY(meta = (BindWidget))
     UHorizontalBox* Box_Rewards;
 

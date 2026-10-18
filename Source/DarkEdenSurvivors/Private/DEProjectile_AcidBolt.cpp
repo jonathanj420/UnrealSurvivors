@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEProjectile_AcidBolt.h"
@@ -101,21 +101,21 @@ void ADEProjectile_AcidBolt::Explode()
 
     FVector Center = GetActorLocation();
 
-    // 1. [½Ã°¢È­] Æø¹ß ¹üÀ§ (ÃÊ·Ï»ö)
+    // 1. [ì‹œê°í™”] í­ë°œ ë²”ìœ„ (ì´ˆë¡ìƒ‰)
     //DrawDebugSphere(World, Center, EffectRadius, 16, FColor::Green, false, 1.0f, 0, 1.0f);
 
-    //// 2. [°ËÃâ] ¹üÀ§ ³» ¸ó½ºÅÍ Ã£±â
+    //// 2. [ê²€ì¶œ] ë²”ìœ„ ë‚´ ëª¬ìŠ¤í„° ì°¾ê¸°
     //TArray<FOverlapResult> OverlapResults;
     //FCollisionQueryParams QueryParams;
-    //QueryParams.AddIgnoredActor(this); // ³ª ÀÚ½ÅÀº ¹«½Ã
-    //QueryParams.AddIgnoredActor(GetOwner()); // ÇÃ·¹ÀÌ¾î ¹«½Ã
+    //QueryParams.AddIgnoredActor(this); // ë‚˜ ìì‹ ì€ ë¬´ì‹œ
+    //QueryParams.AddIgnoredActor(GetOwner()); // í”Œë ˆì´ì–´ ë¬´ì‹œ
 
-    //// ¸ó½ºÅÍ Ã¤³Î(ECC_GameTraceChannel1 µî)·Î¸¸ °Ë»ç -> ¼º´É ÃÖÀûÈ­
+    //// ëª¬ìŠ¤í„° ì±„ë„(ECC_GameTraceChannel1 ë“±)ë¡œë§Œ ê²€ì‚¬ -> ì„±ëŠ¥ ìµœì í™”
     //bool bHitAny = World->OverlapMultiByChannel(
     //    OverlapResults,
     //    Center,
     //    FQuat::Identity,
-    //    ECC_GameTraceChannel5, // ¡Ú ÇÁ·ÎÁ§Æ® ¼³Á¤¿¡ ¸Â´Â ¸ó½ºÅÍ Ã¤³Î »ç¿ë ÇÊ¼ö!
+    //    ECC_GameTraceChannel5, // â˜… í”„ë¡œì íŠ¸ ì„¤ì •ì— ë§ëŠ” ëª¬ìŠ¤í„° ì±„ë„ ì‚¬ìš© í•„ìˆ˜!
     //    FCollisionShape::MakeSphere(EffectRadius),
     //    QueryParams
     //);
@@ -124,23 +124,23 @@ void ADEProjectile_AcidBolt::Explode()
     QueryParams.AddIgnoredActor(this);
     QueryParams.AddIgnoredActor(GetOwner());
 
-    // ¡Ú ÇÙ½É º¯°æ: ObjectTypeÀ¸·Î °Ë»öÇÏ±â À§ÇÑ ¼³Á¤
+    // â˜… í•µì‹¬ ë³€ê²½: ObjectTypeìœ¼ë¡œ ê²€ìƒ‰í•˜ê¸° ìœ„í•œ ì„¤ì •
     FCollisionObjectQueryParams ObjectQueryParams;
-    ObjectQueryParams.AddObjectTypesToQuery(ECC_GameTraceChannel5); // ¸ó½ºÅÍ Ã¤³Î(5¹ø)¸¸ ÄÛ Áı¾î¼­ °Ë»ö
+    ObjectQueryParams.AddObjectTypesToQuery(ECC_GameTraceChannel5); // ëª¬ìŠ¤í„° ì±„ë„(5ë²ˆ)ë§Œ ì½• ì§‘ì–´ì„œ ê²€ìƒ‰
 
-    // ÇÔ¼ö º¯°æ: OverlapMultiByChannel -> OverlapMultiByObjectType
+    // í•¨ìˆ˜ ë³€ê²½: OverlapMultiByChannel -> OverlapMultiByObjectType
     bool bHitAny = World->OverlapMultiByObjectType(
         OverlapResults,
         Center,
         FQuat::Identity,
-        ObjectQueryParams, // ¡Ú Ã¤³Î ´ë½Å ¿ÀºêÁ§Æ® Äõ¸® ÆÄ¶ó¹ÌÅÍ°¡ µé¾î°¨
+        ObjectQueryParams, // â˜… ì±„ë„ ëŒ€ì‹  ì˜¤ë¸Œì íŠ¸ ì¿¼ë¦¬ íŒŒë¼ë¯¸í„°ê°€ ë“¤ì–´ê°
         FCollisionShape::MakeSphere(Radius),
         QueryParams
     );
 
     if (bHitAny)
     {
-        // Áßº¹ Å¸°İ ¹æÁö¿ë (ÇÑ ¸ó½ºÅÍ¿¡ Äİ¶óÀÌ´õ°¡ ¿©·¯ °³ÀÏ ¼ö ÀÖÀ½)
+        // ì¤‘ë³µ íƒ€ê²© ë°©ì§€ìš© (í•œ ëª¬ìŠ¤í„°ì— ì½œë¼ì´ë”ê°€ ì—¬ëŸ¬ ê°œì¼ ìˆ˜ ìˆìŒ)
         //TSet<AActor*> HitActors;
         //UE_LOG(LogTemp, Warning, TEXT("Target Hit"));
         for (const FOverlapResult& Result : OverlapResults)
@@ -171,15 +171,15 @@ void ADEProjectile_AcidBolt::Explode()
 
         if (SpawnedEffect)
         {
-            // ¹°¸® Å¸°İ ÆÇÁ¤°ú ¿ÏÀüÈ÷ µ¿ÀÏÇÑ 'EffectRadius'¸¦ ³ªÀÌ¾Æ°¡¶ó·Î ½÷ÁÜ!
+            // ë¬¼ë¦¬ íƒ€ê²© íŒì •ê³¼ ì™„ì „íˆ ë™ì¼í•œ 'EffectRadius'ë¥¼ ë‚˜ì´ì•„ê°€ë¼ë¡œ ì´ì¤Œ!
             SpawnedEffect->SetFloatParameter(FName("SkillRadius"), Radius);
         }
     }
-    // ---- 2) ¼Ò¸® °£Çæ Àç»ı ----
+    // ---- 2) ì†Œë¦¬ ê°„í— ì¬ìƒ ----
     static double LastExplosionSoundTime = 0.0;
     const double CurrentTime = FPlatformTime::Seconds();
 
-    // ÃÖ¼Ò °£°İ 0.05ÃÊ
+    // ìµœì†Œ ê°„ê²© 0.05ì´ˆ
     const double SoundCooldown = 1.0f;
 
     if (ExplosionSound && (CurrentTime - LastExplosionSoundTime >= SoundCooldown))

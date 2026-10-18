@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -19,7 +19,7 @@ public:
 	virtual void Execute(FDESkillContext& Context) override;
 
 protected:
-	// Å¸ÀÌ¸Ó°¡ È£ÃâÇÒ ÇÔ¼ö
+	// íƒ€ì´ë¨¸ê°€ í˜¸ì¶œí•  í•¨ìˆ˜
 	void FireOneShot();
 
 public:
@@ -46,7 +46,7 @@ public:
 	float AngleOffset = 0.0f;
 
 private:
-	// ¿¬»ç Ã³¸®¸¦ À§ÇÑ ÀÓ½Ã ÀúÀå¼Ò
+	// ì—°ì‚¬ ì²˜ë¦¬ë¥¼ ìœ„í•œ ì„ì‹œ ì €ì¥ì†Œ
 	UPROPERTY()
 	FDESkillContext CachedContext;
 

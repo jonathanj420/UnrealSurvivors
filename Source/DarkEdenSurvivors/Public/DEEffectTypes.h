@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -67,7 +67,7 @@ struct FEffectData
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Stack", meta = (EditCondition = "bIsStackable"))
     float StackMultiplier = 1.f;
 
-    // »óÅÂÀÌ»ó Áö¼Ó ½Ã°£ µî
+    // ìƒíƒœì´ìƒ ì§€ì† ì‹œê°„ ë“±
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Advanced")
     float Duration = 0.f;
 };

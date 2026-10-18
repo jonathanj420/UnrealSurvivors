@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -29,33 +29,33 @@ public:
 
 public:
 	// =========================================================
-	// [Pool Interface] Ç®¸µ & ÃÊ±âÈ­
+	// [Pool Interface] í’€ë§ & ì´ˆê¸°í™”
 	// =========================================================
 
-	// Ç®¿¡¼­ ²¨³¾ ¶§ È£Ãâ (À§Ä¡ ÁöÁ¤ + È°¼ºÈ­)
+	// í’€ì—ì„œ êº¼ë‚¼ ë•Œ í˜¸ì¶œ (ìœ„ì¹˜ ì§€ì • + í™œì„±í™”)
 	virtual void ActivatePickup(const FVector& Location, float DataValue = 0.0f);
 
-	// Ç®·Î µ¹¾Æ°¥ ¶§ È£Ãâ (ºñÈ°¼ºÈ­)
+	// í’€ë¡œ ëŒì•„ê°ˆ ë•Œ í˜¸ì¶œ (ë¹„í™œì„±í™”)
 	virtual void DeactivatePickup();
 
 	// =========================================================
-	// [Magnet System] ÀÚ¼® ±â´É
+	// [Magnet System] ìì„ ê¸°ëŠ¥
 	// =========================================================
 
-	//// ¿ÜºÎ(ÇÃ·¹ÀÌ¾î)¿¡¼­ È£Ãâ: "³ªÇÑÅ× »¡·Á¿Í!"
+	//// ì™¸ë¶€(í”Œë ˆì´ì–´)ì—ì„œ í˜¸ì¶œ: "ë‚˜í•œí…Œ ë¹¨ë ¤ì™€!"
 	//void StartMagnetMovement(AActor* TargetActor);
 
 protected:
 	// =========================================================
-	// [Effect] ÀÚ½ÄµéÀÌ ±¸ÇöÇÒ ³»¿ë
+	// [Effect] ìì‹ë“¤ì´ êµ¬í˜„í•  ë‚´ìš©
 	// =========================================================
 
-	// ½ÇÁ¦ È¿°ú Àû¿ë (°æÇèÄ¡ ÁÖ±â, Ã¼·Â È¸º¹ µî)
-	// TargetActor: ¸ÔÀº »ç¶÷ (ÇÃ·¹ÀÌ¾î)
+	// ì‹¤ì œ íš¨ê³¼ ì ìš© (ê²½í—˜ì¹˜ ì£¼ê¸°, ì²´ë ¥ íšŒë³µ ë“±)
+	// TargetActor: ë¨¹ì€ ì‚¬ëŒ (í”Œë ˆì´ì–´)
 	
 
 protected:
-	// ÄÄÆ÷³ÍÆ®
+	// ì»´í¬ë„ŒíŠ¸
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pickup")
 	USphereComponent* Trigger;
 
@@ -65,22 +65,22 @@ protected:
 public:
 
 	virtual void ApplyEffect(AActor* TargetActor);
-	// ÀÚ¼® ÀÌµ¿ °ü·Ã
+	// ìì„ ì´ë™ ê´€ë ¨
 	bool bIsMagnetized = false;
 	bool bCanBeMagnetized = false;
 	UPROPERTY()
 	AActor* MagnetTarget = nullptr;
 
 	float CurrentSpeed = 0.0f;
-	float Acceleration = 2500.0f; // »¡·Á°¡´Â °¡¼Óµµ
+	float Acceleration = 2500.0f; // ë¹¨ë ¤ê°€ëŠ” ê°€ì†ë„
 
-	// ÀÚ½ÄµéÀÌ ¾µ °ø¿ë µ¥ÀÌÅÍ (°æÇèÄ¡ ¾ç, È¸º¹·® µî)
+	// ìì‹ë“¤ì´ ì“¸ ê³µìš© ë°ì´í„° (ê²½í—˜ì¹˜ ì–‘, íšŒë³µëŸ‰ ë“±)
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Pickup")
 	float Value = 0.0f;
 	void SetTriggerRadius(float InSize);
 
 protected:
-	// ¾ğ¸®¾óÀÇ ³×ÀÌÆ¼ºê Ãæµ¹ ÀÌº¥Æ®¿¡ ¹ÙÀÎµùÇÒ ÇÔ¼ö!
+	// ì–¸ë¦¬ì–¼ì˜ ë„¤ì´í‹°ë¸Œ ì¶©ëŒ ì´ë²¤íŠ¸ì— ë°”ì¸ë”©í•  í•¨ìˆ˜!
 	UFUNCTION()
 	virtual void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 

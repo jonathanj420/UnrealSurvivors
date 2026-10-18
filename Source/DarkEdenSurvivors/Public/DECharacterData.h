@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -12,19 +12,19 @@ struct FPassiveMilestone
 {
     GENERATED_BODY()
 
-    // ¹ßµ¿ ·¹º§ (½ÃÀÛºÎÅÍ ÁÖ·Á¸é 1)
+    // ë°œë™ ë ˆë²¨ (ì‹œì‘ë¶€í„° ì£¼ë ¤ë©´ 1)
     UPROPERTY(EditDefaultsOnly, Category = "Milestone")
     int32 RequiredLevel = 1;
 
-    // ¿Ã·ÁÁÙ ½ºÅÈ Á¾·ù (Åõ»çÃ¼ °³¼ö¸é EDEStatType::Amount)
+    // ì˜¬ë ¤ì¤„ ìŠ¤íƒ¯ ì¢…ë¥˜ (íˆ¬ì‚¬ì²´ ê°œìˆ˜ë©´ EDEStatType::Amount)
     UPROPERTY(EditDefaultsOnly, Category = "Milestone")
     EDEStatType StatType;
 
-    // Áõ°¡·® (+2°³¸é 2.0f)
+    // ì¦ê°€ëŸ‰ (+2ê°œë©´ 2.0f)
     UPROPERTY(EditDefaultsOnly, Category = "Milestone")
     float AdditiveBonus = 0.0f;
 
-    // ¹èÀ² (ÀÌµ¿¼Óµµ 20% Áõ°¡¸é 1.2f)
+    // ë°°ìœ¨ (ì´ë™ì†ë„ 20% ì¦ê°€ë©´ 1.2f)
     UPROPERTY(EditDefaultsOnly, Category = "Milestone")
     float MultiplierBonus = 1.0f;
 };
@@ -38,7 +38,7 @@ class DARKEDENSURVIVORS_API UDECharacterData : public UPrimaryDataAsset
     GENERATED_BODY()
 
 public:
-    // Ä³¸¯ÅÍ °íÀ¯ ·¹º§¾÷ ÆĞ½Ãºê Æ®¸®
+    // ìºë¦­í„° ê³ ìœ  ë ˆë²¨ì—… íŒ¨ì‹œë¸Œ íŠ¸ë¦¬
     UPROPERTY(EditDefaultsOnly, Category = "Progression")
     TArray<FPassiveMilestone> LevelMilestones;
 

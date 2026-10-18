@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -26,7 +26,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// BloodyKnife¸¦ ÃÊ±âÈ­ÇÏ´Â ÇÔ¼ö (½ºÅ³ÀÌ ½ºÆùÇÒ ¶§ È£Ãâ)
+	// BloodyKnifeë¥¼ ì´ˆê¸°í™”í•˜ëŠ” í•¨ìˆ˜ (ìŠ¤í‚¬ì´ ìŠ¤í°í•  ë•Œ í˜¸ì¶œ)
 	void Initialize(const FVector Direction);
 
 protected:
@@ -46,7 +46,7 @@ protected:
 	virtual void OnLifeTimeExpired() override;
 
 public:
-	// ¿¡µğÅÍ¿¡¼­ Æø¹ß ³ªÀÌ¾Æ°¡¶ó ¿¡¼ÂÀ» ³ÖÀ» ½½·Ô
+	// ì—ë””í„°ì—ì„œ í­ë°œ ë‚˜ì´ì•„ê°€ë¼ ì—ì…‹ì„ ë„£ì„ ìŠ¬ë¡¯
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect")
 	class UNiagaraSystem* ExplosionEffect;
 

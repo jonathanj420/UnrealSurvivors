@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -17,15 +17,15 @@ class DARKEDENSURVIVORS_API ADEGameModeBase : public AGameModeBase
 public:
 	ADEGameModeBase();
 
-	// 1. ÇÃ·¹ÀÌ¾î Á¢¼Ó/ÅğÀå °¨Áö (¿£Áø ±âº» ÇÔ¼ö ¿À¹ö¶óÀÌµå)
+	// 1. í”Œë ˆì´ì–´ ì ‘ì†/í‡´ì¥ ê°ì§€ (ì—”ì§„ ê¸°ë³¸ í•¨ìˆ˜ ì˜¤ë²„ë¼ì´ë“œ)
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 	virtual void Logout(AController* Exiting) override;
 
-	// 2. ÀÚ½ÄµéÀÌ ¾µ À¯Æ¿¸®Æ¼ (ÀúÀå/·Îµå ¼ÅÆ²)
+	// 2. ìì‹ë“¤ì´ ì“¸ ìœ í‹¸ë¦¬í‹° (ì €ì¥/ë¡œë“œ ì…”í‹€)
 	UFUNCTION(BlueprintCallable, Category = "System")
 	void SaveGameData();
 
-	// Ä¡Æ®Å° (ÄÜ¼Ö ¸í·É¾î·Î ½ÇÇà °¡´ÉÇÏ°Ô)
+	// ì¹˜íŠ¸í‚¤ (ì½˜ì†” ëª…ë ¹ì–´ë¡œ ì‹¤í–‰ ê°€ëŠ¥í•˜ê²Œ)
 	UFUNCTION(Exec)
 	void Cheat_AddGold(int32 Amount);
 

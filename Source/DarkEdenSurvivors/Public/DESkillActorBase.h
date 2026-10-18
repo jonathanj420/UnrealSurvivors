@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -23,8 +23,8 @@ public:
     virtual void Tick(float DeltaTime) override;
 
     // ---------------------------------------------------
-    // [»ı¸í ÁÖ±â (Lifecycle)]
-    // ¸ğµç ½ºÅ³ ¾×ÅÍ´Â ÀÌ Èå¸§À» µû¸¨´Ï´Ù.
+    // [ìƒëª… ì£¼ê¸° (Lifecycle)]
+    // ëª¨ë“  ìŠ¤í‚¬ ì•¡í„°ëŠ” ì´ íë¦„ì„ ë”°ë¦…ë‹ˆë‹¤.
     // ---------------------------------------------------
     virtual void InitializeFromContext(const FDESkillContext& Context);
 
@@ -40,8 +40,8 @@ protected:
     virtual void OnLifeTimeExpired();
 
     // ---------------------------------------------------
-    // [ÀüÅõ ·ÎÁ÷ (Combat)]
-    // Projectile¿¡ ÀÖ´ø °¡Àå ÁøÈ­µÈ µ¥¹ÌÁö ·ÎÁ÷À» ºÎ¸ğ°¡ °¡Áı´Ï´Ù.
+    // [ì „íˆ¬ ë¡œì§ (Combat)]
+    // Projectileì— ìˆë˜ ê°€ì¥ ì§„í™”ëœ ë°ë¯¸ì§€ ë¡œì§ì„ ë¶€ëª¨ê°€ ê°€ì§‘ë‹ˆë‹¤.
     // ---------------------------------------------------
     virtual bool TryDealDamage(AActor* Victim);
     virtual void PerformCollisionDetection(float DeltaTime) {}
@@ -49,7 +49,7 @@ protected:
     virtual bool CanHit() const { return true; }
     virtual bool CanHitTarget(AActor* Target) const { return true; } // for later use maybe
     // ---------------------------------------------------
-    // [ÄÄÆ÷³ÍÆ® (Components)]
+    // [ì»´í¬ë„ŒíŠ¸ (Components)]
     // ---------------------------------------------------
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     USphereComponent* CollisionComponent;
@@ -64,7 +64,7 @@ protected:
     TArray<UNiagaraComponent*> CachedNiagaraComps;
 
     // ---------------------------------------------------
-    // [°øÅë µ¥ÀÌÅÍ (Stats)]
+    // [ê³µí†µ ë°ì´í„° (Stats)]
     // ---------------------------------------------------
 
     UPROPERTY()

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEMonsterRepositionManager.h"
@@ -22,14 +22,14 @@ void ADEMonsterRepositionManager::BeginPlay()
 
     Player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
     GameMode=Player->GetWorld()->GetAuthGameMode<ADEGameMode_Stage>();
-    // 1. °ÔÀÓ¸ğµåÇÑÅ× ¸ÕÀú ¹°¾îº½
+    // 1. ê²Œì„ëª¨ë“œí•œí…Œ ë¨¼ì € ë¬¼ì–´ë´„
     if (GameMode)
     {
         MonsterSpawnManager = GameMode->GetMonsterSpawnManager();
         UE_LOG(LogTemp, Warning, TEXT("Monster Manager Found Successfully"));
     }
 
-    // 2. [ÇÙ½É] ¸¸¾à °ÔÀÓ¸ğµå°¡ "¸ğ¸£´Âµ¥?(nullptr)"¶ó°í ÇÏ¸é, Á÷Á¢ ¿ùµå¸¦ µÚÁ®¼­ Ã£À½
+    // 2. [í•µì‹¬] ë§Œì•½ ê²Œì„ëª¨ë“œê°€ "ëª¨ë¥´ëŠ”ë°?(nullptr)"ë¼ê³  í•˜ë©´, ì§ì ‘ ì›”ë“œë¥¼ ë’¤ì ¸ì„œ ì°¾ìŒ
     if (!MonsterSpawnManager)
     {
         AActor* FoundActor = UGameplayStatics::GetActorOfClass(GetWorld(), ADEMonsterSpawnManager::StaticClass());
@@ -37,7 +37,7 @@ void ADEMonsterRepositionManager::BeginPlay()
         UE_LOG(LogTemp, Warning, TEXT("Monster Manager Found Forced"));
     }
 
-    // 3. ±×·¡µµ ¾øÀ¸¸é ÁøÂ¥ ¹®Á¦ÀÓ. (Å©·¡½Ã ´ë½Å ·Î±× ¶ç¿ì°í ¸®ÅÏ)
+    // 3. ê·¸ë˜ë„ ì—†ìœ¼ë©´ ì§„ì§œ ë¬¸ì œì„. (í¬ë˜ì‹œ ëŒ€ì‹  ë¡œê·¸ ë„ìš°ê³  ë¦¬í„´)
     if (!MonsterSpawnManager)
     {
         UE_LOG(LogTemp, Error, TEXT("RepositionManager: CRITICAL ERROR - Cannot find MonsterSpawnManager!"));
@@ -52,33 +52,33 @@ void ADEMonsterRepositionManager::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    // 1. ¸Å´ÏÀú°¡ À¯È¿ÇÑÁö Ã¼Å© (¾ÈÀüÀåÄ¡)
+    // 1. ë§¤ë‹ˆì €ê°€ ìœ íš¨í•œì§€ ì²´í¬ (ì•ˆì „ì¥ì¹˜)
     if (!MonsterSpawnManager || !Player) return;
 
-    // 2. ¸ó½ºÅÍ ¸®½ºÆ® °¡Á®¿À±â (ÂüÁ¶·Î °¡Á®¿È)
+    // 2. ëª¬ìŠ¤í„° ë¦¬ìŠ¤íŠ¸ ê°€ì ¸ì˜¤ê¸° (ì°¸ì¡°ë¡œ ê°€ì ¸ì˜´)
     const TArray<ADEMonsterBase*>& Monsters = MonsterSpawnManager->GetActiveMonsters();
 
     const FVector PlayerLoc = Player->GetActorLocation();
     const float MaxDistSq = MaxDistanceFromPlayer * MaxDistanceFromPlayer;
 
-    // 3. [ÇÙ½É ¼öÁ¤] ¿ª¼øÀ¸·Î ¼øÈ¸ (µÚ¿¡¼­ ¾ÕÀ¸·Î)
-    // ÀÌ·¸°Ô ÇÏ¸é Áß°£¿¡ ¸ó½ºÅÍ°¡ »ç¶óÁ®µµ ÀÎµ¦½º°¡ ²¿ÀÌÁö ¾Ê½À´Ï´Ù.
+    // 3. [í•µì‹¬ ìˆ˜ì •] ì—­ìˆœìœ¼ë¡œ ìˆœíšŒ (ë’¤ì—ì„œ ì•ìœ¼ë¡œ)
+    // ì´ë ‡ê²Œ í•˜ë©´ ì¤‘ê°„ì— ëª¬ìŠ¤í„°ê°€ ì‚¬ë¼ì ¸ë„ ì¸ë±ìŠ¤ê°€ ê¼¬ì´ì§€ ì•ŠìŠµë‹ˆë‹¤.
     for (int32 i = Monsters.Num() - 1; i >= 0; --i)
     {
-        // 4. À¯È¿¼º Ã¼Å©
-        // (¹è¿­ÀÇ i¹øÂ° ¿ä¼Ò¸¦ °¡Á®¿È)
+        // 4. ìœ íš¨ì„± ì²´í¬
+        // (ë°°ì—´ì˜ ië²ˆì§¸ ìš”ì†Œë¥¼ ê°€ì ¸ì˜´)
         ADEMonsterBase* Monster = Monsters[i];
 
-        // ¸ó½ºÅÍ°¡ ½ÇÁ¦·Î Á¸ÀçÇÏ´ÂÁö, Á×Áø ¾Ê¾Ò´ÂÁö Ã¼Å©
+        // ëª¬ìŠ¤í„°ê°€ ì‹¤ì œë¡œ ì¡´ì¬í•˜ëŠ”ì§€, ì£½ì§„ ì•Šì•˜ëŠ”ì§€ ì²´í¬
         if (!IsValid(Monster) || !Monster->IsAlive())
         {
             continue;
         }
 
-        // 5. °Å¸® °è»ê
+        // 5. ê±°ë¦¬ ê³„ì‚°
         const float DistSq = FVector::DistSquared(Monster->GetActorLocation(), PlayerLoc);
 
-        // 6. ³Ê¹« ¸Ö¾îÁö¸é Àç¹èÄ¡
+        // 6. ë„ˆë¬´ ë©€ì–´ì§€ë©´ ì¬ë°°ì¹˜
         if (DistSq > MaxDistSq)
         {
             RepositionMonster(Monster);
@@ -92,10 +92,10 @@ void ADEMonsterRepositionManager::RepositionMonster(ADEMonsterBase* Monster)
 
     const FVector NewPos = GetRandomPositionAroundPlayer();
 
-    // ¼ø°£ÀÌµ¿
+    // ìˆœê°„ì´ë™
     Monster->SetActorLocation(NewPos, false, nullptr, ETeleportType::TeleportPhysics);
 
-    // Å¸°Ù °»½Å (Áß¿ä)
+    // íƒ€ê²Ÿ ê°±ì‹  (ì¤‘ìš”)
     //Monster->OnRepositioned();
 }
 
@@ -103,7 +103,7 @@ FVector ADEMonsterRepositionManager::GetRandomPositionAroundPlayer() const
 {
     const FVector PlayerLoc = Player->GetActorLocation();
 
-    // ·£´ı ¹æÇâ (¿øÇü)
+    // ëœë¤ ë°©í–¥ (ì›í˜•)
     const float Angle = FMath::FRandRange(0.f, 2.f * PI);
     const float Radius = FMath::FRandRange(RespawnMinRadius, RespawnMaxRadius);
 

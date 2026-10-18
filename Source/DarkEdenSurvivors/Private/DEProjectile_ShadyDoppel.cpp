@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEProjectile_ShadyDoppel.h"
@@ -36,22 +36,22 @@ void ADEProjectile_ShadyDoppel::InitializeFromContext(const FDESkillContext& Con
         TargetPos = StartPos + (Context.TargetDirection.GetSafeNormal2D() * 1000.0f);
     }
 
-    // [°³¼± 1] 2D ±â¹İÀ¸·Î º¤ÅÍ °è»ê ÃÖÀûÈ­
+    // [ê°œì„  1] 2D ê¸°ë°˜ìœ¼ë¡œ ë²¡í„° ê³„ì‚° ìµœì í™”
     FVector DirToTarget = (TargetPos - StartPos).GetSafeNormal2D();
 
-    // ¿ÜÀû ¿¬»ê ¾øÀÌ 2D Á÷°¢ º¤ÅÍ(¿ìÃø) ±¸ÇÏ±â: (X, Y) -> (Y, -X)
+    // ì™¸ì  ì—°ì‚° ì—†ì´ 2D ì§ê° ë²¡í„°(ìš°ì¸¡) êµ¬í•˜ê¸°: (X, Y) -> (Y, -X)
     FVector RightVector = FVector(DirToTarget.Y, -DirToTarget.X, 0.0f);
 
     float RandomOffset = FMath::RandRange(-CurveOffsetRange, CurveOffsetRange);
 
-    // Dist2D¸¦ »ç¿ëÇÏ¿© ZÃà ¿¬»ê Á¦¿Ü
+    // Dist2Dë¥¼ ì‚¬ìš©í•˜ì—¬ Zì¶• ì—°ì‚° ì œì™¸
     ControlPos = StartPos + (DirToTarget * FVector::Dist2D(StartPos, TargetPos) * 0.5f) + (RightVector * RandomOffset);
 
-    // [°³¼± 2] ºñÇà½Ã°£ ³ª´°¼ÀÀ» °ö¼ÀÀ¸·Î ¹Ù²Ù±â À§ÇÑ ¿ª¼ö(Rate) Ä³½Ì
+    // [ê°œì„  2] ë¹„í–‰ì‹œê°„ ë‚˜ëˆ—ì…ˆì„ ê³±ì…ˆìœ¼ë¡œ ë°”ê¾¸ê¸° ìœ„í•œ ì—­ìˆ˜(Rate) ìºì‹±
     float Distance = FVector::Dist2D(StartPos, TargetPos);
     TotalFlightTime = Distance / FMath::Max(100.0f, CurrentSpeed);
 
-    // Çì´õ¿¡ ¸â¹ö º¯¼ö·Î ¼±¾ğ ÇÊ¿ä: float FlightRate;
+    // í—¤ë”ì— ë©¤ë²„ ë³€ìˆ˜ë¡œ ì„ ì–¸ í•„ìš”: float FlightRate;
     FlightRate = 1.0f / FMath::Max(0.01f, TotalFlightTime);
 }
 
@@ -61,7 +61,7 @@ void ADEProjectile_ShadyDoppel::UpdateMovement(float DeltaTime)
     {
         CurrentTime += DeltaTime;
 
-        // [°³¼± 2 Àû¿ë] ³ª´°¼À ´ë½Å Ä³½ÌÇØµĞ FlightRate °ö¼À »ç¿ë
+        // [ê°œì„  2 ì ìš©] ë‚˜ëˆ—ì…ˆ ëŒ€ì‹  ìºì‹±í•´ë‘” FlightRate ê³±ì…ˆ ì‚¬ìš©
         float Alpha = CurrentTime * FlightRate;
 
         if (Alpha < 1.0f)
@@ -70,10 +70,10 @@ void ADEProjectile_ShadyDoppel::UpdateMovement(float DeltaTime)
             FVector L2 = FMath::Lerp(ControlPos, TargetPos, Alpha);
             FVector CurrentPos = FMath::Lerp(L1, L2, Alpha);
 
-            // [°³¼± 1 Àû¿ë] 2D Á¤±ÔÈ­·Î ZÃà ¹«½Ã
+            // [ê°œì„  1 ì ìš©] 2D ì •ê·œí™”ë¡œ Zì¶• ë¬´ì‹œ
             FVector MoveDir = (CurrentPos - GetActorLocation()).GetSafeNormal2D();
 
-            // [°³¼± 3 Àû¿ë] À§Ä¡¿Í È¸ÀüÀ» ÇÑ ¹øÀÇ ÇÔ¼ö È£Ãâ·Î º´ÇÕ (¼º´É ´ëÆø Çâ»ó)
+            // [ê°œì„  3 ì ìš©] ìœ„ì¹˜ì™€ íšŒì „ì„ í•œ ë²ˆì˜ í•¨ìˆ˜ í˜¸ì¶œë¡œ ë³‘í•© (ì„±ëŠ¥ ëŒ€í­ í–¥ìƒ)
             if (!MoveDir.IsNearlyZero())
             {
                 SetActorLocationAndRotation(CurrentPos, MoveDir.Rotation());
@@ -89,10 +89,10 @@ void ADEProjectile_ShadyDoppel::UpdateMovement(float DeltaTime)
             {
                 bIsPiercing = true;
 
-                // [°³¼± 1 Àû¿ë] Å»Ãâ ¹æÇâµµ 2D Á¤±ÔÈ­
+                // [ê°œì„  1 ì ìš©] íƒˆì¶œ ë°©í–¥ë„ 2D ì •ê·œí™”
                 ShootDirection = (TargetPos - ControlPos).GetSafeNormal2D();
 
-                // ¿©±â¼­µµ º´ÇÕÇÏ¸é ÁÁÁö¸¸, Rotation¸¸ ¹Ù²î¹Ç·Î ±×´ë·Î µÓ´Ï´Ù.
+                // ì—¬ê¸°ì„œë„ ë³‘í•©í•˜ë©´ ì¢‹ì§€ë§Œ, Rotationë§Œ ë°”ë€Œë¯€ë¡œ ê·¸ëŒ€ë¡œ ë‘¡ë‹ˆë‹¤.
                 SetActorRotation(ShootDirection.Rotation());
 
                 if (MovementComponent)
@@ -115,45 +115,45 @@ void ADEProjectile_ShadyDoppel::UpdateMovement(float DeltaTime)
 
 //void ADEProjectile_ShadyDoppel::InitializeFromContext(const FDESkillContext& Context)
 //{
-//    // 1. ºÎ¸ğ ÃÊ±âÈ­ (¿©±â¼­ µ¥¹ÌÁö, °üÅë·Â, ±âº» ¼Óµµ°¡ ¼¼ÆÃµÊ)
+//    // 1. ë¶€ëª¨ ì´ˆê¸°í™” (ì—¬ê¸°ì„œ ë°ë¯¸ì§€, ê´€í†µë ¥, ê¸°ë³¸ ì†ë„ê°€ ì„¸íŒ…ë¨)
 //    Super::InitializeFromContext(Context);
 //
-//    // 2. 1ÆäÀÌÁî(°î¼±) µ¿¾ÈÀº ºÎ¸ğÀÇ Á÷¼± ¹«ºê¸ÕÆ® ¿£ÁøÀ» Àá½Ã ²ü´Ï´Ù.
+//    // 2. 1í˜ì´ì¦ˆ(ê³¡ì„ ) ë™ì•ˆì€ ë¶€ëª¨ì˜ ì§ì„  ë¬´ë¸Œë¨¼íŠ¸ ì—”ì§„ì„ ì ì‹œ ë•ë‹ˆë‹¤.
 //    if (MovementComponent)
 //    {
 //        MovementComponent->Velocity = FVector::ZeroVector;
 //        MovementComponent->Deactivate();
 //    }
 //
-//    // 3. »óÅÂ ¹× ½ÃÀÛ ÁÂÇ¥ ÃÊ±âÈ­
+//    // 3. ìƒíƒœ ë° ì‹œì‘ ì¢Œí‘œ ì´ˆê¸°í™”
 //    bIsPiercing = false;
 //    CurrentTime = 0.0f;
 //    StartPos = GetActorLocation();
 //
-//    // 4. Å¸°Ù À§Ä¡ ¼³Á¤
+//    // 4. íƒ€ê²Ÿ ìœ„ì¹˜ ì„¤ì •
 //    if (Context.Targets.Num() > 0 && Context.Targets[0])
 //    {
 //        TargetPos = Context.Targets[0]->GetActorLocation();
 //    }
 //    else
 //    {
-//        // Å¸°ÙÀÌ ¾øÀ¸¸é ¹Ù¶óº¸´Â ¹æÇâÀ¸·Î Àû´çÈ÷ ¸Ö¸®(1000) Âï¾îÁÜ
+//        // íƒ€ê²Ÿì´ ì—†ìœ¼ë©´ ë°”ë¼ë³´ëŠ” ë°©í–¥ìœ¼ë¡œ ì ë‹¹íˆ ë©€ë¦¬(1000) ì°ì–´ì¤Œ
 //        TargetPos = StartPos + (Context.TargetDirection.GetSafeNormal() * 1000.0f);
 //    }
 //
-//    // 5. Á¦¾îÁ¡(ControlPos) ºñÆ²±â ·ÎÁ÷!
+//    // 5. ì œì–´ì (ControlPos) ë¹„í‹€ê¸° ë¡œì§!
 //    FVector DirToTarget = (TargetPos - StartPos).GetSafeNormal();
 //    FVector RightVector = FVector::CrossProduct(FVector::UpVector, DirToTarget).GetSafeNormal();
 //
-//    // ¿ŞÂÊÀ¸·Î ²ªÀÏÁö ¿À¸¥ÂÊÀ¸·Î ²ªÀÏÁö ·£´ıÇÏ°Ô °áÁ¤
+//    // ì™¼ìª½ìœ¼ë¡œ êº¾ì¼ì§€ ì˜¤ë¥¸ìª½ìœ¼ë¡œ êº¾ì¼ì§€ ëœë¤í•˜ê²Œ ê²°ì •
 //    float RandomOffset = FMath::RandRange(-CurveOffsetRange, CurveOffsetRange);
 //
-//    // ½ÃÀÛÁ¡°ú Å¸°ÙÀÇ µü Áß°£ ÁöÁ¡¿¡¼­ ÁÂ/¿ì·Î RandomOffset¸¸Å­ ¹Ğ¾î³¿
+//    // ì‹œì‘ì ê³¼ íƒ€ê²Ÿì˜ ë”± ì¤‘ê°„ ì§€ì ì—ì„œ ì¢Œ/ìš°ë¡œ RandomOffsetë§Œí¼ ë°€ì–´ëƒ„
 //    ControlPos = StartPos + (DirToTarget * FVector::Distance(StartPos, TargetPos) * 0.5f) + (RightVector * RandomOffset);
 //
-//    // 6. [AAA µğÅ×ÀÏ] °Å¸®¿¡ ¸ÂÃç¼­ ºñÇà½Ã°£ °è»ê (¼Óµµ°¡ ºü¸£¸é »¡¸® µµÂøÇÔ)
+//    // 6. [AAA ë””í…Œì¼] ê±°ë¦¬ì— ë§ì¶°ì„œ ë¹„í–‰ì‹œê°„ ê³„ì‚° (ì†ë„ê°€ ë¹ ë¥´ë©´ ë¹¨ë¦¬ ë„ì°©í•¨)
 //    float Distance = FVector::Distance(StartPos, TargetPos);
-//    TotalFlightTime = Distance / FMath::Max(100.0f, CurrentSpeed); // 0 ³ª´©±â ¹æÁö
+//    TotalFlightTime = Distance / FMath::Max(100.0f, CurrentSpeed); // 0 ë‚˜ëˆ„ê¸° ë°©ì§€
 //}
 //
 //void ADEProjectile_ShadyDoppel::UpdateMovement(float DeltaTime)
@@ -165,7 +165,7 @@ void ADEProjectile_ShadyDoppel::UpdateMovement(float DeltaTime)
 //
 //        if (Alpha < 1.0f)
 //        {
-//            // (ÀÌÀü°ú µ¿ÀÏÇÑ º£Áö¾î °î¼± ÀÌµ¿ ·ÎÁ÷) ...
+//            // (ì´ì „ê³¼ ë™ì¼í•œ ë² ì§€ì–´ ê³¡ì„  ì´ë™ ë¡œì§) ...
 //            FVector L1 = FMath::Lerp(StartPos, ControlPos, Alpha);
 //            FVector L2 = FMath::Lerp(ControlPos, TargetPos, Alpha);
 //            FVector CurrentPos = FMath::Lerp(L1, L2, Alpha);
@@ -177,11 +177,11 @@ void ADEProjectile_ShadyDoppel::UpdateMovement(float DeltaTime)
 //        else
 //        {
 //            // ==========================================
-//            // ¡Ú Å¸°Ù µµ´Ş! (°î¼± ºñÇà Á¾·á)
+//            // â˜… íƒ€ê²Ÿ ë„ë‹¬! (ê³¡ì„  ë¹„í–‰ ì¢…ë£Œ)
 //            // ==========================================
 //            if (bCanPierceAfterCurve)
 //            {
-//                // [µµÇÃ 2: ÁøÈ­Çü] ¿ìÁÖ ³¡±îÁö Á÷¼± °üÅë!
+//                // [ë„í”Œ 2: ì§„í™”í˜•] ìš°ì£¼ ëê¹Œì§€ ì§ì„  ê´€í†µ!
 //                bIsPiercing = true;
 //
 //                ShootDirection = (TargetPos - ControlPos).GetSafeNormal();
@@ -195,15 +195,15 @@ void ADEProjectile_ShadyDoppel::UpdateMovement(float DeltaTime)
 //            }
 //            else
 //            {
-//                // [µµÇÃ 1: ÀÏ¹İÇü] ¸ñÇ¥ ÁöÁ¡¿¡ µµ´ŞÇßÀ¸´Ï ±ò²ûÇÏ°Ô ¼Ò¸ê!
-//                // (Æã! ÇÏ´Â Æø¹ß ÀÌÆåÆ®³ª »ç¿îµå¸¦ ¿©±â¼­ Àç»ıÇØµµ ÁÁÀ½)
+//                // [ë„í”Œ 1: ì¼ë°˜í˜•] ëª©í‘œ ì§€ì ì— ë„ë‹¬í–ˆìœ¼ë‹ˆ ê¹”ë”í•˜ê²Œ ì†Œë©¸!
+//                // (í‘! í•˜ëŠ” í­ë°œ ì´í™íŠ¸ë‚˜ ì‚¬ìš´ë“œë¥¼ ì—¬ê¸°ì„œ ì¬ìƒí•´ë„ ì¢‹ìŒ)
 //                ReturnToPool();
 //            }
 //        }
 //    }
 //    else
 //    {
-//        // 2ÆäÀÌÁî: ÁøÈ­ÇüÀÏ ¶§¸¸ ½ÇÇàµÇ´Â °üÅë ºñÇà
+//        // 2í˜ì´ì¦ˆ: ì§„í™”í˜•ì¼ ë•Œë§Œ ì‹¤í–‰ë˜ëŠ” ê´€í†µ ë¹„í–‰
 //        Super::UpdateMovement(DeltaTime);
 //    }
 //}

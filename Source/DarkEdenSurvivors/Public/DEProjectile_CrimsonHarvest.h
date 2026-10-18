@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -9,8 +9,8 @@
 UENUM(BlueprintType)
 enum class EBatPhase : uint8
 {
-	Hunting,  // Àûµé »çÀÌ¸¦ Æ¨°Ü´Ù´Ï´Â ±âº» »óÅÂ
-	Returning // ¼ö¸íÀÌ ´ÙÇØ ÇÃ·¹ÀÌ¾î¿¡°Ô µ¹¾Æ°¡´Â »óÅÂ
+	Hunting,  // ì ë“¤ ì‚¬ì´ë¥¼ íŠ•ê²¨ë‹¤ë‹ˆëŠ” ê¸°ë³¸ ìƒíƒœ
+	Returning // ìˆ˜ëª…ì´ ë‹¤í•´ í”Œë ˆì´ì–´ì—ê²Œ ëŒì•„ê°€ëŠ” ìƒíƒœ
 };
 
 /**
@@ -35,7 +35,7 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Phase")
     EBatPhase CurrentPhase = EBatPhase::Hunting;
 
-    // µ¹¾Æ¿Ã ¶§ÀÇ ¼Óµµ¿Í È¸Àü(È£¹Ö) ¹ÎÃ¸¼º
+    // ëŒì•„ì˜¬ ë•Œì˜ ì†ë„ì™€ íšŒì „(í˜¸ë°) ë¯¼ì²©ì„±
     UPROPERTY(EditDefaultsOnly, Category = "Movement")
     float ReturnSpeed = 1500.0f;
 

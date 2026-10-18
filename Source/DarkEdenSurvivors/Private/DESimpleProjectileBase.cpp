@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DESimpleProjectileBase.h"
@@ -22,7 +22,7 @@
 ADESimpleProjectileBase::ADESimpleProjectileBase()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true; // Åõ»çÃ¼´Â º¸Åë Æ½ÀÌ ÇÊ¿äÇÕ´Ï´Ù (ÀÌµ¿ µî)
+	PrimaryActorTick.bCanEverTick = true; // íˆ¬ì‚¬ì²´ëŠ” ë³´í†µ í‹±ì´ í•„ìš”í•©ë‹ˆë‹¤ (ì´ë™ ë“±)
 
 	CollisionComponent->SetCollisionProfileName(TEXT("Projectile"));
 	//CollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ADESimpleProjectileBase::OnOverlap);
@@ -32,19 +32,19 @@ ADESimpleProjectileBase::ADESimpleProjectileBase()
 
 	MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("MovementComponent"));
 	MovementComponent->bRotationFollowsVelocity = true;
-	MovementComponent->ProjectileGravityScale = 0.0f; // ±âº» ¹«Áß·Â
-	MovementComponent->bSweepCollision = false; // [ÃÖÀûÈ­ ÇÙ½É] ÀÌ°Å ²ô¼¼¿ä!
+	MovementComponent->ProjectileGravityScale = 0.0f; // ê¸°ë³¸ ë¬´ì¤‘ë ¥
+	MovementComponent->bSweepCollision = false; // [ìµœì í™” í•µì‹¬] ì´ê±° ë„ì„¸ìš”!
 
 	RotatingMovementComponent = CreateDefaultSubobject<URotatingMovementComponent>(TEXT("RotatingMovement"));
-	RotatingMovementComponent->SetUpdatedComponent(Mesh); // ·çÆ®(Ãæµ¹Ã¼)¸¦ µ¹¸²
+	RotatingMovementComponent->SetUpdatedComponent(Mesh); // ë£¨íŠ¸(ì¶©ëŒì²´)ë¥¼ ëŒë¦¼
 
-	// 2. ¡Ú [ÃÖÀûÈ­ ÇÙ½É] ±âº»ÀûÀ¸·Î´Â ¾Æ¿¹ ²¨µÓ´Ï´Ù! ¡Ú
+	// 2. â˜… [ìµœì í™” í•µì‹¬] ê¸°ë³¸ì ìœ¼ë¡œëŠ” ì•„ì˜ˆ êº¼ë‘¡ë‹ˆë‹¤! â˜…
 	RotatingMovementComponent->RotationRate = FRotator::ZeroRotator;
 	RotatingMovementComponent->bAutoActivate = false;
 	RotatingMovementComponent->SetComponentTickEnabled(false);
 
-	// 4. [±âº» º¯¼ö ÃÊ±âÈ­]
-	Penetration = 1; // ±âº» 1
+	// 4. [ê¸°ë³¸ ë³€ìˆ˜ ì´ˆê¸°í™”]
+	Penetration = 1; // ê¸°ë³¸ 1
 	Damage = 0.0f;
 	LifeTime = 3.0f;
  
@@ -62,32 +62,32 @@ void ADESimpleProjectileBase::Tick(float DeltaTime)
 void ADESimpleProjectileBase::InitializeFromContext(const FDESkillContext& Context)
 {
 
-	// 1. Åõ»çÃ¼ °íÀ¯ µ¥ÀÌÅÍ ¼¼ÆÃ (»óÀÚ¿¡¼­ ¹æÇâ ²¨³»±â!)
+	// 1. íˆ¬ì‚¬ì²´ ê³ ìœ  ë°ì´í„° ì„¸íŒ… (ìƒìì—ì„œ ë°©í–¥ êº¼ë‚´ê¸°!)
 	ShootDirection = Context.TargetDirection.GetSafeNormal();
 	Speed = Context.Speed;
 	CurrentSpeed = (Speed == 0.0f) ? 1200.0f : Speed;
 	Penetration = Context.Penetration;
 
-	// 2. ¼Óµµ ¹Ì¸® ÁÖÀÔ
+	// 2. ì†ë„ ë¯¸ë¦¬ ì£¼ì…
 	if (MovementComponent)
 	{
 		MovementComponent->Velocity = ShootDirection * CurrentSpeed;
 	}
 
-	// 3. ¡Ú ºÎ¸ğ ÃÊ±âÈ­ È£Ãâ (ÀÌ ¾È¿¡¼­ °¡»ó ÇÔ¼öÀÎ ResetState()°¡ È£ÃâµÇ¸ç ±ò²ûÇÏ°Ô 1¹ø¸¸ ÄÑÁü)
+	// 3. â˜… ë¶€ëª¨ ì´ˆê¸°í™” í˜¸ì¶œ (ì´ ì•ˆì—ì„œ ê°€ìƒ í•¨ìˆ˜ì¸ ResetState()ê°€ í˜¸ì¶œë˜ë©° ê¹”ë”í•˜ê²Œ 1ë²ˆë§Œ ì¼œì§)
 	Super::InitializeFromContext(Context);
 }
 
 void ADESimpleProjectileBase::ResetState()
 {
 	Super::ResetState();
-	// 4. ¹«ºê¸ÕÆ® ÄÄÆ÷³ÍÆ® È°¼ºÈ­
+	// 4. ë¬´ë¸Œë¨¼íŠ¸ ì»´í¬ë„ŒíŠ¸ í™œì„±í™”
 	HitActors.Reset();
 
 	if (MovementComponent)
 	{
 		MovementComponent->Activate();
-		MovementComponent->SetUpdatedComponent(CollisionComponent); // È¤½Ã ¿¬°á ²÷°åÀ»±îºÁ
+		MovementComponent->SetUpdatedComponent(CollisionComponent); // í˜¹ì‹œ ì—°ê²° ëŠê²¼ì„ê¹Œë´
 	}
 
 	if (RotatingMovementComponent)
@@ -117,7 +117,7 @@ void ADESimpleProjectileBase::ReturnToPool()
 		MovementComponent->Deactivate();
 	}
 
-	// ³ª¸ÓÁö´Â ºÎ¸ğ°¡ ¾Ë¾Æ¼­ ²ü´Ï´Ù.
+	// ë‚˜ë¨¸ì§€ëŠ” ë¶€ëª¨ê°€ ì•Œì•„ì„œ ë•ë‹ˆë‹¤.
 	Super::ReturnToPool();
 }
 
@@ -125,13 +125,13 @@ void ADESimpleProjectileBase::ReturnToPool()
 //	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 //	bool bFromSweep, const FHitResult& SweepResult)
 //{
-//	// 1. [À¯È¿¼º °Ë»ç]
+//	// 1. [ìœ íš¨ì„± ê²€ì‚¬]
 //	if (!OtherActor || OtherActor == this || OtherActor == GetInstigator() || HitActors.Contains(OtherActor)) return;
 //
-//	// 2. Å¸°İ ±â·Ï
+//	// 2. íƒ€ê²© ê¸°ë¡
 //	HitActors.Add(OtherActor);
 //	//UE_LOG(LogTemp, Warning, TEXT("Projectile : %s , Hit : %s"), *GetName(), *OtherActor->GetName());
-//	// 3. ¡Ú °«-º®ÇÏ°Ô ¾ĞÃàµÈ µ¥¹ÌÁö ·ÎÁ÷ & °üÅë Ã³¸® ¡Ú
+//	// 3. â˜… ê°“-ë²½í•˜ê²Œ ì••ì¶•ëœ ë°ë¯¸ì§€ ë¡œì§ & ê´€í†µ ì²˜ë¦¬ â˜…
 //	if (TryDealDamage(OtherActor))
 //	{
 //		if (Penetration != -1 && --Penetration <= 0)
@@ -144,18 +144,18 @@ void ADESimpleProjectileBase::ReturnToPool()
 
 void ADESimpleProjectileBase::UpdateMovement(float DeltaTime)
 {
-	// [ÃÖÀûÈ­] °¡¼Óµµ°¡ ÀÖÀ» ¶§¸¸ ¿¬»ê
-	// KINDA_SMALL_NUMBER (0.0001) Ã¼Å©µµ ºñ¿ëÀÌ´Ù. ±×³É 0.0f ºñ±³°¡ ´õ ºü¸¦ ¼öµµ ÀÖÀ½.
+	// [ìµœì í™”] ê°€ì†ë„ê°€ ìˆì„ ë•Œë§Œ ì—°ì‚°
+	// KINDA_SMALL_NUMBER (0.0001) ì²´í¬ë„ ë¹„ìš©ì´ë‹¤. ê·¸ëƒ¥ 0.0f ë¹„êµê°€ ë” ë¹ ë¥¼ ìˆ˜ë„ ìˆìŒ.
 	if (MovementComponent && Acceleration != 0.0f)
 	{
-		// 1. float µ¡¼À (CPU°¡ Á¦ÀÏ ÁÁ¾ÆÇÏ´Â ¿¬»ê)
+		// 1. float ë§ì…ˆ (CPUê°€ ì œì¼ ì¢‹ì•„í•˜ëŠ” ì—°ì‚°)
 		CurrentSpeed += (Acceleration * DeltaTime);
 
-		// 2. À½¼ö ¹æÁö & MaxSpeed Á¦ÇÑ
+		// 2. ìŒìˆ˜ ë°©ì§€ & MaxSpeed ì œí•œ
 		//if (CurrentSpeed < 0.0f) CurrentSpeed = 0.0f;
-		// if (CurrentSpeed > MaxSpeed) ... (ÇÊ¿äÇÏ¸é)
+		// if (CurrentSpeed > MaxSpeed) ... (í•„ìš”í•˜ë©´)
 
-		// 3. [ÇÙ½É] Á¦°ö±Ù ¿¬»ê(sqrt) ¾øÀÌ ´Ü¼ø °ö¼ÀÀ¸·Î ¼Óµµ Àû¿ë
+		// 3. [í•µì‹¬] ì œê³±ê·¼ ì—°ì‚°(sqrt) ì—†ì´ ë‹¨ìˆœ ê³±ì…ˆìœ¼ë¡œ ì†ë„ ì ìš©
 		MovementComponent->Velocity = ShootDirection * CurrentSpeed;
 	}
 }
@@ -164,7 +164,7 @@ void ADESimpleProjectileBase::PerformCollisionDetection(float DeltaTime)
 {
 	if (!CanHit()) return;
 
-	if (Penetration == 0) return; // °üÅë·Â ´Ù ½èÀ¸¸é ¸ØÃã
+	if (Penetration == 0) return; // ê´€í†µë ¥ ë‹¤ ì¼ìœ¼ë©´ ë©ˆì¶¤
 
 	UWorld* World = GetWorld();
 	if (!World) return;
@@ -175,7 +175,7 @@ void ADESimpleProjectileBase::PerformCollisionDetection(float DeltaTime)
 	TArray<FHitResult> HitResults;
 	FCollisionShape SphereShape = FCollisionShape::MakeSphere(Radius);
 
-	// 1. ¿£Áø¿¡ ½ºÄ³³Ê ¹ß»ç (ECC_GameTraceChannel1Àº º»ÀÎÀÇ ¸ó½ºÅÍ Ã¤³Î ¸ÅÅ©·Î·Î º¯°æ)
+	// 1. ì—”ì§„ì— ìŠ¤ìºë„ˆ ë°œì‚¬ (ECC_GameTraceChannel1ì€ ë³¸ì¸ì˜ ëª¬ìŠ¤í„° ì±„ë„ ë§¤í¬ë¡œë¡œ ë³€ê²½)
 	bool bHit = World->SweepMultiByChannel(
 		HitResults,
 		StartLoc,
@@ -195,22 +195,22 @@ void ADESimpleProjectileBase::PerformCollisionDetection(float DeltaTime)
 		{
 			AActor* Target = Hit.GetActor();
 
-			// 2. À¯È¿¼º °Ë»ç (³ª ÀÚ½Å, ÁÖÀÎ ¹«½Ã)
+			// 2. ìœ íš¨ì„± ê²€ì‚¬ (ë‚˜ ìì‹ , ì£¼ì¸ ë¬´ì‹œ)
 			if (!Target || Target == this || Target == GetInstigator()) continue;
 
-			// 3. ¡Ú [Åõ»çÃ¼ ÇÙ½É ·ê] ¸íºÎ¿¡ ÀÌ¸§ÀÌ ÀÖ´Ù¸é ½Ã°£ ¹«½ÃÇÏ°í ¹«Á¶°Ç Åë°ú (°üÅë ¹ö±× ¹æÁö)
+			// 3. â˜… [íˆ¬ì‚¬ì²´ í•µì‹¬ ë£°] ëª…ë¶€ì— ì´ë¦„ì´ ìˆë‹¤ë©´ ì‹œê°„ ë¬´ì‹œí•˜ê³  ë¬´ì¡°ê±´ í†µê³¼ (ê´€í†µ ë²„ê·¸ ë°©ì§€)
 			if (HitCooldownMap.Contains(Target)) continue;
 
-			// 4. Å¸°İ Ã³¸®
+			// 4. íƒ€ê²© ì²˜ë¦¬
 			if (TryDealDamage(Target))
 			{
-				// Å¸°İ ¼º°ø ½Ã ¸íºÎ¿¡ ÀÌ¸§ ¿Ã¸®±â (Åõ»çÃ¼´Â ½Ã°£°ªÀ» ¾È ¾²¹Ç·Î 0.0f ÀúÀå)
+				// íƒ€ê²© ì„±ê³µ ì‹œ ëª…ë¶€ì— ì´ë¦„ ì˜¬ë¦¬ê¸° (íˆ¬ì‚¬ì²´ëŠ” ì‹œê°„ê°’ì„ ì•ˆ ì“°ë¯€ë¡œ 0.0f ì €ì¥)
 				HitCooldownMap.Add(Target, 0.0f);
 
 				OnTargetHit(Target);
 
 
-				// °üÅë·Â °¨¼Ò ¹× ¼Ò¸ê Ã³¸®
+				// ê´€í†µë ¥ ê°ì†Œ ë° ì†Œë©¸ ì²˜ë¦¬
 				if (Penetration != -1 && --Penetration <= 0)
 				{
 					ReturnToPool();
@@ -220,25 +220,25 @@ void ADESimpleProjectileBase::PerformCollisionDetection(float DeltaTime)
 		}
 	}
 
-	// 5. ´ÙÀ½ ÇÁ·¹ÀÓ ½ºÄµÀ» À§ÇØ ÇöÀç À§Ä¡¸¦ Ä³½Ì
+	// 5. ë‹¤ìŒ í”„ë ˆì„ ìŠ¤ìº”ì„ ìœ„í•´ í˜„ì¬ ìœ„ì¹˜ë¥¼ ìºì‹±
 	LastFrameLocation = EndLoc;
 }
 
 void ADESimpleProjectileBase::SetSpeed(float NewSpeed)
 {
-	// 1. µ¥ÀÌÅÍ °»½Å
+	// 1. ë°ì´í„° ê°±ì‹ 
 	Speed = NewSpeed;
 
 	if (MovementComponent)
 	{
-		// 2. ¹«ºê¸ÕÆ® ¼³Á¤ °»½Å (´ÙÀ½ ÇÁ·¹ÀÓºÎÅÍ Àû¿ëµÉ ¼Óµµ)
+		// 2. ë¬´ë¸Œë¨¼íŠ¸ ì„¤ì • ê°±ì‹  (ë‹¤ìŒ í”„ë ˆì„ë¶€í„° ì ìš©ë  ì†ë„)
 		MovementComponent->MaxSpeed = Speed;
 		MovementComponent->InitialSpeed = Speed;
 
-		// 3. ¡Ú ÇöÀç ³¯¾Æ°¡°í ÀÖ´Â µµÁßÀÌ¶ó¸é, Áï½Ã ¼Óµµ ¹İ¿µ!
+		// 3. â˜… í˜„ì¬ ë‚ ì•„ê°€ê³  ìˆëŠ” ë„ì¤‘ì´ë¼ë©´, ì¦‰ì‹œ ì†ë„ ë°˜ì˜!
 		if (MovementComponent->IsActive() && MovementComponent->Velocity.Size() > 0.f)
 		{
-			// ÇöÀç ¹æÇâ(Direction)Àº À¯ÁöÇÏµÇ, ¼Ó·Â(Speed)¸¸ °¥¾Æ³¢¿ò
+			// í˜„ì¬ ë°©í–¥(Direction)ì€ ìœ ì§€í•˜ë˜, ì†ë ¥(Speed)ë§Œ ê°ˆì•„ë¼ì›€
 			MovementComponent->Velocity = MovementComponent->Velocity.GetSafeNormal() * Speed;
 		}
 	}

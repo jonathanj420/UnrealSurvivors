@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -10,7 +10,7 @@
 class UNiagaraSystem;
 class USoundBase;
 
-// ÀÌÆåÆ®¸¦ ¾îµğ¼­ Àç»ıÇÒÁö °áÁ¤ÇÏ´Â Enum
+// ì´í™íŠ¸ë¥¼ ì–´ë””ì„œ ì¬ìƒí• ì§€ ê²°ì •í•˜ëŠ” Enum
 UENUM(BlueprintType)
 enum class EEffectTargetType : uint8
 {
@@ -68,11 +68,11 @@ public:
     float SizeMultiplier = 1.0f;
 
 public:
-    // ³ªÀÌ¾Æ°¡¶ó ÀÌÆåÆ®°¡ ÅÍÁú À§Ä¡
+    // ë‚˜ì´ì•„ê°€ë¼ ì´í™íŠ¸ê°€ í„°ì§ˆ ìœ„ì¹˜
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
     EEffectTargetType NiagaraTargetType;
 
-    // »ç¿îµå°¡ Àç»ıµÉ À§Ä¡ (ºĞ¸®!)
+    // ì‚¬ìš´ë“œê°€ ì¬ìƒë  ìœ„ì¹˜ (ë¶„ë¦¬!)
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
     EEffectTargetType SoundTargetType;
 

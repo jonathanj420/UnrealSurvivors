@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -29,7 +29,7 @@ protected:
     virtual void BeginPlay() override;
 
 public:
-    /* ================= ΩΩ∑‘ ¡¶«— ================= */
+    /* ================= Ïä¨Î°Ø Ï†úÌïú ================= */
 
     UPROPERTY(EditAnywhere, Category = "Inventory|Slots")
     int32 MaxSkillSlots = 6;
@@ -37,18 +37,18 @@ public:
     UPROPERTY(EditAnywhere, Category = "Inventory|Slots")
     int32 MaxAccessorySlots = 6;
 
-    /* ================= º“¿Ø ∏Ò∑œ ================= */
+    /* ================= ÏÜåÏú† Î™©Î°ù ================= */
 
-    // SkillID ∏Ò∑œ
+    // SkillID Î™©Î°ù
     UPROPERTY(VisibleAnywhere, Category = "Inventory|Skills")
     TArray<int32> OwnedSkillIDs;
 
-    // AccessoryID ∏Ò∑œ
+    // AccessoryID Î™©Î°ù
     UPROPERTY(VisibleAnywhere, Category = "Inventory|Accessories")
     TArray<int32> OwnedAccessoryIDs;
 
 public:
-    /* ================= ¡∂»∏ ================= */
+    /* ================= Ï°∞Ìöå ================= */
 
     bool HasSkill(int32 SkillID) const;
     bool HasAccessory(int32 AccessoryID) const;
@@ -58,7 +58,7 @@ public:
 
     const TArray<int32>& GetOwnedSkillIDs() const;
 
-    /* ================= √ﬂ∞° / ¡¶∞≈ ================= */
+    /* ================= Ï∂îÍ∞Ä / Ï†úÍ±∞ ================= */
 
     bool TryAddSkill(int32 SkillID);
     bool TryAddAccessory(int32 AccessoryID);

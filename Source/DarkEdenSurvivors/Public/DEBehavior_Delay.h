@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -15,17 +15,17 @@ class DARKEDENSURVIVORS_API UDEBehavior_Delay : public UDESkillBehavior
     GENERATED_BODY()
 
 public:
-    // ¿¡µğÅÍ¿¡¼­ ±âÈ¹ÀÚ°¡ Á¶ÀıÇÒ ´ë±â ½Ã°£
+    // ì—ë””í„°ì—ì„œ ê¸°íšìê°€ ì¡°ì ˆí•  ëŒ€ê¸° ì‹œê°„
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Behavior|Time")
     float DelayTime = 1.0f;
 
-    // ÆÄÀÌÇÁ¶óÀÎ¿¡°Ô ³» µô·¹ÀÌ ½Ã°£À» ¾Ë·ÁÁÜ!
+    // íŒŒì´í”„ë¼ì¸ì—ê²Œ ë‚´ ë”œë ˆì´ ì‹œê°„ì„ ì•Œë ¤ì¤Œ!
     virtual float GetPipelineDelay() const override { return DelayTime; }
 
-    // Execute´Â ºñ¿öµÎ¾îµµ µË´Ï´Ù. (ÇÊ¿ä½Ã ·Î±×¸¦ Âï°Å³ª ÀÌÆåÆ®¸¦ ³Ö¾îµµ µÊ)
+    // ExecuteëŠ” ë¹„ì›Œë‘ì–´ë„ ë©ë‹ˆë‹¤. (í•„ìš”ì‹œ ë¡œê·¸ë¥¼ ì°ê±°ë‚˜ ì´í™íŠ¸ë¥¼ ë„£ì–´ë„ ë¨)
     virtual void Execute(FDESkillContext& Context) override
     {
-        // UI ¿¬Ãâ ½ÃÀÛ µîÀ» ¿©±â¼­ ÇÒ ¼öµµ ÀÖ½À´Ï´Ù.
+        // UI ì—°ì¶œ ì‹œì‘ ë“±ì„ ì—¬ê¸°ì„œ í•  ìˆ˜ë„ ìˆìŠµë‹ˆë‹¤.
     }
 	
 };

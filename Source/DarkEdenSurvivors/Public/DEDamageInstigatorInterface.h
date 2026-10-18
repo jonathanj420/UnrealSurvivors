@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -23,6 +23,6 @@ class DARKEDENSURVIVORS_API IDEDamageInstigatorInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	// µ¥¹ÌÁö À¯¹ßÀÚ(½ºÅ³ µî)°¡ ¸·Å¸¸¦ ÃÆÀ» ¶§ È£ÃâµÉ °¡»ó ÇÔ¼ö
+	// ë°ë¯¸ì§€ ìœ ë°œì(ìŠ¤í‚¬ ë“±)ê°€ ë§‰íƒ€ë¥¼ ì³¤ì„ ë•Œ í˜¸ì¶œë  ê°€ìƒ í•¨ìˆ˜
 	virtual void OnTargetKilled(const FDEDamageResult& Result) = 0;
 };

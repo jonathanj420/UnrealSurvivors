@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DESkill_AcidBolt.h"
@@ -24,17 +24,17 @@ void UDESkill_AcidBolt::InitBehaviors()
 {
 	Super::InitBehaviors();
 
-	// 1. [Å½»ö Çàµ¿] °¡Àå °¡±î¿î ÀûÀ» Ã£¾Æ¶ó
+	// 1. [íƒìƒ‰ í–‰ë™] ê°€ì¥ ê°€ê¹Œìš´ ì ì„ ì°¾ì•„ë¼
 	UDEBehavior_SelectNearestTarget* Targeting = NewObject<UDEBehavior_SelectNearestTarget>(this);
 	Targeting->DefaultSearchRadius = 800.f; // 2000 = mob auto repos rad
 	Targeting->EnemyTag = TEXT("Enemy");    // 
 	Behaviors.Add(Targeting);
 
-	// 2. [¹ß»ç Çàµ¿] Ã£Àº Àû ¹æÇâÀ» ±âÁØÀ¸·Î ÆÛÁö°Ô ½÷¶ó
+	// 2. [ë°œì‚¬ í–‰ë™] ì°¾ì€ ì  ë°©í–¥ì„ ê¸°ì¤€ìœ¼ë¡œ í¼ì§€ê²Œ ì´ë¼
 	UDEBehavior_FireProjectileRadial* RadialFire = NewObject<UDEBehavior_FireProjectileRadial>(this);
 	RadialFire->ProjectileClass = this->ProjectileClass;
 	RadialFire->FireSound = this->FireSound;
-	RadialFire->ArcAngle = 360.f; // 360µµ
+	RadialFire->ArcAngle = 360.f; // 360ë„
 	Behaviors.Add(RadialFire);
 }
 
@@ -47,7 +47,7 @@ void UDESkill_AcidBolt::InitBehaviors()
 //    FVector Origin = SkillOwner->GetActorLocation();
 //    FRotator BaseRot = SkillOwner->GetActorRotation();
 //
-//    // ¹ß»çÀ½
+//    // ë°œì‚¬ìŒ
 //    if (FireSound)
 //        UGameplayStatics::PlaySoundAtLocation(SkillOwner, FireSound, Origin);
 //

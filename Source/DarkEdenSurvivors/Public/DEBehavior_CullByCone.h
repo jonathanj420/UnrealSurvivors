@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+О╩©// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -15,11 +15,11 @@ class DARKEDENSURVIVORS_API UDEBehavior_CullByCone : public UDESkillBehavior
     GENERATED_BODY()
 
 public:
-    // ╨нц╓╡ц ╧щ╟Ф (╩Г╟е╦╝)
+    // К╤─Л╠└Й╪╢ К╟≤Й╡╫ (Л┌╛Й╠╟К╕╛)
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Targeting")
     float Radius = 150.0f;
 
-    // ╨нц╓╡ц ╟╒╣╣ (©╧: 120╣╣╦И аб©Л 60╣╣╬©)
+    // К╤─Л╠└Й╪╢ Й╟│К▐└ (Л≤┬: 120К▐└К╘╢ Л╒▄Л ╟ 60К▐└Л■╘)
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Targeting")
     float ConeAngle = 120.0f;
 

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEBehavior_PlayUI.h"
@@ -13,13 +13,13 @@ void UDEBehavior_PlayUI::Execute(FDESkillContext& Context)
     {
         if (APawn* InstigatorPawn = Cast<APawn>(Context.Instigator))
         {
-            // 2. ÀÌÁ¦ Pawn¿¡¼­ Controller¸¦ °¡Á®¿Í ´Ù½Ã PlayerController·Î Ä³½ºÆÃÇÕ´Ï´Ù.
+            // 2. ì´ì œ Pawnì—ì„œ Controllerë¥¼ ê°€ì ¸ì™€ ë‹¤ì‹œ PlayerControllerë¡œ ìºìŠ¤íŒ…í•©ë‹ˆë‹¤.
             if (APlayerController* PC = Cast<APlayerController>(InstigatorPawn->GetController()))
             {
                 UUserWidget* CinematicUI = CreateWidget<UUserWidget>(PC, CinematicWidgetClass);
                 if (CinematicUI)
                 {
-                    // È­¸é ÃÖ»ó´Ü¿¡ UI¸¦ ¶ç¿ó´Ï´Ù!
+                    // í™”ë©´ ìµœìƒë‹¨ì— UIë¥¼ ë„ì›ë‹ˆë‹¤!
                     CinematicUI->AddToViewport(ZOrder);
                 }
             }

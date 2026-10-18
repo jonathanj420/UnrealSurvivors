@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DELevelUpChoice_Skill.h"
@@ -11,7 +11,7 @@ void UDELevelUpChoice_Skill::Init(int32 InSkillID, FText InName, UTexture2D* InI
     SkillID = InSkillID;
     SkillName = InName;
     SkillIcon = InIcon;
-    ChoiceDescription = InDescription; // ÀúÀåÇØµÎ¸é ºí·çÇÁ¸°Æ® UI¿¡¼­ ÀÐ¾î°¨
+    ChoiceDescription = InDescription; // ì €ìž¥í•´ë‘ë©´ ë¸”ë£¨í”„ë¦°íŠ¸ UIì—ì„œ ì½ì–´ê°
     TargetLevel = InTargetLevel;
 
 }
@@ -23,7 +23,7 @@ FText UDELevelUpChoice_Skill::GetDisplayName() const
 
 FText UDELevelUpChoice_Skill::GetDescription() const
 {
-    // ÇÊ¿äÇÏ¸é SkillManager¿¡¼­ SkillID·Î ¼³¸í Á¶È¸
+    // í•„ìš”í•˜ë©´ SkillManagerì—ì„œ SkillIDë¡œ ì„¤ëª… ì¡°íšŒ
     return ChoiceDescription;
 }
 
@@ -40,24 +40,24 @@ void UDELevelUpChoice_Skill::Apply(AActor* PlayerActor)
     if (UDESkillManagerComponent* SkillManager = PlayerActor->FindComponentByClass<UDESkillManagerComponent>())
     {
         // =========================================================
-        // ¡Ú ¿©±â¼­ ²¿¸®Ç¥¸¦ È®ÀÎÇÏ°í ½ºÅ³ ¸Å´ÏÀúÇÑÅ× ´Ù¸¥ ¸í·ÉÀ» ³»¸²!
+        // â˜… ì—¬ê¸°ì„œ ê¼¬ë¦¬í‘œë¥¼ í™•ì¸í•˜ê³  ìŠ¤í‚¬ ë§¤ë‹ˆì €í•œí…Œ ë‹¤ë¥¸ ëª…ë ¹ì„ ë‚´ë¦¼!
         // =========================================================
         //if (bIsEvolution && TargetBaseSkillID != INDEX_NONE)
         //{
-        //    // ³×°¡ ¾Æ±î Â¥µÐ ±× ¿Ïº®ÇÑ ÁøÈ­ ÇÔ¼ö È£Ãâ! (±âÁ¸ ¹«±â »èÁ¦ + ÁøÈ­ ¹«±â ÀåÂø)
+        //    // ë„¤ê°€ ì•„ê¹Œ ì§œë‘” ê·¸ ì™„ë²½í•œ ì§„í™” í•¨ìˆ˜ í˜¸ì¶œ! (ê¸°ì¡´ ë¬´ê¸° ì‚­ì œ + ì§„í™” ë¬´ê¸° ìž¥ì°©)
         //    //SkillManager->EvolveSkill(TargetBaseSkillID, SkillID);
         //    SkillManager->EvolveSkill(ConsumedSkillIDs, SkillID);
         //}
         if (bIsEvolution && ConsumedSkillIDs.Num() > 0)
         {
-            // ³×°¡ ¾Æ±î Â¥µÐ ±× ¿Ïº®ÇÑ ÁøÈ­ ÇÔ¼ö È£Ãâ! (±âÁ¸ ¹«±â »èÁ¦ + ÁøÈ­ ¹«±â ÀåÂø)
+            // ë„¤ê°€ ì•„ê¹Œ ì§œë‘” ê·¸ ì™„ë²½í•œ ì§„í™” í•¨ìˆ˜ í˜¸ì¶œ! (ê¸°ì¡´ ë¬´ê¸° ì‚­ì œ + ì§„í™” ë¬´ê¸° ìž¥ì°©)
             //SkillManager->EvolveSkill(TargetBaseSkillID, SkillID);
             SkillManager->EvolveSkill(ConsumedSkillIDs, SkillID);
         }
 
         else
         {
-            // ²¿¸®Ç¥°¡ ¾øÀ¸¸é? ±âÁ¸Ã³·³ ´Ü¼øÇÏ°Ô ·¹º§¾÷!
+            // ê¼¬ë¦¬í‘œê°€ ì—†ìœ¼ë©´? ê¸°ì¡´ì²˜ëŸ¼ ë‹¨ìˆœí•˜ê²Œ ë ˆë²¨ì—…!
             SkillManager->ApplySkillChoice(SkillID);
         }
 

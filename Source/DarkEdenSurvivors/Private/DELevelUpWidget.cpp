@@ -1,9 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DELevelUpWidget.h"
 #include "DELevelUpManagerComponent.h"
-#include "DELevelUpChoiceSlotWidget.h" // ½½·Ô Çì´õ Æ÷ÇÔ
+#include "DELevelUpChoiceSlotWidget.h" // ìŠ¬ë¡¯ í—¤ë” í¬í•¨
 #include "DELevelUpChoiceBase.h"
 #include "Components/VerticalBox.h"
 #include "DEPlayerController.h"
@@ -24,28 +24,28 @@ void UDELevelUpWidget::NativeConstruct()
 		return;
 	}
 
-	// 1. ±âÁ¸¿¡ ³²¾ÆÀÖ´ø ½½·ÔÀÌ ÀÖ´Ù¸é Á¦°Å (¸®·Ñ ±â´É ´ëºñ)
+	// 1. ê¸°ì¡´ì— ë‚¨ì•„ìˆë˜ ìŠ¬ë¡¯ì´ ìˆë‹¤ë©´ ì œê±° (ë¦¬ë¡¤ ê¸°ëŠ¥ ëŒ€ë¹„)
 	ChoiceContainer->ClearChildren();
 
-	// 2. ¸Å´ÏÀú¿¡°Ô ¼±ÅÃÁö 3°³(È¤Àº 4°³) ¹Ş¾Æ¿À±â
-	// (ÇÔ¼ö ÀÌ¸§Àº ´ÔÀÌ ¸¸µç Manager¿¡ ¸ÂÃç¼­ GetRandomChoices or GenerateChoices »ç¿ë)
+	// 2. ë§¤ë‹ˆì €ì—ê²Œ ì„ íƒì§€ 3ê°œ(í˜¹ì€ 4ê°œ) ë°›ì•„ì˜¤ê¸°
+	// (í•¨ìˆ˜ ì´ë¦„ì€ ë‹˜ì´ ë§Œë“  Managerì— ë§ì¶°ì„œ GetRandomChoices or GenerateChoices ì‚¬ìš©)
 	TArray<UDELevelUpChoiceBase*> Choices = LevelUpManager->GenerateChoices(3);
 
-	// 3. ½½·Ô »ı¼º ¹× ¹èÄ¡
+	// 3. ìŠ¬ë¡¯ ìƒì„± ë° ë°°ì¹˜
 	for (UDELevelUpChoiceBase* Choice : Choices)
 	{
-		// À§Á¬ »ı¼º (CreateWidget)
+		// ìœ„ì ¯ ìƒì„± (CreateWidget)
 		UDELevelUpChoiceSlotWidget* SlotWidget = CreateWidget<UDELevelUpChoiceSlotWidget>(this, SlotWidgetClass);
 
 		if (SlotWidget)
 		{
-			// µ¥ÀÌÅÍ ÁÖÀÔ (ÀÌ¸§, ¾ÆÀÌÄÜ µî ¼¼ÆÃ)
+			// ë°ì´í„° ì£¼ì… (ì´ë¦„, ì•„ì´ì½˜ ë“± ì„¸íŒ…)
 			SlotWidget->InitSlot(Choice);
 
-			// ÀÌº¥Æ® ¿¬°á: "½½·ÔÀÌ Å¬¸¯µÇ¸é -> OnOptionSelected ½ÇÇàÇØ¶ó"
+			// ì´ë²¤íŠ¸ ì—°ê²°: "ìŠ¬ë¡¯ì´ í´ë¦­ë˜ë©´ -> OnOptionSelected ì‹¤í–‰í•´ë¼"
 			SlotWidget->OnSlotSelected.AddDynamic(this, &UDELevelUpWidget::OnOptionSelected);
 
-			// È­¸é(HorizontalBox)¿¡ Ãß°¡
+			// í™”ë©´(HorizontalBox)ì— ì¶”ê°€
 			ChoiceContainer->AddChild(SlotWidget);
 		}
 	}
@@ -53,8 +53,8 @@ void UDELevelUpWidget::NativeConstruct()
 
 void UDELevelUpWidget::OnOptionSelected()
 {
-	// ¡Ú Áß¿ä: Apply()´Â ÀÌ¹Ì SlotWidget ¾È¿¡¼­ ½ÇÇàµÇ¾ú½À´Ï´Ù.
-	// ¿©±â¼­´Â Ã¢À» ´İ°í °ÔÀÓÀ» Àç°³ÇÏ´Â ¿ªÇÒ¸¸ ÇÕ´Ï´Ù.
+	// â˜… ì¤‘ìš”: Apply()ëŠ” ì´ë¯¸ SlotWidget ì•ˆì—ì„œ ì‹¤í–‰ë˜ì—ˆìŠµë‹ˆë‹¤.
+	// ì—¬ê¸°ì„œëŠ” ì°½ì„ ë‹«ê³  ê²Œì„ì„ ì¬ê°œí•˜ëŠ” ì—­í• ë§Œ í•©ë‹ˆë‹¤.
 
 	if (auto PC = Cast<ADEPlayerController>(GetOwningPlayer()))
 	{

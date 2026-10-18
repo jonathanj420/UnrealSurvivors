@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEProjectile_Boomerang.h"
@@ -6,7 +6,7 @@
 
 ADEProjectile_Boomerang::ADEProjectile_Boomerang()
 {
-    // ºÎ¸Ş¶ûÀº MovementComponent ¾È ¾¸
+    // ë¶€ë©”ë‘ì€ MovementComponent ì•ˆ ì”€
     if (MovementComponent)
     {
         if (MovementComponent)
@@ -30,9 +30,9 @@ void ADEProjectile_Boomerang::ResetState()
 
 void ADEProjectile_Boomerang::UpdateMovement(float DeltaTime)
 {
-    // °øÅë È¸Àü ·ÎÁ÷ (Áßº¹ Á¦°Å)
+    // ê³µí†µ íšŒì „ ë¡œì§ (ì¤‘ë³µ ì œê±°)
     //FRotator CurrentRot = GetActorRotation();
-    //CurrentRot.Yaw += 720.f * DeltaTime; // ºÎ¸Ş¶ûÀº Á» ´õ »¡¸® µ¹¾Æ¾ß Á¦¸À!
+    //CurrentRot.Yaw += 720.f * DeltaTime; // ë¶€ë©”ë‘ì€ ì¢€ ë” ë¹¨ë¦¬ ëŒì•„ì•¼ ì œë§›!
     //SetActorRotation(CurrentRot);
 
 
@@ -40,27 +40,27 @@ void ADEProjectile_Boomerang::UpdateMovement(float DeltaTime)
     {
     case EBoomerangPhase::Going:
     {
-        // 1. [ÇÙ½É] °¡¼Óµµ¸¦ ÀÌ¿ëÇØ ÇöÀç ¼Óµµ¸¦ Á¡Á¡ ÁÙÀÔ´Ï´Ù.
-        // RetractionAccelerationÀº ¾à 1000.0f Á¤µµ·Î ÀâÀ¸½Ã¸é Àû´çÇÕ´Ï´Ù.
+        // 1. [í•µì‹¬] ê°€ì†ë„ë¥¼ ì´ìš©í•´ í˜„ì¬ ì†ë„ë¥¼ ì ì  ì¤„ì…ë‹ˆë‹¤.
+        // RetractionAccelerationì€ ì•½ 1000.0f ì •ë„ë¡œ ì¡ìœ¼ì‹œë©´ ì ë‹¹í•©ë‹ˆë‹¤.
         CurrentSpeed -= RetractionAcceleration * DeltaTime;
 
-        // 2. ÀÌµ¿ Ã³¸®
+        // 2. ì´ë™ ì²˜ë¦¬
         FVector Delta = ShootDirection * CurrentSpeed * DeltaTime;
         AddActorWorldOffset(Delta);
 
-        // 3. [»óÅÂ ÀüÈ¯] ¼Óµµ°¡ 0 ÀÌÇÏ(Á¤Á¡)°¡ µÇ¸é Returning ÆäÀÌÁî·Î ÀüÈ¯!
+        // 3. [ìƒíƒœ ì „í™˜] ì†ë„ê°€ 0 ì´í•˜(ì •ì )ê°€ ë˜ë©´ Returning í˜ì´ì¦ˆë¡œ ì „í™˜!
         if (CurrentSpeed <= 0.0f)
         {
             Phase = EBoomerangPhase::Returning;
             HitActors.Reset();
-            CurrentSpeed = 0.0f; // 0ºÎÅÍ ´Ù½Ã °¡¼Ó ½ÃÀÛÇÏ±â À§ÇØ ÃÊ±âÈ­
+            CurrentSpeed = 0.0f; // 0ë¶€í„° ë‹¤ì‹œ ê°€ì† ì‹œì‘í•˜ê¸° ìœ„í•´ ì´ˆê¸°í™”
         }
         break;
     }
 
     case EBoomerangPhase::Returning:
     {
-        // 1. [ÇÙ½É] ¼Óµµ¸¦ ´Ù½Ã °¡¼Ó½ÃÅµ´Ï´Ù. (MaxSpeed±îÁö)
+        // 1. [í•µì‹¬] ì†ë„ë¥¼ ë‹¤ì‹œ ê°€ì†ì‹œí‚µë‹ˆë‹¤. (MaxSpeedê¹Œì§€)
         CurrentSpeed += RetractionAcceleration * DeltaTime;
         float FinalReturnSpeed = FMath::Min(CurrentSpeed, ReturnSpeed);
 
@@ -75,10 +75,10 @@ void ADEProjectile_Boomerang::UpdateMovement(float DeltaTime)
             MoveDir = ToOwner.GetSafeNormal();
         }
 
-        // 2. °¡¼ÓµÈ ¼Óµµ·Î ÀÌµ¿
+        // 2. ê°€ì†ëœ ì†ë„ë¡œ ì´ë™
         AddActorWorldOffset(MoveDir * FinalReturnSpeed * DeltaTime);
 
-        // 3. ½ÃÀüÀÚ µµ´Ş Ã¼Å© (±âÁ¸ ·ÎÁ÷ À¯Áö)
+        // 3. ì‹œì „ì ë„ë‹¬ ì²´í¬ (ê¸°ì¡´ ë¡œì§ ìœ ì§€)
         if (CachedContext.Instigator && bCanBeReturned)
         {
             float DistSq = FVector::DistSquared(GetActorLocation(), CachedContext.Instigator->GetActorLocation());

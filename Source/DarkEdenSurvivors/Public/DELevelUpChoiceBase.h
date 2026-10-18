@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -19,7 +19,7 @@ public:
     virtual FText GetDescription() const PURE_VIRTUAL(UDELevelUpChoiceBase::GetDescription, return FText(););
     virtual UTexture2D* GetIcon() const PURE_VIRTUAL(UDELevelUpChoiceBase::GetIcon, return nullptr;);
 
-    // ¡Ú ÇÙ½É: ¼±ÅÃ ½Ã ½ÇÁ¦ Àû¿ë
+    // â˜… í•µì‹¬: ì„ íƒ ì‹œ ì‹¤ì œ ì ìš©
     virtual void Apply(AActor * PlayerActor) PURE_VIRTUAL(UDELevelUpChoiceBase::Apply, );
 
 

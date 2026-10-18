@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -10,11 +10,11 @@
 //UENUM(BlueprintType)
 //enum class EDEDamageType : uint8
 //{
-//	Normal,         // ÀÏ¹İ Å¸°İ
-//	Execution,      // Ã³Çü (Á¶°ÇºÎ ¸¶¹«¸® -> ½Ã³ÊÁö ¹ßµ¿ O)
-//	InstantKill,    // Áï»ç (¹«Á¶°ÇºÎ »èÁ¦ -> ½Ã³ÊÁö ¹ßµ¿ X)
-//	Poison,         // µ¶
-//	Bleed,        // ÃâÇ÷
+//	Normal,         // ì¼ë°˜ íƒ€ê²©
+//	Execution,      // ì²˜í˜• (ì¡°ê±´ë¶€ ë§ˆë¬´ë¦¬ -> ì‹œë„ˆì§€ ë°œë™ O)
+//	InstantKill,    // ì¦‰ì‚¬ (ë¬´ì¡°ê±´ë¶€ ì‚­ì œ -> ì‹œë„ˆì§€ ë°œë™ X)
+//	Poison,         // ë…
+//	Bleed,        // ì¶œí˜ˆ
 //	Acid
 //};
 
@@ -22,47 +22,47 @@
  * 
  */
 
- // [¿äÃ»] ¶§¸®´Â ³ğÀÌ º¸³»´Â Á¤º¸
+ // [ìš”ì²­] ë•Œë¦¬ëŠ” ë†ˆì´ ë³´ë‚´ëŠ” ì •ë³´
 USTRUCT(BlueprintType)
 struct FDEDamageRequest
 {
 	GENERATED_BODY()
 
-	// ´©°¡ ¶§·È³ª? (ÇÃ·¹ÀÌ¾î)
+	// ëˆ„ê°€ ë•Œë ¸ë‚˜? (í”Œë ˆì´ì–´)
 	UPROPERTY(BlueprintReadWrite)
 	AActor* Instigator = nullptr;
 
-	// ¹«¾ùÀ¸·Î ¶§·È³ª? (Åõ»çÃ¼, Ä® µî)
+	// ë¬´ì—‡ìœ¼ë¡œ ë•Œë ¸ë‚˜? (íˆ¬ì‚¬ì²´, ì¹¼ ë“±)
 	UPROPERTY(BlueprintReadWrite)
 	AActor* DamageCauser = nullptr;
 
-	// [Ãß°¡] ¹°¸®ÀûÀÎ ¾×ÅÍ´Â ¾Æ´ÏÁö¸¸, µ¥¹ÌÁöÀÇ ¿øÀÎÀÌ µÈ ½ºÅ³/¾ÆÀÌÅÛ °´Ã¼
-	// (ÀÌ°Ô ÀÖ¾î¾ß Å³·Î±×¿¡¼­ ½ºÅ³ ¾ÆÀÌÄÜÀ» º¸¿©ÁÙ ¼ö ÀÖÀ½)
+	// [ì¶”ê°€] ë¬¼ë¦¬ì ì¸ ì•¡í„°ëŠ” ì•„ë‹ˆì§€ë§Œ, ë°ë¯¸ì§€ì˜ ì›ì¸ì´ ëœ ìŠ¤í‚¬/ì•„ì´í…œ ê°ì²´
+	// (ì´ê²Œ ìˆì–´ì•¼ í‚¬ë¡œê·¸ì—ì„œ ìŠ¤í‚¬ ì•„ì´ì½˜ì„ ë³´ì—¬ì¤„ ìˆ˜ ìˆìŒ)
 	UPROPERTY(BlueprintReadWrite)
 	UObject* SourceObject = nullptr;
 
 	UPROPERTY(BlueprintReadWrite)
 	AActor* Victim = nullptr;
 
-	// ±âº» µ¥¹ÌÁö (¾ÆÁ÷ Ä¡¸íÅ¸/¹æ¾î·Â Àû¿ë Àü)
+	// ê¸°ë³¸ ë°ë¯¸ì§€ (ì•„ì§ ì¹˜ëª…íƒ€/ë°©ì–´ë ¥ ì ìš© ì „)
 	UPROPERTY(BlueprintReadWrite)
 	float BaseDamage = 0.0f;
 
-	// Ä¡¸íÅ¸ È®·ü (0.0 ~ 1.0)
+	// ì¹˜ëª…íƒ€ í™•ë¥  (0.0 ~ 1.0)
 	UPROPERTY(BlueprintReadWrite)
 	float CritChance = 0.0f;
 
-	// Ä¡¸íÅ¸ ¹èÀ² (¿¹: 5.8 = 580%)
+	// ì¹˜ëª…íƒ€ ë°°ìœ¨ (ì˜ˆ: 5.8 = 580%)
 	UPROPERTY(BlueprintReadWrite)
 	float CritDamageMultiplier = 1.0f;
 
-	// (È®Àå¼º) ¹æ¾î ¹«½Ã ¿©ºÎ, ¼Ó¼º Å¸ÀÔ µîÀº ³ªÁß¿¡ ¿©±â¿¡ Ãß°¡
+	// (í™•ì¥ì„±) ë°©ì–´ ë¬´ì‹œ ì—¬ë¶€, ì†ì„± íƒ€ì… ë“±ì€ ë‚˜ì¤‘ì— ì—¬ê¸°ì— ì¶”ê°€
 	UPROPERTY(BlueprintReadWrite)
 	float LifeStealChance = 0.0f;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	//EDEDamageType DamageType = EDEDamageType::Normal;
-	// ¡Ú [NEW] ¹«ÇÑ´ëÀÇ ¼Ó¼º°ú ¸ŞÄ¿´ÏÁòÀ» ´ã´Â ÅÂ±× °¡¹æ!
+	// â˜… [NEW] ë¬´í•œëŒ€ì˜ ì†ì„±ê³¼ ë©”ì»¤ë‹ˆì¦˜ì„ ë‹´ëŠ” íƒœê·¸ ê°€ë°©!
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Categories = "Damage"))
 	FGameplayTagContainer DamageTags;
 
@@ -70,38 +70,38 @@ struct FDEDamageRequest
 	bool bCanTriggerOnHit = true;
 };
 
-// [°á°ú] ¸ÂÀº ³ğÀÌ °è»êÇØ¼­ µ¹·ÁÁÖ´Â Á¤º¸
+// [ê²°ê³¼] ë§ì€ ë†ˆì´ ê³„ì‚°í•´ì„œ ëŒë ¤ì£¼ëŠ” ì •ë³´
 USTRUCT(BlueprintType)
 struct FDEDamageResult
 {
 	GENERATED_BODY()
 
-		// ÃÖÁ¾ Àû¿ëµÈ µ¥¹ÌÁö
+		// ìµœì¢… ì ìš©ëœ ë°ë¯¸ì§€
 		UPROPERTY(BlueprintReadWrite)
 	float FinalDamage = 0.0f;
 
-	// Ä¡¸íÅ¸ ÅÍÁ³´ÂÁö? (UI Ãâ·Â¿ë)
+	// ì¹˜ëª…íƒ€ í„°ì¡ŒëŠ”ì§€? (UI ì¶œë ¥ìš©)
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsCritical = false;
 
-	// ±×·¡¼­ Á×¾ú´ÂÁö? (Å³ ·Î±×, ÈíÇ÷¿ë)
+	// ê·¸ë˜ì„œ ì£½ì—ˆëŠ”ì§€? (í‚¬ ë¡œê·¸, í¡í˜ˆìš©)
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsDead = false;
 
-	// ¸ÂÀº ³ğÀÌ ´©±ºÁö (Ã³Ä¡ ½Ã ½ÃÃ¼ À§Ä¡³ª ÀÌ¸§ ÇÊ¿äÇÒ ¶§ ¾¸)
+	// ë§ì€ ë†ˆì´ ëˆ„êµ°ì§€ (ì²˜ì¹˜ ì‹œ ì‹œì²´ ìœ„ì¹˜ë‚˜ ì´ë¦„ í•„ìš”í•  ë•Œ ì”€)
 	UPROPERTY(BlueprintReadWrite)
 	AActor* Victim = nullptr;
-	// (È®Àå¼º) È¸ÇÇÇß´ÂÁö? ¸·¾Ò´ÂÁö?
+	// (í™•ì¥ì„±) íšŒí”¼í–ˆëŠ”ì§€? ë§‰ì•˜ëŠ”ì§€?
 	// bool bIsEvaded = false;
 
-	// [Ãß°¡] ¾î¶² ½ºÅ³/¹«±â·Î ¶§¸° °á°úÀÎÁö
+	// [ì¶”ê°€] ì–´ë–¤ ìŠ¤í‚¬/ë¬´ê¸°ë¡œ ë•Œë¦° ê²°ê³¼ì¸ì§€
 	UPROPERTY(BlueprintReadWrite)
 	UObject* SourceObject = nullptr;
 
-	//// [Ãß°¡] ¹«½¼ Å¸ÀÔÀÇ µ¥¹ÌÁö·Î ÇÇ¸¦ ±ğ¾Ò´ÂÁö
+	//// [ì¶”ê°€] ë¬´ìŠ¨ íƒ€ì…ì˜ ë°ë¯¸ì§€ë¡œ í”¼ë¥¼ ê¹ì•˜ëŠ”ì§€
 	//UPROPERTY(BlueprintReadWrite)
 	//EDEDamageType DamageType = EDEDamageType::Normal;
-	// ¡Ú [NEW] °á°ú¿¡µµ ÅÂ±× °¡¹æÀ» ±×´ë·Î ³Ñ°ÜÁİ´Ï´Ù. (ÇÃ·ÎÆÃ ÅØ½ºÆ® »ö»ó ÆÇº°¿ë)
+	// â˜… [NEW] ê²°ê³¼ì—ë„ íƒœê·¸ ê°€ë°©ì„ ê·¸ëŒ€ë¡œ ë„˜ê²¨ì¤ë‹ˆë‹¤. (í”Œë¡œíŒ… í…ìŠ¤íŠ¸ ìƒ‰ìƒ íŒë³„ìš©)
 	UPROPERTY(BlueprintReadWrite)
 	FGameplayTagContainer DamageTags;
 
@@ -112,11 +112,11 @@ struct FDEDamageResult
 UENUM(BlueprintType)
 enum class EDamageTextType : uint8
 {
-	Damage,         // ÀÏ¹İ µ¥¹ÌÁö (¼ıÀÚ)
-	Heal,           // È¸º¹ (ÃÊ·Ï»ö ¼ıÀÚ)
-	Critical,       // Å©¸®Æ¼ÄÃ (Å©°í »¡°£ ¼ıÀÚ)
-	Execution,      // Ã³Çü ("Executed!")
-	StatusEffect    // »óÅÂÀÌ»ó ("Stunned!", "Bleeding!")
+	Damage,         // ì¼ë°˜ ë°ë¯¸ì§€ (ìˆ«ì)
+	Heal,           // íšŒë³µ (ì´ˆë¡ìƒ‰ ìˆ«ì)
+	Critical,       // í¬ë¦¬í‹°ì»¬ (í¬ê³  ë¹¨ê°„ ìˆ«ì)
+	Execution,      // ì²˜í˜• ("Executed!")
+	StatusEffect    // ìƒíƒœì´ìƒ ("Stunned!", "Bleeding!")
 };
 
 USTRUCT(BlueprintType)

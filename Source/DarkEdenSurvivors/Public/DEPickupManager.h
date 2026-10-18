@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -31,36 +31,36 @@ public:
 	virtual bool IsTickableWhenPaused() const override { return false; }
 
 	// [Public API]
-	// 1. ¾ÆÀÌÅÛ »ı¼º ¿äÃ»
+	// 1. ì•„ì´í…œ ìƒì„± ìš”ì²­
 	void SpawnPickup(const FVector& Location, float ItemValue, TSubclassOf<ADEPickupBase> ClassToSpawn);
 
-	// 2. Àü¿ª ÀÚ¼® ¹ßµ¿ (ÀÚ¼® ¾ÆÀÌÅÛ ¸Ô¾úÀ» ¶§)
+	// 2. ì „ì—­ ìì„ ë°œë™ (ìì„ ì•„ì´í…œ ë¨¹ì—ˆì„ ë•Œ)
 	void TriggerGlobalMagnet(AActor* TargetPlayer);
 
-	// 3. ¸ğµç ¾ÆÀÌÅÛ Ã»¼Ò (½ºÅ×ÀÌÁö Á¾·á ½Ã)
+	// 3. ëª¨ë“  ì•„ì´í…œ ì²­ì†Œ (ìŠ¤í…Œì´ì§€ ì¢…ë£Œ ì‹œ)
 	void ClearAllPickups();
 
 	void SetStatComponent(UDEStatComponent* InStatComponent);
 protected:
-	// ³»ºÎ ÇÔ¼ö: Æ¯Á¤ ¾ÆÀÌÅÛÀ» ÀÚ¼® ¸®½ºÆ®¿¡ µî·Ï
+	// ë‚´ë¶€ í•¨ìˆ˜: íŠ¹ì • ì•„ì´í…œì„ ìì„ ë¦¬ìŠ¤íŠ¸ì— ë“±ë¡
 	void RegisterMagnetRequest(ADEPickupBase* Pickup, AActor* Target);
 
 protected:
 	// [State]
-	// ÇöÀç ¿ùµå¿¡ ±ò¸° ¸ğµç ¾ÆÀÌÅÛ (ÀåºÎ)
+	// í˜„ì¬ ì›”ë“œì— ê¹”ë¦° ëª¨ë“  ì•„ì´í…œ (ì¥ë¶€)
 	UPROPERTY()
 	TArray<TWeakObjectPtr<ADEPickupBase>> ActivePickups;
 
-	// ÇöÀç ÇÃ·¹ÀÌ¾î¿¡°Ô »¡·Á¿À°í ÀÖ´Â ¾ÆÀÌÅÛ ¸ñ·Ï (ÀÌµ¿ Ã³¸®¿ë)
+	// í˜„ì¬ í”Œë ˆì´ì–´ì—ê²Œ ë¹¨ë ¤ì˜¤ê³  ìˆëŠ” ì•„ì´í…œ ëª©ë¡ (ì´ë™ ì²˜ë¦¬ìš©)
 	UPROPERTY()
 	TArray<TWeakObjectPtr<ADEPickupBase>> MagnetizingPickups;
 
-	// ÇÃ·¹ÀÌ¾î ½ºÅÈ ÄÄÆ÷³ÍÆ® Ä³½Ì (¸Å¹ø Ã£±â ¹æÁö)
+	// í”Œë ˆì´ì–´ ìŠ¤íƒ¯ ì»´í¬ë„ŒíŠ¸ ìºì‹± (ë§¤ë²ˆ ì°¾ê¸° ë°©ì§€)
 	UPROPERTY()
 	TWeakObjectPtr<UDEStatComponent> CachedStatComponent;
 
 
-	// ÃÖÀûÈ­¿ë Á¦ÇÑ °³¼ö
+	// ìµœì í™”ìš© ì œí•œ ê°œìˆ˜
 	const int32 MaxActivePickups = 400;
 
 };

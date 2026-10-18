@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -16,7 +16,7 @@ public:
 	ADESimpleSummonBase();
 	virtual void Tick(float DeltaTime) override;
 
-	// Ç®¸µ ¹× ÃÊ±âÈ­ (Åõ»çÃ¼¿Í µ¿ÀÏ)
+	// í’€ë§ ë° ì´ˆê¸°í™” (íˆ¬ì‚¬ì²´ì™€ ë™ì¼)
 	virtual void InitializeFromContext(const FDESkillContext& Context);
 	virtual void ResetState();
 	virtual void ReturnToPool();

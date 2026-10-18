@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEDamageTextWidget.h"
@@ -11,17 +11,17 @@ void UDEDamageTextWidget::NativeConstruct()
     SetVisibility(ESlateVisibility::Collapsed);
     //SetAlignmentInViewport(FVector2D(0.5f, 0.5f));
     //SetRenderTransformPivot(FVector2D(0.5f, 0.5f));
-    // [ÀÌµ¿] ¿©±â¼­ µü ÇÑ ¹ø¸¸ ¿¬°áÇÏ¼¼¿ä!
+    // [ì´ë™] ì—¬ê¸°ì„œ ë”± í•œ ë²ˆë§Œ ì—°ê²°í•˜ì„¸ìš”!
     if (PopAnimMk2)
     {
-        // [¼öÁ¤µÈ ºÎºĞ]
-        // 1. µ¨¸®°ÔÀÌÆ® º¯¼ö¸¦ ÇÏ³ª ¸¸µì´Ï´Ù.
+        // [ìˆ˜ì •ëœ ë¶€ë¶„]
+        // 1. ë¸ë¦¬ê²Œì´íŠ¸ ë³€ìˆ˜ë¥¼ í•˜ë‚˜ ë§Œë“­ë‹ˆë‹¤.
         FWidgetAnimationDynamicEvent AnimFinishedDelegate;
 
-        // 2. 'BindDynamic'À» ½á¼­ ÇÔ¼ö¸¦ ¿¬°áÇÕ´Ï´Ù. (CreateUObject ¾Æ´Ô!)
+        // 2. 'BindDynamic'ì„ ì¨ì„œ í•¨ìˆ˜ë¥¼ ì—°ê²°í•©ë‹ˆë‹¤. (CreateUObject ì•„ë‹˜!)
         AnimFinishedDelegate.BindDynamic(this, &UDEDamageTextWidget::HandleAnimFinished);
 
-        // 3. ¿¬°áµÈ µ¨¸®°ÔÀÌÆ®¸¦ µî·ÏÇÕ´Ï´Ù.
+        // 3. ì—°ê²°ëœ ë¸ë¦¬ê²Œì´íŠ¸ë¥¼ ë“±ë¡í•©ë‹ˆë‹¤.
         BindToAnimationFinished(PopAnimMk2, AnimFinishedDelegate);
     }
 }
@@ -32,15 +32,15 @@ void UDEDamageTextWidget::Activate(const FDamageVisualInfo& Info)
 	bActive = true;
 	SetVisibility(ESlateVisibility::HitTestInvisible);
 
-	//  EnumÀ» ÀÌ¿ëÇÑ ºĞ±â Ã³¸® (È®Àå¼º MAX)
+	//  Enumì„ ì´ìš©í•œ ë¶„ê¸° ì²˜ë¦¬ (í™•ì¥ì„± MAX)
 	switch (Info.TextType)
 	{
 	case EDamageTextType::Execution:
 	{
 		DamageText->SetText(FText::FromString(TEXT("EXECUTED!")));
-		//DamageText->SetColorAndOpacity(FSlateColor(FLinearColor(0.6f, 0.0f, 0.8f, 1.0f))); // ´ÙÅ© ÆÛÇÃ (»ç½Å ´À³¦)
+		//DamageText->SetColorAndOpacity(FSlateColor(FLinearColor(0.6f, 0.0f, 0.8f, 1.0f))); // ë‹¤í¬ í¼í”Œ (ì‚¬ì‹  ëŠë‚Œ)
 		DamageText->SetColorAndOpacity(FSlateColor(FLinearColor::Red));
-		// Ã³ÇüÀº Å©±â¸¦ 1.5¹è »½Æ¢±â!
+		// ì²˜í˜•ì€ í¬ê¸°ë¥¼ 1.5ë°° ë»¥íŠ€ê¸°!
 		ScaleContainer->SetRenderTransform(FWidgetTransform(FVector2D::ZeroVector, FVector2D(1.5f, 1.5f), FVector2D::ZeroVector, 0.0f));
 
 		break;
@@ -60,7 +60,7 @@ void UDEDamageTextWidget::Activate(const FDamageVisualInfo& Info)
 		DamageText->SetRenderTransform(FWidgetTransform(FVector2D::ZeroVector, FVector2D(1.0f, 1.0f), FVector2D::ZeroVector, 0.0f));
 		break;
 	}
-	default: // Damage (ÀÏ¹İ Å¸°İ)
+	default: // Damage (ì¼ë°˜ íƒ€ê²©)
 	{
 		DamageText->SetText(FText::AsNumber(FMath::RoundToInt(Info.Amount)));
 		DamageText->SetColorAndOpacity(FSlateColor(FLinearColor::White));
@@ -69,7 +69,7 @@ void UDEDamageTextWidget::Activate(const FDamageVisualInfo& Info)
 	}
 	}
 
-	// ¾Ö´Ï¸ŞÀÌ¼Ç Àç»ı
+	// ì• ë‹ˆë©”ì´ì…˜ ì¬ìƒ
 	if (PopAnimMk2)
 	{
 		PlayAnimation(PopAnimMk2);

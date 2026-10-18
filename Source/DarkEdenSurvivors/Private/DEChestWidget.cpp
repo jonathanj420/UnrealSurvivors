@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEChestWidget.h"
@@ -17,17 +17,17 @@ void UDEChestWidget::NativeConstruct(){
 
 void UDEChestWidget::NativeOnInitialized()
 {
-    // ºÎ¸ğ ÇÔ¼ö È£Ãâ (void ¹İÈ¯ÀÌ¹Ç·Î Ã¼Å©ÇÒ ÇÊ¿ä ¾øÀÌ ±×³É ½ÇÇà)
+    // ë¶€ëª¨ í•¨ìˆ˜ í˜¸ì¶œ (void ë°˜í™˜ì´ë¯€ë¡œ ì²´í¬í•  í•„ìš” ì—†ì´ ê·¸ëƒ¥ ì‹¤í–‰)
     Super::NativeOnInitialized();
 
-    // 1. ÇÃ·¹ÀÌ¾î ÄÁÆ®·Ñ·¯ Ä³½Ì
+    // 1. í”Œë ˆì´ì–´ ì»¨íŠ¸ë¡¤ëŸ¬ ìºì‹±
     CachedPC = Cast<ADEPlayerController>(GetOwningPlayer());
     if (!CachedPC)
     {
         UE_LOG(LogTemp, Error, TEXT("[ChestWidget] no PlayerController"));
     }
 
-    // 2. ¹öÆ° µ¨¸®°ÔÀÌÆ® ¹ÙÀÎµù
+    // 2. ë²„íŠ¼ ë¸ë¦¬ê²Œì´íŠ¸ ë°”ì¸ë”©
     if (Btn_Close)
     {
         Btn_Close->OnClicked.AddDynamic(this, &UDEChestWidget::ApplyAllRewardsAndClose);
@@ -37,45 +37,45 @@ void UDEChestWidget::NativeOnInitialized()
 
 void UDEChestWidget::SetupChestRewards(const TArray<UDELevelUpChoiceBase*>& InRewards)
 {
-    // 1. µ¥ÀÌÅÍ¸¸ Ä³½ÌÇØµÒ. (¾ÆÁ÷ È­¸é¿¡ ¾È ±×¸²!)
+    // 1. ë°ì´í„°ë§Œ ìºì‹±í•´ë‘ . (ì•„ì§ í™”ë©´ì— ì•ˆ ê·¸ë¦¼!)
     ChestRewards = InRewards;
 
-    // 2. °¡·Î ¹Ú½º ÃÊ±âÈ­ (¾È º¸ÀÌ°Ô ºñ¿öµÒ)
+    // 2. ê°€ë¡œ ë°•ìŠ¤ ì´ˆê¸°í™” (ì•ˆ ë³´ì´ê²Œ ë¹„ì›Œë‘ )
     if (Box_Rewards)
     {
         Box_Rewards->ClearChildren();
     }
 
-    // 3. »óÅÂ¸¦ 'Å¬¸¯ ´ë±â'·Î º¯°æÇÏ°í µîÀå ¾Ö´Ï¸ŞÀÌ¼Ç ½ÇÇà
+    // 3. ìƒíƒœë¥¼ 'í´ë¦­ ëŒ€ê¸°'ë¡œ ë³€ê²½í•˜ê³  ë“±ì¥ ì• ë‹ˆë©”ì´ì…˜ ì‹¤í–‰
     CurrentState = EChestWidgetState::WaitClick;
     PlayChestAppearAnimation();
     //ChestRewards = InRewards;
 
-    //// 1. È¤½Ã °¡·Î ¹Ú½º¿¡ ÀÌÀü ¾²·¹±â µ¥ÀÌÅÍ°¡ ³²¾ÆÀÖÀ» ¼ö ÀÖÀ¸´Ï ½Ï ºñ¿öÁÜ
+    //// 1. í˜¹ì‹œ ê°€ë¡œ ë°•ìŠ¤ì— ì´ì „ ì“°ë ˆê¸° ë°ì´í„°ê°€ ë‚¨ì•„ìˆì„ ìˆ˜ ìˆìœ¼ë‹ˆ ì‹¹ ë¹„ì›Œì¤Œ
     //if (Box_Rewards)
     //{
     //    Box_Rewards->ClearChildren();
     //}
 
-    //// 2. ºí·çÇÁ¸°Æ® Å¬·¡½º(RewardSlotClass)°¡ ¿¡µğÅÍ¿¡ Àß ¼¼ÆÃµÇ¾î ÀÖ´ÂÁö È®ÀÎ
+    //// 2. ë¸”ë£¨í”„ë¦°íŠ¸ í´ë˜ìŠ¤(RewardSlotClass)ê°€ ì—ë””í„°ì— ì˜ ì„¸íŒ…ë˜ì–´ ìˆëŠ”ì§€ í™•ì¸
     //if (RewardSlotClass)
     //{
-    //    // 3. º¸»ó ¹è¿­À» µ¹¸é¼­ ½½·ÔÀ» ÇÏ³ª¾¿ C++·Î ÄçÄç Âï¾î³¿!
+    //    // 3. ë³´ìƒ ë°°ì—´ì„ ëŒë©´ì„œ ìŠ¬ë¡¯ì„ í•˜ë‚˜ì”© C++ë¡œ ì¾…ì¾… ì°ì–´ëƒ„!
     //    for (UDELevelUpChoiceBase* Reward : ChestRewards)
     //    {
-    //        // À§Á¬ µ¿Àû »ı¼º!
+    //        // ìœ„ì ¯ ë™ì  ìƒì„±!
     //        UDEChestRewardSlotWidget* NewSlot = CreateWidget<UDEChestRewardSlotWidget>(this, RewardSlotClass);
     //        if (NewSlot)
     //        {
-    //            // ¾Æ±î ³×°¡ Â§ ±× ¿Ïº®ÇÑ µ¥ÀÌÅÍ ¼¼ÆÃ ÇÔ¼ö È£Ãâ
+    //            // ì•„ê¹Œ ë„¤ê°€ ì§  ê·¸ ì™„ë²½í•œ ë°ì´í„° ì„¸íŒ… í•¨ìˆ˜ í˜¸ì¶œ
     //            NewSlot->InitSlot(Reward);
 
-    //            // °¡·Î ¹Ú½º¿¡ Áı¾î³Ö±â!
+    //            // ê°€ë¡œ ë°•ìŠ¤ì— ì§‘ì–´ë„£ê¸°!
     //            if (Box_Rewards)
     //            {
     //                UHorizontalBoxSlot* HBoxSlot = Box_Rewards->AddChildToHorizontalBox(NewSlot);
 
-    //                // (¼±ÅÃ) ½½·Ô »çÀÌÀÇ °£°İ(Padding)ÀÌ³ª Á¤·ÄÀ» C++¿¡¼­ Á¦¾îÇÒ ¼ö ÀÖÀ½
+    //                // (ì„ íƒ) ìŠ¬ë¡¯ ì‚¬ì´ì˜ ê°„ê²©(Padding)ì´ë‚˜ ì •ë ¬ì„ C++ì—ì„œ ì œì–´í•  ìˆ˜ ìˆìŒ
     //                if (HBoxSlot)
     //                {
     //                    HBoxSlot->SetPadding(FMargin(10.0f, 0.0f, 10.0f, 0.0f));
@@ -91,20 +91,20 @@ void UDEChestWidget::SetupChestRewards(const TArray<UDELevelUpChoiceBase*>& InRe
     //    UE_LOG(LogTemp, Error, TEXT("RewardSlotClass is NULL"));
     //}
 
-    //// 4. ½½·Ô ·»´õ¸µ ³¡³µÀ¸´Ï »óÀÚ Èçµå´Â ¾Ö´Ï¸ŞÀÌ¼Ç ½ÃÀÛ!
+    //// 4. ìŠ¬ë¡¯ ë Œë”ë§ ëë‚¬ìœ¼ë‹ˆ ìƒì í”ë“œëŠ” ì• ë‹ˆë©”ì´ì…˜ ì‹œì‘!
     //PlayChestOpenAnimation(ChestRewards.Num());
 }
 
 FReply UDEChestWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-    // ÇöÀç 'Å¬¸¯ ´ë±â' »óÅÂÀÏ ¶§¸¸ ¹İÀÀÇÔ
+    // í˜„ì¬ 'í´ë¦­ ëŒ€ê¸°' ìƒíƒœì¼ ë•Œë§Œ ë°˜ì‘í•¨
     if (CurrentState == EChestWidgetState::WaitClick)
     {
-        // »óÅÂ¸¦ 'Èçµé¸®´Â Áß'À¸·Î ¹Ù²Ù°í ¿¬Ãâ ½ÃÀÛ
+        // ìƒíƒœë¥¼ 'í”ë“¤ë¦¬ëŠ” ì¤‘'ìœ¼ë¡œ ë°”ê¾¸ê³  ì—°ì¶œ ì‹œì‘
         CurrentState = EChestWidgetState::Shaking;
         PlayChestShakeAnimation();
 
-        return FReply::Handled(); // ÀÌº¥Æ® ¼Òºñ! (´õ ÀÌ»ó Å¬¸¯ ¾È ¸Ô°Ô ÇÔ)
+        return FReply::Handled(); // ì´ë²¤íŠ¸ ì†Œë¹„! (ë” ì´ìƒ í´ë¦­ ì•ˆ ë¨¹ê²Œ í•¨)
     }
 
     return Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
@@ -112,7 +112,7 @@ FReply UDEChestWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, cons
 
 void UDEChestWidget::RevealRewards()
 {
-    if (CurrentState == EChestWidgetState::RewardsShown) return; // Áßº¹ ¹æÁö
+    if (CurrentState == EChestWidgetState::RewardsShown) return; // ì¤‘ë³µ ë°©ì§€
 
     if (RewardSlotClass)
     {
@@ -144,11 +144,11 @@ void UDEChestWidget::RevealRewards()
 
 void UDEChestWidget::ApplyAllRewardsAndClose()
 {
-    // ³» Ä³¸¯ÅÍ(Player) Ã£±â
+    // ë‚´ ìºë¦­í„°(Player) ì°¾ê¸°
     APawn* OwnerPawn = GetOwningPlayerPawn();
     if (!OwnerPawn) return;
 
-    // »óÀÚ¿¡¼­ ³ª¿Â ¸ğµç º¸»ó(Ä¸½¶)µéÀ» ¶â¾î¼­ ÇÃ·¹ÀÌ¾î¿¡°Ô ÀÏ°ı Àû¿ë!
+    // ìƒìì—ì„œ ë‚˜ì˜¨ ëª¨ë“  ë³´ìƒ(ìº¡ìŠ)ë“¤ì„ ëœ¯ì–´ì„œ í”Œë ˆì´ì–´ì—ê²Œ ì¼ê´„ ì ìš©!
     for (UDELevelUpChoiceBase* Reward : ChestRewards)
     {
         if (Reward)
@@ -157,12 +157,12 @@ void UDEChestWidget::ApplyAllRewardsAndClose()
         }
     }
 
-    // Àû¿ë ³¡³µÀ¸´Ï À§Á¬ ´İ°í, ÀÏ½ÃÁ¤Áö(Pause) Ç®±â
+    // ì ìš© ëë‚¬ìœ¼ë‹ˆ ìœ„ì ¯ ë‹«ê³ , ì¼ì‹œì •ì§€(Pause) í’€ê¸°
     RemoveFromParent();
 
     if (CachedPC)
     {
         CachedPC->ResumeGame();
-        // ¸¶¿ì½º Ä¿¼­ ¼û±â±â µî Ãß°¡ Ã³¸®
+        // ë§ˆìš°ìŠ¤ ì»¤ì„œ ìˆ¨ê¸°ê¸° ë“± ì¶”ê°€ ì²˜ë¦¬
     }
 }

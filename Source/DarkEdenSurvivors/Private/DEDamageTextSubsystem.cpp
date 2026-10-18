@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEDamageTextSubsystem.h"
@@ -10,7 +10,7 @@
 
 void UDEDamageTextSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
-    //// Å¬·¡½º ·Îµå¸¸ ¼öÇà (°´Ã¼ »ı¼º X)
+    //// í´ë˜ìŠ¤ ë¡œë“œë§Œ ìˆ˜í–‰ (ê°ì²´ ìƒì„± X)
     //static ConstructorHelpers::FClassFinder<UDEDamageTextWidget> BPClass(
     //    TEXT("/Game/DarkEden/UI/WBP_DamageTextWidget.WBP_DamageTextWidget_C"));
 
@@ -20,14 +20,14 @@ void UDEDamageTextSubsystem::Initialize(FSubsystemCollectionBase& Collection)
     //}
     Super::Initialize(Collection);
 
-    // [¼öÁ¤] ConstructorHelpers ´ë½Å LoadClass »ç¿ë!
-    // 1. °æ·Î ¼³Á¤ (¿¡·¯ ¸Ş½ÃÁö¿¡ ÀÖ´ø °æ·Î ±×´ë·Î º¹»çÇÔ + µÚ¿¡ _C È®ÀÎ)
+    // [ìˆ˜ì •] ConstructorHelpers ëŒ€ì‹  LoadClass ì‚¬ìš©!
+    // 1. ê²½ë¡œ ì„¤ì • (ì—ëŸ¬ ë©”ì‹œì§€ì— ìˆë˜ ê²½ë¡œ ê·¸ëŒ€ë¡œ ë³µì‚¬í•¨ + ë’¤ì— _C í™•ì¸)
     FString Path = TEXT("/Game/DarkEden/UI/WBP_DamageTextWidget.WBP_DamageTextWidget_C");
 
-    // 2. ·±Å¸ÀÓ ·Îµå (ÀÌ°Ç »ı¼ºÀÚ°¡ ¾Æ´Ï¶óµµ ¾Æ¹« µ¥¼­³ª ¾µ ¼ö ÀÖÀ½)
+    // 2. ëŸ°íƒ€ì„ ë¡œë“œ (ì´ê±´ ìƒì„±ìê°€ ì•„ë‹ˆë¼ë„ ì•„ë¬´ ë°ì„œë‚˜ ì“¸ ìˆ˜ ìˆìŒ)
     DamageTextWidgetClass = LoadClass<UDEDamageTextWidget>(nullptr, *Path);
 
-    // 3. ¾ÈÀüÀåÄ¡ (°æ·Î Æ²¸®¸é ·Î±× ¶ç¿ì°í ³Ñ¾î°¡±â)
+    // 3. ì•ˆì „ì¥ì¹˜ (ê²½ë¡œ í‹€ë¦¬ë©´ ë¡œê·¸ ë„ìš°ê³  ë„˜ì–´ê°€ê¸°)
     if (!DamageTextWidgetClass)
     {
         UE_LOG(LogTemp, Error, TEXT("Widegt BOOM NO PATH FUCK: %s"), *Path);
@@ -65,7 +65,7 @@ APlayerController* UDEDamageTextSubsystem::GetPlayerController()
 
 UDEDamageTextWidget* UDEDamageTextSubsystem::AcquireWidget()
 {
-    // 1. ±âÁ¸ Ç®¿¡¼­ ºñÈ°¼º À§Á¬ Àç»ç¿ë
+    // 1. ê¸°ì¡´ í’€ì—ì„œ ë¹„í™œì„± ìœ„ì ¯ ì¬ì‚¬ìš©
     for (int32 i = WidgetPool.Num() - 1; i >= 0; --i)
     {
         if (!WidgetPool[i]->IsActive())
@@ -76,13 +76,13 @@ UDEDamageTextWidget* UDEDamageTextSubsystem::AcquireWidget()
 
     if (WidgetPool.Num() >= MaxDamageTexts)
     {
-        // ÀÌ¹Ì È­¸é¿¡ 50°³°¡ ²Ë Ã¡´Ù¸é »õ·Î ¸¸µéÁö ¾Ê°í °ú°¨È÷ Æ÷±â!
-        // (ÇÁ·¹ÀÓ ¹æ¾î¸¦ À§ÇÑ °¡Àå È®½ÇÇÑ ¹æ¹ı)
+        // ì´ë¯¸ í™”ë©´ì— 50ê°œê°€ ê½‰ ì°¼ë‹¤ë©´ ìƒˆë¡œ ë§Œë“¤ì§€ ì•Šê³  ê³¼ê°íˆ í¬ê¸°!
+        // (í”„ë ˆì„ ë°©ì–´ë¥¼ ìœ„í•œ ê°€ì¥ í™•ì‹¤í•œ ë°©ë²•)
         return nullptr;
     }
 
 
-    // 2. ¾øÀ¸¸é Ç® È®Àå (Lazy Create)
+    // 2. ì—†ìœ¼ë©´ í’€ í™•ì¥ (Lazy Create)
     APlayerController* PC = GetPlayerController();
     if (!PC || !DamageTextWidgetClass) return nullptr;
 
@@ -107,19 +107,19 @@ void UDEDamageTextSubsystem::ShowDamage(const FDamageVisualInfo& Info)
     UDEDamageTextWidget* Widget = AcquireWidget();
     if (!Widget) return;
 
-    //// 2. [µ¥¹ÌÁö ´©Àû] ÀÌ¹Ì ÀÌ ¸ó½ºÅÍ ¸Ó¸® À§¿¡ ¶° ÀÖ´Â ÅØ½ºÆ®°¡ ÀÖ´Ù¸é?
+    //// 2. [ë°ë¯¸ì§€ ëˆ„ì ] ì´ë¯¸ ì´ ëª¬ìŠ¤í„° ë¨¸ë¦¬ ìœ„ì— ë–  ìˆëŠ” í…ìŠ¤íŠ¸ê°€ ìˆë‹¤ë©´?
     //for (UDEDamageTextWidget* ActiveWidget : ActiveWidgets)
     //{
-    //    // À§Á¬ÀÌ ÇöÀç °¡¸®Å°°í ÀÖ´Â Å¸°ÙÀÌ ¹æ±İ ¸ÂÀº Å¸°Ù°ú °°´Ù¸é!
+    //    // ìœ„ì ¯ì´ í˜„ì¬ ê°€ë¦¬í‚¤ê³  ìˆëŠ” íƒ€ê²Ÿì´ ë°©ê¸ˆ ë§ì€ íƒ€ê²Ÿê³¼ ê°™ë‹¤ë©´!
     //    if (ActiveWidget->GetTargetActor() == Info.TargetActor)
     //    {
-    //        // À§Á¬ÀÇ µ¥¹ÌÁö ¼ıÀÚ¿¡ ¹æ±İ ¸ÂÀº µ¥¹ÌÁö¸¦ ´õÇÏ°í, Å©±â ¾Ö´Ï¸ŞÀÌ¼ÇÀ» ´Ù½Ã Àç»ı!
+    //        // ìœ„ì ¯ì˜ ë°ë¯¸ì§€ ìˆ«ìì— ë°©ê¸ˆ ë§ì€ ë°ë¯¸ì§€ë¥¼ ë”í•˜ê³ , í¬ê¸° ì• ë‹ˆë©”ì´ì…˜ì„ ë‹¤ì‹œ ì¬ìƒ!
     //        ActiveWidget->AddDamage(Info.DamageAmount);
-    //        return; // »õ À§Á¬ ¾È ²¨³»°í ¿©±â¼­ Á¾·á!
+    //        return; // ìƒˆ ìœ„ì ¯ ì•ˆ êº¼ë‚´ê³  ì—¬ê¸°ì„œ ì¢…ë£Œ!
     //    }
     //}
 
-    // À§Ä¡ ·£´ı ¿ÀÇÁ¼Â (°ãÄ§ ¹æÁö)
+    // ìœ„ì¹˜ ëœë¤ ì˜¤í”„ì…‹ (ê²¹ì¹¨ ë°©ì§€)
     FDamageVisualInfo FinalInfo = Info;
     FinalInfo.WorldLocation += FVector(
         FMath::RandRange(-20.f, 20.f),
@@ -141,7 +141,7 @@ void UDEDamageTextSubsystem::Tick(float DeltaTime)
     APlayerController* PC = GetPlayerController();
     if (!PC) return;
 
-    // 1. DPI ½ºÄÉÀÏ °¡Á®¿À±â (ÇÊ¼ö!)
+    // 1. DPI ìŠ¤ì¼€ì¼ ê°€ì ¸ì˜¤ê¸° (í•„ìˆ˜!)
     float DPIScale = UWidgetLayoutLibrary::GetViewportScale(PC);
     if (DPIScale <= 0.0f) DPIScale = 1.0f;
 
@@ -154,11 +154,11 @@ void UDEDamageTextSubsystem::Tick(float DeltaTime)
             ActiveWidgets.RemoveAt(i);
             continue;
         }
-        // ... (À¯È¿¼º °Ë»ç ¹× ºñÈ°¼º Á¦°Å ·ÎÁ÷Àº ±×´ë·Î) ...
+        // ... (ìœ íš¨ì„± ê²€ì‚¬ ë° ë¹„í™œì„± ì œê±° ë¡œì§ì€ ê·¸ëŒ€ë¡œ) ...
 
         FVector2D ScreenPos;
 
-        // 2. ¿ùµå ÁÂÇ¥ -> ½ºÅ©¸° ÁÂÇ¥ º¯È¯ (false = DPI Àû¿ë ¾È µÈ Raw Pixel °ª)
+        // 2. ì›”ë“œ ì¢Œí‘œ -> ìŠ¤í¬ë¦° ì¢Œí‘œ ë³€í™˜ (false = DPI ì ìš© ì•ˆ ëœ Raw Pixel ê°’)
         bool bProjected = UGameplayStatics::ProjectWorldToScreen(
             PC,
             Widget->GetWorldLocation(),
@@ -168,8 +168,8 @@ void UDEDamageTextSubsystem::Tick(float DeltaTime)
 
         if (bProjected)
         {
-            // 3. [ÇÙ½É] ·»´õ¸µ ÁÂÇ¥°è·Î º¯È¯ (ScreenPos / DPIScale)
-            // ÀÌ·¸°Ô ÇÏ¸é ¼º´É(RenderTranslation)°ú Á¤È®µµ(DPI) µÑ ´Ù ÀâÀ½!
+            // 3. [í•µì‹¬] ë Œë”ë§ ì¢Œí‘œê³„ë¡œ ë³€í™˜ (ScreenPos / DPIScale)
+            // ì´ë ‡ê²Œ í•˜ë©´ ì„±ëŠ¥(RenderTranslation)ê³¼ ì •í™•ë„(DPI) ë‘˜ ë‹¤ ì¡ìŒ!
             const FVector2D SlatePos = ScreenPos / DPIScale;
 
             Widget->SetRenderTranslation(SlatePos);

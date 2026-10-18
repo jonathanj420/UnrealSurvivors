@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEBehavior_SpawnSummon.h"
@@ -17,11 +17,11 @@ void UDEBehavior_SpawnSummon::Execute(FDESkillContext& Context)
     UDEPoolSubsystem* Pool = World->GetSubsystem<UDEPoolSubsystem>();
     if (!Pool) return;
 
-    // 1. [½ºÆù À§Ä¡ °è»ê]
+    // 1. [ìŠ¤í° ìœ„ì¹˜ ê³„ì‚°]
     FVector OwnerLoc = Context.Instigator->GetActorLocation();
     FRotator OwnerRot = Context.Instigator->GetActorRotation();
 
-    // ¸¸¾à Targeting ºñÇìÀÌºñ¾î¸¦ ÅëÇØ TargetÀÌ ÀâÇôÀÖ´Ù¸é Àû À§Ä¡¿¡ ½ºÆù!
+    // ë§Œì•½ Targeting ë¹„í—¤ì´ë¹„ì–´ë¥¼ í†µí•´ Targetì´ ì¡í˜€ìˆë‹¤ë©´ ì  ìœ„ì¹˜ì— ìŠ¤í°!
     FVector SpawnLoc;
     if (Context.Targets.Num() > 0 && Context.Targets[0])
     {
@@ -29,7 +29,7 @@ void UDEBehavior_SpawnSummon::Execute(FDESkillContext& Context)
     }
     else
     {
-        // Å¸°ÙÀÌ ¾ø´Ù¸é ³» ¾ÕÂÊÀ¸·Î »ìÂ¦ ¶ç¿ö¼­ ½ºÆù
+        // íƒ€ê²Ÿì´ ì—†ë‹¤ë©´ ë‚´ ì•ìª½ìœ¼ë¡œ ì‚´ì§ ë„ì›Œì„œ ìŠ¤í°
         FVector2D RandomOffset2D = FMath::RandPointInCircle(SpawnDistanceOffset);
 
         //FVector ForwardDir = Context.Instigator->GetActorForwardVector();
@@ -37,16 +37,16 @@ void UDEBehavior_SpawnSummon::Execute(FDESkillContext& Context)
 
     }
 
-    // ZÃàÀº ¹Ù´ÚÀ¸·Î °íÁ¤ (ÇÊ¿ä ½Ã)
+    // Zì¶•ì€ ë°”ë‹¥ìœ¼ë¡œ ê³ ì • (í•„ìš” ì‹œ)
     SpawnLoc.Z = 0.0f;
 
-    // 2. [¿ÀºêÁ§Æ® Ç®¿¡¼­ ²¨³»±â]
-    int32 TargetCount = Context.Amount; // ±âº»ÀûÀ¸·Î´Â ÃÖÁ¾ ½ºÅÈ º¸µû¸®ÀÇ °ªÀ» ¾´´Ù.
+    // 2. [ì˜¤ë¸Œì íŠ¸ í’€ì—ì„œ êº¼ë‚´ê¸°]
+    int32 TargetCount = Context.Amount; // ê¸°ë³¸ì ìœ¼ë¡œëŠ” ìµœì¢… ìŠ¤íƒ¯ ë³´ë”°ë¦¬ì˜ ê°’ì„ ì“´ë‹¤.
 
     if (bUseBaseAmountOnly && Context.SourceSkill)
     {
-        // ¿øº» ½ºÅ³(SourceSkill) °´Ã¼³ª µ¥ÀÌÅÍ ¿¡¼Â¿¡ Á÷Á¢ Á¢±ÙÇÏ¿© ¼ø¼ö °ªÀ» °¡Á®¿Â´Ù.
-        // (GetBaseAmount´Â ±âÁ¸ ½ºÅ³ Å¬·¡½º¿¡ ±¸ÇöÇØµÎ½Å µ¥ÀÌÅÍ Å×ÀÌºí Á¶È¸ ÇÔ¼ö¶ó°í °¡Á¤)
+        // ì›ë³¸ ìŠ¤í‚¬(SourceSkill) ê°ì²´ë‚˜ ë°ì´í„° ì—ì…‹ì— ì§ì ‘ ì ‘ê·¼í•˜ì—¬ ìˆœìˆ˜ ê°’ì„ ê°€ì ¸ì˜¨ë‹¤.
+        // (GetBaseAmountëŠ” ê¸°ì¡´ ìŠ¤í‚¬ í´ë˜ìŠ¤ì— êµ¬í˜„í•´ë‘ì‹  ë°ì´í„° í…Œì´ë¸” ì¡°íšŒ í•¨ìˆ˜ë¼ê³  ê°€ì •)
         TargetCount = Context.SourceSkill->GetBaseAmount();
     }
 
@@ -54,16 +54,16 @@ void UDEBehavior_SpawnSummon::Execute(FDESkillContext& Context)
 
     for (int32 i = 0; i < Count; i++)
     {
-        // ¿©·¯ ¸¶¸®ÀÏ °æ¿ì À§Ä¡¸¦ »ìÂ¦¾¿ Èğ»Ñ·ÁÁÜ
+        // ì—¬ëŸ¬ ë§ˆë¦¬ì¼ ê²½ìš° ìœ„ì¹˜ë¥¼ ì‚´ì§ì”© í©ë¿Œë ¤ì¤Œ
         FVector FinalLoc = SpawnLoc + FVector(FMath::RandRange(-50.f, 50.f), FMath::RandRange(-50.f, 50.f), 0.f);
 
         AActor* PooledActor = Pool->GetPooledActor(SummonClass, FinalLoc, FRotator::ZeroRotator, false);
 
         if (auto* Summon = Cast<ADESimpleSummonBase>(PooledActor))
         {
-            // 3. [ÃÊ±âÈ­] (¿©±â¼­ Context.Duration µîÀÇ Á¤º¸°¡ ³Ñ¾î°¨)
+            // 3. [ì´ˆê¸°í™”] (ì—¬ê¸°ì„œ Context.Duration ë“±ì˜ ì •ë³´ê°€ ë„˜ì–´ê°)
             Summon->InitializeFromContext(Context);
-            // ¡Ú OwnedActorMap¿¡ µî·Ï
+            // â˜… OwnedActorMapì— ë“±ë¡
             if (Context.SourceSkill)
             {
                 FString UniqueStr = FGuid::NewGuid().ToString();
@@ -73,7 +73,7 @@ void UDEBehavior_SpawnSummon::Execute(FDESkillContext& Context)
         }
     }
 
-    // 4. [»ç¿îµå]
+    // 4. [ì‚¬ìš´ë“œ]
     if (SpawnSound)
     {
         UGameplayStatics::PlaySoundAtLocation(World, SpawnSound, SpawnLoc);
@@ -85,20 +85,20 @@ void UDEBehavior_SpawnSummon::OnContextRefreshed(const FDESkillContext& Context)
 {
     if (!Context.SourceSkill || !Context.Instigator) return;
 
-    // 1. ÇÊ¿äÇÑ Æ÷ÀÎÅÍµé ¹Ì¸® È®º¸
+    // 1. í•„ìš”í•œ í¬ì¸í„°ë“¤ ë¯¸ë¦¬ í™•ë³´
     UWorld* World = Context.Instigator->GetWorld();
     if (!World) return;
 
     UDEPoolSubsystem* Pool = World->GetSubsystem<UDEPoolSubsystem>();
     if (!Pool) return;
 
-    // 2. ÇöÀç »ì¾ÆÀÖ´Â ¼ÒÈ¯¼ö Ä«¿îÆ® ¹× °»½Å
+    // 2. í˜„ì¬ ì‚´ì•„ìˆëŠ” ì†Œí™˜ìˆ˜ ì¹´ìš´íŠ¸ ë° ê°±ì‹ 
     int32 CurrentCount = 0;
     for (auto& Pair : Context.SourceSkill->OwnedSkillActorMap)
     {
         if (Pair.Value.IsValid())
         {
-            // ÀÎÅÍÆäÀÌ½º³ª Ä³½ºÆÃÀ» ÅëÇØ ÄÁÅØ½ºÆ® °»½Å
+            // ì¸í„°í˜ì´ìŠ¤ë‚˜ ìºìŠ¤íŒ…ì„ í†µí•´ ì»¨í…ìŠ¤íŠ¸ ê°±ì‹ 
             if (auto* Summon = Cast<ADESimpleSummonBase>(Pair.Value.Get()))
             {
                 Summon->InitializeFromContext(Context);
@@ -108,7 +108,7 @@ void UDEBehavior_SpawnSummon::OnContextRefreshed(const FDESkillContext& Context)
     }
     UE_LOG(LogTemp, Error, TEXT("Context Refreshed for Perma Summons"));
 
-    // 3. ¸ñÇ¥ ¼öÄ¡ °è»ê
+    // 3. ëª©í‘œ ìˆ˜ì¹˜ ê³„ì‚°
     int32 TargetCount = bUseBaseAmountOnly
         ? Context.SourceSkill->GetBaseAmount()
         : Context.Amount;
@@ -116,7 +116,7 @@ void UDEBehavior_SpawnSummon::OnContextRefreshed(const FDESkillContext& Context)
     int32 AdditionalCount = TargetCount - CurrentCount;
     if (AdditionalCount <= 0) return;
 
-    // 4. [Áß¿ä] SpawnLoc Àç°è»ê (Execute ·ÎÁ÷ º¹»ç)
+    // 4. [ì¤‘ìš”] SpawnLoc ì¬ê³„ì‚° (Execute ë¡œì§ ë³µì‚¬)
     FVector OwnerLoc = Context.Instigator->GetActorLocation();
     FVector BaseSpawnLoc = OwnerLoc;
 
@@ -131,7 +131,7 @@ void UDEBehavior_SpawnSummon::OnContextRefreshed(const FDESkillContext& Context)
     }
     BaseSpawnLoc.Z = 0.0f;
 
-    // 5. Ãß°¡ ¼ÒÈ¯ ½ÇÇà
+    // 5. ì¶”ê°€ ì†Œí™˜ ì‹¤í–‰
     for (int32 i = 0; i < AdditionalCount; i++)
     {
         FVector FinalLoc = BaseSpawnLoc + FVector(FMath::RandRange(-50.f, 50.f), FMath::RandRange(-50.f, 50.f), 0.f);

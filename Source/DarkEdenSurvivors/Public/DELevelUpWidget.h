@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -21,24 +21,24 @@ class DARKEDENSURVIVORS_API UDELevelUpWidget : public UUserWidget
     GENERATED_BODY()
 
 public:
-    // ¸Å´ÏÀú µî·Ï ÇÔ¼ö
+    // ë§¤ë‹ˆì € ë“±ë¡ í•¨ìˆ˜
     void InitWidget(UDELevelUpManagerComponent* InManager);
 
 protected:
     virtual void NativeConstruct() override;
 
-    // ½½·Ô¿¡¼­ "³ª ¼±ÅÃµÆ¾î!" ½ÅÈ£¸¦ º¸³»¸é ½ÇÇàµÉ ÇÔ¼ö
+    // ìŠ¬ë¡¯ì—ì„œ "ë‚˜ ì„ íƒëì–´!" ì‹ í˜¸ë¥¼ ë³´ë‚´ë©´ ì‹¤í–‰ë  í•¨ìˆ˜
     UFUNCTION()
     void OnOptionSelected();
 
 public:
     // =========================================================
-    // [UI ¹ÙÀÎµù] ±âÁ¸ ¹öÆ° 3°³ -> °¡·Î ¹Ú½º 1°³·Î º¯°æ!
+    // [UI ë°”ì¸ë”©] ê¸°ì¡´ ë²„íŠ¼ 3ê°œ -> ê°€ë¡œ ë°•ìŠ¤ 1ê°œë¡œ ë³€ê²½!
     // =========================================================
     UPROPERTY(meta = (BindWidget))
     UVerticalBox* ChoiceContainer;
 
-    // [¼³Á¤] ½½·ÔÀ¸·Î »ç¿ëÇÒ À§Á¬ BP Å¬·¡½º (¿¡µğÅÍ¿¡¼­ ÇÒ´ç ÇÊ¿ä)
+    // [ì„¤ì •] ìŠ¬ë¡¯ìœ¼ë¡œ ì‚¬ìš©í•  ìœ„ì ¯ BP í´ë˜ìŠ¤ (ì—ë””í„°ì—ì„œ í• ë‹¹ í•„ìš”)
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
     TSubclassOf<UDELevelUpChoiceSlotWidget> SlotWidgetClass;
 

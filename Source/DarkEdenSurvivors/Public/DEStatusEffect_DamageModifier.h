@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -25,17 +25,17 @@ class DARKEDENSURVIVORS_API UDEStatusEffect_DamageModifier : public UDEStatusEff
 public:
 	UDEStatusEffect_DamageModifier()
 	{
-		// ¸ğµğÆÄÀÌ¾î´Â º¸Åë Æ½(Tick) ¿¬»êÀÌ ¾Æ¿¹ ÇÊ¿ä ¾øÀ¸¹Ç·Î ²¨¹ö·Áµµ µË´Ï´Ù.
+		// ëª¨ë””íŒŒì´ì–´ëŠ” ë³´í†µ í‹±(Tick) ì—°ì‚°ì´ ì•„ì˜ˆ í•„ìš” ì—†ìœ¼ë¯€ë¡œ êº¼ë²„ë ¤ë„ ë©ë‹ˆë‹¤.
 	}
 
 	UPROPERTY(EditDefaultsOnly, Category = "Status Effect|Modifier")
 	EDamageModifierType ModifierType = EDamageModifierType::Percentage;
 
-	// ¸¶ÀÌ³Ê½º °ª(-0.5)À» ³ÖÀ¸¸é µ¥¹ÌÁö °¨¼Ò ¹öÇÁ·Îµµ ÀÛµ¿!
+	// ë§ˆì´ë„ˆìŠ¤ ê°’(-0.5)ì„ ë„£ìœ¼ë©´ ë°ë¯¸ì§€ ê°ì†Œ ë²„í”„ë¡œë„ ì‘ë™!
 	UPROPERTY(EditDefaultsOnly, Category = "Status Effect|Modifier")
 	float ModifierValuePerStack = 0.05f;
 
-	// Base¿¡ ¸¸µé¾îµĞ °¡»ó ÇÔ¼ö ¿À¹ö¶óÀÌµå
+	// Baseì— ë§Œë“¤ì–´ë‘” ê°€ìƒ í•¨ìˆ˜ ì˜¤ë²„ë¼ì´ë“œ
 	virtual void ModifyIncomingDamage(const FActiveStatusEffect& EffectData, FDEDamageRequest& InOutRequest) const override;
 	
 };

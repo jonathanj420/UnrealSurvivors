@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEBehavior_ApplyKnockback.h"
@@ -7,40 +7,40 @@
 
 void UDEBehavior_ApplyKnockback::Execute(FDESkillContext& Context)
 {
-	// 1. ³Ë¹é ÈûÀÌ ¾øÀ¸¸é ½ÇÇà ¾È ÇÔ (ÃÖÀûÈ­)
+	// 1. ë„‰ë°± í˜ì´ ì—†ìœ¼ë©´ ì‹¤í–‰ ì•ˆ í•¨ (ìµœì í™”)
 	if (Context.KnockbackForce <= KINDA_SMALL_NUMBER) return;
 
-	// 2. ±âÁØÁ¡ ¼³Á¤: ¹«Á¶°Ç "½ÃÀüÀÚ(ÇÃ·¹ÀÌ¾î)" À§Ä¡
-	// (Åõ»çÃ¼°¡ ¸ÂÀº À§Ä¡ HitLocationÀ» ¾²Áö ¾ÊÀ½!)
+	// 2. ê¸°ì¤€ì  ì„¤ì •: ë¬´ì¡°ê±´ "ì‹œì „ì(í”Œë ˆì´ì–´)" ìœ„ì¹˜
+	// (íˆ¬ì‚¬ì²´ê°€ ë§ì€ ìœ„ì¹˜ HitLocationì„ ì“°ì§€ ì•ŠìŒ!)
 	FVector Origin = FVector::ZeroVector;
 	if (Context.Instigator)
 	{
 		Origin = Context.Instigator->GetActorLocation();
 	}
 
-	// 3. Å¸°Ù ¼øÈ¸
+	// 3. íƒ€ê²Ÿ ìˆœíšŒ
 	for (AActor* Target : Context.Targets)
 	{
 		if (!IsValid(Target)) continue;
 
-		// ¸ó½ºÅÍ Å¬·¡½º·Î Ä³½ºÆÃ (ApplyKnockback È£ÃâÀ» À§ÇØ)
+		// ëª¬ìŠ¤í„° í´ë˜ìŠ¤ë¡œ ìºìŠ¤íŒ… (ApplyKnockback í˜¸ì¶œì„ ìœ„í•´)
 		ADEMonsterBase* Monster = Cast<ADEMonsterBase>(Target);
 		if (Monster)
 		{
-			// [ÇÙ½É ·ÎÁ÷] ¹æÇâ = ¸ó½ºÅÍ À§Ä¡ - ÇÃ·¹ÀÌ¾î À§Ä¡
-			// °á°ú: ÇÃ·¹ÀÌ¾î·ÎºÎÅÍ ¸Ö¾îÁö´Â º¤ÅÍ
+			// [í•µì‹¬ ë¡œì§] ë°©í–¥ = ëª¬ìŠ¤í„° ìœ„ì¹˜ - í”Œë ˆì´ì–´ ìœ„ì¹˜
+			// ê²°ê³¼: í”Œë ˆì´ì–´ë¡œë¶€í„° ë©€ì–´ì§€ëŠ” ë²¡í„°
 			FVector Direction = Monster->GetActorLocation() - Origin;
 
-			// ZÃà ¹«½Ã (¼öÆò ³Ë¹é)
+			// Zì¶• ë¬´ì‹œ (ìˆ˜í‰ ë„‰ë°±)
 			if (bFlattenZ)
 			{
 				Direction.Z = 0.0f;
 			}
 
-			// ¿¹¿Ü Ã³¸®: ¸ó½ºÅÍ°¡ ÇÃ·¹ÀÌ¾î¿Í ¿Ïº®ÇÏ°Ô °ãÃÄ¼­ º¤ÅÍ°¡ 0ÀÎ °æ¿ì
+			// ì˜ˆì™¸ ì²˜ë¦¬: ëª¬ìŠ¤í„°ê°€ í”Œë ˆì´ì–´ì™€ ì™„ë²½í•˜ê²Œ ê²¹ì³ì„œ ë²¡í„°ê°€ 0ì¸ ê²½ìš°
 			if (Direction.IsNearlyZero())
 			{
-				// ¸ó½ºÅÍ°¡ ¹Ù¶óº¸´Â ¹æÇâÀÇ ¹İ´ë(µŞ°ÉÀ½Áú)·Î ¹Ğ¾î¹ö¸²
+				// ëª¬ìŠ¤í„°ê°€ ë°”ë¼ë³´ëŠ” ë°©í–¥ì˜ ë°˜ëŒ€(ë’·ê±¸ìŒì§ˆ)ë¡œ ë°€ì–´ë²„ë¦¼
 				Direction = Monster->GetActorForwardVector() * -1.0f;
 			}
 			else
@@ -48,10 +48,10 @@ void UDEBehavior_ApplyKnockback::Execute(FDESkillContext& Context)
 				Direction.Normalize();
 			}
 
-			// ÃÖÁ¾ Èû °è»ê (Context °ª * ¹èÀ²)
+			// ìµœì¢… í˜ ê³„ì‚° (Context ê°’ * ë°°ìœ¨)
 			float FinalForce = Context.KnockbackForce * ForceMultiplier;
 
-			// ¸ó½ºÅÍ ³»ºÎ ·ÎÁ÷ È£Ãâ (MoveToPlayer¿¡¼­ Ã³¸®µÊ)
+			// ëª¬ìŠ¤í„° ë‚´ë¶€ ë¡œì§ í˜¸ì¶œ (MoveToPlayerì—ì„œ ì²˜ë¦¬ë¨)
 			Monster->ApplyKnockback(Direction, FinalForce);
 		}
 	}

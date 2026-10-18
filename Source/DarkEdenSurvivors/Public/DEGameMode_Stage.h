@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -40,7 +40,7 @@ protected:
 
     
 
-    // °á°úÃ¢ À§Á¬ Å¬·¡½º (¿¡µğÅÍ¿¡¼­ ÇÒ´ç)
+    // ê²°ê³¼ì°½ ìœ„ì ¯ í´ë˜ìŠ¤ (ì—ë””í„°ì—ì„œ í• ë‹¹)
     UPROPERTY(EditDefaultsOnly, Category = "UI")
     TSubclassOf<class UUserWidget> ResultWidgetClass;
 
@@ -49,8 +49,8 @@ public:
     UFUNCTION()
     void GameOver();
 public:
-    // ¡Ú ¸ó½ºÅÍ°¡ Á×°Å³ª »óÀÚ¸¦ ¸Ô¾úÀ» ¶§ È£ÃâÇÒ 'ÀÔ±İ' ÇÔ¼ö
+    // â˜… ëª¬ìŠ¤í„°ê°€ ì£½ê±°ë‚˜ ìƒìë¥¼ ë¨¹ì—ˆì„ ë•Œ í˜¸ì¶œí•  'ì…ê¸ˆ' í•¨ìˆ˜
     UFUNCTION(BlueprintCallable, Category = "Reward")
     void AddGold(int32 Amount);
-    // ... ³ª¸ÓÁö ¸Å´ÏÀú Æ÷ÀÎÅÍµµ ¼±¾ğ
+    // ... ë‚˜ë¨¸ì§€ ë§¤ë‹ˆì € í¬ì¸í„°ë„ ì„ ì–¸
 };

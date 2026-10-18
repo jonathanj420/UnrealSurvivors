@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEHUDWidget.h"
@@ -18,18 +18,18 @@ void UDEHUDWidget::BindCharacterStat(ADECharacterBase* Character)
 {
     if (!Character) return;
 
-    // 1. Ã¼·Â ÄÄÆ÷³ÍÆ® ¿¬°á
+    // 1. ì²´ë ¥ ì»´í¬ë„ŒíŠ¸ ì—°ê²°
     if (UDEHealthComponent* HealthComp = Character->GetHealthComponent())
     {
-        // ÃÊ±â°ª ÇÑ ¹ø °»½Å
+        // ì´ˆê¸°ê°’ í•œ ë²ˆ ê°±ì‹ 
         UpdateHP(HealthComp->GetCurrentHP(), HealthComp->GetMaxHP());
 
-        // ÀÌº¥Æ® ±¸µ¶ (AddUObject·Î ¹­¾î¾ß ¾ÈÀü)
-        // ÁÖÀÇ: HealthComponentÀÇ µ¨¸®°ÔÀÌÆ® ½Ã±×´ÏÃ³°¡ (Current, Max)¸¦ º¸³»Áà¾ß ÇÔ
+        // ì´ë²¤íŠ¸ êµ¬ë… (AddUObjectë¡œ ë¬¶ì–´ì•¼ ì•ˆì „)
+        // ì£¼ì˜: HealthComponentì˜ ë¸ë¦¬ê²Œì´íŠ¸ ì‹œê·¸ë‹ˆì²˜ê°€ (Current, Max)ë¥¼ ë³´ë‚´ì¤˜ì•¼ í•¨
         HealthComp->OnHPChanged.AddUObject(this, &UDEHUDWidget::UpdateHP);
     }
 
-    // 2. °æÇèÄ¡ ÄÄÆ÷³ÍÆ® ¿¬°á (±¸ÇöµÇ¾î ÀÖ´Ù¸é)
+    // 2. ê²½í—˜ì¹˜ ì»´í¬ë„ŒíŠ¸ ì—°ê²° (êµ¬í˜„ë˜ì–´ ìžˆë‹¤ë©´)
     
     if (UDEProgressionComponent* ProgressionComponent = Character->GetProgressionComponent())
     {
@@ -43,7 +43,7 @@ void UDEHUDWidget::UpdateHP(float CurrentHP, float MaxHP)
 {
     if (PB_HP && MaxHP > 0.0f)
     {
-        // 0.0 ~ 1.0 »çÀÌ ºñÀ²·Î º¯È¯
+        // 0.0 ~ 1.0 ì‚¬ì´ ë¹„ìœ¨ë¡œ ë³€í™˜
         float Percent = FMath::Clamp(CurrentHP / MaxHP, 0.0f, 1.0f);
         PB_HP->SetPercent(Percent);
     }

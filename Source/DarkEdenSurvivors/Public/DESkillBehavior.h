@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -12,7 +12,7 @@
 struct FDESkillContext;
 
 /**
- * ¸ğµç ½ºÅ³ Çàµ¿ÀÇ º£ÀÌ½º Å¬·¡½º
+ * ëª¨ë“  ìŠ¤í‚¬ í–‰ë™ì˜ ë² ì´ìŠ¤ í´ë˜ìŠ¤
  */
 UCLASS(Abstract, Blueprintable, BlueprintType, EditInlineNew, DefaultToInstanced)
 class DARKEDENSURVIVORS_API UDESkillBehavior : public UObject
@@ -20,14 +20,14 @@ class DARKEDENSURVIVORS_API UDESkillBehavior : public UObject
     GENERATED_BODY()
 
 public:
-    /** ½ÇÁ¦ Çàµ¿ ½ÇÇà */
+    /** ì‹¤ì œ í–‰ë™ ì‹¤í–‰ */
     virtual void Execute(FDESkillContext& Context) PURE_VIRTUAL(UDESkillBehavior::Execute, );
     virtual void OnContextRefreshed(const FDESkillContext& Context) {}
-    // »õ·Ó°Ô Ãß°¡! ½ºÅ³ÀÌ ³¡³¯ ¶§ ºñÇìÀÌºñ¾î ÀÚ½ÅÀÌ Á¤¸®ÇÒ °Ô ÀÖ´Ù¸é ¿©±â¼­ ÇÏµµ·Ï ¶Õ¾îÁÜ
+    // ìƒˆë¡­ê²Œ ì¶”ê°€! ìŠ¤í‚¬ì´ ëë‚  ë•Œ ë¹„í—¤ì´ë¹„ì–´ ìì‹ ì´ ì •ë¦¬í•  ê²Œ ìˆë‹¤ë©´ ì—¬ê¸°ì„œ í•˜ë„ë¡ ëš«ì–´ì¤Œ
     virtual void EndBehavior() {}
 public:
-    // ÆÄÀÌÇÁ¶óÀÎ ·çÇÁ¸¦ ¸ØÃç¾ß ÇÏ´Â ½Ã°£ÀÌ ÀÖ´ÂÁö ¹İÈ¯ÇÕ´Ï´Ù.
-    // ±âº»°ªÀº 0.0f ÀÌ¸ç, µô·¹ÀÌ°¡ ¾ø´Â ÀÏ¹İ ºñÇìÀÌºñ¾îµéÀº ¿À¹ö¶óÀÌµå ÇÒ ÇÊ¿ä°¡ ¾ø½À´Ï´Ù.
+    // íŒŒì´í”„ë¼ì¸ ë£¨í”„ë¥¼ ë©ˆì¶°ì•¼ í•˜ëŠ” ì‹œê°„ì´ ìˆëŠ”ì§€ ë°˜í™˜í•©ë‹ˆë‹¤.
+    // ê¸°ë³¸ê°’ì€ 0.0f ì´ë©°, ë”œë ˆì´ê°€ ì—†ëŠ” ì¼ë°˜ ë¹„í—¤ì´ë¹„ì–´ë“¤ì€ ì˜¤ë²„ë¼ì´ë“œ í•  í•„ìš”ê°€ ì—†ìŠµë‹ˆë‹¤.
     virtual float GetPipelineDelay() const { return 0.0f; }
 
 };

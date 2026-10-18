@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DESummon_GoreGland.h"
@@ -24,10 +24,10 @@ void ADESummon_GoreGland::ResetState()
 
     CurrentTarget = nullptr;
 
-    // 1. [Å¸°Ù Å½»ö] 0.5ÃÊ¸¶´Ù °¡º­¿î Å½»ö¸¸ ÁøÇà
+    // 1. [íƒ€ê²Ÿ íƒìƒ‰] 0.5ì´ˆë§ˆë‹¤ ê°€ë²¼ìš´ íƒìƒ‰ë§Œ ì§„í–‰
     GetWorldTimerManager().SetTimer(TargetSearchTimerHandle, this, &ADESummon_GoreGland::FindNearestTarget, 0.5f, true);
 
-    // 2. [ÁÖ±âÀû Å¸°İ] ÇÇ »Õ±â ¹«ÇÑ ¹İº¹ Å¸ÀÌ¸Ó
+    // 2. [ì£¼ê¸°ì  íƒ€ê²©] í”¼ ë¿œê¸° ë¬´í•œ ë°˜ë³µ íƒ€ì´ë¨¸
     GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &ADESummon_GoreGland::PerformBloodPulse, AttackInterval, true);
 }
 
@@ -35,19 +35,19 @@ void ADESummon_GoreGland::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    // [ÀÌµ¿ ·ÎÁ÷] Æ½¸¶´Ù ºÎµå·´°Ô Å¸°ÙÀ» ÇâÇØ ±â¾î°©´Ï´Ù.
+    // [ì´ë™ ë¡œì§] í‹±ë§ˆë‹¤ ë¶€ë“œëŸ½ê²Œ íƒ€ê²Ÿì„ í–¥í•´ ê¸°ì–´ê°‘ë‹ˆë‹¤.
     if (IsValid(CurrentTarget))
     {
         FVector CurrentLoc = GetActorLocation();
         FVector TargetLoc = CurrentTarget->GetActorLocation();
 
-        // ZÃà °íÁ¤: °øÁß¿¡ ¶ßÁö ¾Ê°í ÇÇ ÀåÆÇÀÌ ¹Ù´ÚÀ» ¿¹»Ú°Ô ¾µ°í ´Ù´Ï°Ô ÇÕ´Ï´Ù.
+        // Zì¶• ê³ ì •: ê³µì¤‘ì— ëœ¨ì§€ ì•Šê³  í”¼ ì¥íŒì´ ë°”ë‹¥ì„ ì˜ˆì˜ê²Œ ì“¸ê³  ë‹¤ë‹ˆê²Œ í•©ë‹ˆë‹¤.
         TargetLoc.Z = CurrentLoc.Z;
 
         FVector Direction = (TargetLoc - CurrentLoc).GetSafeNormal();
         SetActorLocation(CurrentLoc + (Direction * MoveSpeed * DeltaTime));
 
-        // (¼±ÅÃ) ÁøÇà ¹æÇâÀ¸·Î »ìÂ¦ È¸ÀüÇÏ°Ô ¸¸µé¸é ²ŞÆ²°Å¸®´Â ´À³¦ÀÌ ´õ »ğ´Ï´Ù.
+        // (ì„ íƒ) ì§„í–‰ ë°©í–¥ìœ¼ë¡œ ì‚´ì§ íšŒì „í•˜ê²Œ ë§Œë“¤ë©´ ê¿ˆí‹€ê±°ë¦¬ëŠ” ëŠë‚Œì´ ë” ì‚½ë‹ˆë‹¤.
         FRotator NewRot = FMath::RInterpTo(GetActorRotation(), Direction.Rotation(), DeltaTime, 5.0f);
         SetActorRotation(NewRot);
     }
@@ -55,7 +55,7 @@ void ADESummon_GoreGland::Tick(float DeltaTime)
 
 void ADESummon_GoreGland::FindNearestTarget()
 {
-    // ÀÌ¹Ì ÂÑ°í ÀÖ´Â Å¸°ÙÀÌ »ì¾ÆÀÖ°í »ç°Å¸® ³»¿¡ ÀÖ´Ù¸é °»½Å »ı·« (À¯Áö)
+    // ì´ë¯¸ ì«“ê³  ìˆëŠ” íƒ€ê²Ÿì´ ì‚´ì•„ìˆê³  ì‚¬ê±°ë¦¬ ë‚´ì— ìˆë‹¤ë©´ ê°±ì‹  ìƒëµ (ìœ ì§€)
     if (IsValid(CurrentTarget))
     {
         float DistSq = FVector::DistSquared(GetActorLocation(), CurrentTarget->GetActorLocation());
@@ -65,7 +65,7 @@ void ADESummon_GoreGland::FindNearestTarget()
         }
     }
 
-    // ¡Ú [ÇÙ½É] ¶óÀÌºê·¯¸® È£Ãâ·Î ±æ¾ú´ø ¿À¹ö·¦ ÄÚµå¸¦ ´Ü 1ÁÙ·Î ¾ĞÃà!
+    // â˜… [í•µì‹¬] ë¼ì´ë¸ŒëŸ¬ë¦¬ í˜¸ì¶œë¡œ ê¸¸ì—ˆë˜ ì˜¤ë²„ë© ì½”ë“œë¥¼ ë‹¨ 1ì¤„ë¡œ ì••ì¶•!
     CurrentTarget = UDEGameplayLibrary::GetNearestTarget(this, TargetSearchRadius);
 
 }
@@ -77,8 +77,8 @@ void ADESummon_GoreGland::PerformBloodPulse()
 
     FVector Center = GetActorLocation();
 
-    // ¡Ú [ÀÌÆåÆ® ¿¬µ¿] ¹æ±İ ±ğÀ¸½Å ³ªÀÌ¾Æ°¡¶ó ½Ã½ºÅÛ¿¡ "Áö±İ ÅÍÁ®¶ó!" ÇÏ°í ½ÅÈ£¸¦ º¸³À´Ï´Ù.
-    // (³ªÀÌ¾Æ°¡¶ó ³»ºÎ¿¡¼­ 'TriggerPulse'¶ó´Â int32 º¯¼ö¸¦ ¸¸µé¾îµÎ°í User Parameter·Î ¹Ş°Ô ¼¼ÆÃÇÏ½Ã¸é µË´Ï´Ù)
+    // â˜… [ì´í™íŠ¸ ì—°ë™] ë°©ê¸ˆ ê¹ìœ¼ì‹  ë‚˜ì´ì•„ê°€ë¼ ì‹œìŠ¤í…œì— "ì§€ê¸ˆ í„°ì ¸ë¼!" í•˜ê³  ì‹ í˜¸ë¥¼ ë³´ëƒ…ë‹ˆë‹¤.
+    // (ë‚˜ì´ì•„ê°€ë¼ ë‚´ë¶€ì—ì„œ 'TriggerPulse'ë¼ëŠ” int32 ë³€ìˆ˜ë¥¼ ë§Œë“¤ì–´ë‘ê³  User Parameterë¡œ ë°›ê²Œ ì„¸íŒ…í•˜ì‹œë©´ ë©ë‹ˆë‹¤)
     
 
 
@@ -106,17 +106,17 @@ void ADESummon_GoreGland::PerformBloodPulse()
         OverlapResults,
         Center,
         FQuat::Identity,
-        ObjectQueryParams, // ¡Ú Ã¤³Î ´ë½Å ¿ÀºêÁ§Æ® Äõ¸® ÆÄ¶ó¹ÌÅÍ°¡ µé¾î°¨
+        ObjectQueryParams, // â˜… ì±„ë„ ëŒ€ì‹  ì˜¤ë¸Œì íŠ¸ ì¿¼ë¦¬ íŒŒë¼ë¯¸í„°ê°€ ë“¤ì–´ê°
         SphereShape,
         QueryParams
     );
 
-    //Context.Targets.Reset(); // Âî²¨±â ºñ¿ì±â
+    //Context.Targets.Reset(); // ì°Œêº¼ê¸° ë¹„ìš°ê¸°
 
     //THIS MOFOKIN OverlapMultiByProfile NEVER RETURNS FUCKIN TRUE FOR OVERLAPS ONLY TRUE FOR FUCKING BLOCKS
     if (bHitAny)
     {
-        // Áßº¹ Å¸°İ ¹æÁö¿ë (ÇÑ ¸ó½ºÅÍ¿¡ Äİ¶óÀÌ´õ°¡ ¿©·¯ °³ÀÏ ¼ö ÀÖÀ½)
+        // ì¤‘ë³µ íƒ€ê²© ë°©ì§€ìš© (í•œ ëª¬ìŠ¤í„°ì— ì½œë¼ì´ë”ê°€ ì—¬ëŸ¬ ê°œì¼ ìˆ˜ ìˆìŒ)
         //TSet<AActor*> HitActors;
         //UE_LOG(LogTemp, Warning, TEXT("Target Hit"));
         for (const FOverlapResult& Result : OverlapResults)
@@ -144,7 +144,7 @@ void ADESummon_GoreGland::PerformBloodPulse()
 
         if (SpawnedEffect)
         {
-            // ¹°¸® Å¸°İ ÆÇÁ¤°ú ¿ÏÀüÈ÷ µ¿ÀÏÇÑ 'EffectRadius'¸¦ ³ªÀÌ¾Æ°¡¶ó·Î ½÷ÁÜ!
+            // ë¬¼ë¦¬ íƒ€ê²© íŒì •ê³¼ ì™„ì „íˆ ë™ì¼í•œ 'EffectRadius'ë¥¼ ë‚˜ì´ì•„ê°€ë¼ë¡œ ì´ì¤Œ!
             SpawnedEffect->SetFloatParameter(FName("SkillRadius"), Radius);
         }
     }
@@ -152,7 +152,7 @@ void ADESummon_GoreGland::PerformBloodPulse()
 
 void ADESummon_GoreGland::ReturnToPool()
 {
-    // Ç®·Î ¹İÈ¯µÉ ¶§ ·çÇÁ Å¸ÀÌ¸Ó ±ò²ûÇÏ°Ô ²ô±â
+    // í’€ë¡œ ë°˜í™˜ë  ë•Œ ë£¨í”„ íƒ€ì´ë¨¸ ê¹”ë”í•˜ê²Œ ë„ê¸°
     GetWorldTimerManager().ClearTimer(TargetSearchTimerHandle);
     GetWorldTimerManager().ClearTimer(AttackTimerHandle);
     CurrentTarget = nullptr;

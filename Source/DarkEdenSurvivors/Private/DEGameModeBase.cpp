@@ -1,15 +1,15 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEGameModeBase.h"
-#include "DEGameInstance.h" // ÀÎ½ºÅÏ½º Çì´õ ÇÊ¼ö
+#include "DEGameInstance.h" // ì¸ìŠ¤í„´ìŠ¤ í—¤ë” í•„ìˆ˜
 #include "Kismet/GameplayStatics.h"
 
 
 ADEGameModeBase::ADEGameModeBase()
 {
-	// ±âº» ÆùÀÌ³ª ÄÁÆ®·Ñ·¯´Â ÀÚ½Ä¿¡¼­ ¼³Á¤ÇÏ¹Ç·Î ¿©±â¼± ºñ¿öµÖµµ µÊ
-	// ÇÊ¿äÇÏ´Ù¸é °¡Àå ±âº»ÀÌ µÇ´Â ÄÁÆ®·Ñ·¯ ¼³Á¤
+	// ê¸°ë³¸ í°ì´ë‚˜ ì»¨íŠ¸ë¡¤ëŸ¬ëŠ” ìì‹ì—ì„œ ì„¤ì •í•˜ë¯€ë¡œ ì—¬ê¸°ì„  ë¹„ì›Œë‘¬ë„ ë¨
+	// í•„ìš”í•˜ë‹¤ë©´ ê°€ì¥ ê¸°ë³¸ì´ ë˜ëŠ” ì»¨íŠ¸ë¡¤ëŸ¬ ì„¤ì •
 	// PlayerControllerClass = AMyBaseController::StaticClass();
 }
 
@@ -17,11 +17,11 @@ void ADEGameModeBase::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
 
-	// Á¢¼Ó ·Î±× (·Îºñµç ½ºÅ×ÀÌÁöµç ´Ù ¶ä)
+	// ì ‘ì† ë¡œê·¸ (ë¡œë¹„ë“  ìŠ¤í…Œì´ì§€ë“  ë‹¤ ëœ¸)
 	UE_LOG(LogTemp, Warning, TEXT("[GameModeBase] Player Login: %s"), *NewPlayer->GetName());
 
-	// ¿©±â¼­ GameInstanceÀÇ µ¥ÀÌÅÍ¸¦ °¡Á®¿Í¼­ ÇÃ·¹ÀÌ¾î¿¡°Ô Àû¿ëÇÒ ¼öµµ ÀÖÀ½
-	// ¿¹: NewPlayer->SetSkin(GameInstance->GetEquippedSkin());
+	// ì—¬ê¸°ì„œ GameInstanceì˜ ë°ì´í„°ë¥¼ ê°€ì ¸ì™€ì„œ í”Œë ˆì´ì–´ì—ê²Œ ì ìš©í•  ìˆ˜ë„ ìˆìŒ
+	// ì˜ˆ: NewPlayer->SetSkin(GameInstance->GetEquippedSkin());
 }
 
 void ADEGameModeBase::Logout(AController* Exiting)
@@ -30,13 +30,13 @@ void ADEGameModeBase::Logout(AController* Exiting)
 
 	UE_LOG(LogTemp, Warning, TEXT("[GameModeBase] Player Logout: %s"), *Exiting->GetName());
 
-	// (¼±ÅÃ) ¸Ê ³ª°¥ ¶§ ÀÚµ¿ ÀúÀå?
+	// (ì„ íƒ) ë§µ ë‚˜ê°ˆ ë•Œ ìë™ ì €ì¥?
 	// SaveGameData();
 }
 
 void ADEGameModeBase::SaveGameData()
 {
-	// ¸Å¹ø CastÇÏ±â ±ÍÂúÀ¸´Ï±î ¿©±â¼­ ÇÑ ¹ø¿¡ Ã³¸®
+	// ë§¤ë²ˆ Castí•˜ê¸° ê·€ì°®ìœ¼ë‹ˆê¹Œ ì—¬ê¸°ì„œ í•œ ë²ˆì— ì²˜ë¦¬
 	if (UDEGameInstance* GI = Cast<UDEGameInstance>(GetGameInstance()))
 	{
 		GI->SaveGame();

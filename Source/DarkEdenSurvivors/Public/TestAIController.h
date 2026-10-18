@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -26,6 +26,6 @@ private:
 	UPROPERTY()
 	class UBlackboardData* BBAsset;
 
-    // ¸Å ÇÁ·¹ÀÓ ½ÇÇàµÇ¾î ÇÃ·¹ÀÌ¾î À§Ä¡¸¦ °»½ÅÇÕ´Ï´Ù.
+    // ë§¤ í”„ë ˆì„ ì‹¤í–‰ë˜ì–´ í”Œë ˆì´ì–´ ìœ„ì¹˜ë¥¼ ê°±ì‹ í•©ë‹ˆë‹¤.
     virtual void Tick(float DeltaSeconds) override;
 };

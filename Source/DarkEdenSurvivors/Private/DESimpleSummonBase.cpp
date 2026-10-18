@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DESimpleSummonBase.h"
@@ -14,13 +14,13 @@
 // Sets default values
 ADESimpleSummonBase::ADESimpleSummonBase()
 {
-	PrimaryActorTick.bCanEverTick = true; // ¼ÒÈ¯¼ö ÀÌµ¿(ÃßÀû) ·ÎÁ÷À» À§ÇØ ÄÑµÒ
+	PrimaryActorTick.bCanEverTick = true; // ì†Œí™˜ìˆ˜ ì´ë™(ì¶”ì ) ë¡œì§ì„ ìœ„í•´ ì¼œë‘ 
 
-	// 1. [Ãæµ¹Ã¼ »ı¼º] (¼ÒÈ¯¼öÀÇ Áß½ÉÁ¡ ¹× °ãÄ§ ÆÇÁ¤¿ë)
+	// 1. [ì¶©ëŒì²´ ìƒì„±] (ì†Œí™˜ìˆ˜ì˜ ì¤‘ì‹¬ì  ë° ê²¹ì¹¨ íŒì •ìš©)
 	CollisionComponent->InitSphereRadius(50.0f);
-	CollisionComponent->SetCollisionProfileName(TEXT("PlayerAttack")); // ±âº»Àº OverlapÀ¸·Î
+	CollisionComponent->SetCollisionProfileName(TEXT("PlayerAttack")); // ê¸°ë³¸ì€ Overlapìœ¼ë¡œ
 
-	//// 2. [¸Ş½Ã »ı¼º]
+	//// 2. [ë©”ì‹œ ìƒì„±]
 	//Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	//Mesh->SetupAttachment(RootComponent);
 	//Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -28,10 +28,10 @@ ADESimpleSummonBase::ADESimpleSummonBase()
 	//Mesh->SetSimulatePhysics(false);
 	//Mesh->SetEnableGravity(false);
 
-	//// 3. [³ªÀÌ¾Æ°¡¶ó »ı¼º]
+	//// 3. [ë‚˜ì´ì•„ê°€ë¼ ìƒì„±]
 	//NiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComponent"));
 	//NiagaraComponent->SetupAttachment(RootComponent);
-	//NiagaraComponent->SetAutoActivate(false); // ResetState¿¡¼­ ÄÔ
+	//NiagaraComponent->SetAutoActivate(false); // ResetStateì—ì„œ ì¼¬
 	//NiagaraComponent->SetRelativeLocation(FVector::ZeroVector);
 }
 

@@ -1,10 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "DarkEdenSurvivors.h"
 #include "GameFramework/Character.h"
-#include "DESkillBase.h" // UDESkillBase Å¬·¡½º Á¤ÀÇ Æ÷ÇÔ
+#include "DESkillBase.h" // UDESkillBase í´ë˜ìŠ¤ ì •ì˜ í¬í•¨
 #include "DECharacterBase.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnPlayerDiedDelegate);
@@ -37,7 +37,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
-	// ½ºÅ³ ¸Å´ÏÀú (¸ğµç Ä³¸¯ÅÍ°¡ °¡Áü)
+	// ìŠ¤í‚¬ ë§¤ë‹ˆì € (ëª¨ë“  ìºë¦­í„°ê°€ ê°€ì§)
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	class UDESkillManagerComponent* SkillManager;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
@@ -132,7 +132,7 @@ public:
 	void AddExp(float v);
 	void SetMaxHP(float NewMaxHP);
 public:
-	// Ä³¸¯ÅÍ°¡ ±âº»ÀûÀ¸·Î °¡Áö°í ÅÂ¾î³ª´Â ½ºÅ³ ID
+	// ìºë¦­í„°ê°€ ê¸°ë³¸ì ìœ¼ë¡œ ê°€ì§€ê³  íƒœì–´ë‚˜ëŠ” ìŠ¤í‚¬ ID
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Skill")
 	int32 BaseSkillID = -1;
 
@@ -175,7 +175,7 @@ protected:
 public:
 	float GetCapsuleHalfRadius();
 public:
-	// [4] Á¢±ÙÀÚ (Getter) - ´Ù¸¥ Å¬·¡½º¿¡¼­ ÆíÇÏ°Ô °¡Á®´Ù ¾²¶ó°í ¸¸µê
+	// [4] ì ‘ê·¼ì (Getter) - ë‹¤ë¥¸ í´ë˜ìŠ¤ì—ì„œ í¸í•˜ê²Œ ê°€ì ¸ë‹¤ ì“°ë¼ê³  ë§Œë“¦
 	UFUNCTION(BlueprintCallable, Category = "Components")
 	UDEStatComponent* GetStatComponent() const { return StatComponent; }
 
@@ -205,7 +205,7 @@ public:
 	void ForceLevelUpSkill(int32 SkillId);
 
 	public:
-		// ¡Ú µğ¹ö±×¿ë ¾Ç¼¼¼­¸® ÀåÂø ½½·Ô
+		// â˜… ë””ë²„ê·¸ìš© ì•…ì„¸ì„œë¦¬ ì¥ì°© ìŠ¬ë¡¯
 		UPROPERTY(EditAnywhere, Category = "Debug|Cheat")
 		class UDEAccessoryData* DebugAccessoryToEquip;
 

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "TestProjectile.h"
@@ -16,22 +16,22 @@ ATestProjectile::ATestProjectile()
 
     if (!CollisionComponent)
     {
-        // ½ºÇÇ¾î¸¦ ´Ü¼ø Äİ¸®Àü Ç¥ÇöÀ¸·Î »ç¿ëÇÕ´Ï´Ù.
+        // ìŠ¤í”¼ì–´ë¥¼ ë‹¨ìˆœ ì½œë¦¬ì „ í‘œí˜„ìœ¼ë¡œ ì‚¬ìš©í•©ë‹ˆë‹¤.
         CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
         CollisionComponent->BodyInstance.SetCollisionProfileName(TEXT("Projectile"));
         CollisionComponent->OnComponentHit.AddDynamic(this, &ATestProjectile::OnHit);
 
 
-        // ½ºÇÇ¾îÀÇ Äİ¸®Àü ¹İ°æÀ» ¼³Á¤ÇÕ´Ï´Ù.
+        // ìŠ¤í”¼ì–´ì˜ ì½œë¦¬ì „ ë°˜ê²½ì„ ì„¤ì •í•©ë‹ˆë‹¤.
         CollisionComponent->InitSphereRadius(15.0f);
-        // ·çÆ® ÄÄÆ÷³ÍÆ®°¡ Äİ¸®Àü ÄÄÆ÷³ÍÆ®°¡ µÇµµ·Ï ¼³Á¤ÇÕ´Ï´Ù.
+        // ë£¨íŠ¸ ì»´í¬ë„ŒíŠ¸ê°€ ì½œë¦¬ì „ ì»´í¬ë„ŒíŠ¸ê°€ ë˜ë„ë¡ ì„¤ì •í•©ë‹ˆë‹¤.
         RootComponent = CollisionComponent;
 
     }
 
     if (!ProjectileMovementComponent)
     {
-        // ÀÌ ÄÄÆ÷³ÍÆ®¸¦ »ç¿ëÇÏ¿© ÀÌ ¹ß»çÃ¼ÀÇ ÀÌµ¿À» ÁÖµµÇÕ´Ï´Ù.
+        // ì´ ì»´í¬ë„ŒíŠ¸ë¥¼ ì‚¬ìš©í•˜ì—¬ ì´ ë°œì‚¬ì²´ì˜ ì´ë™ì„ ì£¼ë„í•©ë‹ˆë‹¤.
         ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
         ProjectileMovementComponent->SetUpdatedComponent(CollisionComponent);
         ProjectileMovementComponent->InitialSpeed = 3000.0f;

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEAccSlotWidget.h"
@@ -9,20 +9,20 @@ void UDEAccSlotWidget::SetAccessory(const FText& InAccName, int32 InAccLevel, UT
     AccName = InAccName;
     AccLevel = InAccLevel;
 
-    // 1. ÀÌ¸§ ¼¼ÆÃ
+    // 1. ì´ë¦„ ì„¸íŒ…
     if (AccNameText)
     {
         AccNameText->SetText(AccName);
     }
 
-    // 2. ·¹º§ ÅØ½ºÆ® ¼¼ÆÃ (¿¹: "Lv.1")
+    // 2. ë ˆë²¨ í…ìŠ¤íŠ¸ ì„¸íŒ… (ì˜ˆ: "Lv.1")
     if (AccLevelText)
     {
         FString LevelStr = FString::Printf(TEXT("Lv.%d"), AccLevel);
         AccLevelText->SetText(FText::FromString(LevelStr));
     }
 
-    // 3. ¾ÆÀÌÄÜ ÀÌ¹ÌÁö ¼¼ÆÃ
+    // 3. ì•„ì´ì½˜ ì´ë¯¸ì§€ ì„¸íŒ…
     if (AccIconImage && InAccIcon)
     {
         AccIconImage->SetBrushFromTexture(InAccIcon);

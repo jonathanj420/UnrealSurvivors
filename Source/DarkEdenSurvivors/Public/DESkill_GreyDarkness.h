@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -28,11 +28,11 @@ protected:
     UPROPERTY(EditAnywhere, Category = "Growth") float MaxBonusRadius = 150.0f;
 
 public:
-    // ¡Ú ÀÎÅÍÆäÀÌ½º ÇÔ¼ö ±¸Çö
+    // â˜… ì¸í„°í˜ì´ìŠ¤ í•¨ìˆ˜ êµ¬í˜„
     virtual void OnTargetKilled(const FDEDamageResult& Result) override;
 
 protected:
-    // ½ºÅÃÀ» ÃÖÁ¾ ½ºÅ³ ÄÁÅØ½ºÆ®¿¡ ¹Ğ¾î³Ö±â
+    // ìŠ¤íƒì„ ìµœì¢… ìŠ¤í‚¬ ì»¨í…ìŠ¤íŠ¸ì— ë°€ì–´ë„£ê¸°
     virtual void BuildContext(FDESkillContext& OutContext) override;
 
 private:

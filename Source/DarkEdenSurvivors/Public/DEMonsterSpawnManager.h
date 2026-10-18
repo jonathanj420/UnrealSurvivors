@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -7,7 +7,7 @@
 #include "Engine/DataTable.h"
 #include "Data/DEStageWaveData.h"    
 #include "Data/DEMonsterData.h"
-#include "Engine/StreamableManager.h" // »ó´Ü ÀÎÅ¬·çµå Ãß°¡
+#include "Engine/StreamableManager.h" // ìƒë‹¨ ì¸í´ë£¨ë“œ ì¶”ê°€
 #include "Components/HierarchicalInstancedStaticMeshComponent.h"
 #include "DEMonsterSpawnManager.generated.h"
 
@@ -41,25 +41,25 @@ public:
     UPROPERTY()
     TMap<FName, TSubclassOf<ADEMonsterBase>> CachedMonsterClasses;
 
-    // ºñµ¿±â ·ÎµùÀ» µµ¿ÍÁÙ ¿£Áø ¸Å´ÏÀú
+    // ë¹„ë™ê¸° ë¡œë”©ì„ ë„ì™€ì¤„ ì—”ì§„ ë§¤ë‹ˆì €
     FStreamableManager StreamableManager;
 
-    // ·ÎµùµÈ ¿¡¼ÂµéÀÌ °¡ºñÁö ÄÃ·ºÅÍ(GC)¿¡ ³¯¾Æ°¡Áö ¾Ê°Ô ²Ë Àâ°í ÀÖÀ» ¼ÕÀâÀÌ
+    // ë¡œë”©ëœ ì—ì…‹ë“¤ì´ ê°€ë¹„ì§€ ì»¬ë ‰í„°(GC)ì— ë‚ ì•„ê°€ì§€ ì•Šê²Œ ê½‰ ì¡ê³  ìˆì„ ì†ì¡ì´
     TSharedPtr<FStreamableHandle> PreloadHandle;
 
-    // ÇÁ¸®·Îµå ÇÔ¼ö ¼±¾ğ
+    // í”„ë¦¬ë¡œë“œ í•¨ìˆ˜ ì„ ì–¸
     void PreloadMonsterResources();
 
     //Pooled Monster Instance
     UPROPERTY(EditAnywhere, Category = "Pooling")
     TArray<class ADEMonsterBase*> MonsterPool;
 
-    // È°¼ºÈ­µÇ¾î ÇÊµå¿¡ ÀÖ´Â ¸ó½ºÅÍ ¸ñ·Ï
+    // í™œì„±í™”ë˜ì–´ í•„ë“œì— ìˆëŠ” ëª¬ìŠ¤í„° ëª©ë¡
     UPROPERTY(VisibleInstanceOnly, Category = "Pooling")
     TArray<ADEMonsterBase*> ActiveMonsters;
 
 
-    // Á×¾î¼­ ´ë±â ÁßÀÎ(²¨Á®ÀÖ´Â) ¸ó½ºÅÍ ¸ñ·Ï (±âÁ¸ MonsterPool ´ëÃ¼)
+    // ì£½ì–´ì„œ ëŒ€ê¸° ì¤‘ì¸(êº¼ì ¸ìˆëŠ”) ëª¬ìŠ¤í„° ëª©ë¡ (ê¸°ì¡´ MonsterPool ëŒ€ì²´)
     UPROPERTY(VisibleInstanceOnly, Category = "Pooling")
     TArray<ADEMonsterBase*> InactiveMonsters;
 
@@ -128,15 +128,15 @@ public:
     const TArray<ADEMonsterBase*>& GetActiveMonsters() const;
 
 
-    // ÇÃ·¹ÀÌ¾î ÂüÁ¶
+    // í”Œë ˆì´ì–´ ì°¸ì¡°
     class ADECharacterBase* Player;
-    // ¸ó½ºÅÍ ÂüÁ¶
+    // ëª¬ìŠ¤í„° ì°¸ì¡°
     TSubclassOf<ADEMonsterBase> MonsterBase;
 private:
     UPROPERTY()
     TObjectPtr<UDEGameInstance> GameInstanceCache;
 
-    // UPROPERTY Ãß°¡
+    // UPROPERTY ì¶”ê°€
     UPROPERTY(VisibleAnywhere, Category = "Components")
     UDEMonsterUpdateComponent* MonsterUpdateComponent;
 

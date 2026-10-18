@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEBehavior_FilterTargets.h"
@@ -13,24 +13,24 @@ UDEBehavior_FilterTargets::UDEBehavior_FilterTargets()
 
 void UDEBehavior_FilterTargets::Execute(FDESkillContext& Context)
 {
-	// 1. ¿¹¿Ü Ã³¸®: Å¸°ÙÀÌ ¾ø°Å³ª, ÀÌ¹Ì ¸ñÇ¥º¸´Ù ÀûÀ¸¸é ÇÊÅÍ¸µÇÒ ÇÊ¿ä ¾øÀ½
+	// 1. ì˜ˆì™¸ ì²˜ë¦¬: íƒ€ê²Ÿì´ ì—†ê±°ë‚˜, ì´ë¯¸ ëª©í‘œë³´ë‹¤ ì ìœ¼ë©´ í•„í„°ë§í•  í•„ìš” ì—†ìŒ
 	if (Context.Targets.Num() == 0) return;
 
 	const int32 FinalCount = (TargetCount == -1) ? Context.Amount : TargetCount;
 
-	// °Å¸® °è»êÀ» À§ÇØ ³» À§Ä¡ °¡Á®¿À±â
+	// ê±°ë¦¬ ê³„ì‚°ì„ ìœ„í•´ ë‚´ ìœ„ì¹˜ ê°€ì ¸ì˜¤ê¸°
 	FVector MyLoc = FVector::ZeroVector;
 	if (Context.Instigator)
 	{
 		MyLoc = Context.Instigator->GetActorLocation();
 	}
 
-	// 2. ÇÊÅÍ Å¸ÀÔ¿¡ µû¶ó Á¤·Ä(Sorting) ¶Ç´Â ¼¯±â(Shuffle)
+	// 2. í•„í„° íƒ€ì…ì— ë”°ë¼ ì •ë ¬(Sorting) ë˜ëŠ” ì„ê¸°(Shuffle)
 	switch (FilterType)
 	{
 	case ETargetFilterType::Random:
 	{
-		// Fisher-Yates Shuffle (°¡Àå °øÆòÇÏ°í ºü¸¥ ·£´ı ¼¯±â)
+		// Fisher-Yates Shuffle (ê°€ì¥ ê³µí‰í•˜ê³  ë¹ ë¥¸ ëœë¤ ì„ê¸°)
 		int32 LastIndex = Context.Targets.Num() - 1;
 		for (int32 i = 0; i <= LastIndex; ++i)
 		{
@@ -45,8 +45,8 @@ void UDEBehavior_FilterTargets::Execute(FDESkillContext& Context)
 
 	case ETargetFilterType::Nearest:
 	{
-		// °Å¸® ¿À¸§Â÷¼ø (°¡±î¿î ³ğÀÌ ¾Õ)
-		// ÃÖÀûÈ­: DistSquared »ç¿ë (·çÆ® ¿¬»ê Á¦°Å)
+		// ê±°ë¦¬ ì˜¤ë¦„ì°¨ìˆœ (ê°€ê¹Œìš´ ë†ˆì´ ì•)
+		// ìµœì í™”: DistSquared ì‚¬ìš© (ë£¨íŠ¸ ì—°ì‚° ì œê±°)
 		Context.Targets.Sort([MyLoc](const AActor& A, const AActor& B) {
 			return FVector::DistSquared(A.GetActorLocation(), MyLoc) < FVector::DistSquared(B.GetActorLocation(), MyLoc);
 			});
@@ -55,7 +55,7 @@ void UDEBehavior_FilterTargets::Execute(FDESkillContext& Context)
 
 	case ETargetFilterType::Farthest:
 	{
-		// °Å¸® ³»¸²Â÷¼ø (¸Õ ³ğÀÌ ¾Õ)
+		// ê±°ë¦¬ ë‚´ë¦¼ì°¨ìˆœ (ë¨¼ ë†ˆì´ ì•)
 		Context.Targets.Sort([MyLoc](const AActor& A, const AActor& B) {
 			return FVector::DistSquared(A.GetActorLocation(), MyLoc) > FVector::DistSquared(B.GetActorLocation(), MyLoc);
 			});
@@ -64,17 +64,17 @@ void UDEBehavior_FilterTargets::Execute(FDESkillContext& Context)
 
 	case ETargetFilterType::LowestHP:
 	{
-		// Ã¼·Â ¿À¸§Â÷¼ø (³·Àº ³ğÀÌ ¾Õ)
+		// ì²´ë ¥ ì˜¤ë¦„ì°¨ìˆœ (ë‚®ì€ ë†ˆì´ ì•)
 		Context.Targets.Sort([](const AActor& A, const AActor& B) {
 			const auto* MonsterA = Cast<ADEMonsterBase>(&A);
 			const auto* MonsterB = Cast<ADEMonsterBase>(&B);
 
-			// µÑ ´Ù ¸ó½ºÅÍ¸é Ã¼·Â ºñ±³
+			// ë‘˜ ë‹¤ ëª¬ìŠ¤í„°ë©´ ì²´ë ¥ ë¹„êµ
 			if (MonsterA && MonsterB)
 			{
 				return MonsterA->GetCurrentHP() < MonsterB->GetCurrentHP();
 			}
-			// ¸ó½ºÅÍ°¡ ¾Æ´Ï¸é(È¤½Ã ¼¯¿©ÀÖ´Ù¸é) µÚ·Î º¸³¿
+			// ëª¬ìŠ¤í„°ê°€ ì•„ë‹ˆë©´(í˜¹ì‹œ ì„ì—¬ìˆë‹¤ë©´) ë’¤ë¡œ ë³´ëƒ„
 			return (MonsterA != nullptr) && (MonsterB == nullptr);
 			});
 	}
@@ -82,7 +82,7 @@ void UDEBehavior_FilterTargets::Execute(FDESkillContext& Context)
 
 	case ETargetFilterType::HighestHP:
 	{
-		// Ã¼·Â ³»¸²Â÷¼ø (³ôÀº ³ğÀÌ ¾Õ)
+		// ì²´ë ¥ ë‚´ë¦¼ì°¨ìˆœ (ë†’ì€ ë†ˆì´ ì•)
 		Context.Targets.Sort([](const AActor& A, const AActor& B) {
 			const auto* MonsterA = Cast<ADEMonsterBase>(&A);
 			const auto* MonsterB = Cast<ADEMonsterBase>(&B);
@@ -97,8 +97,8 @@ void UDEBehavior_FilterTargets::Execute(FDESkillContext& Context)
 	break;
 	}
 
-	// 3. ÀÚ¸£±â (Truncate)
-	// Á¤·ÄÀÌ ³¡³µÀ¸´Ï ¾Õ¿¡¼­ºÎÅÍ N°³¸¸ ³²±â°í µÚ´Â ´Ù ³¯¸²
+	// 3. ìë¥´ê¸° (Truncate)
+	// ì •ë ¬ì´ ëë‚¬ìœ¼ë‹ˆ ì•ì—ì„œë¶€í„° Nê°œë§Œ ë‚¨ê¸°ê³  ë’¤ëŠ” ë‹¤ ë‚ ë¦¼
 	/*Context.Targets.SetNum(FinalCount);
 	for (const AActor* Target : Context.Targets)
 	{
@@ -107,34 +107,34 @@ void UDEBehavior_FilterTargets::Execute(FDESkillContext& Context)
 
 	if (Context.Targets.Num() > FinalCount)
 	{
-		// ÄÉÀÌ½º A: ¸÷ÀÌ 200¸¶¸®·Î ³Ê¹« ¸¹´Ù? ¾Õ¿¡¼­ºÎÅÍ 6¸¶¸®¸¸ ³²±â°í °¡Â÷ ¾øÀÌ ÀÚ¸£±â!
+		// ì¼€ì´ìŠ¤ A: ëª¹ì´ 200ë§ˆë¦¬ë¡œ ë„ˆë¬´ ë§ë‹¤? ì•ì—ì„œë¶€í„° 6ë§ˆë¦¬ë§Œ ë‚¨ê¸°ê³  ê°€ì°¨ ì—†ì´ ìë¥´ê¸°!
 		Context.Targets.SetNum(FinalCount);
 	}
 	else if (Context.Targets.Num() < FinalCount)
 	{
-		// ÄÉÀÌ½º B: ¸÷Àº 1¸¶¸®»ÓÀÎµ¥ Ã¢Àº 6¹ßÀÌ´Ù?!
-		// ÀÖ´Â ³ğµéÀ» 'µ¹·Á¸·±â(Round-Robin)'·Î ¹è¿­¿¡ ²Ë²Ë Ã¤¿ö ³Ö½À´Ï´Ù!
+		// ì¼€ì´ìŠ¤ B: ëª¹ì€ 1ë§ˆë¦¬ë¿ì¸ë° ì°½ì€ 6ë°œì´ë‹¤?!
+		// ìˆëŠ” ë†ˆë“¤ì„ 'ëŒë ¤ë§‰ê¸°(Round-Robin)'ë¡œ ë°°ì—´ì— ê½‰ê½‰ ì±„ì›Œ ë„£ìŠµë‹ˆë‹¤!
 		int32 OriginalNum = Context.Targets.Num();
-		int32 Needed = FinalCount - OriginalNum; // ºÎÁ·ÇÑ Å¸°Ù ¼ö (6 - 1 = 5)
+		int32 Needed = FinalCount - OriginalNum; // ë¶€ì¡±í•œ íƒ€ê²Ÿ ìˆ˜ (6 - 1 = 5)
 
 		for (int32 i = 0; i < Needed; ++i)
 		{
-			//³×, ¸Â½À´Ï´Ù.¾ğ¸®¾ó TArray´Â ÀÚ±â ÀÚ½ÅÀÇ ¿ø¼Ò¸¦ Á÷Á¢ ÂüÁ¶ÇØ¼­ °ğ¹Ù·Î Add()¿¡ Áı¾î³Ö´Â ÇàÀ§ ÀÚÃ¼¸¦ ¿øÃµ Â÷´Ü(Assertion) ÇØµÎ¾ú½À´Ï´Ù.¸Ş¸ğ¸® ¿À¿°(Memory Corruption)À» ¸·±â À§ÇÑ ¿¡ÇÈ°ÔÀÓÁîÀÇ ¾ÈÀüÀåÄ¡ÀÔ´Ï´Ù.
+			//ë„¤, ë§ìŠµë‹ˆë‹¤.ì–¸ë¦¬ì–¼ TArrayëŠ” ìê¸° ìì‹ ì˜ ì›ì†Œë¥¼ ì§ì ‘ ì°¸ì¡°í•´ì„œ ê³§ë°”ë¡œ Add()ì— ì§‘ì–´ë„£ëŠ” í–‰ìœ„ ìì²´ë¥¼ ì›ì²œ ì°¨ë‹¨(Assertion) í•´ë‘ì—ˆìŠµë‹ˆë‹¤.ë©”ëª¨ë¦¬ ì˜¤ì—¼(Memory Corruption)ì„ ë§‰ê¸° ìœ„í•œ ì—í”½ê²Œì„ì¦ˆì˜ ì•ˆì „ì¥ì¹˜ì…ë‹ˆë‹¤.
 			// =========================================================
-			// ¡Ú ¿¡·¯ ÇØ°á: ¹è¿­ÀÇ ¿ø¼Ò¸¦ Áö¿ª º¯¼ö(Æ÷ÀÎÅÍ)·Î ¾ÈÀüÇÏ°Ô »©¿É´Ï´Ù.
+			// â˜… ì—ëŸ¬ í•´ê²°: ë°°ì—´ì˜ ì›ì†Œë¥¼ ì§€ì—­ ë³€ìˆ˜(í¬ì¸í„°)ë¡œ ì•ˆì „í•˜ê²Œ ë¹¼ì˜µë‹ˆë‹¤.
 			// =========================================================
 			AActor* TargetToCopy = Context.Targets[i % OriginalNum];
 
-			// ±× º¹»çÇØ µĞ Æ÷ÀÎÅÍ¸¦ ¾ÈÀüÇÏ°Ô Áı¾î³Ö½À´Ï´Ù! (Å©·¡½Ã Àı´ë ¾È ³²)
+			// ê·¸ ë³µì‚¬í•´ ë‘” í¬ì¸í„°ë¥¼ ì•ˆì „í•˜ê²Œ ì§‘ì–´ë„£ìŠµë‹ˆë‹¤! (í¬ë˜ì‹œ ì ˆëŒ€ ì•ˆ ë‚¨)
 			Context.Targets.Add(TargetToCopy);
 
-			//// % (³ª¸ÓÁö ¿¬»ê)À» ¾²¸é ±â°¡ ¸·Èù ºĞ¹è°¡ ÀÏ¾î³³´Ï´Ù.
-			//// ¸÷ÀÌ A ÇÑ ¸¶¸®¸é? [A] -> [A, A, A, A, A, A]
-			//// ¸÷ÀÌ A, B µÎ ¸¶¸®¸é? [A, B] -> [A, B, A, B, A, B] (Ã¢ 3¹ß¾¿ °øÆòÇÏ°Ô ³ª´² ¸ÂÀ½!)
+			//// % (ë‚˜ë¨¸ì§€ ì—°ì‚°)ì„ ì“°ë©´ ê¸°ê°€ ë§‰íŒ ë¶„ë°°ê°€ ì¼ì–´ë‚©ë‹ˆë‹¤.
+			//// ëª¹ì´ A í•œ ë§ˆë¦¬ë©´? [A] -> [A, A, A, A, A, A]
+			//// ëª¹ì´ A, B ë‘ ë§ˆë¦¬ë©´? [A, B] -> [A, B, A, B, A, B] (ì°½ 3ë°œì”© ê³µí‰í•˜ê²Œ ë‚˜ëˆ  ë§ìŒ!)
 			//Context.Targets.Add(Context.Targets[i % OriginalNum]);
 		}
 	}
 
-	// ¹è¿­ ¸Ş¸ğ¸® ÃÖÀûÈ­ (¼±ÅÃ »çÇ×)
+	// ë°°ì—´ ë©”ëª¨ë¦¬ ìµœì í™” (ì„ íƒ ì‚¬í•­)
 	// Context.Targets.Shrink();
 }

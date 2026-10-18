@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -28,29 +28,29 @@ struct FDESkillEvolutionRow : public FTableRowBase
 
 public:
 
-    //// ÁøÈ­ Àü ½ºÅ³
+    //// ì§„í™” ì „ ìŠ¤í‚¬
     //UPROPERTY(EditAnywhere, BlueprintReadOnly)
     //int32 BaseSkillID;
 
-    //// ÇÊ¿ä ·¹º§
+    //// í•„ìš” ë ˆë²¨
     //UPROPERTY(EditAnywhere, BlueprintReadOnly)
     //int32 RequiredSkillLevel;
 
-    // ¡Ú BaseSkillID ÇÏ³ª ´ë½Å, ÇÊ¿äÇÑ '¸ğµç' ½ºÅ³°ú ·¹º§À» ¹è¿­·Î ¹Ş½À´Ï´Ù!
-    // (¿¹: Æ÷ÀÌÁğ(9), ¾Ö½Ãµå(9), ºí·¯µğ(9) ¼¼ °³¸¦ ³ÖÀ¸¸é 3´Ü ÇÕ¼º ·¹½ÃÇÇ°¡ µÊ)
+    // â˜… BaseSkillID í•˜ë‚˜ ëŒ€ì‹ , í•„ìš”í•œ 'ëª¨ë“ ' ìŠ¤í‚¬ê³¼ ë ˆë²¨ì„ ë°°ì—´ë¡œ ë°›ìŠµë‹ˆë‹¤!
+    // (ì˜ˆ: í¬ì´ì¦Œ(9), ì• ì‹œë“œ(9), ë¸”ëŸ¬ë””(9) ì„¸ ê°œë¥¼ ë„£ìœ¼ë©´ 3ë‹¨ í•©ì„± ë ˆì‹œí”¼ê°€ ë¨)
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     TArray<FDESkillRequirement> RequiredSkills;
 
 
-    // ÇÊ¿ä ¾Ç¼¼¼­¸®µé
+    // í•„ìš” ì•…ì„¸ì„œë¦¬ë“¤
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     TArray<int32> RequiredAccessoryIDs;
 
-    // ÁøÈ­ °á°ú ½ºÅ³
+    // ì§„í™” ê²°ê³¼ ìŠ¤í‚¬
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     int32 ResultSkillID;
 
-    // ¿©·¯ ÁøÈ­ Ãæµ¹ ½Ã ¿ì¼±¼øÀ§
+    // ì—¬ëŸ¬ ì§„í™” ì¶©ëŒ ì‹œ ìš°ì„ ìˆœìœ„
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     int32 Priority = 0;
 };

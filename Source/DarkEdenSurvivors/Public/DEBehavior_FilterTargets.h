@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -6,7 +6,7 @@
 #include "DESkillBehavior.h"
 #include "DEBehavior_FilterTargets.generated.h"
 
-// ÇÊÅÍ¸µ ±âÁØ
+// í•„í„°ë§ ê¸°ì¤€
 UENUM()
 enum class ETargetFilterType : uint8
 {
@@ -30,11 +30,11 @@ public:
 	virtual void Execute(FDESkillContext& Context) override;
 
 public:
-	// ³²±æ Å¸°Ù ¼ö (¿¹: 1ÀÌ¸é 1¸¶¸®¸¸, 5¸é 5¸¶¸®¸¸ ³²±è)
+	// ë‚¨ê¸¸ íƒ€ê²Ÿ ìˆ˜ (ì˜ˆ: 1ì´ë©´ 1ë§ˆë¦¬ë§Œ, 5ë©´ 5ë§ˆë¦¬ë§Œ ë‚¨ê¹€)
 	UPROPERTY(EditAnywhere, Category = "Filter")
 	int32 TargetCount = 1;
 
-	// ÇÊÅÍ¸µ ¹æ½Ä
+	// í•„í„°ë§ ë°©ì‹
 	UPROPERTY(EditAnywhere, Category = "Filter")
 	ETargetFilterType FilterType = ETargetFilterType::Random;
 	

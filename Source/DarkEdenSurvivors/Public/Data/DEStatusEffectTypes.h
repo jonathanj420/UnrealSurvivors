@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -12,11 +12,11 @@ struct FActiveStatusEffect
 {
 	GENERATED_BODY()
 
-	// 1. °ÅÇªÁı(CDO) Æ÷ÀÎÅÍ: º¯ÇÏÁö ¾Ê´Â ·ÎÁ÷°ú ¼¼ÆÃ°ª¿¡ Á¢±ÙÇÏ±â À§ÇÔ
+	// 1. ê±°í‘¸ì§‘(CDO) í¬ì¸í„°: ë³€í•˜ì§€ ì•ŠëŠ” ë¡œì§ê³¼ ì„¸íŒ…ê°’ì— ì ‘ê·¼í•˜ê¸° ìœ„í•¨
 	UPROPERTY()
 	const UDEStatusEffectBase* EffectDef = nullptr;
 
-	// 2. º¯ÇÏ´Â »óÅÂ°ªµé (°³¹ßÀÚ´ÔÀÇ ¿Ïº®ÇÑ Å©·¡½Ã ¹æ¾î Ã¶ÇĞÀ» ÀÌ¾î¹Ş¾Æ WeakPtr »ç¿ë)
+	// 2. ë³€í•˜ëŠ” ìƒíƒœê°’ë“¤ (ê°œë°œìë‹˜ì˜ ì™„ë²½í•œ í¬ë˜ì‹œ ë°©ì–´ ì² í•™ì„ ì´ì–´ë°›ì•„ WeakPtr ì‚¬ìš©)
 	UPROPERTY()
 	TWeakObjectPtr<AActor> Instigator = nullptr;
 
@@ -38,11 +38,11 @@ struct FActiveStatusEffect
 	UPROPERTY()
 	int32 CurrentStacks = 1;
 
-	// »óÅÂÀÌ»óÀº Áö¼Ó½Ã°£ µ¿¾È µé°í ÀÖ¾î¾ß ÇÏ´Ï±î º¹»ç°¡ ¸ÂÀ½
+	// ìƒíƒœì´ìƒì€ ì§€ì†ì‹œê°„ ë™ì•ˆ ë“¤ê³  ìˆì–´ì•¼ í•˜ë‹ˆê¹Œ ë³µì‚¬ê°€ ë§ìŒ
 	FDESkillContext SourceContext;
 
 
-	// ±¸Á¶Ã¼ ÃÊ±âÈ­¸¦ À§ÇÑ ÆíÀÇ »ı¼ºÀÚ
+	// êµ¬ì¡°ì²´ ì´ˆê¸°í™”ë¥¼ ìœ„í•œ í¸ì˜ ìƒì„±ì
 	FActiveStatusEffect() {}
 };
 

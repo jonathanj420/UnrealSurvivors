@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -20,12 +20,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect")
 	TSubclassOf<class UDEStatusEffectBase> StatusClass;
 
-	// -1.0 ÀÌ¸é Context(½ºÅ³ ÃÖÁ¾ ½ºÆå)ÀÇ DurationÀ» µû¶ó°¡°í, 
-	// ¾ç¼öÀÌ¸é ÀÌ ºí·çÇÁ¸°Æ®¿¡ ÀûÈù °íÁ¤°ªÀ» ¿ì¼±ÀûÀ¸·Î ¾¹´Ï´Ù.
+	// -1.0 ì´ë©´ Context(ìŠ¤í‚¬ ìµœì¢… ìŠ¤í™)ì˜ Durationì„ ë”°ë¼ê°€ê³ , 
+	// ì–‘ìˆ˜ì´ë©´ ì´ ë¸”ë£¨í”„ë¦°íŠ¸ì— ì íŒ ê³ ì •ê°’ì„ ìš°ì„ ì ìœ¼ë¡œ ì”ë‹ˆë‹¤.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect")
 	float Duration = -1.0f;
 
-	// -1.0 ÀÌ¸é ContextÀÇ Power¸¦ µû¶ó°©´Ï´Ù.
+	// -1.0 ì´ë©´ Contextì˜ Powerë¥¼ ë”°ë¼ê°‘ë‹ˆë‹¤.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect")
 	float Power = -1.0f;
 

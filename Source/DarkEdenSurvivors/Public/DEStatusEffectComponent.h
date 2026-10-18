@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -29,7 +29,7 @@ public:
 	void AddEffect(TSubclassOf<UDEStatusEffectBase> EffectClass, AActor* Instigator, float Duration, float Power, float Interval, const FDESkillContext& InContext);
 
 	// =========================================================
-	// ¡Ú [¼öÁ¤µÊ] EEffectTag -> FGameplayTag ·Î ¸ğµÎ ±³Ã¼!
+	// â˜… [ìˆ˜ì •ë¨] EEffectTag -> FGameplayTag ë¡œ ëª¨ë‘ êµì²´!
 	// =========================================================
 	void RemoveEffectsByTag(FGameplayTag Tag);
 
@@ -43,9 +43,9 @@ protected:
 	TWeakObjectPtr<AActor> OwnerActor;
 
 	// =========================================================
-	// ¡Ú [¼öÁ¤µÊ] TSet<EEffectTag> -> FGameplayTagContainer °¡¹æÀ¸·Î ±³Ã¼!
-	// ÀÌÁ¦ º¸½º ¸ó½ºÅÍ ºí·çÇÁ¸°Æ®¿¡¼­ "Status.Debuff.Stun" (±âÀı) ÅÂ±×¸¦ Ãß°¡ÇØµÎ¸é 
-	// ¾Ë¾Æ¼­ ±âÀı ¸é¿ªÀÌ µË´Ï´Ù.
+	// â˜… [ìˆ˜ì •ë¨] TSet<EEffectTag> -> FGameplayTagContainer ê°€ë°©ìœ¼ë¡œ êµì²´!
+	// ì´ì œ ë³´ìŠ¤ ëª¬ìŠ¤í„° ë¸”ë£¨í”„ë¦°íŠ¸ì—ì„œ "Status.Debuff.Stun" (ê¸°ì ˆ) íƒœê·¸ë¥¼ ì¶”ê°€í•´ë‘ë©´ 
+	// ì•Œì•„ì„œ ê¸°ì ˆ ë©´ì—­ì´ ë©ë‹ˆë‹¤.
 	// =========================================================
 	UPROPERTY(EditDefaultsOnly, Category = "Status Effect", meta = (Categories = "Status"))
 	FGameplayTagContainer ImmuneTags;
@@ -53,6 +53,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Status Effect")
 	TArray<FActiveStatusEffect> ActiveEffects;
 
-	// ¡Ú [¼öÁ¤µÊ] ³»ºÎ °Ë»ö ÇïÆÛ ÇÔ¼öµµ FGameplayTag ·Î ±³Ã¼
+	// â˜… [ìˆ˜ì •ë¨] ë‚´ë¶€ ê²€ìƒ‰ í—¬í¼ í•¨ìˆ˜ë„ FGameplayTag ë¡œ êµì²´
 	FActiveStatusEffect* GetEffectByTag(FGameplayTag Tag);
 };

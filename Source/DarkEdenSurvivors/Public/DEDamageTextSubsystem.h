@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -23,7 +23,7 @@ public:
     virtual void Deinitialize() override;
     virtual bool IsTickableWhenPaused() const override { return false; }
 
-    // ¿ÜºÎ(Gameplay) ÁøÀÔÁ¡
+    // ì™¸ë¶€(Gameplay) ì§„ì…ì 
     void ShowDamage(const FDamageVisualInfo& Info);
 
     // Tick
@@ -36,12 +36,12 @@ public:
 
     virtual bool IsTickable() const override
     {
-        // È°¼º À§Á¬ÀÌ ÀÖÀ» ¶§¸¸ Tick
+        // í™œì„± ìœ„ì ¯ì´ ìˆì„ ë•Œë§Œ Tick
         return ActiveWidgets.Num() > 0;
     }
 
 private:
-    // ³»ºÎ À¯Æ¿
+    // ë‚´ë¶€ ìœ í‹¸
     UDEDamageTextWidget* AcquireWidget();
     APlayerController* GetPlayerController();
 
@@ -50,17 +50,17 @@ private:
     UPROPERTY()
     TSubclassOf<UDEDamageTextWidget> DamageTextWidgetClass;
 
-    // Ç® & È°¼º ¸ñ·Ï
+    // í’€ & í™œì„± ëª©ë¡
     UPROPERTY()
     TArray<UDEDamageTextWidget*> WidgetPool;
 
     UPROPERTY()
     TArray<UDEDamageTextWidget*> ActiveWidgets;
 
-    // PlayerController Ä³½Ã
+    // PlayerController ìºì‹œ
     TWeakObjectPtr<APlayerController> CachedPC;
 
-    // ÃÊ±â Ç® Å©±â (±ÇÀå 32~64)
+    // ì´ˆê¸° í’€ í¬ê¸° (ê¶Œì¥ 32~64)
     static constexpr int32 InitialPoolSize = 64;
     int32 MaxDamageTexts = 50;
 };

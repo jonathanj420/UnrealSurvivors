@@ -1,10 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEBehavior_FireProjectile.h"
 #include "DEPoolSubsystem.h"
 #include "Kismet/KismetMathLibrary.h"
-#include "DESkillActorBase.h" // Åõ»çÃ¼ Çì´õ
+#include "DESkillActorBase.h" // íˆ¬ì‚¬ì²´ í—¤ë”
 #include "DEAutoSkillBase.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -16,50 +16,50 @@ void UDEBehavior_FireProjectile::Execute(FDESkillContext& Context)
 	int32 Count = FMath::Max(1, Context.Amount);
 	float ActualBurstInterval = BurstInterval;
 
-	// ¡Ú Context ¾È¿¡ º¯¼ö¸¦ ¿í¿©³ÖÁö ¾Ê°í, ¸íÇÔ(SourceSkill)À» ÅëÇØ º»Ã¼¿¡°Ô Á÷Á¢ ¹°¾îº½!
+	// â˜… Context ì•ˆì— ë³€ìˆ˜ë¥¼ ìš±ì—¬ë„£ì§€ ì•Šê³ , ëª…í•¨(SourceSkill)ì„ í†µí•´ ë³¸ì²´ì—ê²Œ ì§ì ‘ ë¬¼ì–´ë´„!
 	float CurrentSkillCooldown = Context.SourceSkill->GetCurrentFinalCooldown();
 
-	// ¸¶ÁøÀ² 0.95 Àû¿ëÇÏ¿© ±â°üÃÑ ¸ğµå (µ¿Àû ¾ĞÃà) ¹ßµ¿
+	// ë§ˆì§„ìœ¨ 0.95 ì ìš©í•˜ì—¬ ê¸°ê´€ì´ ëª¨ë“œ (ë™ì  ì••ì¶•) ë°œë™
 	if ((Count * ActualBurstInterval) >= CurrentSkillCooldown)
 	{
 		ActualBurstInterval = (CurrentSkillCooldown * 0.95f) / Count;
 	}
 
-	// [Case A: µ¿½Ã ¹ß»ç (±âÁ¸)]
+	// [Case A: ë™ì‹œ ë°œì‚¬ (ê¸°ì¡´)]
 	if (ActualBurstInterval <= 0.f)
 	{
-		// Context¸¦ º¹»çÇÒ ÇÊ¿ä ¾øÀÌ ±×³É ¹İº¹¹®À¸·Î ½ô
-		// (Execute ÇÔ¼ö ¾È¿¡¼­ Àá½Ã ¾µ ¿ëµµ·Î CachedContext È°¿ë)
+		// Contextë¥¼ ë³µì‚¬í•  í•„ìš” ì—†ì´ ê·¸ëƒ¥ ë°˜ë³µë¬¸ìœ¼ë¡œ ì¨
+		// (Execute í•¨ìˆ˜ ì•ˆì—ì„œ ì ì‹œ ì“¸ ìš©ë„ë¡œ CachedContext í™œìš©)
 		CachedContext = Context;
 		for (int32 i = 0; i < Count; i++)
 		{
-			FireOneShot(); // ±×³É ¿¬¼Ó È£Ãâ
+			FireOneShot(); // ê·¸ëƒ¥ ì—°ì† í˜¸ì¶œ
 		}
 		return;
 	}
 
-	// [Case B: ¿¬»ç (Delay)]
-	// Å¸ÀÌ¸Ó´Â ³ªÁß¿¡ ½ÇÇàµÇ¹Ç·Î Context¸¦ ¹é¾÷ÇØµÖ¾ß ÇÔ!
+	// [Case B: ì—°ì‚¬ (Delay)]
+	// íƒ€ì´ë¨¸ëŠ” ë‚˜ì¤‘ì— ì‹¤í–‰ë˜ë¯€ë¡œ Contextë¥¼ ë°±ì—…í•´ë‘¬ì•¼ í•¨!
 	CachedContext = Context;
 	RemainingShots = Count;
 	//UE_LOG(LogTemp, Warning, TEXT("Fire Projectile : Remaining Shots : %d"), RemainingShots);
 	UWorld* World = Context.Instigator->GetWorld();
 	if (World)
 	{
-		// Ã¹ ¹ßÀº Áï½Ã ¹ß»ç
+		// ì²« ë°œì€ ì¦‰ì‹œ ë°œì‚¬
 		FireOneShot();
 		//RemainingShots--;
 
 		if (RemainingShots > 0)
 		{
 			//UE_LOG(LogTemp, Warning, TEXT("Remaining Shots Left: %d, BURST ACTIVATED"), RemainingShots);
-			// ³ª¸ÓÁö´Â Å¸ÀÌ¸Ó·Î
+			// ë‚˜ë¨¸ì§€ëŠ” íƒ€ì´ë¨¸ë¡œ
 			World->GetTimerManager().SetTimer(
 				BurstTimerHandle,
 				this,
 				&UDEBehavior_FireProjectile::FireOneShot,
 				ActualBurstInterval,
-				true // ¹İº¹
+				true // ë°˜ë³µ
 			);
 		}
 	}
@@ -67,10 +67,10 @@ void UDEBehavior_FireProjectile::Execute(FDESkillContext& Context)
 
 void UDEBehavior_FireProjectile::FireOneShot()
 {
-	// Context ´ë½Å ¹é¾÷ÇØµĞ CachedContext »ç¿ë
+	// Context ëŒ€ì‹  ë°±ì—…í•´ë‘” CachedContext ì‚¬ìš©
 	if (!CachedContext.Instigator || !ProjectileClass)
 	{
-		// ¾ÈÀüÀåÄ¡: ½ÃÀüÀÚ°¡ Á×°Å³ª »ç¶óÁ³À¸¸é Å¸ÀÌ¸Ó Á¤Áö
+		// ì•ˆì „ì¥ì¹˜: ì‹œì „ìê°€ ì£½ê±°ë‚˜ ì‚¬ë¼ì¡Œìœ¼ë©´ íƒ€ì´ë¨¸ ì •ì§€
 		if (CachedContext.Instigator)
 		{
 			CachedContext.Instigator->GetWorld()->GetTimerManager().ClearTimer(BurstTimerHandle);
@@ -87,12 +87,12 @@ void UDEBehavior_FireProjectile::FireOneShot()
 	FVector CurrentForward = CachedContext.Instigator->GetActorForwardVector();
 	FVector BaseDir = CurrentForward.RotateAngleAxis(AngleOffset, FVector::UpVector);
 
-	// --- ¹ß»ç ·ÎÁ÷ (µ¿ÀÏ) ---
+	// --- ë°œì‚¬ ë¡œì§ (ë™ì¼) ---
 	FRotator FireRot = BaseDir.Rotation();
 	if (CachedContext.Targets.Num() > 0 && CachedContext.Targets[0])
 	{
 		FVector TargetLoc = CachedContext.Targets[0]->GetActorLocation();
-		// ³» À§Ä¡¿¡¼­ Å¸°Ù À§Ä¡¸¦ ¹Ù¶óº¸´Â È¸Àü°ª °è»ê
+		// ë‚´ ìœ„ì¹˜ì—ì„œ íƒ€ê²Ÿ ìœ„ì¹˜ë¥¼ ë°”ë¼ë³´ëŠ” íšŒì „ê°’ ê³„ì‚°
 		FireRot = UKismetMathLibrary::FindLookAtRotation(CachedContext.Instigator->GetActorLocation(), TargetLoc);
 	}
 	FVector Right = CachedContext.Instigator->GetActorRightVector();
@@ -100,12 +100,12 @@ void UDEBehavior_FireProjectile::FireOneShot()
 	FVector OwnerLoc = CachedContext.Instigator->GetActorLocation();
 	FRotator OwnerRot = CachedContext.Instigator->GetActorRotation();
 
-	// 1. À§Ä¡ ·£´ı
+	// 1. ìœ„ì¹˜ ëœë¤
 	float RandRight = FMath::FRandRange(-RandomPositionRange, RandomPositionRange);
 	float RandUp = FMath::FRandRange(-RandomPositionRange, RandomPositionRange);
 	FVector SpawnLoc = OwnerLoc /*+ (Forward * 100.f)*/ + (Right * RandRight) + (Up * RandUp);
 
-	// 2. °¢µµ ·£´ı
+	// 2. ê°ë„ ëœë¤
 	FRotator SpawnRot = FireRot;//OwnerRot;
 	if (FireConeAngle > 0.f)
 	{
@@ -115,7 +115,7 @@ void UDEBehavior_FireProjectile::FireOneShot()
 		SpawnRot.Yaw += RandYaw;
 	}
 
-	// 3. ½ºÆù
+	// 3. ìŠ¤í°
 	AActor* PooledActor = Pool->GetPooledActor(ProjectileClass, SpawnLoc, SpawnRot, false);
 	if (auto* Proj = Cast<ADESkillActorBase>(PooledActor))
 	{
@@ -124,13 +124,13 @@ void UDEBehavior_FireProjectile::FireOneShot()
 		//UE_LOG(LogTemp, Warning, TEXT("Shot Fired, Damage : %f"), CachedContext.Damage);
 	}
 
-	// 4. »ç¿îµå
+	// 4. ì‚¬ìš´ë“œ
 	if (FireSound)
 	{
 		UGameplayStatics::PlaySoundAtLocation(World, FireSound, SpawnLoc);
 	}
 
-	//// [¿¬»ç ¸ğµåÀÏ ¶§¸¸ Á¾·á Ã¼Å©]
+	//// [ì—°ì‚¬ ëª¨ë“œì¼ ë•Œë§Œ ì¢…ë£Œ ì²´í¬]
 	//if (BurstInterval > 0.f)
 	//{
 	//	RemainingShots--;

@@ -1,24 +1,24 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEStatusEffectBase.h"
 #include "DEMonsterBase.h"
-#include "Components/SkeletalMeshComponent.h"    // ¡Ú ¸ó½ºÅÍ ¸Ş½¬¸¦ Ã£±â À§ÇØ ÇÊ¼ö!
+#include "Components/SkeletalMeshComponent.h"    // â˜… ëª¬ìŠ¤í„° ë©”ì‰¬ë¥¼ ì°¾ê¸° ìœ„í•´ í•„ìˆ˜!
 #include "Materials/MaterialInstanceDynamic.h"
 
 UDEStatusEffectBase::UDEStatusEffectBase()
 {
-	// ±âº»°ª ¾ÈÀü ¼¼ÆÃ
+	// ê¸°ë³¸ê°’ ì•ˆì „ ì„¸íŒ…
 	StackPolicy = EStackPolicy::Ignore;
 	MaxStacks = 1;
 }
 
 void UDEStatusEffectBase::Tick(AActor* Target, FActiveStatusEffect& EffectData, float DeltaTime) const
 {
-	// 1. ÀüÃ¼ Áö¼Ó ½Ã°£ ¾÷µ¥ÀÌÆ®
+	// 1. ì „ì²´ ì§€ì† ì‹œê°„ ì—…ë°ì´íŠ¸
 	EffectData.ElapsedTime += DeltaTime;
 
-	// 2. ÀÎÅÍ¹ú(Æ½ ÁÖ±â)ÀÌ ÀÖ´Â °æ¿ì µµÆ® µô Å¸ÀÌ¸Ó ¾÷µ¥ÀÌÆ®
+	// 2. ì¸í„°ë²Œ(í‹± ì£¼ê¸°)ì´ ìˆëŠ” ê²½ìš° ë„íŠ¸ ë”œ íƒ€ì´ë¨¸ ì—…ë°ì´íŠ¸
 	if (EffectData.Interval > 0.f)
 	{
 		EffectData.TickTimer += DeltaTime;
@@ -26,8 +26,8 @@ void UDEStatusEffectBase::Tick(AActor* Target, FActiveStatusEffect& EffectData, 
 		{
 			EffectData.TickTimer -= EffectData.Interval;
 
-			// µµÆ® µôÀÌ³ª ÁÖ±âÀû È¿°ú ¹ßµ¿! 
-			// (ºí·çÇÁ¸°Æ®³ª ÀÚ½Ä C++ Å¬·¡½º¿¡¼­ ¿À¹ö¶óÀÌµåÇÑ ·ÎÁ÷ÀÌ ½ÇÇàµÊ)
+			// ë„íŠ¸ ë”œì´ë‚˜ ì£¼ê¸°ì  íš¨ê³¼ ë°œë™! 
+			// (ë¸”ë£¨í”„ë¦°íŠ¸ë‚˜ ìì‹ C++ í´ë˜ìŠ¤ì—ì„œ ì˜¤ë²„ë¼ì´ë“œí•œ ë¡œì§ì´ ì‹¤í–‰ë¨)
 			OnIntervalTick(Target, EffectData);
 		}
 	}
@@ -36,22 +36,22 @@ void UDEStatusEffectBase::Tick(AActor* Target, FActiveStatusEffect& EffectData, 
 void UDEStatusEffectBase::OnApply(AActor* Target, FActiveStatusEffect& EffectData) const
 {
 	UE_LOG(LogTemp, Warning, TEXT("Status Effect : %s On Apply !"), *GetName());
-	// ÀÚ½Ä Å¬·¡½º(UDEStatusEffect_CC µî)¿¡¼­ Super::OnApply_Implementation() È£Ãâ ÈÄ ·ÎÁ÷ ÀÛ¼º
-	// (¿¹: ¿©±â¼­ EffectParticleÀ» Target¿¡ Attach ½ÃÅ°´Â °øÅë ·ÎÁ÷À» ³Ö±â ÁÁ½À´Ï´Ù.)
+	// ìì‹ í´ë˜ìŠ¤(UDEStatusEffect_CC ë“±)ì—ì„œ Super::OnApply_Implementation() í˜¸ì¶œ í›„ ë¡œì§ ì‘ì„±
+	// (ì˜ˆ: ì—¬ê¸°ì„œ EffectParticleì„ Targetì— Attach ì‹œí‚¤ëŠ” ê³µí†µ ë¡œì§ì„ ë„£ê¸° ì¢‹ìŠµë‹ˆë‹¤.)
 }
 
 void UDEStatusEffectBase::OnRemove(AActor* Target, FActiveStatusEffect& EffectData) const
 {
 	UE_LOG(LogTemp, Warning, TEXT("Status Effect : %s On Remove !"), *GetName());
-	// ÀÚ½Ä Å¬·¡½º¿¡¼­ ½ºÅÈ ¿øº¹ µîÀÇ ·ÎÁ÷ ÀÛ¼º
+	// ìì‹ í´ë˜ìŠ¤ì—ì„œ ìŠ¤íƒ¯ ì›ë³µ ë“±ì˜ ë¡œì§ ì‘ì„±
 }
 
 void UDEStatusEffectBase::OnIntervalTick(AActor* Target, FActiveStatusEffect& EffectData) const
 {
-	// UDEStatusEffect_DoT Å¬·¡½º¿¡¼­ µ¥¹ÌÁö¸¦ °¡ÇÏ´Â ·ÎÁ÷ ±¸Çö
+	// UDEStatusEffect_DoT í´ë˜ìŠ¤ì—ì„œ ë°ë¯¸ì§€ë¥¼ ê°€í•˜ëŠ” ë¡œì§ êµ¬í˜„
 }
 
 void UDEStatusEffectBase::OnStacked(AActor* Target, FActiveStatusEffect& EffectData, int32 NewStackCount) const
 {
-	// ½ºÅÃÀÌ ½×ÀÏ ¶§ ÆÄÆ¼Å¬ Æã ÅÍÁö´Â ¿¬ÃâÀÌ³ª »ç¿îµå Àç»ı
+	// ìŠ¤íƒì´ ìŒ“ì¼ ë•Œ íŒŒí‹°í´ í‘ í„°ì§€ëŠ” ì—°ì¶œì´ë‚˜ ì‚¬ìš´ë“œ ì¬ìƒ
 }

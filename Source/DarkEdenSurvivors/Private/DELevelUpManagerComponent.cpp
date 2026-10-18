@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DELevelUpManagerComponent.h"
@@ -24,7 +24,7 @@ void UDELevelUpManagerComponent::BeginPlay()
 {
     Super::BeginPlay();
 
-    // 2. °ÔÀÓ ½ÃÀÛ ½Ã ÇÑ ¹ø¸¸! Å×ÀÌºí ÀüÃ¼(GetAllRows)¸¦ ÀĞ¾î¼­ ¸¶½ºÅÍ ¹è¿­¿¡ Ä³½ÌÇØ µÓ´Ï´Ù.
+    // 2. ê²Œì„ ì‹œì‘ ì‹œ í•œ ë²ˆë§Œ! í…Œì´ë¸” ì „ì²´(GetAllRows)ë¥¼ ì½ì–´ì„œ ë§ˆìŠ¤í„° ë°°ì—´ì— ìºì‹±í•´ ë‘¡ë‹ˆë‹¤.
     if (AccessoryDataTable)
     {
         TArray<FDEAccessoryRow*> AllRows;
@@ -34,7 +34,7 @@ void UDELevelUpManagerComponent::BeginPlay()
         {
             if (Row && Row->AccessoryData)
             {
-                // µ¥ÀÌÅÍ ¿¡¼Â°ú °¡ÁßÄ¡¸¦ ¹­¾î¼­ Ãß°¡
+                // ë°ì´í„° ì—ì…‹ê³¼ ê°€ì¤‘ì¹˜ë¥¼ ë¬¶ì–´ì„œ ì¶”ê°€
                 MasterAccessoryPool.Add({ Row->AccessoryData, Row->DropWeight });
             }
         }
@@ -47,15 +47,15 @@ TArray<UDELevelUpChoiceBase*> UDELevelUpManagerComponent::GenerateChoices(int32 
     TArray<UDELevelUpChoiceBase*> Result;
 
     // =========================================================
-    // ¡Ú [ÇÙ½É] ÀÌ¹Ì »ÌÈù ³à¼®µéÀ» ±â·ÏÇØµÑ 'ºí·¢¸®½ºÆ® ÀåºÎ'
+    // â˜… [í•µì‹¬] ì´ë¯¸ ë½‘íŒ ë…€ì„ë“¤ì„ ê¸°ë¡í•´ë‘˜ 'ë¸”ë™ë¦¬ìŠ¤íŠ¸ ì¥ë¶€'
     // =========================================================
     TArray<int32> PickedSkillIDs;
     TArray<const UDEAccessoryData*> PickedAccs;
 
-    int32 MaxAttempts = Count * 10; // (¾ÈÀüÀåÄ¡) ÃÖ´ë ½Ãµµ È½¼ö
+    int32 MaxAttempts = Count * 10; // (ì•ˆì „ì¥ì¹˜) ìµœëŒ€ ì‹œë„ íšŸìˆ˜
     int32 Attempts = 0;
 
-    // Àå¹Ù±¸´Ï°¡ ²Ë Â÷°Å³ª, ÃÖ´ë ½Ãµµ È½¼ö¸¦ ³Ñ±æ ¶§±îÁö ¹«ÇÑ ¹İº¹!
+    // ì¥ë°”êµ¬ë‹ˆê°€ ê½‰ ì°¨ê±°ë‚˜, ìµœëŒ€ ì‹œë„ íšŸìˆ˜ë¥¼ ë„˜ê¸¸ ë•Œê¹Œì§€ ë¬´í•œ ë°˜ë³µ!
     while (Result.Num() < Count && Attempts < MaxAttempts)
     {
         Attempts++;
@@ -67,11 +67,11 @@ TArray<UDELevelUpChoiceBase*> UDELevelUpManagerComponent::GenerateChoices(int32 
             {
                 UDELevelUpChoice_Skill* SkillChoice = Cast<UDELevelUpChoice_Skill>(RawChoice);
 
-                // ÀåºÎ¿¡ ¾ø´Â(Ã³À½ »ÌÈù) ½ºÅ³ÀÌ¶ó¸é?
+                // ì¥ë¶€ì— ì—†ëŠ”(ì²˜ìŒ ë½‘íŒ) ìŠ¤í‚¬ì´ë¼ë©´?
                 if (SkillChoice && !PickedSkillIDs.Contains(SkillChoice->GetSkillID()))
                 {
-                    PickedSkillIDs.Add(SkillChoice->GetSkillID()); // ÀåºÎ¿¡ ±â·Ï
-                    Result.Add(SkillChoice);                  // °á°ú ¹Ù±¸´Ï¿¡ ´ã±â
+                    PickedSkillIDs.Add(SkillChoice->GetSkillID()); // ì¥ë¶€ì— ê¸°ë¡
+                    Result.Add(SkillChoice);                  // ê²°ê³¼ ë°”êµ¬ë‹ˆì— ë‹´ê¸°
                     UE_LOG(LogTemp, Warning, TEXT("Random Skill Selected: %s"), *SkillChoice->GetDisplayName().ToString());
                 }
             }
@@ -82,11 +82,11 @@ TArray<UDELevelUpChoiceBase*> UDELevelUpManagerComponent::GenerateChoices(int32 
             {
                 UDELevelUpChoice_Accessory* AccChoice = Cast<UDELevelUpChoice_Accessory>(RawChoice);
 
-                // ÀåºÎ¿¡ ¾ø´Â(Ã³À½ »ÌÈù) Àå½Å±¸¶ó¸é?
+                // ì¥ë¶€ì— ì—†ëŠ”(ì²˜ìŒ ë½‘íŒ) ì¥ì‹ êµ¬ë¼ë©´?
                 if (AccChoice && !PickedAccs.Contains(AccChoice->GetAccessoryData()))
                 {
-                    PickedAccs.Add(AccChoice->GetAccessoryData()); // ÀåºÎ¿¡ ±â·Ï
-                    Result.Add(AccChoice);                    // °á°ú ¹Ù±¸´Ï¿¡ ´ã±â
+                    PickedAccs.Add(AccChoice->GetAccessoryData()); // ì¥ë¶€ì— ê¸°ë¡
+                    Result.Add(AccChoice);                    // ê²°ê³¼ ë°”êµ¬ë‹ˆì— ë‹´ê¸°
                     UE_LOG(LogTemp, Warning, TEXT("Random Accessory Selected: %s"), *AccChoice->GetDisplayName().ToString());
                 }
             }
@@ -105,7 +105,7 @@ void UDELevelUpManagerComponent::ApplyChoice(UDELevelUpChoiceBase* Choice)
     if (!OwnerActor)
         return;
 
-    // ¡Ú ÇÙ½É: ½ÇÁ¦ Àû¿ëÀº Choice°¡ ÇÑ´Ù
+    // â˜… í•µì‹¬: ì‹¤ì œ ì ìš©ì€ Choiceê°€ í•œë‹¤
     Choice->Apply(OwnerActor);
 }
 
@@ -114,26 +114,26 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::CreateRandomSkillChoice()
     UDESkillManagerComponent* SkillMgr = GetOwner()->FindComponentByClass<UDESkillManagerComponent>();
     if (!SkillMgr) return nullptr;
 
-    // 1. ·£´ı ½ºÅ³ÀÇ ±âº» Á¤º¸(Row)¸¦ °¡Á®¿É´Ï´Ù (¾ÆÀÌÄÜ, ÀÌ¸§ µîÀ» À§ÇØ ÇÊ¼ö!)
+    // 1. ëœë¤ ìŠ¤í‚¬ì˜ ê¸°ë³¸ ì •ë³´(Row)ë¥¼ ê°€ì ¸ì˜µë‹ˆë‹¤ (ì•„ì´ì½˜, ì´ë¦„ ë“±ì„ ìœ„í•´ í•„ìˆ˜!)
     const FDESkillRow* Row = SkillMgr->GetRandomSkillRow();
     if (!Row) return nullptr;
 
-    // 2. ÇÃ·¹ÀÌ¾îÀÇ ÇöÀç ½ºÅ³ ·¹º§À» È®ÀÎÇÕ´Ï´Ù. (SkillMgr¿¡ ÀÌ·± ÇÔ¼ö°¡ ÀÖ´Ù°í °¡Á¤)
+    // 2. í”Œë ˆì´ì–´ì˜ í˜„ì¬ ìŠ¤í‚¬ ë ˆë²¨ì„ í™•ì¸í•©ë‹ˆë‹¤. (SkillMgrì— ì´ëŸ° í•¨ìˆ˜ê°€ ìˆë‹¤ê³  ê°€ì •)
     int32 CurrentLevel = SkillMgr->GetSkillLevel(Row->SkillID);
     int32 TargetLevel = CurrentLevel + 1;
 
-    FText DisplayDescription; // UI¿¡ ÃÖÁ¾ÀûÀ¸·Î ¶ç¿öÁÙ ÅØ½ºÆ®
+    FText DisplayDescription; // UIì— ìµœì¢…ì ìœ¼ë¡œ ë„ì›Œì¤„ í…ìŠ¤íŠ¸
 
-    // 3. ·¹º§¿¡ µû¶ó ÅØ½ºÆ®¸¦ ´Ù¸£°Ô °¡Á®¿É´Ï´Ù.
+    // 3. ë ˆë²¨ì— ë”°ë¼ í…ìŠ¤íŠ¸ë¥¼ ë‹¤ë¥´ê²Œ ê°€ì ¸ì˜µë‹ˆë‹¤.
     if (CurrentLevel == 0)
     {
-        // Ã³À½ ¸Ô´Â ½ºÅ³ÀÏ ¶§
+        // ì²˜ìŒ ë¨¹ëŠ” ìŠ¤í‚¬ì¼ ë•Œ
         DisplayDescription = Row->BaseDescription;
     }
     else
     {
-        // ÀÌ¹Ì ÀÖ´Â ½ºÅ³ ·¹º§¾÷ÀÏ ¶§ (FDESkillData Å×ÀÌºí Á¶È¸)
-        // (°¡Á¤: SkillID¿Í TargetLevelÀ» ÁÖ¸é ÇØ´ç ÇàÀ» ¹ñ¾î³»´Â ÇÔ¼ö)
+        // ì´ë¯¸ ìˆëŠ” ìŠ¤í‚¬ ë ˆë²¨ì—…ì¼ ë•Œ (FDESkillData í…Œì´ë¸” ì¡°íšŒ)
+        // (ê°€ì •: SkillIDì™€ TargetLevelì„ ì£¼ë©´ í•´ë‹¹ í–‰ì„ ë±‰ì–´ë‚´ëŠ” í•¨ìˆ˜)
         const FDESkillData* DataRow = SkillMgr->GetSkillDataRow(Row->SkillID, TargetLevel);
 
         if (DataRow)
@@ -142,21 +142,21 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::CreateRandomSkillChoice()
         }
         else
         {
-            // È¤½Ã¶óµµ µ¥ÀÌÅÍ¸¦ ¸ø Ã£°Å³ª ¸¸·¾ÀÎ °æ¿ìÀÇ ¾ÈÀüÀåÄ¡
-            DisplayDescription = FText::FromString(TEXT("ÃÖ´ë ·¹º§ µµ´Ş!"));
+            // í˜¹ì‹œë¼ë„ ë°ì´í„°ë¥¼ ëª» ì°¾ê±°ë‚˜ ë§Œë ™ì¸ ê²½ìš°ì˜ ì•ˆì „ì¥ì¹˜
+            DisplayDescription = FText::FromString(TEXT("ìµœëŒ€ ë ˆë²¨ ë„ë‹¬!"));
         }
     }
 
-    // 4. ÃÊÀÌ½º °´Ã¼ »ı¼º
+    // 4. ì´ˆì´ìŠ¤ ê°ì²´ ìƒì„±
     UDELevelUpChoice_Skill* Choice = NewObject<UDELevelUpChoice_Skill>(this);
 
-    // ¡Ú Choice->Init ÇÔ¼ö¸¦ ¼öÁ¤ÇØ¼­ ¼³¸í°ú ·¹º§µµ °°ÀÌ ³Ñ°ÜÁİ´Ï´Ù!
+    // â˜… Choice->Init í•¨ìˆ˜ë¥¼ ìˆ˜ì •í•´ì„œ ì„¤ëª…ê³¼ ë ˆë²¨ë„ ê°™ì´ ë„˜ê²¨ì¤ë‹ˆë‹¤!
     Choice->Init(
         Row->SkillID,
         Row->SkillName,
         Row->SkillIcon,
-        DisplayDescription, // À§¿¡¼­ °áÁ¤ÇÑ ÅØ½ºÆ®
-        TargetLevel         // UI¿¡¼­ "Lv.2" °°ÀÌ ¶ç¿öÁÖ±â À§ÇØ ³Ñ±è
+        DisplayDescription, // ìœ„ì—ì„œ ê²°ì •í•œ í…ìŠ¤íŠ¸
+        TargetLevel         // UIì—ì„œ "Lv.2" ê°™ì´ ë„ì›Œì£¼ê¸° ìœ„í•´ ë„˜ê¹€
     );
 
     return Choice;
@@ -185,7 +185,7 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::CreateRandomSkillChoice()
 
 UDELevelUpChoiceBase* UDELevelUpManagerComponent::CreateRandomAccessoryChoice()
 {
-    // µ¥ÀÌÅÍ°¡ ¾øÀ¸¸é ÁøÇà ºÒ°¡
+    // ë°ì´í„°ê°€ ì—†ìœ¼ë©´ ì§„í–‰ ë¶ˆê°€
     if (MasterAccessoryPool.IsEmpty()) return nullptr;
 
     APawn* OwnerPawn = Cast<APawn>(GetOwner());
@@ -194,12 +194,12 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::CreateRandomAccessoryChoice()
     UDEAccessoryComponent* AccComp = OwnerPawn->FindComponentByClass<UDEAccessoryComponent>();
     if (!AccComp) return nullptr;
 
-    // 1. ÇÃ·¹ÀÌ¾î »óÅÂ ÆÄ¾Ç
+    // 1. í”Œë ˆì´ì–´ ìƒíƒœ íŒŒì•…
     const TMap<const UDEAccessoryData*, int32>& EquippedMap = AccComp->GetEquippedAccessories();
-    int32 MaxSlots = 6; // ¾Ç¼¼¼­¸® ÃÖ´ë 6Ä­
+    int32 MaxSlots = 6; // ì•…ì„¸ì„œë¦¬ ìµœëŒ€ 6ì¹¸
     bool bIsSlotFull = (EquippedMap.Num() >= MaxSlots);
 
-    // 2. µîÀå °¡´ÉÇÑ À¯È¿ ÈÄº¸±º(ValidCandidates) Ãß¸®±â ¹× ÀüÃ¼ °¡ÁßÄ¡ ÇÕ»ê
+    // 2. ë“±ì¥ ê°€ëŠ¥í•œ ìœ íš¨ í›„ë³´êµ°(ValidCandidates) ì¶”ë¦¬ê¸° ë° ì „ì²´ ê°€ì¤‘ì¹˜ í•©ì‚°
     TArray<FAccessoryPoolItem> ValidCandidates;
     float TotalWeight = 0.0f;
 
@@ -207,13 +207,13 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::CreateRandomAccessoryChoice()
     {
         const int32* CurrentLevelPtr = EquippedMap.Find(Item.Data);
 
-        // [Á¶°Ç A] ÀÌ¹Ì °¡Áø ÅÛÀÎµ¥ ¸¸·¾ÀÌ ¾Æ´Ï´Ù -> µîÀå °¡´É!
+        // [ì¡°ê±´ A] ì´ë¯¸ ê°€ì§„ í…œì¸ë° ë§Œë ™ì´ ì•„ë‹ˆë‹¤ -> ë“±ì¥ ê°€ëŠ¥!
         if (CurrentLevelPtr != nullptr && *CurrentLevelPtr < Item.Data->MaxLevel)
         {
             ValidCandidates.Add(Item);
             TotalWeight += Item.Weight;
         }
-        // [Á¶°Ç B] ¾ÆÁ÷ ¾ø´Â ÅÛÀÎµ¥ ½½·Ô¿¡ ºóÀÚ¸®°¡ ÀÖ´Ù -> µîÀå °¡´É!
+        // [ì¡°ê±´ B] ì•„ì§ ì—†ëŠ” í…œì¸ë° ìŠ¬ë¡¯ì— ë¹ˆìë¦¬ê°€ ìˆë‹¤ -> ë“±ì¥ ê°€ëŠ¥!
         else if (CurrentLevelPtr == nullptr && !bIsSlotFull)
         {
             ValidCandidates.Add(Item);
@@ -221,14 +221,14 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::CreateRandomAccessoryChoice()
         }
     }
 
-    // »ÌÀ» °Ô ¾Æ¹«°Íµµ ¾ø´Ù¸é (ÀüºÎ ¸¸·¾ÀÌ°Å³ª ÀÚ¸® ²Ë Âü)
+    // ë½‘ì„ ê²Œ ì•„ë¬´ê²ƒë„ ì—†ë‹¤ë©´ (ì „ë¶€ ë§Œë ™ì´ê±°ë‚˜ ìë¦¬ ê½‰ ì°¸)
     if (ValidCandidates.IsEmpty() || TotalWeight <= 0.0f)
     {
-        // ³ªÁß¿¡´Â ¿©±â¼­ '°ñµå ÁÖ¸Ó´Ï'³ª '°í±â(Ã¼·ÂÈ¸º¹)'·Î ´ëÃ¼ ¹İÈ¯ÇÏ¸é µË´Ï´Ù.
+        // ë‚˜ì¤‘ì—ëŠ” ì—¬ê¸°ì„œ 'ê³¨ë“œ ì£¼ë¨¸ë‹ˆ'ë‚˜ 'ê³ ê¸°(ì²´ë ¥íšŒë³µ)'ë¡œ ëŒ€ì²´ ë°˜í™˜í•˜ë©´ ë©ë‹ˆë‹¤.
         return nullptr;
     }
 
-    // 3. ¡Ú ´ë¸ÁÀÇ °¡ÁßÄ¡ ±â¹İ ·£´ı ·ê·¿ µ¹¸®±â ¡Ú
+    // 3. â˜… ëŒ€ë§ì˜ ê°€ì¤‘ì¹˜ ê¸°ë°˜ ëœë¤ ë£°ë › ëŒë¦¬ê¸° â˜…
     float RandomRoll = FMath::FRandRange(0.0f, TotalWeight);
     UDEAccessoryData* SelectedData = nullptr;
 
@@ -243,13 +243,13 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::CreateRandomAccessoryChoice()
         }
     }
 
-    // (¾ÈÀüÀåÄ¡) ºÎµ¿¼Ò¼öÁ¡ ¿ÀÂ÷·Î ¾È »ÌÇûÀ» °æ¿ì ¸¶Áö¸· Ç×¸ñ ÁöÁ¤
+    // (ì•ˆì „ì¥ì¹˜) ë¶€ë™ì†Œìˆ˜ì  ì˜¤ì°¨ë¡œ ì•ˆ ë½‘í˜”ì„ ê²½ìš° ë§ˆì§€ë§‰ í•­ëª© ì§€ì •
     if (!SelectedData)
     {
         SelectedData = ValidCandidates.Last().Data;
     }
 
-    // 4. ÃÖÁ¾ÀûÀ¸·Î »ÌÈù µ¥ÀÌÅÍ¸¦ Choice °´Ã¼¿¡ ´ã¾Æ¼­ ¹İÈ¯
+    // 4. ìµœì¢…ì ìœ¼ë¡œ ë½‘íŒ ë°ì´í„°ë¥¼ Choice ê°ì²´ì— ë‹´ì•„ì„œ ë°˜í™˜
     UDELevelUpChoice_Accessory* Choice = NewObject<UDELevelUpChoice_Accessory>(this);
     Choice->Init(SelectedData);
 
@@ -260,19 +260,19 @@ TArray<UDELevelUpChoiceBase*> UDELevelUpManagerComponent::GenerateChestRewards(f
 {
     TArray<UDELevelUpChoiceBase*> ChestRewards;
 
-    // 1. ¸î °³ »ÌÀ»Áö ÀèÆÌ ·ê·¿ µ¹¸®±â (1, 3, 5 ¹İÈ¯)
+    // 1. ëª‡ ê°œ ë½‘ì„ì§€ ì­íŒŸ ë£°ë › ëŒë¦¬ê¸° (1, 3, 5 ë°˜í™˜)
     int32 RewardCount = CalculateChestJackpot(PlayerLuck);
     UE_LOG(LogTemp, Warning, TEXT("[Chest] Chest Reward Count: %d"), RewardCount);
 
-    // 2. [ÃÖ¿ì¼± ¼øÀ§] ÁøÈ­ °¡´ÉÇÑ ½ºÅ³ÀÌ ÀÖ´ÂÁö È®ÀÎ!
+    // 2. [ìµœìš°ì„  ìˆœìœ„] ì§„í™” ê°€ëŠ¥í•œ ìŠ¤í‚¬ì´ ìˆëŠ”ì§€ í™•ì¸!
     if (UDELevelUpChoiceBase* EvolutionChoice = TryGetEvolutionChoice())
     {
         ChestRewards.Add(EvolutionChoice);
-        RewardCount--; // ÁøÈ­ ½ºÅ³ÀÌ ÇÑ ÀÚ¸®¸¦ Â÷ÁöÇÔ!
+        RewardCount--; // ì§„í™” ìŠ¤í‚¬ì´ í•œ ìë¦¬ë¥¼ ì°¨ì§€í•¨!
         UE_LOG(LogTemp, Warning, TEXT("[Chest] Evolution complete"));
     }
 
-    // 3. ³²Àº ÀÚ¸® Ã¤¿ì±â (±âÁ¸¿¡ °¡Áø ½ºÅ³/¾Ç¼¼ Áß¿¡¼­¸¸ ·¹º§¾÷)
+    // 3. ë‚¨ì€ ìë¦¬ ì±„ìš°ê¸° (ê¸°ì¡´ì— ê°€ì§„ ìŠ¤í‚¬/ì•…ì„¸ ì¤‘ì—ì„œë§Œ ë ˆë²¨ì—…)
     for (int32 i = 0; i < RewardCount; ++i)
     {
         if (UDELevelUpChoiceBase* UpgradeChoice = GetRandomUpgradableChoice())
@@ -281,25 +281,25 @@ TArray<UDELevelUpChoiceBase*> UDELevelUpManagerComponent::GenerateChestRewards(f
         }
         else
         {
-            // 4. ´õ ÀÌ»ó ¿Ã¸± ½ºÅ³/¾Ç¼¼°¡ ¾ø´Ù¸é ²Î(µ·/Èú) º¸»óÀ¸·Î ´ëÃ¼!
+            // 4. ë” ì´ìƒ ì˜¬ë¦´ ìŠ¤í‚¬/ì•…ì„¸ê°€ ì—†ë‹¤ë©´ ê½(ëˆ/í) ë³´ìƒìœ¼ë¡œ ëŒ€ì²´!
             ChestRewards.Add(GetFallbackChoice());
         }
     }
 
-    // ¿Ï¼ºµÈ º¸»ó ¸ñ·ÏÀ» ¹İÈ¯! (ÀÌ°É À§Á¬¿¡ ³Ñ°Ü¼­ 1, 3, 5°³ ¿¬ÃâÀ» ¶ç¿ì¸é µÊ)
+    // ì™„ì„±ëœ ë³´ìƒ ëª©ë¡ì„ ë°˜í™˜! (ì´ê±¸ ìœ„ì ¯ì— ë„˜ê²¨ì„œ 1, 3, 5ê°œ ì—°ì¶œì„ ë„ìš°ë©´ ë¨)
     return ChestRewards;
 }
 
 int32 UDELevelUpManagerComponent::CalculateChestJackpot(float Luck)
 {
-    // ¹ì¼­½Ä °£´Ü ·ê·¿ ¿¹½Ã
+    // ë±€ì„œì‹ ê°„ë‹¨ ë£°ë › ì˜ˆì‹œ
     float Roll = FMath::FRandRange(0.0f, 100.0f);
 
-    // Luck ½ºÅÈ¿¡ µû¶ó È®·üÀÌ À¯µ¿ÀûÀ¸·Î º¯ÇÔ!
-    if (Roll < (1.0f + Luck * 0.1f)) return 5; // ±İ»óÀÚ! (±âº» 1% È®·ü)
-    if (Roll < (10.0f + Luck * 0.5f)) return 3; // Àº»óÀÚ! (±âº» 10% È®·ü)
+    // Luck ìŠ¤íƒ¯ì— ë”°ë¼ í™•ë¥ ì´ ìœ ë™ì ìœ¼ë¡œ ë³€í•¨!
+    if (Roll < (1.0f + Luck * 0.1f)) return 5; // ê¸ˆìƒì! (ê¸°ë³¸ 1% í™•ë¥ )
+    if (Roll < (10.0f + Luck * 0.5f)) return 3; // ì€ìƒì! (ê¸°ë³¸ 10% í™•ë¥ )
 
-    return 1; // ±âº» ³ª¹«»óÀÚ
+    return 1; // ê¸°ë³¸ ë‚˜ë¬´ìƒì
 }
 
 
@@ -312,18 +312,18 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::TryGetEvolutionChoice()
     UDESkillManagerComponent* SkillMgr = OwnerPawn->FindComponentByClass<UDESkillManagerComponent>();
     if (!SkillMgr) return nullptr;
 
-    // ¡Ú ´ÜÀÏ ID ´ë½Å ¹è¿­À» ÁØºñÇÕ´Ï´Ù.
+    // â˜… ë‹¨ì¼ ID ëŒ€ì‹  ë°°ì—´ì„ ì¤€ë¹„í•©ë‹ˆë‹¤.
     TArray<int32> ConsumedSkillIDs;
     int32 ResultSkillID = -1;
 
-    // 1. ³×°¡ Â§ ±× ¿Ïº®ÇÑ ÁøÈ­/ÇÕ¼º ÆÇµ¶±â ÀÛµ¿!
+    // 1. ë„¤ê°€ ì§  ê·¸ ì™„ë²½í•œ ì§„í™”/í•©ì„± íŒë…ê¸° ì‘ë™!
     if (SkillMgr->CheckEvolution(ConsumedSkillIDs, ResultSkillID))
     {
-        // 2. ÆÇµ¶ Åë°ú! ¿Ï¼ºµÉ °á°ú ½ºÅ³(ResultSkillID)ÀÇ µ¥ÀÌÅÍ ·Îµå
+        // 2. íŒë… í†µê³¼! ì™„ì„±ë  ê²°ê³¼ ìŠ¤í‚¬(ResultSkillID)ì˜ ë°ì´í„° ë¡œë“œ
         const FDESkillRow* EvolvedRow = SkillMgr->GetSkillRow(ResultSkillID);
         if (EvolvedRow)
         {
-            // 3. Choice °´Ã¼ Æ÷ÀåÇØ¼­ ¹İÈ¯
+            // 3. Choice ê°ì²´ í¬ì¥í•´ì„œ ë°˜í™˜
             UDELevelUpChoice_Skill* EvolutionChoice = NewObject<UDELevelUpChoice_Skill>(this);
 
             EvolutionChoice->Init(
@@ -334,7 +334,7 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::TryGetEvolutionChoice()
             );
 
             // =========================================================
-            // ¡Ú Áß¿ä: ÀÌÁ¦ ÀÌ Ä«µå´Â ÀÚ±â°¡ ¾î¶² Àç·áµéÀ» °¥¾Æ³Ö¾î¾ß ÇÏ´ÂÁö ¹è¿­·Î ±â¾ïÇÕ´Ï´Ù!
+            // â˜… ì¤‘ìš”: ì´ì œ ì´ ì¹´ë“œëŠ” ìê¸°ê°€ ì–´ë–¤ ì¬ë£Œë“¤ì„ ê°ˆì•„ë„£ì–´ì•¼ í•˜ëŠ”ì§€ ë°°ì—´ë¡œ ê¸°ì–µí•©ë‹ˆë‹¤!
             // =========================================================
             EvolutionChoice->bIsEvolution = true;
             EvolutionChoice->ConsumedSkillIDs = ConsumedSkillIDs;
@@ -346,7 +346,7 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::TryGetEvolutionChoice()
         }
     }
 
-    return nullptr; // ÁøÈ­/ÇÕ¼ºÇÒ °Å ¾øÀ½
+    return nullptr; // ì§„í™”/í•©ì„±í•  ê±° ì—†ìŒ
 
     //UE_LOG(LogTemp, Warning, TEXT("[Chest] Try Get Evolution Choice"));
     //APawn* OwnerPawn = Cast<APawn>(GetOwner());
@@ -361,15 +361,15 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::TryGetEvolutionChoice()
     //int32 BaseSkillID = -1;
     //int32 ResultSkillID = -1;
 
-    //// 1. ³×°¡ Â§ ±× ¿Ïº®ÇÑ ÁøÈ­ ÆÇµ¶±â ÀÛµ¿!
+    //// 1. ë„¤ê°€ ì§  ê·¸ ì™„ë²½í•œ ì§„í™” íŒë…ê¸° ì‘ë™!
     //if (SkillMgr->CheckEvolution(BaseSkillID, ResultSkillID))
     //{
-    //    // 2. ÆÇµ¶ Åë°ú! ÁøÈ­µÉ °á°ú ½ºÅ³(ResultSkillID)ÀÇ µ¥ÀÌÅÍ ·Îµå
+    //    // 2. íŒë… í†µê³¼! ì§„í™”ë  ê²°ê³¼ ìŠ¤í‚¬(ResultSkillID)ì˜ ë°ì´í„° ë¡œë“œ
     //    UE_LOG(LogTemp, Warning, TEXT("[Chest] Passed CheckEvolution"));
     //    const FDESkillRow* EvolvedRow = SkillMgr->GetSkillRow(ResultSkillID);
     //    if (EvolvedRow)
     //    {
-    //        // 3. Choice °´Ã¼ Æ÷ÀåÇØ¼­ ¹İÈ¯
+    //        // 3. Choice ê°ì²´ í¬ì¥í•´ì„œ ë°˜í™˜
     //        UDELevelUpChoice_Skill* EvolutionChoice = NewObject<UDELevelUpChoice_Skill>(this);
 
     //        EvolutionChoice->Init(
@@ -381,7 +381,7 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::TryGetEvolutionChoice()
     //        );
 
     //        // =========================================================
-    //        // ¡Ú Áß¿ä ÆÁ: ÀÌ Choice°¡ 'ÁøÈ­¿ë'ÀÌ¶ó´Â °É ³ªÁß¿¡ ApplyÇÒ ¶§ ¾Ë ¼ö ÀÖ¾î¾ß ÇØ!
+    //        // â˜… ì¤‘ìš” íŒ: ì´ Choiceê°€ 'ì§„í™”ìš©'ì´ë¼ëŠ” ê±¸ ë‚˜ì¤‘ì— Applyí•  ë•Œ ì•Œ ìˆ˜ ìˆì–´ì•¼ í•´!
     //        // =========================================================
     //         EvolutionChoice->bIsEvolution = true;
     //         EvolutionChoice->TargetBaseSkillID = BaseSkillID; 
@@ -392,7 +392,7 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::TryGetEvolutionChoice()
     //    }
     //}
 
-    //return nullptr; // ÁøÈ­ÇÒ °Å ¾øÀ½
+    //return nullptr; // ì§„í™”í•  ê±° ì—†ìŒ
 }
 
 UDELevelUpChoiceBase* UDELevelUpManagerComponent::GetRandomUpgradableChoice()
@@ -405,21 +405,21 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::GetRandomUpgradableChoice()
 
     if (!SkillMgr || !AccComp) return nullptr;
 
-    // 1. ¸¸·¾ÀÌ ¾Æ´Ñ ÈÄº¸µéÀ» ´ãÀ» ºó ¹Ù±¸´Ï ÁØºñ
+    // 1. ë§Œë ™ì´ ì•„ë‹Œ í›„ë³´ë“¤ì„ ë‹´ì„ ë¹ˆ ë°”êµ¬ë‹ˆ ì¤€ë¹„
     TArray<int32> UpgradableSkillIDs;
     TArray<const UDEAccessoryData*> UpgradableAccessories;
 
     // =========================================================
-    // 2. ¹«±â ¹Ù±¸´Ï Ã¤¿ì±â (°¡Áø °Í Áß ¸¸·¾ ¾Æ´Ñ °Í¸¸)
+    // 2. ë¬´ê¸° ë°”êµ¬ë‹ˆ ì±„ìš°ê¸° (ê°€ì§„ ê²ƒ ì¤‘ ë§Œë ™ ì•„ë‹Œ ê²ƒë§Œ)
     // =========================================================
-    // (GetActiveSkills()°¡ ÇöÀç ÀåÂø ÁßÀÎ ½ºÅ³ ¹è¿­À» ¹İÈ¯ÇÑ´Ù°í °¡Á¤)
+    // (GetActiveSkills()ê°€ í˜„ì¬ ì¥ì°© ì¤‘ì¸ ìŠ¤í‚¬ ë°°ì—´ì„ ë°˜í™˜í•œë‹¤ê³  ê°€ì •)
     for (const auto& Pair : SkillMgr->GetActiveSkills())
     {
-        // Pair.Key´Â SkillID, Pair.Value´Â FActiveSkill ±¸Á¶Ã¼¶ó°í °¡Á¤
+        // Pair.KeyëŠ” SkillID, Pair.ValueëŠ” FActiveSkill êµ¬ì¡°ì²´ë¼ê³  ê°€ì •
         int32 SkillID = Pair.Key;
         int32 CurrentLevel = SkillMgr->GetSkillLevels().Contains(SkillID) ? SkillMgr->GetSkillLevels()[SkillID] : 1;
 
-        // µ¥ÀÌÅÍ Å×ÀÌºí¿¡¼­ MaxLevel °¡Á®¿À±â
+        // ë°ì´í„° í…Œì´ë¸”ì—ì„œ MaxLevel ê°€ì ¸ì˜¤ê¸°
         const FDESkillRow* Row = SkillMgr->GetSkillRow(SkillID);
         if (Row && CurrentLevel < Row->MaxLevel)
         {
@@ -428,7 +428,7 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::GetRandomUpgradableChoice()
     }
 
     // =========================================================
-    // 3. Àå½Å±¸ ¹Ù±¸´Ï Ã¤¿ì±â (°¡Áø °Í Áß ¸¸·¾ ¾Æ´Ñ °Í¸¸)
+    // 3. ì¥ì‹ êµ¬ ë°”êµ¬ë‹ˆ ì±„ìš°ê¸° (ê°€ì§„ ê²ƒ ì¤‘ ë§Œë ™ ì•„ë‹Œ ê²ƒë§Œ)
     // =========================================================
     const TMap<const UDEAccessoryData*, int32>& EquippedAcc = AccComp->GetEquippedAccessories();
     for (const auto& Pair : EquippedAcc)
@@ -443,26 +443,26 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::GetRandomUpgradableChoice()
     }
 
     // =========================================================
-    // 4. ÃÑ ÈÄº¸ °³¼ö ÆÄ¾Ç & ·£´ı »Ì±â!
+    // 4. ì´ í›„ë³´ ê°œìˆ˜ íŒŒì•… & ëœë¤ ë½‘ê¸°!
     // =========================================================
     int32 TotalCandidates = UpgradableSkillIDs.Num() + UpgradableAccessories.Num();
 
-    // ¿Ã¸± °Ô ÇÏ³ªµµ ¾ø´Ù! (ÀüºÎ ¸¸·¾ ¤§¤§) -> nullptr ¹İÈ¯ÇØ¼­ ²Î(Fallback) Ã³¸®·Î ³Ñ±è
+    // ì˜¬ë¦´ ê²Œ í•˜ë‚˜ë„ ì—†ë‹¤! (ì „ë¶€ ë§Œë ™ ã„·ã„·) -> nullptr ë°˜í™˜í•´ì„œ ê½(Fallback) ì²˜ë¦¬ë¡œ ë„˜ê¹€
     if (TotalCandidates == 0) return nullptr;
 
-    // 0ºÎÅÍ (ÈÄº¸ °³¼ö - 1) »çÀÌ¿¡¼­ ·£´ıÀ¸·Î ÇÎÆş!
+    // 0ë¶€í„° (í›„ë³´ ê°œìˆ˜ - 1) ì‚¬ì´ì—ì„œ ëœë¤ìœ¼ë¡œ í•‘í!
     int32 RandomIndex = FMath::RandRange(0, TotalCandidates - 1);
 
     // =========================================================
-    // 5. ´çÃ·µÈ ³à¼®À» Choice Ä¸½¶·Î ¿¹»Ú°Ô Æ÷ÀåÇØ¼­ ¹İÈ¯
+    // 5. ë‹¹ì²¨ëœ ë…€ì„ì„ Choice ìº¡ìŠë¡œ ì˜ˆì˜ê²Œ í¬ì¥í•´ì„œ ë°˜í™˜
     // =========================================================
     if (RandomIndex < UpgradableSkillIDs.Num())
     {
-        // [¹«±â ´çÃ·!] ·£´ı ÀÎµ¦½º°¡ ¹«±â ¹è¿­ Å©±â ¾ÈÂÊÀÌ¸é ¹«±âÀÓ
+        // [ë¬´ê¸° ë‹¹ì²¨!] ëœë¤ ì¸ë±ìŠ¤ê°€ ë¬´ê¸° ë°°ì—´ í¬ê¸° ì•ˆìª½ì´ë©´ ë¬´ê¸°ì„
         int32 PickedSkillID = UpgradableSkillIDs[RandomIndex];
         const FDESkillRow* Row = SkillMgr->GetSkillRow(PickedSkillID);
 
-        // ¡Ú [Ãß°¡] ÇöÀç ·¹º§ ÆÄ¾Ç & ´ÙÀ½ ·¹º§ µ¥ÀÌÅÍ °¡Á®¿À±â
+        // â˜… [ì¶”ê°€] í˜„ì¬ ë ˆë²¨ íŒŒì•… & ë‹¤ìŒ ë ˆë²¨ ë°ì´í„° ê°€ì ¸ì˜¤ê¸°
         int32 CurrentLevel = SkillMgr->GetSkillLevel(PickedSkillID);
         int32 TargetLevel = CurrentLevel + 1;
 
@@ -477,20 +477,20 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::GetRandomUpgradableChoice()
             DisplayDescription = FText::FromString(TEXT("None"));
         }
 
-        // ¡Ú [¼öÁ¤] »õ·Î ¹Ù²ï Init ÇÔ¼ö ±Ô°İ¿¡ ¸ÂÃç¼­ Æ÷Àå!
+        // â˜… [ìˆ˜ì •] ìƒˆë¡œ ë°”ë€ Init í•¨ìˆ˜ ê·œê²©ì— ë§ì¶°ì„œ í¬ì¥!
         UDELevelUpChoice_Skill* Choice = NewObject<UDELevelUpChoice_Skill>(this);
         Choice->Init(
             Row->SkillID,
             Row->SkillName,
             Row->SkillIcon,
-            DisplayDescription, // ÅØ½ºÆ® Ãß°¡
-            TargetLevel         // ´ÙÀ½ ·¹º§ Ãß°¡
+            DisplayDescription, // í…ìŠ¤íŠ¸ ì¶”ê°€
+            TargetLevel         // ë‹¤ìŒ ë ˆë²¨ ì¶”ê°€
         );
         return Choice;
     }
     else
     {
-        // [Àå½Å±¸ ´çÃ·!] ¹«±â °³¼ö¸¦ »« ³ª¸ÓÁö ÀÎµ¦½º¸é Àå½Å±¸ÀÓ
+        // [ì¥ì‹ êµ¬ ë‹¹ì²¨!] ë¬´ê¸° ê°œìˆ˜ë¥¼ ëº€ ë‚˜ë¨¸ì§€ ì¸ë±ìŠ¤ë©´ ì¥ì‹ êµ¬ì„
         int32 AccIndex = RandomIndex - UpgradableSkillIDs.Num();
         const UDEAccessoryData* PickedAcc = UpgradableAccessories[AccIndex];
 

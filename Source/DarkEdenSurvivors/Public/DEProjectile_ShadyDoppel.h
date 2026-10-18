@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -23,19 +23,19 @@ protected:
     virtual void UpdateMovement(float DeltaTime) override;
 
 private:
-    // [»óÅÂ º¯¼ö]
+    // [ìƒíƒœ ë³€ìˆ˜]
     bool bIsPiercing;
     float CurrentTime;
     float TotalFlightTime;
-    // ÁøÈ­Çü(µµÇÃ2)ÀÎÁö Ã¼Å©ÇÏ´Â º¯¼ö! ºí·çÇÁ¸°Æ®¿¡¼­ Ã¼Å©¹Ú½º·Î ¼³Á¤ °¡´É
+    // ì§„í™”í˜•(ë„í”Œ2)ì¸ì§€ ì²´í¬í•˜ëŠ” ë³€ìˆ˜! ë¸”ë£¨í”„ë¦°íŠ¸ì—ì„œ ì²´í¬ë°•ìŠ¤ë¡œ ì„¤ì • ê°€ëŠ¥
     UPROPERTY(EditDefaultsOnly, Category = "ShadyDoppel")
     bool bCanPierceAfterCurve = false;
-    // [º£Áö¾î °î¼± ÁÂÇ¥]
+    // [ë² ì§€ì–´ ê³¡ì„  ì¢Œí‘œ]
     FVector StartPos;
     FVector ControlPos;
     FVector TargetPos;
 
-    // (¿É¼Ç) °î¼±ÀÌ ÁÂ¿ì·Î ¾ó¸¶³ª ²ªÀÏÁö °áÁ¤ÇÏ´Â º¯¼ö
+    // (ì˜µì…˜) ê³¡ì„ ì´ ì¢Œìš°ë¡œ ì–¼ë§ˆë‚˜ êº¾ì¼ì§€ ê²°ì •í•˜ëŠ” ë³€ìˆ˜
     UPROPERTY(EditDefaultsOnly, Category = "ShadyDoppel")
     float CurveOffsetRange = 500.0f;
     float FlightRate;

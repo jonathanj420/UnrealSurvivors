@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -20,15 +20,15 @@ public:
     virtual void Execute(FDESkillContext& Context) override;
     virtual void OnContextRefreshed(const FDESkillContext& Context);
 
-    // ¼ÒÈ¯ÇÒ Å¬·¡½º
+    // ì†Œí™˜í•  í´ë˜ìŠ¤
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Summon")
     TSubclassOf<ADESimpleSummonBase> SummonClass;
 
-    // ¼ÒÈ¯ ½Ã Àç»ıÇÒ »ç¿îµå
+    // ì†Œí™˜ ì‹œ ì¬ìƒí•  ì‚¬ìš´ë“œ
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Summon")
     USoundBase* SpawnSound;
 
-    // ½ÃÀüÀÚ ±âÁØ ½ºÆù À§Ä¡ ¿ÀÇÁ¼Â (¿¹: ¾ÕÂÊÀ¸·Î 100¸¸Å­ ¶ç¿ö¼­ ¼ÒÈ¯)
+    // ì‹œì „ì ê¸°ì¤€ ìŠ¤í° ìœ„ì¹˜ ì˜¤í”„ì…‹ (ì˜ˆ: ì•ìª½ìœ¼ë¡œ 100ë§Œí¼ ë„ì›Œì„œ ì†Œí™˜)
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Summon")
     float SpawnDistanceOffset = 100.0f;
 

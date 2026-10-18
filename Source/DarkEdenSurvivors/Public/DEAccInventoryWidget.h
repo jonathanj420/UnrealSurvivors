@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -22,15 +22,15 @@ protected:
     virtual void NativeConstruct() override;
 
     void Refresh();
-    // ½ºÅ³Àº ID¸¦ ½èÁö¸¸, ¾Ç¼¼¼­¸®´Â DataAsset Æ÷ÀÎÅÍ¸¦ ¾²¸é µË´Ï´Ù.
+    // ìŠ¤í‚¬ì€ IDë¥¼ ì¼ì§€ë§Œ, ì•…ì„¸ì„œë¦¬ëŠ” DataAsset í¬ì¸í„°ë¥¼ ì“°ë©´ ë©ë‹ˆë‹¤.
     void OnAccessoryUpdated(const class UDEAccessoryData* InAccData);
 
 public:
-    // PawnÀ» ¿ÜºÎ¿¡¼­ ³Ö¾îÁÖ´Â ÃÊ±âÈ­ ÇÔ¼ö (½ºÅ³°ú µ¿ÀÏ)
+    // Pawnì„ ì™¸ë¶€ì—ì„œ ë„£ì–´ì£¼ëŠ” ì´ˆê¸°í™” í•¨ìˆ˜ (ìŠ¤í‚¬ê³¼ ë™ì¼)
     void InitializeAccessoryWidget(APawn* NewPawn);
 
 protected:
-    // ½ºÅ³ ÆĞ³Î°ú µ¿ÀÏÇÏ°Ô HorizontalBox³ª UniformGrid¸¦ ¹ŞÀ» ¼ö ÀÖ´Â »óÀ§ Å¬·¡½º
+    // ìŠ¤í‚¬ íŒ¨ë„ê³¼ ë™ì¼í•˜ê²Œ HorizontalBoxë‚˜ UniformGridë¥¼ ë°›ì„ ìˆ˜ ìˆëŠ” ìƒìœ„ í´ë˜ìŠ¤
     UPROPERTY(meta = (BindWidget))
     UPanelWidget* AccSlotPanel;
 
@@ -38,7 +38,7 @@ protected:
     TSubclassOf<UDEAccSlotWidget> AccSlotWidgetClass;
 
 private:
-    // ½ºÅ³ ¸Å´ÏÀú ´ë½Å ¾Ç¼¼¼­¸® ÄÄÆ÷³ÍÆ®¸¦ µé°í ÀÖ½À´Ï´Ù.
+    // ìŠ¤í‚¬ ë§¤ë‹ˆì € ëŒ€ì‹  ì•…ì„¸ì„œë¦¬ ì»´í¬ë„ŒíŠ¸ë¥¼ ë“¤ê³  ìˆìŠµë‹ˆë‹¤.
     UPROPERTY()
     UDEAccessoryComponent* AccessoryComp;
 	

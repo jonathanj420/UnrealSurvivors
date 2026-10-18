@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEStatusEffect_Stun.h"
@@ -10,20 +10,20 @@ UDEStatusEffect_Stun::UDEStatusEffect_Stun()
 
 void UDEStatusEffect_Stun::OnApply(AActor* Target, FActiveStatusEffect& EffectData) const
 {
-    // ºÎ¸ğ ·ÎÁ÷ÀÌ ÀÖ´Ù¸é ¸ÕÀú ½ÇÇà (ÇöÀç´Â ºñ¾îÀÖ°ÚÁö¸¸ °ü·Ê»ó È£Ãâ)
+    // ë¶€ëª¨ ë¡œì§ì´ ìˆë‹¤ë©´ ë¨¼ì € ì‹¤í–‰ (í˜„ì¬ëŠ” ë¹„ì–´ìˆê² ì§€ë§Œ ê´€ë¡€ìƒ í˜¸ì¶œ)
     Super::OnApply(Target, EffectData);
 
     if (ADEMonsterBase* Monster = Cast<ADEMonsterBase>(Target))
     {
-        // 1. ¸Å´ÏÀú°¡ °ü¸®ÇÏ´Â ÀÌµ¿/ÃßÀû ·ÎÁ÷ Á¤Áö
+        // 1. ë§¤ë‹ˆì €ê°€ ê´€ë¦¬í•˜ëŠ” ì´ë™/ì¶”ì  ë¡œì§ ì •ì§€
         Monster->SetCanMove(false);
 
-        //// 2. º£ÀÌ½º¿¡ ¸¸µé¾îµĞ º¯¼ö¸¦ È°¿ëÇØ 'µ¹µ¢ÀÌ ÄÃ·¯' ¾º¿ì±â
+        //// 2. ë² ì´ìŠ¤ì— ë§Œë“¤ì–´ë‘” ë³€ìˆ˜ë¥¼ í™œìš©í•´ 'ëŒë©ì´ ì»¬ëŸ¬' ì”Œìš°ê¸°
         //if (bApplyMaterialTint)
         //{
         //    if (USkeletalMeshComponent* MeshComp = Monster->GetMesh())
         //    {
-        //        // Vector(LinearColor) °ªÀ» ¸ÓÆ¼¸®¾ó ÀüÃ¼¿¡ ÂÓ »Ñ·ÁÁİ´Ï´Ù.
+        //        // Vector(LinearColor) ê°’ì„ ë¨¸í‹°ë¦¬ì–¼ ì „ì²´ì— ì«™ ë¿Œë ¤ì¤ë‹ˆë‹¤.
         //        MeshComp->SetVectorParameterValueOnMaterials(TintParameterName, TintColor.ToFVector());
         //    }
         //}
@@ -36,10 +36,10 @@ void UDEStatusEffect_Stun::OnRemove(AActor* Target, FActiveStatusEffect& EffectD
 
     if (ADEMonsterBase* Monster = Cast<ADEMonsterBase>(Target))
     {
-        // 1. ½ºÅÏ ÇØÁ¦, ÀÌµ¿ Àç°³
+        // 1. ìŠ¤í„´ í•´ì œ, ì´ë™ ì¬ê°œ
         Monster->SetCanMove(true);
 
-        //// 2. ¿ø·¡ »ö»ó(º¸Åë Èò»ö/1.0)À¸·Î ¿ø»ó º¹±¸
+        //// 2. ì›ë˜ ìƒ‰ìƒ(ë³´í†µ í°ìƒ‰/1.0)ìœ¼ë¡œ ì›ìƒ ë³µêµ¬
         //if (bApplyMaterialTint)
         //{
         //    if (USkeletalMeshComponent* MeshComp = Monster->GetMesh())

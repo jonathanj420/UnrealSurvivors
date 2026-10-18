@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DESimpleMeleeBase.h"
@@ -38,11 +38,11 @@ void ADESimpleMeleeBase::PerformSweepAttack()
 	ResetState();
 	if (!GetOwner()) return;
 
-	// °ø°İ ½ÃÀÛ À§Ä¡
+	// ê³µê²© ì‹œì‘ ìœ„ì¹˜
 	FVector Start = GetActorLocation();
 	FVector Forward = GetActorForwardVector();
 
-	// Sweep ¹üÀ§
+	// Sweep ë²”ìœ„
 	TArray<FHitResult> HitResults;
 	FCollisionShape SweepShape = FCollisionShape::MakeSphere(SweepRadius);
 
@@ -62,10 +62,10 @@ void ADESimpleMeleeBase::PerformSweepAttack()
 		{
 			HitActors.Add(HitActor);
 
-			// µ¥¹ÌÁö Àû¿ë
+			// ë°ë¯¸ì§€ ì ìš©
 			//UGameplayStatics::ApplyDamage(HitActor, Damage, nullptr, this, nullptr);
 
-			// ³Ë¹é Ã³¸®
+			// ë„‰ë°± ì²˜ë¦¬
 			if (ADEMonsterBase* Monster = Cast<ADEMonsterBase>(HitActor))
 			{
 				FVector KnockDir = (HitActor->GetActorLocation() - GetOwner()->GetActorLocation()).GetSafeNormal();
@@ -77,7 +77,7 @@ void ADESimpleMeleeBase::PerformSweepAttack()
 
 	if (NiagaraSystem)
 	{
-		float ScaleFactor = SweepRadius / BaseRadius; // BaseRadius´Â ÀÌÆåÆ® ±âº» Å©±â
+		float ScaleFactor = SweepRadius / BaseRadius; // BaseRadiusëŠ” ì´í™íŠ¸ ê¸°ë³¸ í¬ê¸°
 		NiagaraEffectComponent->SetWorldScale3D(FVector(ScaleFactor));
 		NiagaraEffectComponent->SetAsset(NiagaraSystem);
 		NiagaraEffectComponent->Activate(true);

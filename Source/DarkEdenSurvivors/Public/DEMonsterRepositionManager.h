@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -43,15 +43,15 @@ private:
 
     /* ===== Config ===== */
 
-    // ÀÌ °Å¸®º¸´Ù ¸Ö¾îÁö¸é Àç¹èÄ¡
+    // ì´ ê±°ë¦¬ë³´ë‹¤ ë©€ì–´ì§€ë©´ ì¬ë°°ì¹˜
     UPROPERTY(EditAnywhere, Category = "Reposition")
     float MaxDistanceFromPlayer = 2000.0f;
 
-    // Àç¹èÄ¡ ½Ã ÇÃ·¹ÀÌ¾î ±âÁØ ÃÖ¼Ò °Å¸®
+    // ì¬ë°°ì¹˜ ì‹œ í”Œë ˆì´ì–´ ê¸°ì¤€ ìµœì†Œ ê±°ë¦¬
     UPROPERTY(EditAnywhere, Category = "Reposition")
     float RespawnMinRadius = 1000.0f;
 
-    // Àç¹èÄ¡ ½Ã ÇÃ·¹ÀÌ¾î ±âÁØ ÃÖ´ë °Å¸®
+    // ì¬ë°°ì¹˜ ì‹œ í”Œë ˆì´ì–´ ê¸°ì¤€ ìµœëŒ€ ê±°ë¦¬
     UPROPERTY(EditAnywhere, Category = "Reposition")
     float RespawnMaxRadius = 1100.0f;
 

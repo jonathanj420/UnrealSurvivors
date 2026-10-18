@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -21,7 +21,7 @@ public:
     virtual void InitBehaviors() override;
 
 private:
-	// ÇÏµåÄÚµùÀ¸·Î ·ÎµåÇÑ ¿¡¼ÂÀ» µé°í ÀÖÀ» Æ÷ÀÎÅÍ
+	// í•˜ë“œì½”ë”©ìœ¼ë¡œ ë¡œë“œí•œ ì—ì…‹ì„ ë“¤ê³  ìˆì„ í¬ì¸í„°
 	UPROPERTY()
 	class UNiagaraSystem* CastEffectAsset;
 

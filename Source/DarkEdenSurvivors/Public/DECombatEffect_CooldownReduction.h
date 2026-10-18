@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -10,8 +10,8 @@
 UENUM(BlueprintType)
 enum class ECDRTargetSkill : uint8
 {
-	AllSkills      UMETA(DisplayName = "¸ğµç ½ºÅ³"),
-	SpecificSkill  UMETA(DisplayName = "Æ¯Á¤ ½ºÅ³ ÁöÁ¤")
+	AllSkills      UMETA(DisplayName = "ëª¨ë“  ìŠ¤í‚¬"),
+	SpecificSkill  UMETA(DisplayName = "íŠ¹ì • ìŠ¤í‚¬ ì§€ì •")
 };
 
 /**
@@ -23,24 +23,24 @@ class DARKEDENSURVIVORS_API UDECombatEffect_CooldownReduction : public UDECombat
     GENERATED_BODY()
 
 public:
-    // °íÁ¤°ªÀÎÁö ÆÛ¼¾Æ®ÀÎÁö
+    // ê³ ì •ê°’ì¸ì§€ í¼ì„¼íŠ¸ì¸ì§€
     UPROPERTY(EditAnywhere, Category = "Cooldown")
     ECooldownReduceType ReduceType = ECooldownReduceType::PercentageOfMax;
 
-    // ±ğÀ» ¼öÄ¡
+    // ê¹ì„ ìˆ˜ì¹˜
     UPROPERTY(EditAnywhere, Category = "Cooldown")
     float Amount = 0.1f;
 
-    // ´ë»óÀ» ¾î¶»°Ô ÀâÀ» °ÍÀÎ°¡? µå·Ó´Ù¿î ¸Ş´º »ı¼º!
+    // ëŒ€ìƒì„ ì–´ë–»ê²Œ ì¡ì„ ê²ƒì¸ê°€? ë“œë¡­ë‹¤ìš´ ë©”ë‰´ ìƒì„±!
     UPROPERTY(EditAnywhere, Category = "Cooldown")
     ECDRTargetSkill TargetSkill = ECDRTargetSkill::SpecificSkill;
 
-    // ¡Ú ¹ÌÄ£ ²ÜÆÁ: EditCondition
-    // TargetSkill µå·Ó´Ù¿î¿¡¼­ 'SpecificSkill'À» ¼±ÅÃÇßÀ» ¶§¸¸ ÀÌ ÀÔ·ÂÃ¢ÀÌ È°¼ºÈ­µÊ!
+    // â˜… ë¯¸ì¹œ ê¿€íŒ: EditCondition
+    // TargetSkill ë“œë¡­ë‹¤ìš´ì—ì„œ 'SpecificSkill'ì„ ì„ íƒí–ˆì„ ë•Œë§Œ ì´ ì…ë ¥ì°½ì´ í™œì„±í™”ë¨!
     UPROPERTY(EditAnywhere, Category = "Cooldown", meta = (EditCondition = "TargetSkill == ECDRTargetSkill::SpecificSkill", EditConditionHides))
     int32 SpecificSkillID = -1;
 
-    // Ã³Ä¡ ½Ã ÄğÃÊ±âÈ­ »Í¸À¿ë
+    // ì²˜ì¹˜ ì‹œ ì¿¨ì´ˆê¸°í™” ë½•ë§›ìš©
     UPROPERTY(EditAnywhere, Category = "Cooldown")
     bool bInstantReset = false;
 

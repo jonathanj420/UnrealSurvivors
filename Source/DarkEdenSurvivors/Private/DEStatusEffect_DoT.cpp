@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEStatusEffect_DoT.h"
@@ -9,20 +9,20 @@ UDEStatusEffect_DoT::UDEStatusEffect_DoT()
 {
 	StackPolicy = EStackPolicy::Stack;
 	MaxStacks = 5;
-	//DamageType = EDEDamageType::Poison; // ±âº»°ª
+	//DamageType = EDEDamageType::Poison; // ê¸°ë³¸ê°’
 }
 
 void UDEStatusEffect_DoT::OnIntervalTick(AActor* Target, FActiveStatusEffect& EffectData) const
 {
 	if (!Target || !EffectData.Instigator.IsValid()) return;
 
-	// 1. ¿Ïº®ÇÑ Ä¿½ºÅÒ µ¥¹ÌÁö ¿äÃ»(Request) Á¶¸³
+	// 1. ì™„ë²½í•œ ì»¤ìŠ¤í…€ ë°ë¯¸ì§€ ìš”ì²­(Request) ì¡°ë¦½
 	FDEDamageRequest DamageReq;
 	DamageReq.Instigator = EffectData.Instigator.Get();
-	DamageReq.DamageCauser = EffectData.Instigator.Get(); // È¤Àº µµÆ® ÀåÆÇ ¾×ÅÍ°¡ ÀÖ´Ù¸é ±×°É ³Ö¾îµµ µÊ
+	DamageReq.DamageCauser = EffectData.Instigator.Get(); // í˜¹ì€ ë„íŠ¸ ì¥íŒ ì•¡í„°ê°€ ìˆë‹¤ë©´ ê·¸ê±¸ ë„£ì–´ë„ ë¨
 
-	// ¼Ò½º ¿ÀºêÁ§Æ®´Â ÀÌ »óÅÂÀÌ»ó °ÅÇªÁı(CDO) ÀÚ½ÅÀ» ³Ñ°ÜÁİ´Ï´Ù. 
-	// ³ªÁß¿¡ Å³·Î±×¿¡¼­ "µ¶(¾ÆÀÌÄÜ)À¸·Î Á×À½"À» ¶ç¿ï ¼ö ÀÖ½À´Ï´Ù.
+	// ì†ŒìŠ¤ ì˜¤ë¸Œì íŠ¸ëŠ” ì´ ìƒíƒœì´ìƒ ê±°í‘¸ì§‘(CDO) ìì‹ ì„ ë„˜ê²¨ì¤ë‹ˆë‹¤. 
+	// ë‚˜ì¤‘ì— í‚¬ë¡œê·¸ì—ì„œ "ë…(ì•„ì´ì½˜)ìœ¼ë¡œ ì£½ìŒ"ì„ ë„ìš¸ ìˆ˜ ìˆìŠµë‹ˆë‹¤.
 	DamageReq.SourceObject = const_cast<UDEStatusEffect_DoT*>(this);
 
 	DamageReq.Victim = Target;
@@ -30,18 +30,18 @@ void UDEStatusEffect_DoT::OnIntervalTick(AActor* Target, FActiveStatusEffect& Ef
 	DamageReq.DamageTags = DoTDamageTags;
 
 
-	// ¡Ú¡Ú¡Ú ±Øµµ·Î Áß¿äÇÑ ¼¼ÆÃ ¡Ú¡Ú¡Ú
-	// µµÆ® µ¥¹ÌÁö´Â Å©¸®Æ¼ÄÃÀÌ³ª ÈíÇ÷, ¿ÂÈı(On-Hit) È¿°ú¸¦ ÅÍ¶ß¸®¸é ¾È µË´Ï´Ù!
-	// ¸¸¾à µ¶ Æ½µ©ÀÌ ¿ÂÈıÀ» ÅÍ¶ß¸®°í -> ±× ¿ÂÈıÀÌ ´Ù½Ã µ¶À» °É¸é -> ¿µ¿øÇÑ ¹«ÇÑ·çÇÁ Å©·¡½Ã°¡ ³³´Ï´Ù.
+	// â˜…â˜…â˜… ê·¹ë„ë¡œ ì¤‘ìš”í•œ ì„¸íŒ… â˜…â˜…â˜…
+	// ë„íŠ¸ ë°ë¯¸ì§€ëŠ” í¬ë¦¬í‹°ì»¬ì´ë‚˜ í¡í˜ˆ, ì˜¨í›(On-Hit) íš¨ê³¼ë¥¼ í„°ëœ¨ë¦¬ë©´ ì•ˆ ë©ë‹ˆë‹¤!
+	// ë§Œì•½ ë… í‹±ë€ì´ ì˜¨í›ì„ í„°ëœ¨ë¦¬ê³  -> ê·¸ ì˜¨í›ì´ ë‹¤ì‹œ ë…ì„ ê±¸ë©´ -> ì˜ì›í•œ ë¬´í•œë£¨í”„ í¬ë˜ì‹œê°€ ë‚©ë‹ˆë‹¤.
 	DamageReq.DamageTags.AddTag(FGameplayTag::RequestGameplayTag(FName("Damage.Mechanic.DoT")));
 	DamageReq.CritChance = 0.0f;
 	DamageReq.LifeStealChance = 0.0f;
 	DamageReq.bCanTriggerOnHit = false;
 
-	// 2. Å¸°Ù¿¡°Ô µ¥¹ÌÁö Àü´Ş
+	// 2. íƒ€ê²Ÿì—ê²Œ ë°ë¯¸ì§€ ì „ë‹¬
 	FDEDamageResult Result = UDEGameplayLibrary::ApplyCombatDamage(DamageReq);
 
-	// 3. ½Ã°¢Àû ÇÇµå¹é (ÆÄÆ¼Å¬)
+	// 3. ì‹œê°ì  í”¼ë“œë°± (íŒŒí‹°í´)
 	if (TickParticle)
 	{
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(

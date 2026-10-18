@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEPauseMenuWidget.h"
@@ -18,13 +18,13 @@ void UDEPauseMenuWidget::NativeOnInitialized()
 {
     Super::NativeOnInitialized();
 
-    // 1. °è¼ÓÇÏ±â ¹öÆ° ¿¬°á
+    // 1. ê³„ì†í•˜ê¸° ë²„íŠ¼ ì—°ê²°
     if (Btn_Resume)
     {
         Btn_Resume->OnClicked.AddDynamic(this, &UDEPauseMenuWidget::OnResumeClicked);
     }
 
-    // 2. ³ª°¡±â ¹öÆ° ¿¬°á
+    // 2. ë‚˜ê°€ê¸° ë²„íŠ¼ ì—°ê²°
     if (Btn_Exit)
     {
         Btn_Exit->OnClicked.AddDynamic(this, &UDEPauseMenuWidget::OnExitClicked);
@@ -35,7 +35,7 @@ void UDEPauseMenuWidget::NativeOnInitialized()
 
 void UDEPauseMenuWidget::OnResumeClicked()
 {
-    // ÄÁÆ®·Ñ·¯¸¦ Ã£¾Æ¼­ ´Ù½Ã Toggle (²ô±â) ½ÇÇà
+    // ì»¨íŠ¸ë¡¤ëŸ¬ë¥¼ ì°¾ì•„ì„œ ë‹¤ì‹œ Toggle (ë„ê¸°) ì‹¤í–‰
     if (ADEPlayerController* PC = Cast<ADEPlayerController>(GetOwningPlayer()))
     {
         PC->TogglePauseMenu();
@@ -45,15 +45,15 @@ void UDEPauseMenuWidget::OnResumeClicked()
 
 void UDEPauseMenuWidget::OnExitClicked()
 {
-    // 1. ÇöÀç È­¸éÀ» °¡¸®°í ÀÖ´Â ÀÏ½ÃÁ¤Áö ¸Ş´º(³ª ÀÚ½Å)¸¦ ¸ÕÀú È­¸é¿¡¼­ Ä¡¿î´Ù!
-    // (ÀÌ°Å ¾È ÇÏ¸é ³ªÁß¿¡ ¶ç¿ï °á»ê UI¶û È­¸é¿¡ °ãÃÄ¼­ ³­ÀåÆÇ µÊ)
+    // 1. í˜„ì¬ í™”ë©´ì„ ê°€ë¦¬ê³  ìˆëŠ” ì¼ì‹œì •ì§€ ë©”ë‰´(ë‚˜ ìì‹ )ë¥¼ ë¨¼ì € í™”ë©´ì—ì„œ ì¹˜ìš´ë‹¤!
+    // (ì´ê±° ì•ˆ í•˜ë©´ ë‚˜ì¤‘ì— ë„ìš¸ ê²°ì‚° UIë‘ í™”ë©´ì— ê²¹ì³ì„œ ë‚œì¥íŒ ë¨)
     this->RemoveFromParent();
 
-    // 2. ½ÉÆÇ(GameMode)À» ºÒ·¯¿Â´Ù!
+    // 2. ì‹¬íŒ(GameMode)ì„ ë¶ˆëŸ¬ì˜¨ë‹¤!
     ADEGameMode_Stage* GameMode = Cast<ADEGameMode_Stage>(UGameplayStatics::GetGameMode(GetWorld()));
     if (GameMode)
     {
-        // 3. ½ÉÆÇ¿¡°Ô Ç×º¹ ¼±¾ğ! (¾Ë¾Æ¼­ ½Ã°£ ¸ØÃß°í °á»ê À§Á¬ ¶ç¿öÁÙ °ÅÀÓ)
+        // 3. ì‹¬íŒì—ê²Œ í•­ë³µ ì„ ì–¸! (ì•Œì•„ì„œ ì‹œê°„ ë©ˆì¶”ê³  ê²°ì‚° ìœ„ì ¯ ë„ì›Œì¤„ ê±°ì„)
         GameMode->GameOver();
     }
 }

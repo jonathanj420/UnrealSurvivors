@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DESkillInventoryWidget.h"
@@ -32,7 +32,7 @@ void UDESkillInventoryWidget::NativeConstruct()
     //        &UDESkillInventoryWidget::OnSkillUpdated
     //    );
     //}
-    ////Inventory º¯°æ ÀÌº¥Æ® ±¸µ¶
+    ////Inventory ë³€ê²½ ì´ë²¤íŠ¸ êµ¬ë…
     //Inventory->OnInventoryChanged.AddUObject(
     //    this,
     //    &UDESkillInventoryWidget::Refresh
@@ -45,15 +45,15 @@ void UDESkillInventoryWidget::InitializeSkillWidget(APawn* NewPawn)
 {
     if (!NewPawn) return;
 
-    // ±âÁ¸ ¿¬°á ²÷±â (È¤½Ã Àç¿¬°áÀÏ ¼ö ÀÖÀ¸´Ï)
+    // ê¸°ì¡´ ì—°ê²° ëŠê¸° (í˜¹ì‹œ ìž¬ì—°ê²°ì¼ ìˆ˜ ìžˆìœ¼ë‹ˆ)
     if (SkillManager) SkillManager->OnSkillUpdated.RemoveAll(this);
     if (Inventory) Inventory->OnInventoryChanged.RemoveAll(this);
 
-    // ÄÄÆ÷³ÍÆ® Ã£±â
+    // ì»´í¬ë„ŒíŠ¸ ì°¾ê¸°
     Inventory = NewPawn->FindComponentByClass<UDEInventoryComponent>();
     SkillManager = NewPawn->FindComponentByClass<UDESkillManagerComponent>();
 
-    // check´Â °ÔÀÓÀ» ÅÍ¶ß¸®´Ï if·Î ¹æ¾î
+    // checkëŠ” ê²Œìž„ì„ í„°ëœ¨ë¦¬ë‹ˆ ifë¡œ ë°©ì–´
     if (SkillManager)
     {
         SkillManager->OnSkillUpdated.AddUObject(this, &UDESkillInventoryWidget::OnSkillUpdated);
@@ -64,7 +64,7 @@ void UDESkillInventoryWidget::InitializeSkillWidget(APawn* NewPawn)
         Inventory->OnInventoryChanged.AddUObject(this, &UDESkillInventoryWidget::Refresh);
     }
 
-    // ¹Ù·Î °»½Å
+    // ë°”ë¡œ ê°±ì‹ 
     Refresh();
 }
 

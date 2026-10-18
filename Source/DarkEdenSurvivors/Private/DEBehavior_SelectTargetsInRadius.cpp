@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEBehavior_SelectTargetsInRadius.h"
@@ -14,18 +14,18 @@ void UDEBehavior_SelectTargetsInRadius::Execute(FDESkillContext& Context)
     if (!Context.Instigator) return;
     UWorld* World = Context.Instigator->GetWorld();
 
-    // 1. Áß½ÉÁ¡ ¸®½ºÆ®(CenterPoints) ¼öÁı
+    // 1. ì¤‘ì‹¬ì  ë¦¬ìŠ¤íŠ¸(CenterPoints) ìˆ˜ì§‘
     TArray<FVector> CenterPoints;
 
     switch (OriginType)
     {
     case ESearchOrigin::Instigator:
-        // ³ª ÇÏ³ª
+        // ë‚˜ í•˜ë‚˜
         CenterPoints.Add(Context.Instigator->GetActorLocation());
         break;
 
     case ESearchOrigin::Targets:
-        // ÇöÀç Å¸°Ùµé ÀüºÎ (¿¹: 5¸íÀÌ¸é 5°³ À§Ä¡)
+        // í˜„ì¬ íƒ€ê²Ÿë“¤ ì „ë¶€ (ì˜ˆ: 5ëª…ì´ë©´ 5ê°œ ìœ„ì¹˜)
         for (AActor* Target : Context.Targets)
         {
             if (Target) CenterPoints.Add(Target->GetActorLocation());
@@ -33,7 +33,7 @@ void UDEBehavior_SelectTargetsInRadius::Execute(FDESkillContext& Context)
         break;
 
     case ESearchOrigin::CustomLocations:
-        // ÀúÀåÇØµĞ ÁÂÇ¥µé ÀüºÎ (¿¹: ¼º¼ö ¶³¾îÁø 5°÷)
+        // ì €ì¥í•´ë‘” ì¢Œí‘œë“¤ ì „ë¶€ (ì˜ˆ: ì„±ìˆ˜ ë–¨ì–´ì§„ 5ê³³)
         CenterPoints = Context.CustomLocations;
         break;
     }
@@ -42,9 +42,9 @@ void UDEBehavior_SelectTargetsInRadius::Execute(FDESkillContext& Context)
 
     Context.Targets.Reset();
 
-    // 1. °á°ú ´ãÀ» ±×¸© ÁØºñ
-    TArray<AActor*> RawResults; // Áßº¹ Çã¿ë ±×¸©
-    TSet<AActor*> UniqueResults; // Áßº¹ ¹æÁö ±×¸©
+    // 1. ê²°ê³¼ ë‹´ì„ ê·¸ë¦‡ ì¤€ë¹„
+    TArray<AActor*> RawResults; // ì¤‘ë³µ í—ˆìš© ê·¸ë¦‡
+    TSet<AActor*> UniqueResults; // ì¤‘ë³µ ë°©ì§€ ê·¸ë¦‡
 
     FCollisionQueryParams Params;
     if (bIgnoreInstigator) Params.AddIgnoredActor(Context.Instigator);
@@ -54,24 +54,24 @@ void UDEBehavior_SelectTargetsInRadius::Execute(FDESkillContext& Context)
 
    // UE_LOG(LogTemp, Error, TEXT("Try Select In Radius"));
 
-    // ¡Ú ¹İ°æÀÌ 0 ¹Ì¸¸(-1)ÀÏ ¶§: ¸Ê ÀüÃ¼ ¸ó½ºÅÍ °Ë»ö
+    // â˜… ë°˜ê²½ì´ 0 ë¯¸ë§Œ(-1)ì¼ ë•Œ: ë§µ ì „ì²´ ëª¬ìŠ¤í„° ê²€ìƒ‰
     if (FinalRadius < 0.f)
     {
         //UE_LOG(LogTemp, Error, TEXT("Search Radius is -1, Targetting All Active Monsters"));
-        // 1. °ÔÀÓ¸ğµå¸¦ Ä³½ºÆÃÇØ¼­ °¡Á®¿È
+        // 1. ê²Œì„ëª¨ë“œë¥¼ ìºìŠ¤íŒ…í•´ì„œ ê°€ì ¸ì˜´
         if (ADEGameMode_Stage* GameMode = Cast<ADEGameMode_Stage>(UGameplayStatics::GetGameMode(World)))
         {
-            // 2. °ÔÀÓ¸ğµå°¡ µé°í ÀÖ´Â ½ºÆù ¸Å´ÏÀú¸¦ °¡Á®¿È
+            // 2. ê²Œì„ëª¨ë“œê°€ ë“¤ê³  ìˆëŠ” ìŠ¤í° ë§¤ë‹ˆì €ë¥¼ ê°€ì ¸ì˜´
             if (ADEMonsterSpawnManager* SpawnManager = GameMode->GetMonsterSpawnManager())
             {
-                // 3. ¸Å´ÏÀú°¡ µé°í ÀÖ´Â È°¼ºÈ­µÈ ¸ó½ºÅÍ ¸®½ºÆ®¸¦ ±×´ë·Î º¹»ç! (ÃÊ°í¼Ó O(1))
+                // 3. ë§¤ë‹ˆì €ê°€ ë“¤ê³  ìˆëŠ” í™œì„±í™”ëœ ëª¬ìŠ¤í„° ë¦¬ìŠ¤íŠ¸ë¥¼ ê·¸ëŒ€ë¡œ ë³µì‚¬! (ì´ˆê³ ì† O(1))
                 Context.Targets.Append(SpawnManager->GetActiveMonsters()); // THIS ADDS, ADDS NOT COPYING
             }
         }
-        return; // ±¤¿ª °Ë»ö ³¡³µÀ¸´Ï ¸®ÅÏ
+        return; // ê´‘ì—­ ê²€ìƒ‰ ëë‚¬ìœ¼ë‹ˆ ë¦¬í„´
     }
 
-    // 2. ·çÇÁ µ¹¸é¼­ °Ë»ö
+    // 2. ë£¨í”„ ëŒë©´ì„œ ê²€ìƒ‰
     for (const FVector& Center : CenterPoints)
     {
         TArray<FOverlapResult> Overlaps;
@@ -119,12 +119,12 @@ void UDEBehavior_SelectTargetsInRadius::Execute(FDESkillContext& Context)
                     1.0f);*/
                     if (bAllowOverlap)
                     {
-                        // ¡Ú ¿É¼Ç ÄÑÁü: ±×³É ¹«½ÄÇÏ°Ô °è¼Ó ´ãÀ½ (A, A, A...)
+                        // â˜… ì˜µì…˜ ì¼œì§: ê·¸ëƒ¥ ë¬´ì‹í•˜ê²Œ ê³„ì† ë‹´ìŒ (A, A, A...)
                         RawResults.Add(HitActor);
                     }
                     else
                     {
-                        // ¡Ú ¿É¼Ç ²¨Áü: Set¿¡ ´ã¾Æ¼­ Áßº¹ °Å¸§ (A)
+                        // â˜… ì˜µì…˜ êº¼ì§: Setì— ë‹´ì•„ì„œ ì¤‘ë³µ ê±°ë¦„ (A)
                         UniqueResults.Add(HitActor);
                     }
                 }
@@ -132,23 +132,23 @@ void UDEBehavior_SelectTargetsInRadius::Execute(FDESkillContext& Context)
         }
     }
 
-    // 3. °á°ú °»½Å
+    // 3. ê²°ê³¼ ê°±ì‹ 
     //Context.Targets.Empty();
 
     if (bAllowOverlap)
     {
-        // Áßº¹ Çã¿ëµÈ ¸®½ºÆ® ±×´ë·Î º¹»ç
+        // ì¤‘ë³µ í—ˆìš©ëœ ë¦¬ìŠ¤íŠ¸ ê·¸ëŒ€ë¡œ ë³µì‚¬
         Context.Targets = RawResults;
     }
     else
     {
-        // Áßº¹ Á¦°ÅµÈ SetÀ» ¹è¿­·Î º¯È¯
+        // ì¤‘ë³µ ì œê±°ëœ Setì„ ë°°ì—´ë¡œ ë³€í™˜
         Context.Targets = UniqueResults.Array();
     }
     //UE_LOG(LogTemp, Warning, TEXT("Targets collected: %d"), Context.Targets.Num());
-    //Áßº¹ ¾ø´Â old 
-    //// 2. ´ÙÁß °Ë»ö ¼öÇà (°á°ú ÇÕÄ¡±â)
-    //TSet<AActor*> UniqueResults; // Áßº¹ Á¦°Å¸¦ À§ÇØ Set »ç¿ë (A, B µÑ ´ÙÇÑÅ× ¸ÂÀº ³ğÀº 1¹ø¸¸)
+    //ì¤‘ë³µ ì—†ëŠ” old 
+    //// 2. ë‹¤ì¤‘ ê²€ìƒ‰ ìˆ˜í–‰ (ê²°ê³¼ í•©ì¹˜ê¸°)
+    //TSet<AActor*> UniqueResults; // ì¤‘ë³µ ì œê±°ë¥¼ ìœ„í•´ Set ì‚¬ìš© (A, B ë‘˜ ë‹¤í•œí…Œ ë§ì€ ë†ˆì€ 1ë²ˆë§Œ)
 
     //FCollisionQueryParams Params;
     //if (bIgnoreInstigator) Params.AddIgnoredActor(Context.Instigator);
@@ -174,15 +174,15 @@ void UDEBehavior_SelectTargetsInRadius::Execute(FDESkillContext& Context)
     //            {
     //                if (HitActor->IsA(ADEMonsterBase::StaticClass()))
     //                {
-    //                    UniqueResults.Add(HitActor); // SetÀÌ¶ó¼­ ÀÚµ¿ Áßº¹ Á¦°ÅµÊ
+    //                    UniqueResults.Add(HitActor); // Setì´ë¼ì„œ ìë™ ì¤‘ë³µ ì œê±°ë¨
     //                }
     //            }
     //        }
     //    }
     //}
 
-    //// 3. °á°ú °»½Å
-    //Context.Targets = UniqueResults.Array(); // SetÀ» ´Ù½Ã Array·Î º¯È¯ÇØ¼­ ÀúÀå
+    //// 3. ê²°ê³¼ ê°±ì‹ 
+    //Context.Targets = UniqueResults.Array(); // Setì„ ë‹¤ì‹œ Arrayë¡œ ë³€í™˜í•´ì„œ ì €ì¥
 
 
 }

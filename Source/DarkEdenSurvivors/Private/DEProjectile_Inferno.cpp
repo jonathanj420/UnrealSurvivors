@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEProjectile_Inferno.h"
@@ -7,7 +7,7 @@
 ADEProjectile_Inferno::ADEProjectile_Inferno()
 {
 	Penetration = -1;
-	CollisionComponent->InitSphereRadius(90.0f); // ±âº»°ª
+	CollisionComponent->InitSphereRadius(90.0f); // ê¸°ë³¸ê°’
 	if (Mesh)
 	{
 		Mesh->SetVisibility(false);
@@ -17,7 +17,7 @@ ADEProjectile_Inferno::ADEProjectile_Inferno()
 	if (NS_Fire.Succeeded() && NiagaraComponent)
 	{
 		NiagaraComponent->SetAsset(NS_Fire.Object);
-		// ÀÌÆåÆ® À§Ä¡ ¹Ì¼¼ Á¶Á¤ (Ãæµ¹Ã¼ Áß¾Ó¿¡ ¿À°Ô)
+		// ì´íŽ™íŠ¸ ìœ„ì¹˜ ë¯¸ì„¸ ì¡°ì • (ì¶©ëŒì²´ ì¤‘ì•™ì— ì˜¤ê²Œ)
 		NiagaraComponent->SetRelativeLocation(FVector::ZeroVector);
 		//UE_LOG(LogTemp, Warning, TEXT("Inferno niagara set"));
 	}

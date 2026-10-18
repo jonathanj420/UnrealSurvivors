@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DESkill_SummonGoreGland.h"
@@ -8,13 +8,13 @@
 
 UDESkill_SummonGoreGland::UDESkill_SummonGoreGland()
 {
-    // 1. °æ·Î ¼³Á¤ (ºí·çÇÁ¸°Æ® ¿¡¼Â ¿ìÅ¬¸¯ -> '·¹ÆÛ·±½º º¹»ç' ÈÄ _C¸¦ ²À ºÙ¿©ÁÖ¼¼¿ä)
+    // 1. ê²½ë¡œ ì„¤ì • (ë¸”ë£¨í”„ë¦°íŠ¸ ì—ì…‹ ìš°í´ë¦­ -> 'ë ˆí¼ëŸ°ìŠ¤ ë³µì‚¬' í›„ _Cë¥¼ ê¼­ ë¶™ì—¬ì£¼ì„¸ìš”)
     static ConstructorHelpers::FClassFinder<AActor> SummonBP(TEXT("/Game/DarkEden/Blueprint/SkillProjectiles/DESummon_GoreGland.DESummon_GoreGland_C"));
 
-    // 2. ¿¡¼ÂÀ» ¼º°øÀûÀ¸·Î Ã£¾Ò´ÂÁö È®ÀÎ ÈÄ º¯¼ö¿¡ ÇÒ´ç
+    // 2. ì—ì…‹ì„ ì„±ê³µì ìœ¼ë¡œ ì°¾ì•˜ëŠ”ì§€ í™•ì¸ í›„ ë³€ìˆ˜ì— í• ë‹¹
     if (SummonBP.Succeeded())
     {
-        // SummonClass ´Â º¸Åë Çì´õ¿¡ TSubclassOf<AActor>·Î ¼±¾ğÇÕ´Ï´Ù.
+        // SummonClass ëŠ” ë³´í†µ í—¤ë”ì— TSubclassOf<AActor>ë¡œ ì„ ì–¸í•©ë‹ˆë‹¤.
         SummonClass = SummonBP.Class;
     }
 
@@ -33,15 +33,15 @@ void UDESkill_SummonGoreGland::InitBehaviors()
 {
     Super::InitBehaviors();
 
-    // 1. [Å½»ö Çàµ¿] ½ºÆùÇÒ À§Ä¡(Àû) Ã£±â
+    // 1. [íƒìƒ‰ í–‰ë™] ìŠ¤í°í•  ìœ„ì¹˜(ì ) ì°¾ê¸°
     /*UDEBehavior_SelectNearestTarget* Targeting = NewObject<UDEBehavior_SelectNearestTarget>(this);
     Targeting->DefaultSearchRadius = 1000.f;
     Targeting->EnemyTag = TEXT("Enemy");
     Behaviors.Add(Targeting);*/
 
-    // 2. [¼ÒÈ¯ Çàµ¿] Ã£Àº Àû À§Ä¡¿¡ °í¾î ±Û·£µå ½ºÆù!
+    // 2. [ì†Œí™˜ í–‰ë™] ì°¾ì€ ì  ìœ„ì¹˜ì— ê³ ì–´ ê¸€ëœë“œ ìŠ¤í°!
     UDEBehavior_SpawnSummon* Spawner = NewObject<UDEBehavior_SpawnSummon>(this);
-    Spawner->SummonClass = this->SummonClass; // °í¾î±Û·£µå Å¬·¡½º ÇÒ´ç
+    Spawner->SummonClass = this->SummonClass; // ê³ ì–´ê¸€ëœë“œ í´ë˜ìŠ¤ í• ë‹¹
     Spawner->SpawnSound = this->SummonSound;
     Behaviors.Add(Spawner);
 }

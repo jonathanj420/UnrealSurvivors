@@ -1,10 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEBehavior_SpawnOnMove.h"
 
 #include "DEAutoSkillBase.h"
-#include "DESkillActorBase.h" // ÃÖ»óÀ§ ½ºÅ³ ¾×ÅÍ º£ÀÌ½º
+#include "DESkillActorBase.h" // ìµœìƒìœ„ ìŠ¤í‚¬ ì•¡í„° ë² ì´ìŠ¤
 #include "DEPoolSubsystem.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
@@ -12,11 +12,11 @@
 void UDEBehavior_SpawnOnMove::Execute(FDESkillContext& Context)
 {
     if (!Context.Instigator || !Context.SourceSkill) return;
-    // 1. ¾ÈÀüÇÑ Æ÷ÀÎÅÍ Ä³½Ì
+    // 1. ì•ˆì „í•œ í¬ì¸í„° ìºì‹±
     CachedInstigator = Context.Instigator;
     CachedSourceSkill = Context.SourceSkill;
 
-    // 2. ÃÖÃÊ ±âÁØ À§Ä¡ ±â·Ï
+    // 2. ìµœì´ˆ ê¸°ì¤€ ìœ„ì¹˜ ê¸°ë¡
     LastSpawnLocation = CachedInstigator->GetActorLocation();
 
     UWorld* World = CachedInstigator->GetWorld();
@@ -24,7 +24,7 @@ void UDEBehavior_SpawnOnMove::Execute(FDESkillContext& Context)
     {
         World->GetTimerManager().ClearTimer(DistanceCheckTimerHandle);
 
-        // 3. ÀÌµ¿ °Ë»ç Å¸ÀÌ¸Ó °¡µ¿
+        // 3. ì´ë™ ê²€ì‚¬ íƒ€ì´ë¨¸ ê°€ë™
         World->GetTimerManager().SetTimer(
             DistanceCheckTimerHandle,
             this,
@@ -38,7 +38,7 @@ void UDEBehavior_SpawnOnMove::Execute(FDESkillContext& Context)
 void UDEBehavior_SpawnOnMove::CheckAndSpawn()
 {
     //UE_LOG(LogTemp, Warning, TEXT("Green Poison Try Check and Spawn"));
-    // ½ÃÀüÀÚ³ª ½ºÅ³ º»Ã¼°¡ »ç¶óÁ³´Ù¸é ½º½º·Î Á¾·á
+    // ì‹œì „ìë‚˜ ìŠ¤í‚¬ ë³¸ì²´ê°€ ì‚¬ë¼ì¡Œë‹¤ë©´ ìŠ¤ìŠ¤ë¡œ ì¢…ë£Œ
     if (!CachedInstigator.IsValid() || !CachedSourceSkill.IsValid())
     {
         EndBehavior();
@@ -47,13 +47,13 @@ void UDEBehavior_SpawnOnMove::CheckAndSpawn()
     //UE_LOG(LogTemp, Warning, TEXT("Green Poison Valid Checked"));
     FVector CurrentLocation = CachedInstigator->GetActorLocation();
 
-    // 1. °Å¸® °Ë»ç (ÃÖÀûÈ­¸¦ À§ÇØ DistSquared »ç¿ë)
+    // 1. ê±°ë¦¬ ê²€ì‚¬ (ìµœì í™”ë¥¼ ìœ„í•´ DistSquared ì‚¬ìš©)
     float DistSq = FVector::DistSquared(CurrentLocation, LastSpawnLocation);
     float ThresholdSq = SpawnDistanceThreshold * SpawnDistanceThreshold;
 
     if (DistSq >= ThresholdSq)
     {
-        // 2. À§Ä¡ °»½Å
+        // 2. ìœ„ì¹˜ ê°±ì‹ 
         LastSpawnLocation = CurrentLocation;
 
         UWorld* World = CachedInstigator->GetWorld();
@@ -63,7 +63,7 @@ void UDEBehavior_SpawnOnMove::CheckAndSpawn()
         if (!Pool) return;
 
         // =========================================================
-        // 3. °»½ÅµÈ ÃÖ½Å ½ºÅÈÀ» °¡Á®¿Í ÄÁÅØ½ºÆ® »õ·Î ±¸¼º
+        // 3. ê°±ì‹ ëœ ìµœì‹  ìŠ¤íƒ¯ì„ ê°€ì ¸ì™€ ì»¨í…ìŠ¤íŠ¸ ìƒˆë¡œ êµ¬ì„±
         // =========================================================
         FDESkillContext FreshContext;
         CachedSourceSkill->BuildContext(FreshContext);
@@ -71,18 +71,18 @@ void UDEBehavior_SpawnOnMove::CheckAndSpawn()
         FreshContext.CustomLocations.Empty();
         FreshContext.CustomLocations.Add(CurrentLocation);
 
-        // 4. ¿ÀºêÁ§Æ® Ç®¿¡¼­ ¸¸´É ¾×ÅÍ ²¨³»±â
+        // 4. ì˜¤ë¸Œì íŠ¸ í’€ì—ì„œ ë§ŒëŠ¥ ì•¡í„° êº¼ë‚´ê¸°
         AActor* RawActor = Pool->GetPooledActor(SpawnActorClass, CurrentLocation, FRotator::ZeroRotator, false);
 
-        // ¡Ú ´ÙÇü¼ºÀÇ ÇÙ½É: ¹¹°¡ ³ª¿Àµç ADESkillActorBase·Î ¹Ş¾Æ¼­ Ã³¸®!
+        // â˜… ë‹¤í˜•ì„±ì˜ í•µì‹¬: ë­ê°€ ë‚˜ì˜¤ë“  ADESkillActorBaseë¡œ ë°›ì•„ì„œ ì²˜ë¦¬!
         if (ADESkillActorBase* SkillActor = Cast<ADESkillActorBase>(RawActor))
         {
             SkillActor->SetOwner(CachedInstigator.Get());
 
-            // ÃÖ½Å ½ºÅÈ ÁÖÀÔ (¿À¹ö¶óÀÌµåµÈ °¢ÀÚÀÇ ÇÔ¼ö°¡ ½ÇÇàµÊ)
+            // ìµœì‹  ìŠ¤íƒ¯ ì£¼ì… (ì˜¤ë²„ë¼ì´ë“œëœ ê°ìì˜ í•¨ìˆ˜ê°€ ì‹¤í–‰ë¨)
             SkillActor->InitializeFromContext(FreshContext);
            // UE_LOG(LogTemp, Error, TEXT("Spawned By Distance"));
-            // 5. ½Ç½Ã°£ ¸®ÇÁ·¹½Ã¸¦ À§ÇØ ¸íºÎ¿¡ µî·Ï
+            // 5. ì‹¤ì‹œê°„ ë¦¬í”„ë ˆì‹œë¥¼ ìœ„í•´ ëª…ë¶€ì— ë“±ë¡
             FString UniqueStr = FGuid::NewGuid().ToString();
             FName Key = FName(*FString::Printf(TEXT("%s_%s"), *SpawnActorClass->GetName(), *UniqueStr));
             CachedSourceSkill->OwnedSkillActorMap.Add(Key, SkillActor);
@@ -96,25 +96,25 @@ void UDEBehavior_SpawnOnMove::OnContextRefreshed(const FDESkillContext& Context)
 
     //TArray<FName> KeysToRemove;
 
-    //// 1. ¸íºÎ¿¡ ÀûÈù ¸ğµç ¾×ÅÍ ¼øÈ¸ (ÀåÆÇÀÌµç ¼ÒÈ¯¼öµç °¡¸®Áö ¾ÊÀ½)
+    //// 1. ëª…ë¶€ì— ì íŒ ëª¨ë“  ì•¡í„° ìˆœíšŒ (ì¥íŒì´ë“  ì†Œí™˜ìˆ˜ë“  ê°€ë¦¬ì§€ ì•ŠìŒ)
     //for (auto& Pair : Context.SourceSkill->OwnedSkillActorMap)
     //{
     //    if (Pair.Value.IsValid())
     //    {
     //        if (auto* SkillActor = Pair.Value.Get())
     //        {
-    //            // ½Ç½Ã°£ ½ºÅÈ µ¤¾î¾º¿ì±â
+    //            // ì‹¤ì‹œê°„ ìŠ¤íƒ¯ ë®ì–´ì”Œìš°ê¸°
     //            SkillActor->InitializeFromContext(Context);
     //        }
     //    }
     //    else
     //    {
-    //        // ¼ö¸íÀÌ ´ÙÇØ ÆÄ±«µÇ¾ú°Å³ª Pool·Î µ¹¾Æ°£ ¾×ÅÍ ¼öÁı
+    //        // ìˆ˜ëª…ì´ ë‹¤í•´ íŒŒê´´ë˜ì—ˆê±°ë‚˜ Poolë¡œ ëŒì•„ê°„ ì•¡í„° ìˆ˜ì§‘
     //        KeysToRemove.Add(Pair.Key);
     //    }
     //}
 
-    //// 2. Âî²¨±â ¸Ş¸ğ¸® Ã»¼Ò
+    //// 2. ì°Œêº¼ê¸° ë©”ëª¨ë¦¬ ì²­ì†Œ
     //for (const FName& DeadKey : KeysToRemove)
     //{
     //    Context.SourceSkill->OwnedSkillActorMap.Remove(DeadKey);
@@ -123,7 +123,7 @@ void UDEBehavior_SpawnOnMove::OnContextRefreshed(const FDESkillContext& Context)
 
 void UDEBehavior_SpawnOnMove::EndBehavior()
 {
-    // ½ºÅ³ ÁøÈ­ ¹× ÇØÁ¦ ½Ã ±ò²ûÇÏ°Ô Å¸ÀÌ¸Ó ÇØÁ¦
+    // ìŠ¤í‚¬ ì§„í™” ë° í•´ì œ ì‹œ ê¹”ë”í•˜ê²Œ íƒ€ì´ë¨¸ í•´ì œ
     if (CachedInstigator.IsValid())
     {
         UWorld* World = CachedInstigator->GetWorld();

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEGameHUDWidget.h"
@@ -14,7 +14,7 @@
 void UDEGameHUDWidget::NativeConstruct()
 {
     Super::NativeConstruct();
-    // ¡Ú ¾Ë¶÷½Ã°è ¼¼ÆÃ: 1.0ÃÊ¸¶´Ù 'UpdateTimeTick' ÇÔ¼ö¸¦ ¹Ýº¹(true)ÇØ¼­ ºÒ·¯¶ó!
+    // â˜… ì•ŒëžŒì‹œê³„ ì„¸íŒ…: 1.0ì´ˆë§ˆë‹¤ 'UpdateTimeTick' í•¨ìˆ˜ë¥¼ ë°˜ë³µ(true)í•´ì„œ ë¶ˆëŸ¬ë¼!
     if (GetWorld())
     {
         GetWorld()->GetTimerManager().SetTimer(TimeUpdateTimerHandle, this, &UDEGameHUDWidget::UpdateTimeTick, 1.0f, true);
@@ -33,12 +33,12 @@ void UDEGameHUDWidget::UpdateTimeTick()
 //{
 //    Super::NativeTick(MyGeometry, InDeltaTime);
 //
-//    // ¿ùµå ½Ã°£À» °¡Á®¿Í¼­ ¹Ù·Î ¾÷µ¥ÀÌÆ®
+//    // ì›”ë“œ ì‹œê°„ì„ ê°€ì ¸ì™€ì„œ ë°”ë¡œ ì—…ë°ì´íŠ¸
 //    if (GetWorld())
 //    {
 //        float TimeSeconds = GetWorld()->GetTimeSeconds();
 //
-//        // [ÃÖÀûÈ­] 1ÃÊ¿¡ ÇÑ ¹ø¸¸ ÅØ½ºÆ® °»½Å (¸Å ÇÁ·¹ÀÓ ¹®ÀÚ¿­ ¿¬»ê ¹æÁö)
+//        // [ìµœì í™”] 1ì´ˆì— í•œ ë²ˆë§Œ í…ìŠ¤íŠ¸ ê°±ì‹  (ë§¤ í”„ë ˆìž„ ë¬¸ìžì—´ ì—°ì‚° ë°©ì§€)
 //        int32 CurrentSeconds = (int32)TimeSeconds;
 //        if (CurrentSeconds != LastSeconds)
 //        {
@@ -52,18 +52,18 @@ void UDEGameHUDWidget::BindCharacterStat(ADECharacterBase* Character)
 {
     if (!Character) return;
 
-    // 1. Ã¼·Â ÄÄÆ÷³ÍÆ® ¿¬°á
+    // 1. ì²´ë ¥ ì»´í¬ë„ŒíŠ¸ ì—°ê²°
     if (UDEHealthComponent* HealthComp = Character->GetHealthComponent())
     {
-        // ÃÊ±â°ª ÇÑ ¹ø °»½Å
+        // ì´ˆê¸°ê°’ í•œ ë²ˆ ê°±ì‹ 
         UpdateHP(HealthComp->GetCurrentHP(), HealthComp->GetMaxHP());
 
-        // ÀÌº¥Æ® ±¸µ¶ (AddUObject·Î ¹­¾î¾ß ¾ÈÀü)
-        // ÁÖÀÇ: HealthComponentÀÇ µ¨¸®°ÔÀÌÆ® ½Ã±×´ÏÃ³°¡ (Current, Max)¸¦ º¸³»Áà¾ß ÇÔ
+        // ì´ë²¤íŠ¸ êµ¬ë… (AddUObjectë¡œ ë¬¶ì–´ì•¼ ì•ˆì „)
+        // ì£¼ì˜: HealthComponentì˜ ë¸ë¦¬ê²Œì´íŠ¸ ì‹œê·¸ë‹ˆì²˜ê°€ (Current, Max)ë¥¼ ë³´ë‚´ì¤˜ì•¼ í•¨
         HealthComp->OnHPChanged.AddUObject(this, &UDEGameHUDWidget::UpdateHP);
     }
 
-    // 2. °æÇèÄ¡ ÄÄÆ÷³ÍÆ® ¿¬°á (±¸ÇöµÇ¾î ÀÖ´Ù¸é)
+    // 2. ê²½í—˜ì¹˜ ì»´í¬ë„ŒíŠ¸ ì—°ê²° (êµ¬í˜„ë˜ì–´ ìžˆë‹¤ë©´)
 
     if (UDEProgressionComponent* ProgressionComponent = Character->GetProgressionComponent())
     {
@@ -75,7 +75,7 @@ void UDEGameHUDWidget::BindCharacterStat(ADECharacterBase* Character)
         ProgressionComponent->OnLevelUp.AddUObject(this, &UDEGameHUDWidget::UpdateLevel);
     }
 
-    // 2. ½ºÅ³ À§Á¬µµ ¿¬°áÇØ¶ó! (¿©±â°¡ ÇÙ½É)
+    // 2. ìŠ¤í‚¬ ìœ„ì ¯ë„ ì—°ê²°í•´ë¼! (ì—¬ê¸°ê°€ í•µì‹¬)
     if (WBP_SkillInventoryWidget)
     {
         WBP_SkillInventoryWidget->InitializeSkillWidget(Character);
@@ -94,7 +94,7 @@ void UDEGameHUDWidget::UpdateHP(float CurrentHP, float MaxHP)
 {
     if (PB_HP && MaxHP > 0.0f)
     {
-        // 0.0 ~ 1.0 »çÀÌ ºñÀ²·Î º¯È¯
+        // 0.0 ~ 1.0 ì‚¬ì´ ë¹„ìœ¨ë¡œ ë³€í™˜
         float Percent = FMath::Clamp(CurrentHP / MaxHP, 0.0f, 1.0f);
         PB_HP->SetPercent(Percent);
     }
@@ -124,10 +124,10 @@ void UDEGameHUDWidget::UpdateLevel(int32 CurrentLevel)
 {
     if (Text_Level)
     {
-        // "Lv.1" ÀÌ³ª "LV. 99" Ã³·³ ¿øÇÏ´Â Æ÷¸ËÀ¸·Î ¹®ÀÚ¿­ ¸¸µé±â
+        // "Lv.1" ì´ë‚˜ "LV. 99" ì²˜ëŸ¼ ì›í•˜ëŠ” í¬ë§·ìœ¼ë¡œ ë¬¸ìžì—´ ë§Œë“¤ê¸°
         FString LevelStr = FString::Printf(TEXT("Lv.%d"), CurrentLevel);
 
-        // ÅØ½ºÆ® ºí·Ï¿¡ Àû¿ë
+        // í…ìŠ¤íŠ¸ ë¸”ë¡ì— ì ìš©
         Text_Level->SetText(FText::FromString(LevelStr));
     }
 }

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -7,9 +7,9 @@
 #include "DEBehavior_ApplyKnockback.generated.h"
 
 /**
- * [³Ë¹é ºñÇìÀÌºñ¾î]
- * - Context.Targets¿¡ ÀÖ´Â ÀûµéÀ» "¹«Á¶°Ç ½ÃÀüÀÚ(ÇÃ·¹ÀÌ¾î) ¹İ´ë ¹æÇâ"À¸·Î ¹Ğ¾î³À´Ï´Ù.
- * - ¹°¸®Àû À§Ä¡(Åõ»çÃ¼ Ãæµ¹ ÁöÁ¡)¸¦ ¹«½ÃÇÏ°í, °ÔÀÓÀû Çã¿ë(Gameplay Feel)À» ¿ì¼±ÇÕ´Ï´Ù.
+ * [ë„‰ë°± ë¹„í—¤ì´ë¹„ì–´]
+ * - Context.Targetsì— ìˆëŠ” ì ë“¤ì„ "ë¬´ì¡°ê±´ ì‹œì „ì(í”Œë ˆì´ì–´) ë°˜ëŒ€ ë°©í–¥"ìœ¼ë¡œ ë°€ì–´ëƒ…ë‹ˆë‹¤.
+ * - ë¬¼ë¦¬ì  ìœ„ì¹˜(íˆ¬ì‚¬ì²´ ì¶©ëŒ ì§€ì )ë¥¼ ë¬´ì‹œí•˜ê³ , ê²Œì„ì  í—ˆìš©(Gameplay Feel)ì„ ìš°ì„ í•©ë‹ˆë‹¤.
  */
 /**
  * 
@@ -22,13 +22,13 @@ public:
 	virtual void Execute(FDESkillContext& Context) override;
 
 public:
-	// ³Ë¹é Èû ¹èÀ² (±âº» 1.0)
-	// ¿¹: ±âº» ¼öÄ¡´Â 1000ÀÎµ¥, ÀÌ ½ºÅ³¸¸ 1.5¹è·Î ´õ ¼¼°Ô ¹Ğ°í ½ÍÀ» ¶§ »ç¿ë
+	// ë„‰ë°± í˜ ë°°ìœ¨ (ê¸°ë³¸ 1.0)
+	// ì˜ˆ: ê¸°ë³¸ ìˆ˜ì¹˜ëŠ” 1000ì¸ë°, ì´ ìŠ¤í‚¬ë§Œ 1.5ë°°ë¡œ ë” ì„¸ê²Œ ë°€ê³  ì‹¶ì„ ë•Œ ì‚¬ìš©
 	UPROPERTY(EditAnywhere, Category = "Knockback")
 	float ForceMultiplier = 1.0f;
 
-	// ZÃà(À§¾Æ·¡) ÈûÀ» ¹«½ÃÇÏ°í ¼öÆòÀ¸·Î¸¸ ¹ĞÁö ¿©ºÎ (±âº» true)
-	// true: ¸ó½ºÅÍ°¡ ÇÏ´Ã·Î ¶ßÁö ¾Ê°í ¹Ù´Ú¿¡¼­ ¹Ì²ô·¯Áü
+	// Zì¶•(ìœ„ì•„ë˜) í˜ì„ ë¬´ì‹œí•˜ê³  ìˆ˜í‰ìœ¼ë¡œë§Œ ë°€ì§€ ì—¬ë¶€ (ê¸°ë³¸ true)
+	// true: ëª¬ìŠ¤í„°ê°€ í•˜ëŠ˜ë¡œ ëœ¨ì§€ ì•Šê³  ë°”ë‹¥ì—ì„œ ë¯¸ë„ëŸ¬ì§
 	UPROPERTY(EditAnywhere, Category = "Knockback")
 	bool bFlattenZ = true;
 };

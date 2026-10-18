@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -18,22 +18,22 @@ class DARKEDENSURVIVORS_API UDEStatusEffect_DoT : public UDEStatusEffectBase
 public:
 	UDEStatusEffect_DoT();
 
-	// --- ±âÈ¹ µ¥ÀÌÅÍ (ºí·çÇÁ¸°Æ®¿¡¼­ ¼³Á¤) ---
+	// --- ê¸°íš ë°ì´í„° (ë¸”ë£¨í”„ë¦°íŠ¸ì—ì„œ ì„¤ì •) ---
 
-	//// µ¥¹ÌÁö ¼Ó¼º (¹°¸® º£±â, »ê¼º µ¶, ¸¶¹ı µî)À» ±¸ºĞÇÏ±â À§ÇÑ Å¬·¡½º
+	//// ë°ë¯¸ì§€ ì†ì„± (ë¬¼ë¦¬ ë² ê¸°, ì‚°ì„± ë…, ë§ˆë²• ë“±)ì„ êµ¬ë¶„í•˜ê¸° ìœ„í•œ í´ë˜ìŠ¤
 public:
 	// =========================================================
-	// ¡Ú [NEW] Æ½µ©ÀÌ µé¾î°¥ ¶§ µ¥¹ÌÁö Ã»±¸¼­¿¡ ÂïÈú ¼Ó¼º ÅÂ±×µé!
-	// ±âÈ¹ÀÚ°¡ ºí·çÇÁ¸°Æ®¿¡¼­ "Damage.Affinity.Poison" µîÀ» ¼¼ÆÃÇÕ´Ï´Ù.
+	// â˜… [NEW] í‹±ë€ì´ ë“¤ì–´ê°ˆ ë•Œ ë°ë¯¸ì§€ ì²­êµ¬ì„œì— ì°í ì†ì„± íƒœê·¸ë“¤!
+	// ê¸°íšìê°€ ë¸”ë£¨í”„ë¦°íŠ¸ì—ì„œ "Damage.Affinity.Poison" ë“±ì„ ì„¸íŒ…í•©ë‹ˆë‹¤.
 	// =========================================================
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect|Damage", meta = (Categories = "Damage"))
 	FGameplayTagContainer DoTDamageTags;
-	// Æ½(Interval)¸¶´Ù Å¸°Ù ¸ö¿¡¼­ ÅÍÁú ÀÌÆåÆ® (¿¹: ÇÇ°¡ Æ¢°Å³ª µ¶ ¹æ¿ïÀÌ ÅÍÁö´Â È¿°ú)
-	// ´ÙÅ©¿¡µ§ Æ¯À¯ÀÇ ¼¼ÇÇ¾Æ ÅæÀÌ³ª Ä¢Ä¢ÇÑ ³ì»ö ÀÌÆåÆ®¸¦ ¿©±â¿¡ ÇÒ´çÇÕ´Ï´Ù.
+	// í‹±(Interval)ë§ˆë‹¤ íƒ€ê²Ÿ ëª¸ì—ì„œ í„°ì§ˆ ì´í™íŠ¸ (ì˜ˆ: í”¼ê°€ íŠ€ê±°ë‚˜ ë… ë°©ìš¸ì´ í„°ì§€ëŠ” íš¨ê³¼)
+	// ë‹¤í¬ì—ë´ íŠ¹ìœ ì˜ ì„¸í”¼ì•„ í†¤ì´ë‚˜ ì¹™ì¹™í•œ ë…¹ìƒ‰ ì´í™íŠ¸ë¥¼ ì—¬ê¸°ì— í• ë‹¹í•©ë‹ˆë‹¤.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect|Visual")
 	class UNiagaraSystem* TickParticle;
 
-	// --- ÇÙ½É ·ÎÁ÷ ¿À¹ö¶óÀÌµå ---
+	// --- í•µì‹¬ ë¡œì§ ì˜¤ë²„ë¼ì´ë“œ ---
 	virtual void OnIntervalTick(AActor* Target, FActiveStatusEffect& EffectData) const override;
 	
 };

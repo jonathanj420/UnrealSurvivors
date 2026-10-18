@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -17,7 +17,7 @@ class DARKEDENSURVIVORS_API UDEAccSlotWidget : public UUserWidget
     GENERATED_BODY()
 
 public:
-    // ½ºÅ³ ½½·ÔÀÇ SetSkill°ú ¿Ïº®È÷ ´ëÀÀµÇ´Â ÇÔ¼ö
+    // ìŠ¤í‚¬ ìŠ¬ë¡¯ì˜ SetSkillê³¼ ì™„ë²½íˆ ëŒ€ì‘ë˜ëŠ” í•¨ìˆ˜
     UFUNCTION(BlueprintCallable)
     void SetAccessory(const FText& InAccName, int32 InAccLevel, UTexture2D* InAccIcon);
 

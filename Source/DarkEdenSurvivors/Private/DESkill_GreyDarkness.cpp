@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DESkill_GreyDarkness.h"
@@ -15,15 +15,15 @@ void UDESkill_GreyDarkness::InitBehaviors()
 
     if (SpawnDarkness)
     {
-        // 2. Context°¡ ¾Æ´Ï¶ó, ºñÇìÀÌºñ¾î º»Ã¼¿¡ Á÷Á¢ ¼¼ÆÃÀ» ÁÖÀÔ!
-        SpawnDarkness->AOEClass = AOEClass;               // ºí·çÇÁ¸°Æ®¿¡¼­ ÇÒ´çÇÑ ¸¶´Ã ¿À¶ó Å¬·¡½º
-        SpawnDarkness->AOEKey = TEXT("GreyDarkness");         // Áßº¹ »ı¼º ¹æÁö¿ë ¿µ±¸ Å°
+        // 2. Contextê°€ ì•„ë‹ˆë¼, ë¹„í—¤ì´ë¹„ì–´ ë³¸ì²´ì— ì§ì ‘ ì„¸íŒ…ì„ ì£¼ì…!
+        SpawnDarkness->AOEClass = AOEClass;               // ë¸”ë£¨í”„ë¦°íŠ¸ì—ì„œ í• ë‹¹í•œ ë§ˆëŠ˜ ì˜¤ë¼ í´ë˜ìŠ¤
+        SpawnDarkness->AOEKey = TEXT("GreyDarkness");         // ì¤‘ë³µ ìƒì„± ë°©ì§€ìš© ì˜êµ¬ í‚¤
 
-        // ¡Ú 3. ¿ì¸®°¡ ¸¸µç ¹ü¿ë Å¸°ÙÆÃ ½Ã½ºÅÛ Àû¿ë!
-        SpawnDarkness->SpawnTarget = EAOESpawnTarget::Instigator; // Å¸°Ù: "³» À§Ä¡¿¡ ½ºÆùÇØ¶ó!"
-        SpawnDarkness->bAttachToTarget = true;                    // ¿É¼Ç: "½ºÆù Áï½Ã ³» ¸ö¿¡ Âû½Ï ºÙ¿©¶ó!"
+        // â˜… 3. ìš°ë¦¬ê°€ ë§Œë“  ë²”ìš© íƒ€ê²ŸíŒ… ì‹œìŠ¤í…œ ì ìš©!
+        SpawnDarkness->SpawnTarget = EAOESpawnTarget::Instigator; // íƒ€ê²Ÿ: "ë‚´ ìœ„ì¹˜ì— ìŠ¤í°í•´ë¼!"
+        SpawnDarkness->bAttachToTarget = true;                    // ì˜µì…˜: "ìŠ¤í° ì¦‰ì‹œ ë‚´ ëª¸ì— ì°°ì‹¹ ë¶™ì—¬ë¼!"
 
-        // 4. ÆÄÀÌÇÁ¶óÀÎ¿¡ ÀåÂø
+        // 4. íŒŒì´í”„ë¼ì¸ì— ì¥ì°©
         Behaviors.Add(SpawnDarkness);
     }
 }
@@ -42,10 +42,10 @@ void UDESkill_GreyDarkness::OnTargetKilled(const FDEDamageResult& Result)
 
 void UDESkill_GreyDarkness::BuildContext(FDESkillContext& OutContext)
 {
-    // 1. ºÎ¸ğ(DEAutoSkillBase)ÀÇ ±âº» ·ÎÁ÷(ÇÃ·¹ÀÌ¾î ½ºÅÈ ¹èÀ² ¿¬µ¿ µî) ½ÇÇà
+    // 1. ë¶€ëª¨(DEAutoSkillBase)ì˜ ê¸°ë³¸ ë¡œì§(í”Œë ˆì´ì–´ ìŠ¤íƒ¯ ë°°ìœ¨ ì—°ë™ ë“±) ì‹¤í–‰
     Super::BuildContext(OutContext);
 
-    // 2. ³»°¡ Á×¿©¼­ ¸ğ¾ÆµĞ ÇÍºû ÃàÁ¦(º¸³Ê½º ½ºÅÃ)¸¦ ÃÖÁ¾ °á°ú¿¡ ´õÇØÁØ´Ù!
+    // 2. ë‚´ê°€ ì£½ì—¬ì„œ ëª¨ì•„ë‘” í•ë¹› ì¶•ì œ(ë³´ë„ˆìŠ¤ ìŠ¤íƒ)ë¥¼ ìµœì¢… ê²°ê³¼ì— ë”í•´ì¤€ë‹¤!
     OutContext.Damage += AccumulatedDamage;
     OutContext.Radius += AccumulatedRadius;
 

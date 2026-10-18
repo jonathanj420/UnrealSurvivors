@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEAccInventoryWidget.h"
@@ -16,17 +16,17 @@ void UDEAccInventoryWidget::InitializeAccessoryWidget(APawn* NewPawn)
 {
     if (!NewPawn) return;
 
-    // ÇÃ·¹ÀÌ¾î¿¡°Ô¼­ ¾Ç¼¼¼­¸® ÄÄÆ÷³ÍÆ®¸¦ Ã£¾Æ¼­ Ä³½Ì!
+    // í”Œë ˆì´ì–´ì—ê²Œì„œ ì•…ì„¸ì„œë¦¬ ì»´í¬ë„ŒíŠ¸ë¥¼ ì°¾ì•„ì„œ ìºì‹±!
     AccessoryComp = NewPawn->FindComponentByClass<UDEAccessoryComponent>();
 
     if (AccessoryComp)
     {
         AccessoryComp->OnAccUpdated.AddUObject(this, &UDEAccInventoryWidget::OnAccessoryUpdated);
 
-        // 1. Ã³À½ ¿­·ÈÀ» ¶§ UI ÇÑ¹ø ½Ï ±×·ÁÁÖ±â
+        // 1. ì²˜ìŒ ì—´ë ¸ì„ ë•Œ UI í•œë²ˆ ì‹¹ ê·¸ë ¤ì£¼ê¸°
         Refresh();
 
-        // (¼±ÅÃ) ¸¸¾à AccessoryComp¿¡ µ¨¸®°ÔÀÌÆ®(OnAccessoryChanged)°¡ ÀÖ´Ù¸é ¿©±â¼­ Bind ÇÏ½Ã¸é ¾ÆÁÖ ÁÁ½À´Ï´Ù!
+        // (ì„ íƒ) ë§Œì•½ AccessoryCompì— ë¸ë¦¬ê²Œì´íŠ¸(OnAccessoryChanged)ê°€ ìˆë‹¤ë©´ ì—¬ê¸°ì„œ Bind í•˜ì‹œë©´ ì•„ì£¼ ì¢‹ìŠµë‹ˆë‹¤!
     }
 }
 
@@ -52,18 +52,18 @@ void UDEAccInventoryWidget::Refresh()
         return;
 
     }
-    // 1. ±âÁ¸¿¡ ±×·ÁÁ® ÀÖ´ø ½½·ÔµéÀ» ½Ï ¹Ğ¾î¹ö¸³´Ï´Ù. (Áßº¹ »ı¼º ¹æÁö)
+    // 1. ê¸°ì¡´ì— ê·¸ë ¤ì ¸ ìˆë˜ ìŠ¬ë¡¯ë“¤ì„ ì‹¹ ë°€ì–´ë²„ë¦½ë‹ˆë‹¤. (ì¤‘ë³µ ìƒì„± ë°©ì§€)
     AccSlotPanel->ClearChildren();
 
-    // 2. ÀåÂøµÈ ¾Ç¼¼¼­¸® ¸ñ·Ï °¡Á®¿À±â 
+    // 2. ì¥ì°©ëœ ì•…ì„¸ì„œë¦¬ ëª©ë¡ ê°€ì ¸ì˜¤ê¸° 
     const TMap<const UDEAccessoryData*, int32>& EquippedMap = AccessoryComp->GetEquippedAccessories();
     for (const auto& Pair : EquippedMap)
     {
         UDEAccSlotWidget* NewSlot = CreateWidget<UDEAccSlotWidget>(GetWorld(), AccSlotWidgetClass);
         if (NewSlot)
         {
-            // Pair.Key = UDEAccessoryData* (µ¥ÀÌÅÍ)
-            // Pair.Value = int32 (ÇöÀç ·¹º§)
+            // Pair.Key = UDEAccessoryData* (ë°ì´í„°)
+            // Pair.Value = int32 (í˜„ì¬ ë ˆë²¨)
             NewSlot->SetAccessory(Pair.Key->Name, Pair.Value, Pair.Key->Icon);
 
             AccSlotPanel->AddChild(NewSlot);
@@ -73,7 +73,7 @@ void UDEAccInventoryWidget::Refresh()
 
 void UDEAccInventoryWidget::OnAccessoryUpdated(const UDEAccessoryData* InAccData)
 {
-    // ¾Ç¼¼¼­¸®¸¦ »õ·Î ¸Ô°Å³ª ·¹º§¾÷ ÇßÀ» ¶§ È£ÃâµÇ´Â ÇÔ¼ö
-    // º¹ÀâÇÏ°Ô Ã£¾Æ¼­ ¼öÁ¤ÇÒ ÇÊ¿ä ¾øÀÌ, ±×³É ÀüÃ¼ ÀÎº¥Åä¸®¸¦ ´Ù½Ã ±×¸®´Â °Ô Á¦ÀÏ ±ò²ûÇÕ´Ï´Ù.
+    // ì•…ì„¸ì„œë¦¬ë¥¼ ìƒˆë¡œ ë¨¹ê±°ë‚˜ ë ˆë²¨ì—… í–ˆì„ ë•Œ í˜¸ì¶œë˜ëŠ” í•¨ìˆ˜
+    // ë³µì¡í•˜ê²Œ ì°¾ì•„ì„œ ìˆ˜ì •í•  í•„ìš” ì—†ì´, ê·¸ëƒ¥ ì „ì²´ ì¸ë²¤í† ë¦¬ë¥¼ ë‹¤ì‹œ ê·¸ë¦¬ëŠ” ê²Œ ì œì¼ ê¹”ë”í•©ë‹ˆë‹¤.
     Refresh();
 }

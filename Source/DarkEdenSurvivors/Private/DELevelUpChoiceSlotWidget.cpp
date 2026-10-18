@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DELevelUpChoiceSlotWidget.h"
@@ -22,11 +22,11 @@ void UDELevelUpChoiceSlotWidget::InitSlot(UDELevelUpChoiceBase* InChoice)
 
 	if (ChoiceData)
 	{
-		// 1. ÅØ½ºÆ® ¼³Á¤
+		// 1. í…ìŠ¤íŠ¸ ì„¤ì •
 		if (Txt_Name) Txt_Name->SetText(ChoiceData->GetDisplayName());
 		if (Txt_Desc) Txt_Desc->SetText(ChoiceData->GetDescription());
 
-		// 2. ¾ÆÀÌÄÜ ¼³Á¤
+		// 2. ì•„ì´ì½˜ ì„¤ì •
 		if (Img_Icon)
 		{
 			UTexture2D* IconTexture = ChoiceData->GetIcon();
@@ -37,7 +37,7 @@ void UDELevelUpChoiceSlotWidget::InitSlot(UDELevelUpChoiceBase* InChoice)
 			}
 			else
 			{
-				// ¾ÆÀÌÄÜ ¾øÀ¸¸é ¼û±â°Å³ª ±âº» ÀÌ¹ÌÁö
+				// ì•„ì´ì½˜ ì—†ìœ¼ë©´ ìˆ¨ê¸°ê±°ë‚˜ ê¸°ë³¸ ì´ë¯¸ì§€
 				Img_Icon->SetVisibility(ESlateVisibility::Hidden);
 			}
 		}
@@ -48,11 +48,11 @@ void UDELevelUpChoiceSlotWidget::OnSlotClicked()
 {
 	if (ChoiceData)
 	{
-		// ¡Ú ÇÙ½É: µ¥ÀÌÅÍ °´Ã¼¿¡°Ô "´Ï ´É·Â Àû¿ëÇØ!" ¶ó°í ¸í·É (Ä¿¸Çµå ÆÐÅÏ)
-		// UI´Â ÀÌ°Ô ½ºÅ³ÀÎÁö ¾Ç¼¼¼­¸®ÀÎÁö ¸ô¶óµµ µÊ
+		// â˜… í•µì‹¬: ë°ì´í„° ê°ì²´ì—ê²Œ "ë‹ˆ ëŠ¥ë ¥ ì ìš©í•´!" ë¼ê³  ëª…ë ¹ (ì»¤ë§¨ë“œ íŒ¨í„´)
+		// UIëŠ” ì´ê²Œ ìŠ¤í‚¬ì¸ì§€ ì•…ì„¸ì„œë¦¬ì¸ì§€ ëª°ë¼ë„ ë¨
 		ChoiceData->Apply(GetOwningPlayerPawn());
 
-		// ¡Ú ºÎ¸ð(¸ÞÀÎ À§Á¬)¿¡°Ô ¾Ë¸² -> ºÎ¸ð°¡ Ã¢ ´Ý°í °ÔÀÓ Àç°³
+		// â˜… ë¶€ëª¨(ë©”ì¸ ìœ„ì ¯)ì—ê²Œ ì•Œë¦¼ -> ë¶€ëª¨ê°€ ì°½ ë‹«ê³  ê²Œìž„ ìž¬ê°œ
 		if (OnSlotSelected.IsBound())
 		{
 			OnSlotSelected.Broadcast();

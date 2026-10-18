@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -17,11 +17,11 @@ class DARKEDENSURVIVORS_API UDEStatusEffect_DelayedAction : public UDEStatusEffe
 public:
     UDEStatusEffect_DelayedAction();
 
-    // µğ¹öÇÁ ÇØÁ¦ ½ÃÁ¡(½Ã°£ ¸¸·á or ¸ó½ºÅÍ »ç¸Á)¿¡ ¹«Á¶°Ç È£ÃâµÊ
+    // ë””ë²„í”„ í•´ì œ ì‹œì (ì‹œê°„ ë§Œë£Œ or ëª¬ìŠ¤í„° ì‚¬ë§)ì— ë¬´ì¡°ê±´ í˜¸ì¶œë¨
     virtual void OnRemove(AActor* Target, FActiveStatusEffect& EffectData) const override;
 
 protected:
-    // ¡Ú ÇÙ½É: ÀÚ½ÄµéÀÌ ¹«Á¶°Ç ±¸ÇöÇØ¾ß ÇÏ´Â 'ÁøÂ¥ Çàµ¿' °¡»ó ÇÔ¼ö
+    // â˜… í•µì‹¬: ìì‹ë“¤ì´ ë¬´ì¡°ê±´ êµ¬í˜„í•´ì•¼ í•˜ëŠ” 'ì§„ì§œ í–‰ë™' ê°€ìƒ í•¨ìˆ˜
     virtual void ExecuteAction(AActor* Target, FActiveStatusEffect& EffectData) const PURE_VIRTUAL(UDEStatusEffect_DelayedAction::ExecuteAction, );
 	
 };

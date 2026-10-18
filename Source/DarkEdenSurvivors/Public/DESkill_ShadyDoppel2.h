@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -23,8 +23,8 @@ public:
     //    void FireRandom();
 
 
-    int32 ProjectileFired = 0;        // ¸î °³ ¹İº¹Çß´ÂÁö
-    int32 MaxProjectile = 10;         // ÃÑ¸î¹ß ¿¬»çÇÒÁö
+    int32 ProjectileFired = 0;        // ëª‡ ê°œ ë°˜ë³µí–ˆëŠ”ì§€
+    int32 MaxProjectile = 10;         // ì´ëª‡ë°œ ì—°ì‚¬í• ì§€
 
     FTimerHandle FireTimerHandle;
 private:

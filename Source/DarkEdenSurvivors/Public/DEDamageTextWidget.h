@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -24,7 +24,7 @@ public:
 
     //AActor* GetTargetActor() const { return TargetActor; }
 
-    // ´ë¸ÁÀÇ ´©Àû µ¥¹ÌÁö Ã³¸® ÇÔ¼ö!
+    // ëŒ€ë§ì˜ ëˆ„ì  ë°ë¯¸ì§€ ì²˜ë¦¬ í•¨ìˆ˜!
     void AddDamage(float AdditionalDamage);
 
 
@@ -32,7 +32,7 @@ protected:
     virtual void NativeConstruct() override;
 
 protected:
-    // ¹æ±İ UMG¿¡¼­ °¨½ÎÁØ ºÎ¸ğ ÄÁÅ×ÀÌ³Ê¸¦ ÄÚµå·Î °¡Á®¿É´Ï´Ù.
+    // ë°©ê¸ˆ UMGì—ì„œ ê°ì‹¸ì¤€ ë¶€ëª¨ ì»¨í…Œì´ë„ˆë¥¼ ì½”ë“œë¡œ ê°€ì ¸ì˜µë‹ˆë‹¤.
     UPROPERTY(meta = (BindWidget))
     class UOverlay* ScaleContainer;
 

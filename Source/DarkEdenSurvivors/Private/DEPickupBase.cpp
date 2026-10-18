@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEPickupBase.h"
@@ -17,13 +17,13 @@ ADEPickupBase::ADEPickupBase()
 	RootComponent = Trigger;
 	Trigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	//Trigger->SetCollisionResponseToAllChannels(ECR_Ignore);
-	//Trigger->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap); // ÇÃ·¹ÀÌ¾î(Pawn)¸¸ °¨Áö!
+	//Trigger->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap); // í”Œë ˆì´ì–´(Pawn)ë§Œ ê°ì§€!
 	Trigger->SetSphereRadius(30.0f);
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(RootComponent);
 	Mesh->SetCastShadow(false);
-	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision); // ¸Ş½¬ Ãæµ¹ ²û
+	Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision); // ë©”ì‰¬ ì¶©ëŒ ë”
 }
 
 // Called when the game starts or when spawned
@@ -40,30 +40,30 @@ void ADEPickupBase::BeginPlay()
 void ADEPickupBase::ActivatePickup(const FVector& Location, float DataValue)
 {
 	SetActorLocation(Location);
-	Value = DataValue; // °æÇèÄ¡ 10, Ã¼·Â 30 µî °ª ¼³Á¤
+	Value = DataValue; // ê²½í—˜ì¹˜ 10, ì²´ë ¥ 30 ë“± ê°’ ì„¤ì •
 
-	// »óÅÂ ÃÊ±âÈ­
+	// ìƒíƒœ ì´ˆê¸°í™”
 	bIsMagnetized = false;
 	MagnetTarget = nullptr;
-	CurrentSpeed = 0.0f; // ¼Óµµ ¸®¼Â
+	CurrentSpeed = 0.0f; // ì†ë„ ë¦¬ì…‹
 
-	// ÄÑ±â
+	// ì¼œê¸°
 	SetActorHiddenInGame(false);
 	Trigger->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	//SetActorTickEnabled(false); // ÀÌµ¿ Àü±îÁø Æ½ ²û
+	//SetActorTickEnabled(false); // ì´ë™ ì „ê¹Œì§„ í‹± ë”
 }
 
 void ADEPickupBase::DeactivatePickup()
 {
-	// ²ô±â
+	// ë„ê¸°
 	SetActorHiddenInGame(true);
 	Trigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	SetActorTickEnabled(false);
 
-	// TODO: Ç® ½Ã½ºÅÛ¿¡ ¹İÈ¯ ¿äÃ»
+	// TODO: í’€ ì‹œìŠ¤í…œì— ë°˜í™˜ ìš”ì²­
 	GetWorld()->GetSubsystem<UDEPoolSubsystem>()->ReturnActorToPool(this);
 
-	// Ç® ½Ã½ºÅÛ ¾øÀ¸¸é ÀÓ½Ã ÆÄ±«
+	// í’€ ì‹œìŠ¤í…œ ì—†ìœ¼ë©´ ì„ì‹œ íŒŒê´´
 	// Destroy();
 }
 
@@ -71,10 +71,10 @@ void ADEPickupBase::DeactivatePickup()
 
 void ADEPickupBase::ApplyEffect(AActor* TargetActor)
 {
-	// ºÎ¸ğ´Â ¾Æ¹«°Íµµ ¾È ÇÔ (°¡»óÇÔ¼ö)
-	// ÀÚ½ÄÀÌ override ÇØ¼­ °æÇèÄ¡¸¦ ÁÖµç ÈúÀ» ÇÏµç ÇÔ
+	// ë¶€ëª¨ëŠ” ì•„ë¬´ê²ƒë„ ì•ˆ í•¨ (ê°€ìƒí•¨ìˆ˜)
+	// ìì‹ì´ override í•´ì„œ ê²½í—˜ì¹˜ë¥¼ ì£¼ë“  íì„ í•˜ë“  í•¨
 
-	// È¿°ú Àû¿ë ÈÄ »ç¶óÁü
+	// íš¨ê³¼ ì ìš© í›„ ì‚¬ë¼ì§
 	DeactivatePickup();
 }
 
@@ -91,20 +91,20 @@ void ADEPickupBase::SetTriggerRadius(float InSize)
 void ADEPickupBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Pickup Touched Somthin,...."));
-	// ÀÌ¹Ì ¸ÔÇô¼­ ¾È º¸ÀÌ´Â ³ğÀÌ°Å³ª, OtherActor°¡ ¾øÀ¸¸é ¹«½Ã
+	// ì´ë¯¸ ë¨¹í˜€ì„œ ì•ˆ ë³´ì´ëŠ” ë†ˆì´ê±°ë‚˜, OtherActorê°€ ì—†ìœ¼ë©´ ë¬´ì‹œ
 	if (IsHidden())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("WTF?"));
 	}
 	if (IsHidden() || !OtherActor) return;
 
-	// (¼±ÅÃ) OtherActor°¡ ÁøÂ¥ ÇÃ·¹ÀÌ¾îÀÎÁö °Ë»ç (ÅÂ±× ±â¹İÀÌ Á© ÆíÇÕ´Ï´Ù)
+	// (ì„ íƒ) OtherActorê°€ ì§„ì§œ í”Œë ˆì´ì–´ì¸ì§€ ê²€ì‚¬ (íƒœê·¸ ê¸°ë°˜ì´ ì ¤ í¸í•©ë‹ˆë‹¤)
 	if (OtherActor->ActorHasTag(TEXT("Player")))
 	{
-		// ´ê¾Ò´Ù! ¹Ù·Î È¿°ú Àû¿ë!
+		// ë‹¿ì•˜ë‹¤! ë°”ë¡œ íš¨ê³¼ ì ìš©!
 		ApplyEffect(OtherActor);
 
-		// ApplyEffect ³»ºÎ¿¡¼­ ¾îÂ÷ÇÇ SetActorHiddenInGame(true)¸¦ ÇÏ°Å³ª Pool·Î µ¹¾Æ°¡¹Ç·Î,
-		// ¸Å´ÏÀúÀÇ ´ÙÀ½ ¹ø Tick¿¡¼­ ¾Ë¾Æ¼­ ¸®½ºÆ®¿¡¼­ ¶³¾îÁ® ³ª°©´Ï´Ù.
+		// ApplyEffect ë‚´ë¶€ì—ì„œ ì–´ì°¨í”¼ SetActorHiddenInGame(true)ë¥¼ í•˜ê±°ë‚˜ Poolë¡œ ëŒì•„ê°€ë¯€ë¡œ,
+		// ë§¤ë‹ˆì €ì˜ ë‹¤ìŒ ë²ˆ Tickì—ì„œ ì•Œì•„ì„œ ë¦¬ìŠ¤íŠ¸ì—ì„œ ë–¨ì–´ì ¸ ë‚˜ê°‘ë‹ˆë‹¤.
 	}
 }

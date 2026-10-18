@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEBehavior_FireProjectileRadial.h"
@@ -12,7 +12,7 @@
 
 void UDEBehavior_FireProjectileRadial::Execute(FDESkillContext& Context)
 {
-	// 1. ÇÊ¼ö µ¥ÀÌÅÍ °Ë»ç
+	// 1. í•„ìˆ˜ ë°ì´í„° ê²€ì‚¬
 	if (!Context.Instigator || ProjectileClasses.Num() == 0) return;
 
 	UWorld* World = Context.Instigator->GetWorld();
@@ -22,49 +22,49 @@ void UDEBehavior_FireProjectileRadial::Execute(FDESkillContext& Context)
 	if (!Pool) return;
 
 
-	// 2. ¹ß»ç ¿øÁ¡ ¼³Á¤
+	// 2. ë°œì‚¬ ì›ì  ì„¤ì •
 	FVector Origin = Context.Instigator->GetActorLocation();
 
-	// 3. ±âÁØ È¸Àü(BaseRot) ¼³Á¤
-	// ±âº»°ª: ÇÃ·¹ÀÌ¾î°¡ º¸´Â ¹æÇâ
+	// 3. ê¸°ì¤€ íšŒì „(BaseRot) ì„¤ì •
+	// ê¸°ë³¸ê°’: í”Œë ˆì´ì–´ê°€ ë³´ëŠ” ë°©í–¥
 	FRotator BaseRot = Context.Instigator->GetActorRotation();
 
-	// ¡Ú [ÇÙ½É] Å¸°ÙÀÌ ÀÖ´Ù¸é, Å¸°ÙÀ» ¹Ù¶óº¸´Â ¹æÇâÀ¸·Î ±âÁØÁ¡ º¯°æ
+	// â˜… [í•µì‹¬] íƒ€ê²Ÿì´ ìˆë‹¤ë©´, íƒ€ê²Ÿì„ ë°”ë¼ë³´ëŠ” ë°©í–¥ìœ¼ë¡œ ê¸°ì¤€ì  ë³€ê²½
 	if (Context.Targets.Num() > 0 && Context.Targets[0])
 	{
 		FVector TargetLoc = Context.Targets[0]->GetActorLocation();
-		// ³» À§Ä¡¿¡¼­ Å¸°Ù À§Ä¡¸¦ ¹Ù¶óº¸´Â È¸Àü°ª °è»ê
+		// ë‚´ ìœ„ì¹˜ì—ì„œ íƒ€ê²Ÿ ìœ„ì¹˜ë¥¼ ë°”ë¼ë³´ëŠ” íšŒì „ê°’ ê³„ì‚°
 		BaseRot = UKismetMathLibrary::FindLookAtRotation(Origin, TargetLoc);
 	}
 
-	// 4. °¢µµ °è»ê
+	// 4. ê°ë„ ê³„ì‚°
 	int32 Count = FMath::Max(1, Context.Amount);
 
-	// ÀüÃ¼ °¢µµ(ArcAngle)¸¦ °³¼ö·Î ³ª´® (¿¹: 360 / 3 = 120µµ)
+	// ì „ì²´ ê°ë„(ArcAngle)ë¥¼ ê°œìˆ˜ë¡œ ë‚˜ëˆ” (ì˜ˆ: 360 / 3 = 120ë„)
 	float AngleStep = (Count > 0) ? (ArcAngle / (float)Count) : 0.f;
 
-	// (¿É¼Ç) ¸¸¾à 360µµ°¡ ¾Æ´Ï¶ó ºÎÃ¤²Ã(120µµ µî)ÀÌ¶ó¸é, 
-	// Å¸°ÙÀ» 'Áß½É'¿¡ µÎ±â À§ÇØ ½ÃÀÛ °¢µµ¸¦ Àı¹İ¸¸Å­ µÚ·Î °¨¾ÆÁÜ.
-	// 360µµÀÏ ¶§´Â ±»ÀÌ ¾È ÇØµµ Æ¼°¡ ¾È ³ªÁö¸¸, ºÎÃ¤²ÃÀÏ ¶© ÀÌ°Ô ÀÖ¾î¾ß ÀÚ¿¬½º·¯¿ò.
-	// ex) 120µµÂ¥¸® ÄÉÀÍÀ» 3Á¶°¢ÇØ¼­ ÄÉÀÍ ³¡ Áß¾Ó¿¡ ÇÇÅ©¸¦ ²È´Â°Ô ÀÌ ¿¹½Ã
+	// (ì˜µì…˜) ë§Œì•½ 360ë„ê°€ ì•„ë‹ˆë¼ ë¶€ì±„ê¼´(120ë„ ë“±)ì´ë¼ë©´, 
+	// íƒ€ê²Ÿì„ 'ì¤‘ì‹¬'ì— ë‘ê¸° ìœ„í•´ ì‹œì‘ ê°ë„ë¥¼ ì ˆë°˜ë§Œí¼ ë’¤ë¡œ ê°ì•„ì¤Œ.
+	// 360ë„ì¼ ë•ŒëŠ” êµ³ì´ ì•ˆ í•´ë„ í‹°ê°€ ì•ˆ ë‚˜ì§€ë§Œ, ë¶€ì±„ê¼´ì¼ ë• ì´ê²Œ ìˆì–´ì•¼ ìì—°ìŠ¤ëŸ¬ì›€.
+	// ex) 120ë„ì§œë¦¬ ì¼€ìµì„ 3ì¡°ê°í•´ì„œ ì¼€ìµ ë ì¤‘ì•™ì— í”¼í¬ë¥¼ ê½‚ëŠ”ê²Œ ì´ ì˜ˆì‹œ
 	float StartYawOffset = 0.f;
 	if (FMath::IsNearlyEqual(ArcAngle, 360.f) == false)
 	{
-		// ¿¹: 120µµ ºÎÃ¤²ÃÀÌ¸é -60µµºÎÅÍ ½ÃÀÛÇØ¼­ Å¸°ÙÀ» °¡¿îµ¥ µÒ
+		// ì˜ˆ: 120ë„ ë¶€ì±„ê¼´ì´ë©´ -60ë„ë¶€í„° ì‹œì‘í•´ì„œ íƒ€ê²Ÿì„ ê°€ìš´ë° ë‘ 
 		StartYawOffset = -ArcAngle * 0.5f + (AngleStep * 0.5f);
 	}
 
 
-	// 5. ¹ß»ç ·çÇÁ
+	// 5. ë°œì‚¬ ë£¨í”„
 	for (int32 i = 0; i < Count; i++)
 	{
-		// ±âÁØ È¸Àü(BaseRot) º¹»ç ¹× Yaw Àû¿ë
+		// ê¸°ì¤€ íšŒì „(BaseRot) ë³µì‚¬ ë° Yaw ì ìš©
 		FRotator SpawnRot = BaseRot;
 		float CurrentYawStep = StartYawOffset + (AngleStep * i);
 		SpawnRot.Yaw += CurrentYawStep;
 
 		// ==========================================================
-		// ¡Ú [ÇÙ½É] ¿©±â¼­ ¹è¿­À» µ¹¸ç ÀåÀüÇÒ ÃÑ¾Ë Å¬·¡½º¸¦ »Ì¾Æ³À´Ï´Ù!
+		// â˜… [í•µì‹¬] ì—¬ê¸°ì„œ ë°°ì—´ì„ ëŒë©° ì¥ì „í•  ì´ì•Œ í´ë˜ìŠ¤ë¥¼ ë½‘ì•„ëƒ…ë‹ˆë‹¤!
 		// ==========================================================
 		TSubclassOf<ADESimpleProjectileBase> SelectedClass = nullptr;
 
@@ -73,16 +73,16 @@ void UDEBehavior_FireProjectileRadial::Execute(FDESkillContext& Context)
 			int32 RandomIndex = FMath::RandRange(0, ProjectileClasses.Num() - 1);
 			SelectedClass = ProjectileClasses[RandomIndex];
 		}
-		else // Sequential (¼ø¼­´ë·Î)
+		else // Sequential (ìˆœì„œëŒ€ë¡œ)
 		{
 			SelectedClass = ProjectileClasses[CurrentFireIndex];
 			CurrentFireIndex = (CurrentFireIndex + 1) % ProjectileClasses.Num();
 		}
 
-		// ¾ÈÀü ÀåÄ¡: »Ì¾Æ³½ Å¬·¡½º°¡ À¯È¿ÇÑÁö È®ÀÎ
+		// ì•ˆì „ ì¥ì¹˜: ë½‘ì•„ë‚¸ í´ë˜ìŠ¤ê°€ ìœ íš¨í•œì§€ í™•ì¸
 		if (SelectedClass)
 		{
-			// »Ì¾Æ³½ 'SelectedClass'¸¦ Ç®¿¡ ³Ñ°Ü¼­ ²¨³À´Ï´Ù.
+			// ë½‘ì•„ë‚¸ 'SelectedClass'ë¥¼ í’€ì— ë„˜ê²¨ì„œ êº¼ëƒ…ë‹ˆë‹¤.
 			AActor* PooledActor = Pool->GetPooledActor(
 				SelectedClass,
 				Origin,
@@ -90,7 +90,7 @@ void UDEBehavior_FireProjectileRadial::Execute(FDESkillContext& Context)
 				true
 			);
 
-			// ÃÊ±âÈ­
+			// ì´ˆê¸°í™”
 			if (auto* Proj = Cast<ADESimpleProjectileBase>(PooledActor))
 			{
 				Context.TargetDirection = SpawnRot.Vector();
@@ -100,14 +100,14 @@ void UDEBehavior_FireProjectileRadial::Execute(FDESkillContext& Context)
 	}
 	//for (int32 i = 0; i < Count; i++)
 	//{
-	//	// ±âÁØ È¸Àü(BaseRot) º¹»ç
+	//	// ê¸°ì¤€ íšŒì „(BaseRot) ë³µì‚¬
 	//	FRotator SpawnRot = BaseRot;
 
-	//	// Yaw(¼öÆò È¸Àü) Àû¿ë
+	//	// Yaw(ìˆ˜í‰ íšŒì „) ì ìš©
 	//	float CurrentYawStep = StartYawOffset + (AngleStep * i);
 	//	SpawnRot.Yaw += CurrentYawStep;
 
-	//	// Ç®¿¡¼­ ²¨³»±â
+	//	// í’€ì—ì„œ êº¼ë‚´ê¸°
 	//	AActor* PooledActor = Pool->GetPooledActor(
 	//		ProjectileClass,
 	//		Origin,
@@ -115,7 +115,7 @@ void UDEBehavior_FireProjectileRadial::Execute(FDESkillContext& Context)
 	//		true
 	//	);
 
-	//	// ÃÊ±âÈ­
+	//	// ì´ˆê¸°í™”
 	//	if (auto* Proj = Cast<ADESimpleProjectileBase>(PooledActor))
 	//	{
 	//		Context.TargetDirection = SpawnRot.Vector();
@@ -124,7 +124,7 @@ void UDEBehavior_FireProjectileRadial::Execute(FDESkillContext& Context)
 	//	}
 	//}
 
-	// 6. »ç¿îµå Àç»ı (ÇÑ ¹ø¸¸)
+	// 6. ì‚¬ìš´ë“œ ì¬ìƒ (í•œ ë²ˆë§Œ)
 	if (FireSound)
 	{
 		UGameplayStatics::PlaySoundAtLocation(World, FireSound, Origin);

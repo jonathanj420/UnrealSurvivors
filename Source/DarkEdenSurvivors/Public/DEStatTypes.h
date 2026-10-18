@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -7,47 +7,47 @@
 #include "DEStatTypes.generated.h"
 
 /**
- * °ÔÀÓ ³» ¸ğµç ¼öÄ¡ º¯°æÀ» °üÀåÇÏ´Â ÅëÇÕ Å¸ÀÔ
- * (¾Ç¼¼¼­¸®, ÆĞ½Ãºê, ¹öÇÁ, ±âº» ½ºÅÈ µî ¸ğµÎ »ç¿ë)
+ * ê²Œì„ ë‚´ ëª¨ë“  ìˆ˜ì¹˜ ë³€ê²½ì„ ê´€ì¥í•˜ëŠ” í†µí•© íƒ€ì…
+ * (ì•…ì„¸ì„œë¦¬, íŒ¨ì‹œë¸Œ, ë²„í”„, ê¸°ë³¸ ìŠ¤íƒ¯ ë“± ëª¨ë‘ ì‚¬ìš©)
  */
 UENUM(BlueprintType)
 enum class EDEStatType : uint8
 {
     // ==========================================
-    // [Combat] ÀüÅõ °ü·Ã (°ø°İ, ¹æ¾î)
+    // [Combat] ì „íˆ¬ ê´€ë ¨ (ê³µê²©, ë°©ì–´)
     // ==========================================
-    Damage          UMETA(DisplayName = "Damage Multiplier"),    // °ø°İ·Â %
-    CritChance      UMETA(DisplayName = "Crit Chance"),          // Ä¡¸íÅ¸ È®·ü +
-    CritDamage      UMETA(DisplayName = "Crit Damage Multiplier"),          // Ä¡¸íÅ¸ ÇÇÇØ %
-    Cooldown        UMETA(DisplayName = "Cooldown Reduction"),   // ÄğÅ¸ÀÓ °¨¼Ò %
-    Area            UMETA(DisplayName = "Area Size"),            // ¹üÀ§ %
-    Duration        UMETA(DisplayName = "Duration"),             // Áö¼Ó½Ã°£ %
-    ProjectileSpeed UMETA(DisplayName = "Projectile Speed"),     // Åõ»çÃ¼ ¼Óµµ %
-    Amount          UMETA(DisplayName = "Projectile Amount"),    // Åõ»çÃ¼ °³¼ö +
-    Knockback       UMETA(DisplayName = "Knockback Force"),      // ³Ë¹é ÆÄ¿ö %
-    LifeStealChance UMETA(DisplayName = "Life Steal Chance"),      // ÇÇÈí È®·ü %
-    LifeStealMultiplier UMETA(DisplayName = "Life Steal Multiplier"),      // ÇÇÈí Áõ°¡? %
+    Damage          UMETA(DisplayName = "Damage Multiplier"),    // ê³µê²©ë ¥ %
+    CritChance      UMETA(DisplayName = "Crit Chance"),          // ì¹˜ëª…íƒ€ í™•ë¥  +
+    CritDamage      UMETA(DisplayName = "Crit Damage Multiplier"),          // ì¹˜ëª…íƒ€ í”¼í•´ %
+    Cooldown        UMETA(DisplayName = "Cooldown Reduction"),   // ì¿¨íƒ€ì„ ê°ì†Œ %
+    Area            UMETA(DisplayName = "Area Size"),            // ë²”ìœ„ %
+    Duration        UMETA(DisplayName = "Duration"),             // ì§€ì†ì‹œê°„ %
+    ProjectileSpeed UMETA(DisplayName = "Projectile Speed"),     // íˆ¬ì‚¬ì²´ ì†ë„ %
+    Amount          UMETA(DisplayName = "Projectile Amount"),    // íˆ¬ì‚¬ì²´ ê°œìˆ˜ +
+    Knockback       UMETA(DisplayName = "Knockback Force"),      // ë„‰ë°± íŒŒì›Œ %
+    LifeStealChance UMETA(DisplayName = "Life Steal Chance"),      // í”¼í¡ í™•ë¥  %
+    LifeStealMultiplier UMETA(DisplayName = "Life Steal Multiplier"),      // í”¼í¡ ì¦ê°€? %
 
     // ==========================================
-    // [Survival] »ıÁ¸ ¹× ½ÅÃ¼ ´É·Â
+    // [Survival] ìƒì¡´ ë° ì‹ ì²´ ëŠ¥ë ¥
     // ==========================================
-    MaxHP           UMETA(DisplayName = "Max HP"),               // ÃÖ´ë Ã¼·Â %
-    MoveSpeed       UMETA(DisplayName = "Move Speed"),           // ÀÌµ¿ ¼Óµµ %
-    Armor           UMETA(DisplayName = "Armor"),                // ¹æ¾î·Â (µ¥¹ÌÁö °¨¼Ò)
-    Regeneration        UMETA(DisplayName = "HP Regeneration"),          // Ã¼·Â Àç»ı (ÃÊ´ç)
+    MaxHP           UMETA(DisplayName = "Max HP"),               // ìµœëŒ€ ì²´ë ¥ %
+    MoveSpeed       UMETA(DisplayName = "Move Speed"),           // ì´ë™ ì†ë„ %
+    Armor           UMETA(DisplayName = "Armor"),                // ë°©ì–´ë ¥ (ë°ë¯¸ì§€ ê°ì†Œ)
+    Regeneration        UMETA(DisplayName = "HP Regeneration"),          // ì²´ë ¥ ì¬ìƒ (ì´ˆë‹¹)
 
     // ==========================================
-    // [Utility] À¯Æ¿¸®Æ¼ (ÆÄ¹Ö, ¼ºÀå)
+    // [Utility] ìœ í‹¸ë¦¬í‹° (íŒŒë°, ì„±ì¥)
     // ==========================================
-    Magnet          UMETA(DisplayName = "Magnet Range"),         // ÀÚ¼® ¹üÀ§ %
-    Luck            UMETA(DisplayName = "Luck"),                 // Çà¿î (¾ÆÀÌÅÛ µå¶ø µî)
-    Greed           UMETA(DisplayName = "Greed (Gold)"),         // °ñµå È¹µæ·® %
-    Growth          UMETA(DisplayName = "Growth (EXP)"),         // °æÇèÄ¡ È¹µæ·® %
-    Curse           UMETA(DisplayName = "Curse (Enemy Buff)"),   // ÀúÁÖ (Àû °­È­)
-    Revival         UMETA(DisplayName = "Revival Count"),        // ºÎÈ° È½¼ö +
+    Magnet          UMETA(DisplayName = "Magnet Range"),         // ìì„ ë²”ìœ„ %
+    Luck            UMETA(DisplayName = "Luck"),                 // í–‰ìš´ (ì•„ì´í…œ ë“œë ë“±)
+    Greed           UMETA(DisplayName = "Greed (Gold)"),         // ê³¨ë“œ íšë“ëŸ‰ %
+    Growth          UMETA(DisplayName = "Growth (EXP)"),         // ê²½í—˜ì¹˜ íšë“ëŸ‰ %
+    Curse           UMETA(DisplayName = "Curse (Enemy Buff)"),   // ì €ì£¼ (ì  ê°•í™”)
+    Revival         UMETA(DisplayName = "Revival Count"),        // ë¶€í™œ íšŸìˆ˜ +
 
     // ==========================================
-    // [Max] ¹İº¹¹®¿ë (Ç×»ó ¸¶Áö¸·¿¡)
+    // [Max] ë°˜ë³µë¬¸ìš© (í•­ìƒ ë§ˆì§€ë§‰ì—)
     // ==========================================
     Max             UMETA(Hidden)
 };
@@ -86,7 +86,7 @@ public:
 	float BaseValue;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	float Additive; // +10 °ø°İ·Â
+	float Additive; // +10 ê³µê²©ë ¥
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	float Multiplier; // +10% (1.1)
@@ -108,10 +108,10 @@ public:
 
 	float GetValue() const
 	{
-        // (±âº»°ª + °íÁ¤ Ãß°¡Ä¡) * (100% + ÆÛ¼¾Æ® Ãß°¡Ä¡ ÇÕ»ê)
-        // ¿¹: (10 + 5) * (1.0 + 0.1 + 0.1) = 15 * 1.2 = 18
+        // (ê¸°ë³¸ê°’ + ê³ ì • ì¶”ê°€ì¹˜) * (100% + í¼ì„¼íŠ¸ ì¶”ê°€ì¹˜ í•©ì‚°)
+        // ì˜ˆ: (10 + 5) * (1.0 + 0.1 + 0.1) = 15 * 1.2 = 18
         float FinalValue = (BaseValue + Additive) * (1.0f + Multiplier);
-        return FMath::Max(0.0f, FinalValue); // ½ºÅÈÀÌ À½¼ö°¡ µÇ´Â °ÍÀ» ¹æÁö (±âÈ¹¿¡ µû¶ó »ı·« °¡´É)
+        return FMath::Max(0.0f, FinalValue); // ìŠ¤íƒ¯ì´ ìŒìˆ˜ê°€ ë˜ëŠ” ê²ƒì„ ë°©ì§€ (ê¸°íšì— ë”°ë¼ ìƒëµ ê°€ëŠ¥)
 	}
 
 	void ResetModifiers()
@@ -122,22 +122,22 @@ public:
 };
 
 /**
- * ÀüÅõ ½º³À¼¦ (½ºÅ³ ¹ßµ¿ ½ÃÁ¡¿¡ Ä¸Ã³ÇÒ µ¥ÀÌÅÍ)
- * Åõ»çÃ¼´Â ÀÌ µ¥ÀÌÅÍ¸¸ µé°í ³¯¾Æ°©´Ï´Ù. (ÃÖÀûÈ­ ÇÙ½É)
+ * ì „íˆ¬ ìŠ¤ëƒ…ìƒ· (ìŠ¤í‚¬ ë°œë™ ì‹œì ì— ìº¡ì²˜í•  ë°ì´í„°)
+ * íˆ¬ì‚¬ì²´ëŠ” ì´ ë°ì´í„°ë§Œ ë“¤ê³  ë‚ ì•„ê°‘ë‹ˆë‹¤. (ìµœì í™” í•µì‹¬)
  */
 USTRUCT(BlueprintType)
 struct FCombatSnapshot
 {
 	GENERATED_BODY()
 
-    float FinalDamageMultiplier = 1.0f; // ±âº» ¹èÀ²Àº 1.0
-    float CritChance = 0.0f;            // Ä¡¸íÅ¸ È®·ü ±âº» 0
-    float CritDamageMultiplier = 2.0f;  // Ä¡¸íÅ¸ ÇÇÇØ·®
-    float CooldownReduction = 0.0f;     // Äğ°¨ ±âº» 0
-    float EffectSizeMultiplier = 1.0f;  // ¹üÀ§ ±âº» 100%
-    float DurationMultiplier = 1.0f;    // Áö¼Ó½Ã°£ ±âº» 100%
-    int32 BonusAmount = 0;              // Ãß°¡ Åõ»çÃ¼ ±âº» 0°³
-    float ProjectileSpeedMultiplier = 1.0f; // ¼Óµµ ±âº» 100%
+    float FinalDamageMultiplier = 1.0f; // ê¸°ë³¸ ë°°ìœ¨ì€ 1.0
+    float CritChance = 0.0f;            // ì¹˜ëª…íƒ€ í™•ë¥  ê¸°ë³¸ 0
+    float CritDamageMultiplier = 2.0f;  // ì¹˜ëª…íƒ€ í”¼í•´ëŸ‰
+    float CooldownReduction = 0.0f;     // ì¿¨ê° ê¸°ë³¸ 0
+    float EffectSizeMultiplier = 1.0f;  // ë²”ìœ„ ê¸°ë³¸ 100%
+    float DurationMultiplier = 1.0f;    // ì§€ì†ì‹œê°„ ê¸°ë³¸ 100%
+    int32 BonusAmount = 0;              // ì¶”ê°€ íˆ¬ì‚¬ì²´ ê¸°ë³¸ 0ê°œ
+    float ProjectileSpeedMultiplier = 1.0f; // ì†ë„ ê¸°ë³¸ 100%
     float LifeStealChance = 0.0f;
     float KnockbackMultiplier = 1.0f;
 

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEStatusEffect_DelayedExplosion.h"
@@ -17,13 +17,13 @@ void UDEStatusEffect_DelayedExplosion::ExecuteAction(AActor* Target, FActiveStat
 
     UNiagaraComponent* SpawnedComp = nullptr;
 
-    // 1. ÆÄÆ¼Å¬ Æã!
+    // 1. íŒŒí‹°í´ í‘!
     if (ExplosionParticle)
         SpawnedComp=UNiagaraFunctionLibrary::SpawnSystemAtLocation(World, ExplosionParticle, ExplosionCenter);
     
     
 
-    // 2. ±¤¿ª µ¥¹ÌÁö Àü¼Û¿ë ÅÃ¹è »óÀÚ(Request) Á¶¸³
+    // 2. ê´‘ì—­ ë°ë¯¸ì§€ ì „ì†¡ìš© íƒë°° ìƒì(Request) ì¡°ë¦½
     FDEDamageRequest Req;
     Req.Instigator = EffectData.Instigator.Get();
     Req.DamageCauser = EffectData.Instigator.Get();
@@ -38,10 +38,10 @@ void UDEStatusEffect_DelayedExplosion::ExecuteAction(AActor* Target, FActiveStat
         SpawnedComp->SetVariableFloat("SkillRadius", FinalRadius);
     }
 
-    // 3. ¿¹¿Ü ´ë»ó (ÇÃ·¹ÀÌ¾î) ÁöÁ¤
+    // 3. ì˜ˆì™¸ ëŒ€ìƒ (í”Œë ˆì´ì–´) ì§€ì •
     TArray<AActor*> Ignored;
     if (Req.Instigator) Ignored.Add(Req.Instigator);
 
-    // ¡Ú 4. ¶óÀÌºê·¯¸® ÇÔ¼ö ´Ü ÇÑ ÁÙ È£Ãâ·Î ³¡! ¡Ú
+    // â˜… 4. ë¼ì´ë¸ŒëŸ¬ë¦¬ í•¨ìˆ˜ ë‹¨ í•œ ì¤„ í˜¸ì¶œë¡œ ë! â˜…
     UDEGameplayLibrary::ApplyAoEDamage(World, ExplosionCenter, FinalRadius, Req, Ignored);
 }

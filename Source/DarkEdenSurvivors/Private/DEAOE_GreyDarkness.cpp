@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEAOE_GreyDarkness.h"
@@ -14,7 +14,7 @@ ADEAOE_GreyDarkness::ADEAOE_GreyDarkness()
 		NiagaraComponent->SetAsset(NiagaraRef.Object);
 
 	}
-	// Darkness´Â ±âº»ÀûÀ¸·Î ¹«ÇÑ Áö¼Ó Aura
+	// DarknessëŠ” ê¸°ë³¸ì ìœ¼ë¡œ ë¬´í•œ ì§€ì† Aura
 	bInfiniteDuration = true;
 }
 
@@ -22,7 +22,7 @@ void ADEAOE_GreyDarkness::OnHitTarget(AActor* Target)
 {
 	Super::OnHitTarget(Target);
 
-	// 2. °¥¸¯ Àü¿ë È¿°ú
+	// 2. ê°ˆë¦­ ì „ìš© íš¨ê³¼
 	ApplyDarknessEffects(Target);
 }
 
@@ -32,19 +32,19 @@ void ADEAOE_GreyDarkness::ApplyDarknessEffects(AActor* Target)
 	//ADEMonsterBase* Monster = Cast<ADEMonsterBase>(Target);
 	//if (!Monster) return;
 
-	///* ===================== Knockback ´©Àû ===================== */
+	///* ===================== Knockback ëˆ„ì  ===================== */
 
 	//float& CurrentKB = AccumulatedKnockback.FindOrAdd(Target);
 	//CurrentKB = FMath::Min(CurrentKB + KnockbackPerHit, MaxAdditionalKnockback);
 
 	//Monster->AddKnockbackBonus(CurrentKB);
 
-	///* ===================== Freeze ÀúÇ× °¨¼Ò ===================== */
+	///* ===================== Freeze ì €í•­ ê°ì†Œ ===================== */
 
 	//float& FreezeResist = CurrentFreezeResist.FindOrAdd(Target);
 	//if (FreezeResist <= 0.f)
 	//{
-	//	// ÃÊ±â°ª ¼³Á¤ (¸ó½ºÅÍ ±âº» ÀúÇ×)
+	//	// ì´ˆê¸°ê°’ ì„¤ì • (ëª¬ìŠ¤í„° ê¸°ë³¸ ì €í•­)
 	//	FreezeResist = Monster->GetFreezeResistance();
 	//}
 

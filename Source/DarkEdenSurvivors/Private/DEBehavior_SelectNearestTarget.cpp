@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEBehavior_SelectNearestTarget.h"
@@ -12,27 +12,27 @@ void UDEBehavior_SelectNearestTarget::Execute(FDESkillContext& Context)
 {
 	if (!Context.Instigator) return;
 
-	// 1. ±âÁ¸ Å¸°Ù ºñ¿ì±â (»õ·Î Ã£À» °Å´Ï±î)
+	// 1. ê¸°ì¡´ íƒ€ê²Ÿ ë¹„ìš°ê¸° (ìƒˆë¡œ ì°¾ì„ ê±°ë‹ˆê¹Œ)
 	Context.Targets.Empty();
 
 	UWorld* World = Context.Instigator->GetWorld();
 	if (!World) return;
 
-	// 2. Å½»ö ¹üÀ§ °áÁ¤ (Context¿¡ 'Range'³ª 'Radius'°¡ ÀÖÀ¸¸é ¿ì¼± »ç¿ë)
+	// 2. íƒìƒ‰ ë²”ìœ„ ê²°ì • (Contextì— 'Range'ë‚˜ 'Radius'ê°€ ìˆìœ¼ë©´ ìš°ì„  ì‚¬ìš©)
 	float Radius = Context.GetValue(TEXT("Radius"), DefaultSearchRadius);
 	if (Radius <= 0.f) Radius = DefaultSearchRadius;
 
 	FVector MyLoc = Context.Instigator->GetActorLocation();
 
-	// 3. ¹üÀ§ ³» ¿À¹ö·¦ °Ë»ç (±¸Ã¼)
+	// 3. ë²”ìœ„ ë‚´ ì˜¤ë²„ë© ê²€ì‚¬ (êµ¬ì²´)
 	TArray<FOverlapResult> Overlaps;
 	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActor(Context.Instigator); // ³ª ÀÚ½Å Á¦¿Ü
+	QueryParams.AddIgnoredActor(Context.Instigator); // ë‚˜ ìì‹  ì œì™¸
 	FCollisionObjectQueryParams ObjectParams;
 	ObjectParams.AddObjectTypesToQuery(ECC_GameTraceChannel5);
 
-	// Enemy Ã¤³ÎÀÌ³ª Pawn Ã¤³Î·Î °Ë»ç (ÇÁ·ÎÁ§Æ® ¼³Á¤¿¡ µû¶ó ¼öÁ¤ ÇÊ¿ä)
-	// ¿©±â¼­´Â ECC_PawnÀ¸·Î °Ë»çÇÏ°í ÅÂ±×¸¦ È®ÀÎÇÏ´Â ¹ü¿ë ¹æ½ÄÀ» ¾¸
+	// Enemy ì±„ë„ì´ë‚˜ Pawn ì±„ë„ë¡œ ê²€ì‚¬ (í”„ë¡œì íŠ¸ ì„¤ì •ì— ë”°ë¼ ìˆ˜ì • í•„ìš”)
+	// ì—¬ê¸°ì„œëŠ” ECC_Pawnìœ¼ë¡œ ê²€ì‚¬í•˜ê³  íƒœê·¸ë¥¼ í™•ì¸í•˜ëŠ” ë²”ìš© ë°©ì‹ì„ ì”€
 	bool bHit = World->OverlapMultiByObjectType(
 		Overlaps,
 		MyLoc,
@@ -45,7 +45,7 @@ void UDEBehavior_SelectNearestTarget::Execute(FDESkillContext& Context)
 	AActor* NearestActor = nullptr;
 	float MinDistSq = FLT_MAX;
 
-	// 4. °¡Àå °¡±î¿î ³ğ Ã£±â
+	// 4. ê°€ì¥ ê°€ê¹Œìš´ ë†ˆ ì°¾ê¸°
 	if (Overlaps.Num()>0)
 	{
 		for (const FOverlapResult& Res : Overlaps)
@@ -62,7 +62,7 @@ void UDEBehavior_SelectNearestTarget::Execute(FDESkillContext& Context)
 		}
 	}
 
-	// 5. Ã£¾ÒÀ¸¸é Context¿¡ ÀúÀå
+	// 5. ì°¾ì•˜ìœ¼ë©´ Contextì— ì €ì¥
 	if (NearestActor)
 	{
 		Context.Targets.Add(NearestActor);

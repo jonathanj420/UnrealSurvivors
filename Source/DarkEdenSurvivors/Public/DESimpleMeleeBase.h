@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -29,11 +29,11 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     class USphereComponent* CollisionComponent;
 
-    // ½ÇÁ¦ Niagara ÄÄÆ÷³ÍÆ®
+    // ì‹¤ì œ Niagara ì»´í¬ë„ŒíŠ¸
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Effects")
     UNiagaraComponent* NiagaraEffectComponent;
 
-    // ³ªÀÌ¾Æ°¡¶ó ½Ã½ºÅÛ ¿¡¼Â
+    // ë‚˜ì´ì•„ê°€ë¼ ì‹œìŠ¤í…œ ì—ì…‹
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effects")
     UNiagaraSystem* NiagaraSystem;
 
@@ -61,18 +61,18 @@ protected:
     bool bIsCrit;
 
 
-    // ½ºÅ³ ½ºÆåÀ¸·Î ÃÊ±âÈ­
+    // ìŠ¤í‚¬ ìŠ¤í™ìœ¼ë¡œ ì´ˆê¸°í™”
 protected:
 
     void ResetState();
 
-    /** Ç®·Î ¹İÈ¯ */
+    /** í’€ë¡œ ë°˜í™˜ */
     UFUNCTION()
     void OnNiagaraFinished(UNiagaraComponent* PSystem);
     void ReturnToPool();
 
 public:
-    // ******** Sweep °ø°İ ********
+    // ******** Sweep ê³µê²© ********
     UFUNCTION()
     virtual void PerformSweepAttack();
 

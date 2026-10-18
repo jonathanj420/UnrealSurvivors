@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -32,17 +32,17 @@ public:
 
 
 private:
-    // ¡Ú ÇÙ½É: ID¸¸ µé°í ÀÖÀ½
+    // â˜… í•µì‹¬: IDë§Œ ë“¤ê³  ìˆìŒ
     int32 SkillID = INDEX_NONE;
 
-    // UI Ç¥½Ã¿ë Ä³½Ã
+    // UI í‘œì‹œìš© ìºì‹œ
     FText SkillName;
 
     FText SkillDesc;
     UPROPERTY()
     UTexture2D* SkillIcon = nullptr;
 
-    // UI À§Á¬¿¡ ¹ÙÀÎµùÇÒ º¯¼öµé Ãß°¡
+    // UI ìœ„ì ¯ì— ë°”ì¸ë”©í•  ë³€ìˆ˜ë“¤ ì¶”ê°€
     FText ChoiceDescription;
 
     int32 TargetLevel;
@@ -55,8 +55,8 @@ public:
 
     UPROPERTY()
     TArray<int32> ConsumedSkillIDs;
-    // ±âÁ¸: int32 TargetBaseSkillID; 
-    // º¯°æ: ¿¢Á¶µğ¾ÆÀÇ Àç·á°¡ µÈ ½ºÅ³µéÀÇ ID ¹è¿­!
+    // ê¸°ì¡´: int32 TargetBaseSkillID; 
+    // ë³€ê²½: ì—‘ì¡°ë””ì•„ì˜ ì¬ë£Œê°€ ëœ ìŠ¤í‚¬ë“¤ì˜ ID ë°°ì—´!
     //UPROPERTY(BlueprintReadOnly, Category = "Evolution")
    
 	

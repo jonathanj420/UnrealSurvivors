@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -19,21 +19,21 @@ public:
     UPROPERTY(EditDefaultsOnly, Category = "Monster")
     int32 MonsterID = 0;
 
-    // ³»ºÎ ½Äº°¿ë ÀÌ¸§ (µğ¹ö±× Ç¥±â¿ë)
+    // ë‚´ë¶€ ì‹ë³„ìš© ì´ë¦„ (ë””ë²„ê·¸ í‘œê¸°ìš©)
     UPROPERTY(EditDefaultsOnly, Category = "Monster")
     FName InternalName;
 
-    // UI Ç¥±â¿ë ÀÌ¸§
+    // UI í‘œê¸°ìš© ì´ë¦„
     UPROPERTY(EditDefaultsOnly, Category = "Monster")
     FText DisplayName;
-    // ¿ÜÇü (SkeletalMesh ¶Ç´Â StaticMesh Áß ÇÏ³ª ¼±ÅÃ)
+    // ì™¸í˜• (SkeletalMesh ë˜ëŠ” StaticMesh ì¤‘ í•˜ë‚˜ ì„ íƒ)
     UPROPERTY(EditAnywhere, Category = "Appearance")
     USkeletalMesh* Mesh = nullptr;
 
     UPROPERTY(EditAnywhere, Category = "Appearance")
     UAnimationAsset* WalkAnimation = nullptr;
 
-    // ±âº» ½ºÅÈ
+    // ê¸°ë³¸ ìŠ¤íƒ¯
     UPROPERTY(EditAnywhere, Category = "Stats")
     float MaxHP = 10.0f;
 

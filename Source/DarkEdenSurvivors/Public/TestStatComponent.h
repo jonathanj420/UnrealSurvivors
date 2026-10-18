@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -24,7 +24,7 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stats")
     float CurrentHealth;
 
-    // ¸ó½ºÅÍ Á¾·ùº° ÀÌµ¿ ¼Óµµ ¼³Á¤ °ª
+    // ëª¬ìŠ¤í„° ì¢…ë¥˜ë³„ ì´ë™ ì†ë„ ì„¤ì • ê°’
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
     float MoveSpeed = 300.0f;
 

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEBloodyNail.h"
@@ -20,9 +20,9 @@ ADEBloodyNail::ADEBloodyNail()
 
 	NiagaraEffectComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraEffect"));
 	NiagaraEffectComponent->SetupAttachment(RootComponent);
-	NiagaraEffectComponent->bAutoActivate = false; // ±âº» ºñÈ°¼ºÈ­
+	NiagaraEffectComponent->bAutoActivate = false; // ê¸°ë³¸ ë¹„í™œì„±í™”
 
-	// ±âº» °ª
+	// ê¸°ë³¸ ê°’
 	Damage = 50.f;
 	KnockbackForce = 500.f;
 	SweepRadius = 200.f;
@@ -50,17 +50,17 @@ void ADEBloodyNail::DoFanShapeAttack(float inDamage, float Range, float AngleDeg
     float HalfAngle = 180 * 0.5f; // degrees
     float Radius = 200.0f;
 
-    // ºÎÃ¤²Ã µğ¹ö±× ±×¸®±â
-    const int32 NumLines = 16; // ºÎÃ¤²Ã ¼± °³¼ö
+    // ë¶€ì±„ê¼´ ë””ë²„ê·¸ ê·¸ë¦¬ê¸°
+    const int32 NumLines = 16; // ë¶€ì±„ê¼´ ì„  ê°œìˆ˜
     for (int32 i = 0; i <= NumLines; ++i)
     {
-        float Alpha = -HalfAngle + (180.0f * i / NumLines); // -45 ~ 45 °°Àº ¹üÀ§
+        float Alpha = -HalfAngle + (180.0f * i / NumLines); // -45 ~ 45 ê°™ì€ ë²”ìœ„
         FRotator Rot(0.f, Alpha, 0.f);
         FVector Dir = Rot.RotateVector(ForwardDir);
         DrawDebugLine(GetWorld(), SweepOrigin, SweepOrigin + Dir * Radius, FColor::Red, false, 1.f, 0, 2.f);
     }
 
-    // ¸ó½ºÅÍ ¹üÀ§ °Ë»ç
+    // ëª¬ìŠ¤í„° ë²”ìœ„ ê²€ì‚¬
     for (ADEMonsterBase* Mob : MonsterManager->ActiveMonsters)
     {
         if (!Mob) continue;
@@ -70,23 +70,23 @@ void ADEBloodyNail::DoFanShapeAttack(float inDamage, float Range, float AngleDeg
 
         if (Dist > Radius) continue;
 
-        FVector ToMobDir = ToMob / Dist; // Á¤±ÔÈ­
+        FVector ToMobDir = ToMob / Dist; // ì •ê·œí™”
         float AngleDeg = FMath::RadiansToDegrees(FMath::Acos(FVector::DotProduct(ForwardDir, ToMobDir)));
 
         if (AngleDeg <= HalfAngle)
         {
-            // ¹üÀ§ ¾È¿¡ ÀÖ´Â ¸ó½ºÅÍ
+            // ë²”ìœ„ ì•ˆì— ìˆëŠ” ëª¬ìŠ¤í„°
             UGameplayStatics::ApplyDamage(Mob, Damage, nullptr, this, nullptr);
 
-            // ³Ë¹é
+            // ë„‰ë°±
             Mob->ApplyKnockback(ToMobDir, KnockbackForce);
 
-            // È÷Æ® µğ¹ö±×
+            // íˆíŠ¸ ë””ë²„ê·¸
             DrawDebugSphere(GetWorld(), Mob->GetActorLocation(), 30.f, 12, FColor::Green, false, 1.f);
         }
     }
 
-    // ÀÌÆåÆ®
+    // ì´í™íŠ¸
     if (NiagaraSystem)
     {
         float ScaleFactor = Radius / BaseRadius;

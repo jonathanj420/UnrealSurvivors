@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DESkill_TalonOfCrow.h"
@@ -14,7 +14,7 @@
 
 UDESkill_TalonOfCrow::UDESkill_TalonOfCrow()
 {
-    // 1. »ı¼ºÀÚ¿¡¼­ ¿¡¼Â °æ·Î¸¦ ÇÏµåÄÚµùÇØ¼­ Ã£¾Æ¿È (¿ìÅ¬¸¯ -> ·¹ÆÛ·±½º º¹»ç)
+    // 1. ìƒì„±ìì—ì„œ ì—ì…‹ ê²½ë¡œë¥¼ í•˜ë“œì½”ë”©í•´ì„œ ì°¾ì•„ì˜´ (ìš°í´ë¦­ -> ë ˆí¼ëŸ°ìŠ¤ ë³µì‚¬)
     static ConstructorHelpers::FObjectFinder<UNiagaraSystem> FXAsset(TEXT("/Game/DarkEden/Data/Niagara/NS_TalonOfCrow.NS_TalonOfCrow"));
     if (FXAsset.Succeeded())
     {
@@ -36,18 +36,18 @@ void UDESkill_TalonOfCrow::InitBehaviors()
 
     UDEBehavior_PlayEffect* PlayFX = NewObject<UDEBehavior_PlayEffect>(this);
     PlayFX->TargetType = EEffectTargetType::Instigator;
-    PlayFX->NiagaraEffect = NailHitEffect; // ¡Ú ¿©±â¿¡ ½ï!
-    PlayFX->SoundEffect = NailHitSound;    // ¡Ú ¿©±â¿¡ ½ï!
+    PlayFX->NiagaraEffect = NailHitEffect; // â˜… ì—¬ê¸°ì— ì™!
+    PlayFX->SoundEffect = NailHitSound;    // â˜… ì—¬ê¸°ì— ì™!
     PlayFX->RotationType = EEffectRotation::TowardTarget;
     Behaviors.Add(PlayFX);
 
     UDEBehavior_CullByCone* CullCone = NewObject<UDEBehavior_CullByCone>(this);
-    //CullCone->Radius = 150.0f;       // ¼ÕÅé »ç°Å¸®
-    //CullCone->ConeAngle = 120.0f;    // ³Ğ°Ô ÇÒÄû´Â ºÎÃ¤²Ã °¢µµ
-    ////CullCone->bShowDebug = true;     // ¡Ú ¿¡µğÅÍ¿¡¼­ »¡°£»ö ÇÇÀÚ Á¶°¢ º¸ÀÌ°Ô ÄÑµÒ!
+    //CullCone->Radius = 150.0f;       // ì†í†± ì‚¬ê±°ë¦¬
+    //CullCone->ConeAngle = 120.0f;    // ë„“ê²Œ í• í€´ëŠ” ë¶€ì±„ê¼´ ê°ë„
+    ////CullCone->bShowDebug = true;     // â˜… ì—ë””í„°ì—ì„œ ë¹¨ê°„ìƒ‰ í”¼ì ì¡°ê° ë³´ì´ê²Œ ì¼œë‘ !
     Behaviors.Add(CullCone);
 
-    // 3. Áï¹ß µ¥¹ÌÁö Àû¿ë
+    // 3. ì¦‰ë°œ ë°ë¯¸ì§€ ì ìš©
     UDEBehavior_InstantDamage* InstantDmg = NewObject<UDEBehavior_InstantDamage>(this);
     Behaviors.Add(InstantDmg);
 
@@ -57,7 +57,7 @@ void UDESkill_TalonOfCrow::InitBehaviors()
     UDECombatEffect_CooldownReduction* CooldownResetEffect = NewObject<UDECombatEffect_CooldownReduction>(this);
     CooldownResetEffect->TriggerCondition = ECombatEventTrigger::OnKill;
 
-    // ¡Ú ÇÙ½É: ÇÏµåÄÚµù 10 ´ë½Å, ºí·çÇÁ¸°Æ®¿¡¼­ ¼¼ÆÃÇÑ ³» ID¸¦ µ¿ÀûÀ¸·Î °¡Á®¿È!
+    // â˜… í•µì‹¬: í•˜ë“œì½”ë”© 10 ëŒ€ì‹ , ë¸”ë£¨í”„ë¦°íŠ¸ì—ì„œ ì„¸íŒ…í•œ ë‚´ IDë¥¼ ë™ì ìœ¼ë¡œ ê°€ì ¸ì˜´!
     CooldownResetEffect->SpecificSkillID = this->SkillID;
     CooldownResetEffect->Amount = 0.5f;
     CooldownResetEffect->InternalCooldown = 0.1f;
@@ -70,36 +70,36 @@ void UDESkill_TalonOfCrow::InitBehaviors()
 
 void UDESkill_TalonOfCrow::ExecuteWithContext(FDESkillContext& Context)
 {
-    // Amount(°ø°İ È½¼ö)¸¸Å­ ÇÒÄû±â¸¦ ¹İº¹ÇÕ´Ï´Ù.
+    // Amount(ê³µê²© íšŸìˆ˜)ë§Œí¼ í• í€´ê¸°ë¥¼ ë°˜ë³µí•©ë‹ˆë‹¤.
     for (int32 i = 0; i < Context.Amount; i++)
     {
-        AActor* AnchorTarget = nullptr; // ¹æÇâÀÇ ±âÁØÁ¡ÀÌ µÉ °ú³á
+        AActor* AnchorTarget = nullptr; // ë°©í–¥ì˜ ê¸°ì¤€ì ì´ ë  ê³¼ë…
 
         if (i == 0)
         {
-            // Ã¹ Å¸: °¡Àå °¡±î¿î Àû
+            // ì²« íƒ€: ê°€ì¥ ê°€ê¹Œìš´ ì 
             AnchorTarget = UDEGameplayLibrary::GetNearestTarget(SkillOwner, -1.0f);
         }
         else
         {
-            // ÈÄ¼Ó Å¸: ·£´ıÇÑ Àû 1¸í
+            // í›„ì† íƒ€: ëœë¤í•œ ì  1ëª…
             TArray<AActor*> RandomEnemies = UDEGameplayLibrary::GetRandomTargets(SkillOwner, -1.0f, 1);
 
-            // ¡Ú [¾ÈÀüÀåÄ¡] ¸Ê¿¡ ÀûÀÌ 1¸í»ÓÀÌ¶ó ¹è¿­ÀÌ ºñ¾îÀÖÀ» ¼ö ÀÖÀ¸¹Ç·Î Æ¨±è(Crash) ¹æÁö
+            // â˜… [ì•ˆì „ì¥ì¹˜] ë§µì— ì ì´ 1ëª…ë¿ì´ë¼ ë°°ì—´ì´ ë¹„ì–´ìˆì„ ìˆ˜ ìˆìœ¼ë¯€ë¡œ íŠ•ê¹€(Crash) ë°©ì§€
             if (RandomEnemies.Num() > 0)
             {
                 AnchorTarget = RandomEnemies[0];
             }
         }
 
-        // ¸Ê¿¡ ÀûÀÌ ÇÏ³ªµµ ¾ø¾î¼­ °ú³áÀ» ¸ø Ã£¾Ò´Ù¸é ÀÌ ¹ø Å¸°İÀº ½ºÅµ
+        // ë§µì— ì ì´ í•˜ë‚˜ë„ ì—†ì–´ì„œ ê³¼ë…ì„ ëª» ì°¾ì•˜ë‹¤ë©´ ì´ ë²ˆ íƒ€ê²©ì€ ìŠ¤í‚µ
         if (!AnchorTarget) continue;
 
-        // ContextÀÇ TargetÀ» ÀÌ¹ø ÇÒÄû±âÀÇ '¹æÇâ ±âÁØÁ¡'À¸·Î ¼¼ÆÃ
+        // Contextì˜ Targetì„ ì´ë²ˆ í• í€´ê¸°ì˜ 'ë°©í–¥ ê¸°ì¤€ì 'ìœ¼ë¡œ ì„¸íŒ…
         Context.Targets.Reset();
         Context.Targets.Add(AnchorTarget);
 
-        // ºÎ¸ğ ÇÔ¼ö È£Ãâ (PlayFX -> ºÎÃ¤²Ã Å¸°ÙÆÃ -> µ¥¹ÌÁö ÆÄÀÌÇÁ¶óÀÎ ½ÇÇà)
+        // ë¶€ëª¨ í•¨ìˆ˜ í˜¸ì¶œ (PlayFX -> ë¶€ì±„ê¼´ íƒ€ê²ŸíŒ… -> ë°ë¯¸ì§€ íŒŒì´í”„ë¼ì¸ ì‹¤í–‰)
         Super::ExecuteWithContext(Context);
     }
 

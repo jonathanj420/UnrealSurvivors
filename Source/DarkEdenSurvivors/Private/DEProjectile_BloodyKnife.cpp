@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEProjectile_BloodyKnife.h"
@@ -12,25 +12,25 @@
 ADEProjectile_BloodyKnife::ADEProjectile_BloodyKnife()
 {
 
-    // 1. [Àü¿ë ¸Ş½Ã ·Îµå]
-    // ºÎ¸ğ°¡ ¸¸µç Mesh ÄÄÆ÷³ÍÆ®¸¦ °¡Á®´Ù ¾¹´Ï´Ù.
+    // 1. [ì „ìš© ë©”ì‹œ ë¡œë“œ]
+    // ë¶€ëª¨ê°€ ë§Œë“  Mesh ì»´í¬ë„ŒíŠ¸ë¥¼ ê°€ì ¸ë‹¤ ì”ë‹ˆë‹¤.
     static ConstructorHelpers::FObjectFinder<UStaticMesh> SM_BKNIFE(TEXT("/Game/DarkEden/Data/Skill/BloodyKnife/SM_BloodyKnife.SM_BloodyKnife"));
     if (SM_BKNIFE.Succeeded())
     {
         Mesh->SetStaticMesh(SM_BKNIFE.Object);
-        // ´Ü°Ë Àü¿ë È¸Àü°ª (´¯ÇôÁ® ÀÖÀ¸¸é ¼¼¿ì±â µî)
+        // ë‹¨ê²€ ì „ìš© íšŒì „ê°’ (ëˆ•í˜€ì ¸ ìˆìœ¼ë©´ ì„¸ìš°ê¸° ë“±)
         Mesh->SetRelativeRotation(FRotator(0.0f, 90.0f, 0.0f));
     }
 
-    // 2. [Àü¿ë ½ºÆå ¼³Á¤]
-    // ºÎ¸ğ°¡ ¸¸µç ÄÄÆ÷³ÍÆ®ÀÇ ¼öÄ¡¸¸ Á¶Á¤ÇÕ´Ï´Ù.
+    // 2. [ì „ìš© ìŠ¤í™ ì„¤ì •]
+    // ë¶€ëª¨ê°€ ë§Œë“  ì»´í¬ë„ŒíŠ¸ì˜ ìˆ˜ì¹˜ë§Œ ì¡°ì •í•©ë‹ˆë‹¤.
     if (MovementComponent)
     {
         MovementComponent->InitialSpeed = 1200.0f;
         MovementComponent->MaxSpeed = 1200.0f;
     }
 
-    CollisionComponent->InitSphereRadius(30.0f); // ±âº»°ª
+    CollisionComponent->InitSphereRadius(30.0f); // ê¸°ë³¸ê°’
   
     /*UDECombatEffect_Execution* Execution =
         CreateDefaultSubobject<UDECombatEffect_Execution>(TEXT("ExecutionEffect"));
@@ -38,7 +38,7 @@ ADEProjectile_BloodyKnife::ADEProjectile_BloodyKnife()
     Execution->TriggerCondition = ECombatEventTrigger::OnKill;
     LocalEffects.Add(Execution);*/
 
-    // *ÁÖÀÇ: µ¨¸®°ÔÀÌÆ® ¿¬°á(AddDynamic)Àº ºÎ¸ğ°¡ ÇßÀ¸´Ï ¶Ç ÇÏ¸é ¾È µË´Ï´Ù!
+    // *ì£¼ì˜: ë¸ë¦¬ê²Œì´íŠ¸ ì—°ê²°(AddDynamic)ì€ ë¶€ëª¨ê°€ í–ˆìœ¼ë‹ˆ ë˜ í•˜ë©´ ì•ˆ ë©ë‹ˆë‹¤!
 
     
 }

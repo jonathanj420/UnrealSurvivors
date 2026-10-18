@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DECharacterSlotWidget.h"
@@ -10,7 +10,7 @@ void UDECharacterSlotWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    // ¹öÆ°¿¡ Å¬¸¯ ÀÌº¥Æ® ¿¬°á
+    // ë²„íŠ¼ì— í´ë¦­ ì´ë²¤íŠ¸ ì—°ê²°
     if (Btn_Slot)
     {
         Btn_Slot->OnClicked.AddDynamic(this, &UDECharacterSlotWidget::OnButtonClicked);
@@ -19,16 +19,16 @@ void UDECharacterSlotWidget::NativeConstruct()
 
 void UDECharacterSlotWidget::InitSlot(const FDECharacterRow& InRowData)
 {
-    // ³» ID ÀúÀå
+    // ë‚´ ID ì €ì¥
     MyCharacterID = InRowData.CharacterID;
 
-    // 1. ÀÌ¸§ ÅØ½ºÆ® ¼¼ÆÃ
+    // 1. ì´ë¦„ í…ìŠ¤íŠ¸ ì„¸íŒ…
     if (Txt_Name)
     {
         Txt_Name->SetText(InRowData.CharacterName);
     }
 
-    // 2. ÃÊ»óÈ­ ÀÌ¹ÌÁö ¼¼ÆÃ
+    // 2. ì´ˆìƒí™” ì´ë¯¸ì§€ ì„¸íŒ…
     if (Img_Portrait && InRowData.Portrait)
     {
         Img_Portrait->SetBrushFromTexture(InRowData.Portrait);
@@ -37,8 +37,8 @@ void UDECharacterSlotWidget::InitSlot(const FDECharacterRow& InRowData)
 
 void UDECharacterSlotWidget::OnButtonClicked()
 {
-    // ¹öÆ°ÀÌ ´­¸®¸é, "³» ID(MyCharacterID)°¡ Å¬¸¯µÆ¾î¿ä!" ÇÏ°í ¾Ë¶÷(Delegate)À» ¹æ¼ÛÇÕ´Ï´Ù.
-    // (³ªÁß¿¡ ¸ŞÀÎ ¸Ş´º°¡ ÀÌ ¾Ë¶÷À» µè°í ÇÏ´Ü »ó¼¼ ¼³¸íÀ» ¹Ù²ãÁÙ °Ì´Ï´Ù.)
+    // ë²„íŠ¼ì´ ëˆŒë¦¬ë©´, "ë‚´ ID(MyCharacterID)ê°€ í´ë¦­ëì–´ìš”!" í•˜ê³  ì•ŒëŒ(Delegate)ì„ ë°©ì†¡í•©ë‹ˆë‹¤.
+    // (ë‚˜ì¤‘ì— ë©”ì¸ ë©”ë‰´ê°€ ì´ ì•ŒëŒì„ ë“£ê³  í•˜ë‹¨ ìƒì„¸ ì„¤ëª…ì„ ë°”ê¿”ì¤„ ê²ë‹ˆë‹¤.)
     if (OnSlotClicked.IsBound())
     {
         OnSlotClicked.Broadcast(MyCharacterID);

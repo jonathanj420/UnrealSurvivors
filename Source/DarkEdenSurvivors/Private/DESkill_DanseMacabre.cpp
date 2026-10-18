@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DESkill_DanseMacabre.h"
@@ -17,16 +17,16 @@ void UDESkill_DanseMacabre::InitBehaviors()
 	Super::InitBehaviors();
 
 	// --------------------------------------------------
-	// SpawnOrbit : ¼º¼­Çü Orbit ½ºÆù Àü´ã
+	// SpawnOrbit : ì„±ì„œí˜• Orbit ìŠ¤í° ì „ë‹´
 	// --------------------------------------------------
 	UDEBehavior_SpawnOrbit* SpawnOrbit =
 		NewObject<UDEBehavior_SpawnOrbit>(this);
 
 	if (SpawnOrbit)
 	{
-		// ¡Ú ÇÙ½É
-		// Orbit ½ºÅ³ÀÌ ¾î¶² AOE¸¦ ¾²´ÂÁö´Â
-		// SkillÀÌ ¾Æ´Ï¶ó Behavior°¡ ¾È´Ù
+		// â˜… í•µì‹¬
+		// Orbit ìŠ¤í‚¬ì´ ì–´ë–¤ AOEë¥¼ ì“°ëŠ”ì§€ëŠ”
+		// Skillì´ ì•„ë‹ˆë¼ Behaviorê°€ ì•ˆë‹¤
 		SpawnOrbit->OrbitAOEClass =
 			ADEAOE_Orbit_DanseMacabre::StaticClass();
 

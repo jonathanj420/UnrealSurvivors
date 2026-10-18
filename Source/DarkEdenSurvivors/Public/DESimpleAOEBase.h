@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -22,36 +22,36 @@ protected:
 
 public:
 
-    // [Ãß°¡] ÄÁÅØ½ºÆ® ±â¹İ ÃÊ±âÈ­ (ÇÁ·ÎÁ§Å¸ÀÏ°ú ÅëÀÏ¼º À¯Áö)
+    // [ì¶”ê°€] ì»¨í…ìŠ¤íŠ¸ ê¸°ë°˜ ì´ˆê¸°í™” (í”„ë¡œì íƒ€ì¼ê³¼ í†µì¼ì„± ìœ ì§€)
     virtual void InitializeFromContext(const FDESkillContext& Context);
-    // Ç®·Î ¹İÈ¯
+    // í’€ë¡œ ë°˜í™˜
     virtual void ResetState() override;
     virtual void ReturnToPool() override;
 
 protected:
-    // µé¾î¿ÀÀÚ¸¶ÀÚ Áï½Ã ¹İÀÀÇÏ±â À§ÇÑ ÀÌº¥Æ® (¹İÀÀ¼º ÇÙ½É)
+    // ë“¤ì–´ì˜¤ìë§ˆì ì¦‰ì‹œ ë°˜ì‘í•˜ê¸° ìœ„í•œ ì´ë²¤íŠ¸ (ë°˜ì‘ì„± í•µì‹¬)
     UFUNCTION()
     void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
         UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
         bool bFromSweep, const FHitResult& SweepResult);
 
-    // Å¸°İ °¡´É ¿©ºÎ È®ÀÎ (°³º° ÄğÅ¸ÀÓ Ã¼Å©)
+    // íƒ€ê²© ê°€ëŠ¥ ì—¬ë¶€ í™•ì¸ (ê°œë³„ ì¿¨íƒ€ì„ ì²´í¬)
     bool CanHitTarget(AActor* Target) const;
 
-    // ½ÇÁ¦ Å¸°İ Ã³¸® (°¡»óÇÔ¼ö: ÀÚ½Ä¿¡¼­ ¿À¹ö¶óÀÌµå °¡´É)
+    // ì‹¤ì œ íƒ€ê²© ì²˜ë¦¬ (ê°€ìƒí•¨ìˆ˜: ìì‹ì—ì„œ ì˜¤ë²„ë¼ì´ë“œ ê°€ëŠ¥)
     virtual void OnHitTarget(AActor* Target);
 
 
 protected:
 
-    float HitCooldown=0.5f; // °³º° ÄğÅ¸ÀÓ (Tick °£°İ)
+    float HitCooldown=0.5f; // ê°œë³„ ì¿¨íƒ€ì„ (Tick ê°„ê²©)
 
     bool bInfiniteDuration;
 
-    // °³º° Å¸°İ ÄğÅ¸ÀÓ ±â·Ï [Key: Àû, Value: ´ÙÀ½ Å¸°İ °¡´É ½Ã°£]
+    // ê°œë³„ íƒ€ê²© ì¿¨íƒ€ì„ ê¸°ë¡ [Key: ì , Value: ë‹¤ìŒ íƒ€ê²© ê°€ëŠ¥ ì‹œê°„]
     TMap<AActor*, double> HitCooldownMap;
-    // [Ãß°¡] Å¸°Ùº° ÇÇ°İ È½¼ö ±â·Ï (°üÅë·Â Á¦ÇÑ ±¸Çö¿ë)
-    // Key: ¸ÂÀº ³ğ, Value: ¸î ´ë ¸Â¾Ò´ÂÁö
+    // [ì¶”ê°€] íƒ€ê²Ÿë³„ í”¼ê²© íšŸìˆ˜ ê¸°ë¡ (ê´€í†µë ¥ ì œí•œ êµ¬í˜„ìš©)
+    // Key: ë§ì€ ë†ˆ, Value: ëª‡ ëŒ€ ë§ì•˜ëŠ”ì§€
     UPROPERTY()
     TMap<AActor*, int32> HitCountMap;
 };

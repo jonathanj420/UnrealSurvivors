@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEBehavior_InstantDamage.h"
@@ -12,25 +12,25 @@
 void UDEBehavior_InstantDamage::Execute(FDESkillContext& Context)
 {
 
-    // 1. ±âº» µ¥¹ÌÁö °è»ê
+    // 1. ê¸°ë³¸ ë°ë¯¸ì§€ ê³„ì‚°
     float BaseDamage = Context.Damage;
-    float FinalDamage = BaseDamage * DamageMultiplier; // ¹èÀ² Àû¿ë
+    float FinalDamage = BaseDamage * DamageMultiplier; // ë°°ìœ¨ ì ìš©
 
-    // 2. Å¸°Ù ¸ñ·Ï ¼øÈ¸
+    // 2. íƒ€ê²Ÿ ëª©ë¡ ìˆœíšŒ
     for (AActor* Target : Context.Targets)
     {
         if (!Target || Target->IsPendingKillPending()) continue;
 
-        // 3. Ã¼·Â ÄÄÆ÷³ÍÆ® Ã£±â (Ä³½Ì)
+        // 3. ì²´ë ¥ ì»´í¬ë„ŒíŠ¸ ì°¾ê¸° (ìºì‹±)
         UDEHealthComponent* TargetHealth = Target->FindComponentByClass<UDEHealthComponent>();
 
         if (TargetHealth)
         {
-            // 4. [AAA ½ºÅ¸ÀÏ] µ¥¹ÌÁö ¿äÃ»¼­(Request) ÀÛ¼º
+            // 4. [AAA ìŠ¤íƒ€ì¼] ë°ë¯¸ì§€ ìš”ì²­ì„œ(Request) ì‘ì„±
             FDEDamageRequest Req;
-            Req.Instigator = Context.Instigator;        // ½ÃÀüÇÑ »ç¶÷
-            Req.DamageCauser = Context.Instigator;      // °¡ÇØÀÚ
-            Req.SourceObject = Context.SourceSkill;     // ½ºÅ³ º»Ã¼
+            Req.Instigator = Context.Instigator;        // ì‹œì „í•œ ì‚¬ëŒ
+            Req.DamageCauser = Context.Instigator;      // ê°€í•´ì
+            Req.SourceObject = Context.SourceSkill;     // ìŠ¤í‚¬ ë³¸ì²´
             Req.Victim = Target;
             Req.BaseDamage = FinalDamage;
             Req.CritChance = Context.CritChance;
@@ -38,49 +38,49 @@ void UDEBehavior_InstantDamage::Execute(FDESkillContext& Context)
             Req.DamageTags = SkillDamageTags;
 
             // =========================================================
-            // ¡Ú 5. [·ÎÄÃ OnPreHit] Á¶ÀÛ Àü¿ë 'Ã¹ ¹øÂ°' ±ú²ıÇÑ ÅÃ¹è »óÀÚ
+            // â˜… 5. [ë¡œì»¬ OnPreHit] ì¡°ì‘ ì „ìš© 'ì²« ë²ˆì§¸' ê¹¨ë—í•œ íƒë°° ìƒì
             // =========================================================
             FCombatEventData PreHitData;
             PreHitData.Instigator = Context.Instigator;
             PreHitData.Target = Target;
-            PreHitData.DamageMultiplier = 1.0f; // ¿À¿°µÇÁö ¾ÊÀº ±âº» 1¹è¼ö
+            PreHitData.DamageMultiplier = 1.0f; // ì˜¤ì—¼ë˜ì§€ ì•Šì€ ê¸°ë³¸ 1ë°°ìˆ˜
             PreHitData.SourceContext = &Context;
 
             if (Context.SourceSkill)
             {
-                // ½ºÅ³ ÁÖ¸Ó´Ï(LocalEffects)¿¡ ÀÖ´Â OnPreHit ÀÌÆåÆ®µéÀ» ½ÇÇà
+                // ìŠ¤í‚¬ ì£¼ë¨¸ë‹ˆ(LocalEffects)ì— ìˆëŠ” OnPreHit ì´í™íŠ¸ë“¤ì„ ì‹¤í–‰
                 for (UDECombatEffect* Effect : Context.SourceSkill->LocalEffects)
                 {
                     if (Effect && Effect->TriggerCondition == ECombatEventTrigger::OnPreHit)
                     {
-                        // Á¶°Ç ¸¸Á· ½Ã PreHitData.DamageMultiplier¸¦ Á¶ÀÛÇÔ!
+                        // ì¡°ê±´ ë§Œì¡± ì‹œ PreHitData.DamageMultiplierë¥¼ ì¡°ì‘í•¨!
                         Effect->ExecuteEffect(PreHitData);
                     }
                 }
             }
 
-            // ·ÎÄÃ ÀÌÆåÆ®°¡ Á¶ÀÛÇÑ ¹è¼ö¸¦ ½ÇÁ¦ Ã»±¸¼­¿¡ Àû¿ë!
+            // ë¡œì»¬ ì´í™íŠ¸ê°€ ì¡°ì‘í•œ ë°°ìˆ˜ë¥¼ ì‹¤ì œ ì²­êµ¬ì„œì— ì ìš©!
             Req.BaseDamage *= PreHitData.DamageMultiplier;
 
             // =========================================================
-            // ¡Ú 6. ¶óÀÌºê·¯¸®¿¡ ´øÁö±â (±Û·Î¹ú OnPreHit °³ÀÔ ¹× ½ÇÁ¦ µ¥¹ÌÁö ¿¬»ê)
+            // â˜… 6. ë¼ì´ë¸ŒëŸ¬ë¦¬ì— ë˜ì§€ê¸° (ê¸€ë¡œë²Œ OnPreHit ê°œì… ë° ì‹¤ì œ ë°ë¯¸ì§€ ì—°ì‚°)
             // =========================================================
-            // ÀÌ ¾È¿¡¼­ ÇÃ·¹ÀÌ¾îÀÇ ÆĞ½Ãºê°¡ ¾Ë¾Æ¼­ ½Ï ´Ù ÅÍÁü
+            // ì´ ì•ˆì—ì„œ í”Œë ˆì´ì–´ì˜ íŒ¨ì‹œë¸Œê°€ ì•Œì•„ì„œ ì‹¹ ë‹¤ í„°ì§
            // UE_LOG(LogTemp, Error, TEXT("Try to Damage in InstantDamage Behavior"));
             FDEDamageResult Res = UDEGameplayLibrary::ApplyCombatDamage(Req);
             //UE_LOG(LogTemp, Error, TEXT("Applied Final Damage in InstantDamage Behavior"));
-            // ¹«Àû µîÀ¸·Î µ¥¹ÌÁö°¡ 0ÀÌ µé¾î°¬´Ù¸é ¾Æ·¡ ÀûÁß È¿°ú´Â ÄğÇÏ°Ô »ı·«
+            // ë¬´ì  ë“±ìœ¼ë¡œ ë°ë¯¸ì§€ê°€ 0ì´ ë“¤ì–´ê°”ë‹¤ë©´ ì•„ë˜ ì ì¤‘ íš¨ê³¼ëŠ” ì¿¨í•˜ê²Œ ìƒëµ
             if (Res.FinalDamage <= 0.0f) continue;
 
             // =========================================================
-            // ¡Ú 7. [·ÎÄÃ OnHit / OnKill] °á°ú º¸°í Àü¿ë 'µÎ ¹øÂ°' ±ú²ıÇÑ ÅÃ¹è »óÀÚ
+            // â˜… 7. [ë¡œì»¬ OnHit / OnKill] ê²°ê³¼ ë³´ê³  ì „ìš© 'ë‘ ë²ˆì§¸' ê¹¨ë—í•œ íƒë°° ìƒì
             // =========================================================
             FCombatEventData PostHitData;
             PostHitData.Instigator = Context.Instigator;
             PostHitData.Target = Target;
-            PostHitData.DamageAmount = Res.FinalDamage; // ½ÇÁ¦ µé¾î°£ Âğ µ¥¹ÌÁö ±â·Ï
+            PostHitData.DamageAmount = Res.FinalDamage; // ì‹¤ì œ ë“¤ì–´ê°„ ì° ë°ë¯¸ì§€ ê¸°ë¡
             PostHitData.SourceContext = &Context;
-            // PostHitData.DamageMultiplier´Â °Çµå¸®Áö ¾Ê¾ÒÀ¸´Ï ¾ÈÀüÇÑ 1.0 »óÅÂ!
+            // PostHitData.DamageMultiplierëŠ” ê±´ë“œë¦¬ì§€ ì•Šì•˜ìœ¼ë‹ˆ ì•ˆì „í•œ 1.0 ìƒíƒœ!
 
             if (Res.bIsDead)
             {
@@ -96,7 +96,7 @@ void UDEBehavior_InstantDamage::Execute(FDESkillContext& Context)
                 {
                     if (!Effect) continue;
 
-                    // ÀÌ ½ºÅ³ Àü¿ë ÃâÇ÷, Ã³Çü µîÀÇ ±â¹ÍÀÌ ¿©±â¼­ ¾ÈÀüÇÏ°Ô ÅÍÁü!
+                    // ì´ ìŠ¤í‚¬ ì „ìš© ì¶œí˜ˆ, ì²˜í˜• ë“±ì˜ ê¸°ë¯¹ì´ ì—¬ê¸°ì„œ ì•ˆì „í•˜ê²Œ í„°ì§!
                     if (Effect->TriggerCondition == ECombatEventTrigger::OnHit)
                     {
                         Effect->ExecuteEffect(PostHitData);
@@ -114,52 +114,52 @@ void UDEBehavior_InstantDamage::Execute(FDESkillContext& Context)
         }
         else
         {
-            // Ã¼·Â ÄÄÆ÷³ÍÆ®°¡ ¾ø´Â ÆÄ±« °¡´É ¿ÀºêÁ§Æ®(Ç×¾Æ¸®, ³ª¹« »óÀÚ µî)¶ó¸é ±âÁ¸ ¿£Áø ÇÔ¼ö·Î Ã³¸®
+            // ì²´ë ¥ ì»´í¬ë„ŒíŠ¸ê°€ ì—†ëŠ” íŒŒê´´ ê°€ëŠ¥ ì˜¤ë¸Œì íŠ¸(í•­ì•„ë¦¬, ë‚˜ë¬´ ìƒì ë“±)ë¼ë©´ ê¸°ì¡´ ì—”ì§„ í•¨ìˆ˜ë¡œ ì²˜ë¦¬
             UGameplayStatics::ApplyDamage(Target, FinalDamage, Context.Instigator->GetInstigatorController(), Context.Instigator, nullptr);
         }
     }
-    //// 1. ±âº» µ¥¹ÌÁö °è»ê
+    //// 1. ê¸°ë³¸ ë°ë¯¸ì§€ ê³„ì‚°
     //float BaseDamage = Context.Damage;
-    //float FinalDamage = BaseDamage * DamageMultiplier; // ¹èÀ² Àû¿ë
+    //float FinalDamage = BaseDamage * DamageMultiplier; // ë°°ìœ¨ ì ìš©
 
-    //// 2. Å¸°Ù ¸ñ·Ï ¼øÈ¸
+    //// 2. íƒ€ê²Ÿ ëª©ë¡ ìˆœíšŒ
     //for (AActor* Target : Context.Targets)
     //{
     //    if (!Target || Target->IsPendingKillPending()) continue;
 
-    //    // 3. Ã¼·Â ÄÄÆ÷³ÍÆ® Ã£±â (Ä³½Ì)
+    //    // 3. ì²´ë ¥ ì»´í¬ë„ŒíŠ¸ ì°¾ê¸° (ìºì‹±)
     //    UDEHealthComponent* TargetHealth = Target->FindComponentByClass<UDEHealthComponent>();
 
     //    if (TargetHealth)
     //    {
-    //        // 4. [AAA ½ºÅ¸ÀÏ] µ¥¹ÌÁö ¿äÃ»¼­(Request) ÀÛ¼º
+    //        // 4. [AAA ìŠ¤íƒ€ì¼] ë°ë¯¸ì§€ ìš”ì²­ì„œ(Request) ì‘ì„±
     //        FDEDamageRequest Req;
-    //        Req.Instigator = Context.Instigator;        // ½ÃÀüÇÑ »ç¶÷
-    //        Req.DamageCauser = Context.Instigator;      // ½ºÅ³ ÁÖÀÎ (È¤Àº Åõ»çÃ¼)
+    //        Req.Instigator = Context.Instigator;        // ì‹œì „í•œ ì‚¬ëŒ
+    //        Req.DamageCauser = Context.Instigator;      // ìŠ¤í‚¬ ì£¼ì¸ (í˜¹ì€ íˆ¬ì‚¬ì²´)
     //        Req.SourceObject = Context.ActiveSkill;     // skill itself
     //        Req.Victim = Target;
-    //        // Context¿¡ ÀÖ´Â Á¤º¸ È°¿ë (½ºÅ³¸¶´Ù Å©È®/Å©µ©ÀÌ ´Ù¸¦ ¼ö ÀÖÀ½)
+    //        // Contextì— ìˆëŠ” ì •ë³´ í™œìš© (ìŠ¤í‚¬ë§ˆë‹¤ í¬í™•/í¬ë€ì´ ë‹¤ë¥¼ ìˆ˜ ìˆìŒ)
     //        Req.BaseDamage = FinalDamage;
-    //        Req.CritChance = Context.CritChance;             // ½ºÅ³ ÄÁÅØ½ºÆ®¿¡ Å©¸®Æ¼ÄÃ È®·üÀÌ ÀÖ´Ù°í °¡Á¤
-    //        Req.CritDamageMultiplier = Context.CritDamageMultiplier; // ½ºÅ³ ÄÁÅØ½ºÆ®¿¡ Å©¸®Æ¼ÄÃ ¹èÀ²ÀÌ ÀÖ´Ù°í °¡Á¤
+    //        Req.CritChance = Context.CritChance;             // ìŠ¤í‚¬ ì»¨í…ìŠ¤íŠ¸ì— í¬ë¦¬í‹°ì»¬ í™•ë¥ ì´ ìˆë‹¤ê³  ê°€ì •
+    //        Req.CritDamageMultiplier = Context.CritDamageMultiplier; // ìŠ¤í‚¬ ì»¨í…ìŠ¤íŠ¸ì— í¬ë¦¬í‹°ì»¬ ë°°ìœ¨ì´ ìˆë‹¤ê³  ê°€ì •
 
-    //        // ¶óÀÌºê·¯¸®¿¡ ´øÁö±â (ÇÇÈí, ³Ë¹é, Å³ Ã³¸®°¡ ÇÑ ¹æ¿¡ ³¡³²)
+    //        // ë¼ì´ë¸ŒëŸ¬ë¦¬ì— ë˜ì§€ê¸° (í”¼í¡, ë„‰ë°±, í‚¬ ì²˜ë¦¬ê°€ í•œ ë°©ì— ëë‚¨)
     //        //UE_LOG(LogTemp, Log, TEXT("Try DEGameplayLibrary"));
     //        FDEDamageResult Res = UDEGameplayLibrary::ApplyCombatDamage(Req, Context.FinalSnapshot, FVector::ZeroVector, 0.0f);
     //    }
     //    else
     //    {
-    //        // Ã¼·Â ÄÄÆ÷³ÍÆ®°¡ ¾ø´Â ÆÄ±« °¡´É ¿ÀºêÁ§Æ®¶ó¸é?
-    //        // ±âÁ¸ ApplyDamage¸¦ ¾ÈÀü¸ÁÀ¸·Î »ç¿ë (¼±ÅÃ)
+    //        // ì²´ë ¥ ì»´í¬ë„ŒíŠ¸ê°€ ì—†ëŠ” íŒŒê´´ ê°€ëŠ¥ ì˜¤ë¸Œì íŠ¸ë¼ë©´?
+    //        // ê¸°ì¡´ ApplyDamageë¥¼ ì•ˆì „ë§ìœ¼ë¡œ ì‚¬ìš© (ì„ íƒ)
     //        // UGameplayStatics::ApplyDamage(Target, FinalDamage, ...);
     //    }
     //}
 
-    //// Context¿¡¼­ ±âº» µ¥¹ÌÁö °¡Á®¿À±â
+    //// Contextì—ì„œ ê¸°ë³¸ ë°ë¯¸ì§€ ê°€ì ¸ì˜¤ê¸°
     //float BaseDamage = Context.Damage;
     //float FinalDamage = BaseDamage * DamageMultiplier;
 
-    //// Å¸°Ù ¸ñ·Ï ¼øÈ¸ÇÏ¸ç µ¥¹ÌÁö
+    //// íƒ€ê²Ÿ ëª©ë¡ ìˆœíšŒí•˜ë©° ë°ë¯¸ì§€
     //for (AActor* Target : Context.Targets)
     //{
     //	if (Target && !Target->IsPendingKillPending())

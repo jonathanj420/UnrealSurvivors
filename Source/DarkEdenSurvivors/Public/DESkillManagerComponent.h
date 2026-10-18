@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -24,9 +24,9 @@ struct FActiveSkill
 	UPROPERTY()
 	UDEAutoSkillBase* SkillObject = nullptr;
 
-	const FDESkillData* RowData = nullptr;   // µ¥ÀÌÅÍ Å×ÀÌºí Row
+	const FDESkillData* RowData = nullptr;   // ë°ì´í„° í…Œì´ë¸” Row
 	UPROPERTY()
-	int32 SkillID = 0; // SkillID¸¸ °¡Áö°í ÀÖÀ¸¸é µÊ
+	int32 SkillID = 0; // SkillIDë§Œ ê°€ì§€ê³  ìˆìœ¼ë©´ ë¨
 	UPROPERTY()
 	int32 CurrentLevel = 1;
 
@@ -46,7 +46,7 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	void ApplyCharacterDamageMultiplier(float Multiplier); // Ä³¸¯ÅÍ °ø°İ·Â º¸Á¤
+	void ApplyCharacterDamageMultiplier(float Multiplier); // ìºë¦­í„° ê³µê²©ë ¥ ë³´ì •
 
 public:
 	// Called every frame
@@ -76,35 +76,35 @@ public:
 	UFUNCTION()
 	void LevelUpSkill(int32 SkillID);
 
-	// ½ºÅ³ ·¹º§ °¡Á®¿À±â
+	// ìŠ¤í‚¬ ë ˆë²¨ ê°€ì ¸ì˜¤ê¸°
 	int32 GetSkillLevel(int32 SkillID) const
 	{
-		// TMap¿¡¼­ ±¸Á¶Ã¼ÀÇ Æ÷ÀÎÅÍ¸¦ Ã£½À´Ï´Ù. (¾øÀ¸¸é nullptr ¹İÈ¯)
+		// TMapì—ì„œ êµ¬ì¡°ì²´ì˜ í¬ì¸í„°ë¥¼ ì°¾ìŠµë‹ˆë‹¤. (ì—†ìœ¼ë©´ nullptr ë°˜í™˜)
 		const FActiveSkill* FoundSkill = ActiveSkills.Find(SkillID);
 
-		// ½ºÅ³ÀÌ Á¸ÀçÇÏ¸é ±× ¾ÈÀÇ CurrentLevelÀ», ¾øÀ¸¸é 0À» ¸®ÅÏÇÕ´Ï´Ù.
+		// ìŠ¤í‚¬ì´ ì¡´ì¬í•˜ë©´ ê·¸ ì•ˆì˜ CurrentLevelì„, ì—†ìœ¼ë©´ 0ì„ ë¦¬í„´í•©ë‹ˆë‹¤.
 		return FoundSkill ? FoundSkill->CurrentLevel : 0;
 	}
 
-	// ½ºÅ³ º¸À¯ ¿©ºÎ
+	// ìŠ¤í‚¬ ë³´ìœ  ì—¬ë¶€
 	bool HasSkill(int32 SkillID) const
 	{
 		return ActiveSkills.Contains(SkillID);
 
 		//return SkillLevels.Contains(SkillID);
 	}
-	// DataTable¿¡ Æ¯Á¤ ·¹º§ÀÇ row Á¸ÀçÇÏ´ÂÁö
+	// DataTableì— íŠ¹ì • ë ˆë²¨ì˜ row ì¡´ì¬í•˜ëŠ”ì§€
 	bool HasSkillData(int32 SkillID, int32 Level) const;
-	// º¸À¯ ½ºÅ³ ¸®½ºÆ®
+	// ë³´ìœ  ìŠ¤í‚¬ ë¦¬ìŠ¤íŠ¸
 	TArray<int32> GetOwnedSkillIDs() const;
 
-	// ÈÄº¸ ½ºÅ³ ¸ñ·Ï (ÇöÀç ½ºÅ³ÀÇ ´ÙÀ½ ·¹º§¸¸)
+	// í›„ë³´ ìŠ¤í‚¬ ëª©ë¡ (í˜„ì¬ ìŠ¤í‚¬ì˜ ë‹¤ìŒ ë ˆë²¨ë§Œ)
 	TArray<int32> GetUpgradeableSkills() const;
 
 	FDESkillRow* GetSkillRow(int32 SkillID);
 
 public:
-	// ½ºÅ³ ¸ñ·ÏÀ» ¿ÜºÎ¿¡¼­ 'ÀĞ±â Àü¿ë'À¸·Î º¼ ¼ö ÀÖ°Ô ÇØÁÖ´Â Getter
+	// ìŠ¤í‚¬ ëª©ë¡ì„ ì™¸ë¶€ì—ì„œ 'ì½ê¸° ì „ìš©'ìœ¼ë¡œ ë³¼ ìˆ˜ ìˆê²Œ í•´ì£¼ëŠ” Getter
 	const TMap<int32, FActiveSkill>& GetActiveSkills() const { return ActiveSkills; }
 	const TMap<int32, int32>& GetSkillLevels() const { return SkillLevels; }
 public:
@@ -146,24 +146,24 @@ public:
 
 
 public:
-	// 1. Æ¯Á¤ ½ºÅ³ ÄğÅ¸ÀÓ Áï½Ã ÃÊ±âÈ­ (ºÎ¸Ş¶û È¸¼ö, Æ¯Á¤ Á¶°Ç ´Ş¼º ½Ã)
+	// 1. íŠ¹ì • ìŠ¤í‚¬ ì¿¨íƒ€ì„ ì¦‰ì‹œ ì´ˆê¸°í™” (ë¶€ë©”ë‘ íšŒìˆ˜, íŠ¹ì • ì¡°ê±´ ë‹¬ì„± ì‹œ)
 	UFUNCTION(BlueprintCallable, Category = "Skill|Cooldown")
 	void ResetCooldownInstant(int32 SkillID);
 
-	// 2. Æ¯Á¤ ½ºÅ³ ÄğÅ¸ÀÓ NÃÊ °¨¼Ò (ÆòÅ¸ Å¸°İ ½Ã Æ¯Á¤ ½ºÅ³ Äğ°¨ È¿°ú µî)
+	// 2. íŠ¹ì • ìŠ¤í‚¬ ì¿¨íƒ€ì„ Nì´ˆ ê°ì†Œ (í‰íƒ€ íƒ€ê²© ì‹œ íŠ¹ì • ìŠ¤í‚¬ ì¿¨ê° íš¨ê³¼ ë“±)
 	UFUNCTION(BlueprintCallable, Category = "Skill|Cooldown")
 	void ReduceCooldown(int32 SkillID, float Amount, ECooldownReduceType ReduceType = ECooldownReduceType::Flat);
 
-	// 3. ¸ğµç ½ºÅ³ ÄğÅ¸ÀÓ NÃÊ °¨¼Ò (±¤¿ª Äğ°¨ ¾ÆÀÌÅÛ È¹µæ, Æ¯¼ö ¹öÇÁ µî)
+	// 3. ëª¨ë“  ìŠ¤í‚¬ ì¿¨íƒ€ì„ Nì´ˆ ê°ì†Œ (ê´‘ì—­ ì¿¨ê° ì•„ì´í…œ íšë“, íŠ¹ìˆ˜ ë²„í”„ ë“±)
 	UFUNCTION(BlueprintCallable, Category = "Skill|Cooldown")
 	void ReduceAllCooldowns(float ReduceAmount);
 protected:
 	float TotalReducedCooldownAmount = 0.0f;
 
-	float CachedCDR = 0.0f; // Ä³½ÌµÈ CDR °ª
+	float CachedCDR = 0.0f; // ìºì‹±ëœ CDR ê°’
 
 	UFUNCTION()
-	void OnStatChanged(EDEStatType StatType, float NewValue); // ½ºÅÈ º¯°æ Äİ¹é
+	void OnStatChanged(EDEStatType StatType, float NewValue); // ìŠ¤íƒ¯ ë³€ê²½ ì½œë°±
 
 
 };

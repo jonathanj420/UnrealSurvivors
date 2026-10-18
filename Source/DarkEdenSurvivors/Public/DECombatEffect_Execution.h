@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -16,7 +16,7 @@ class DARKEDENSURVIVORS_API UDECombatEffect_Execution : public UDECombatEffect
 
 public:
     UPROPERTY(EditAnywhere, Category = "Execution")
-    float Threshold = 0.1f; // 10% ¿Ã«œ ¡ÔªÁ
+    float Threshold = 0.1f; // 10% Ïù¥Ìïò Ï¶âÏÇ¨
 
     virtual void OnExecuteEffect(FCombatEventData& EventData) override;
 	

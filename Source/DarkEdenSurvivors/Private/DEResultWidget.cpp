@@ -1,15 +1,15 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEResultWidget.h"
 #include "Kismet/GameplayStatics.h"
-#include "DEGameInstance.h" // ¡Ú ÀúÀå ±â´É »ç¿ëÀ» À§ÇØ ÇÊ¼ö
+#include "DEGameInstance.h" // â˜… ì €ì¥ ê¸°ëŠ¥ ì‚¬ìš©ì„ ìœ„í•´ í•„ìˆ˜
 
 void UDEResultWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	// ¹öÆ°¿¡ Å¬¸¯ ÇÔ¼ö ¿¬°á
+	// ë²„íŠ¼ì— í´ë¦­ í•¨ìˆ˜ ì—°ê²°
 	if (Btn_Retry)
 		Btn_Retry->OnClicked.AddDynamic(this, &UDEResultWidget::OnRetryClicked);
 
@@ -19,7 +19,7 @@ void UDEResultWidget::NativeConstruct()
 
 void UDEResultWidget::SetResultData(int32 EarnedGold, int32 KillCount, float DamageDealt, float SurviveTime)
 {
-	// 1. È­¸é¿¡ ÅØ½ºÆ® °»½Å
+	// 1. í™”ë©´ì— í…ìŠ¤íŠ¸ ê°±ì‹ 
 	if (Text_GoldEarned)
 		Text_GoldEarned->SetText(FText::AsNumber(EarnedGold));
 
@@ -29,24 +29,24 @@ void UDEResultWidget::SetResultData(int32 EarnedGold, int32 KillCount, float Dam
 	if (Text_DamageDealt)
 		Text_DamageDealt->SetText(FText::AsNumber(FMath::RoundToInt(DamageDealt)));
 
-	// ½Ã°£ Æ÷¸Ë (ºĞ:ÃÊ) º¯È¯
+	// ì‹œê°„ í¬ë§· (ë¶„:ì´ˆ) ë³€í™˜
 	FTimespan Time(0, 0, (int32)SurviveTime);
 	if (Text_SurviveTime)
 		Text_SurviveTime->SetText(FText::AsTimespan(Time));
 
-	// 2. ¡Ú [ÇÙ½É] È¹µæÇÑ °ñµå¸¦ ¿µ±¸ ÀúÀå¼Ò(GameInstance)¿¡ ÀúÀå
+	// 2. â˜… [í•µì‹¬] íšë“í•œ ê³¨ë“œë¥¼ ì˜êµ¬ ì €ì¥ì†Œ(GameInstance)ì— ì €ì¥
 	if (UDEGameInstance* GI = Cast<UDEGameInstance>(GetGameInstance()))
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("[Result] Saving Gold: +%d"), EarnedGold);
 
-		//GI->AddGold(EarnedGold); // ¸Ş¸ğ¸®¿¡ ´õÇÏ±â
-		GI->SaveGame();          // ÆÄÀÏ·Î ÀúÀåÇÏ±â (SaveSlot01.sav)
+		//GI->AddGold(EarnedGold); // ë©”ëª¨ë¦¬ì— ë”í•˜ê¸°
+		GI->SaveGame();          // íŒŒì¼ë¡œ ì €ì¥í•˜ê¸° (SaveSlot01.sav)
 	}
 }
 
 void UDEResultWidget::OnRetryClicked()
 {
-	// ÇöÀç ·¹º§ ´Ù½Ã ½ÃÀÛ
+	// í˜„ì¬ ë ˆë²¨ ë‹¤ì‹œ ì‹œì‘
 	UGameplayStatics::SetGamePaused(this, false);
 
 	FString CurrentLevel = UGameplayStatics::GetCurrentLevelName(this);
@@ -55,6 +55,6 @@ void UDEResultWidget::OnRetryClicked()
 
 void UDEResultWidget::OnMainMenuClicked()
 {
-	// ¸ŞÀÎ ¸Ş´º ·¹º§·Î ÀÌµ¿ (·¹º§ ÀÌ¸§ È®ÀÎ ÇÊ¿ä!)
+	// ë©”ì¸ ë©”ë‰´ ë ˆë²¨ë¡œ ì´ë™ (ë ˆë²¨ ì´ë¦„ í™•ì¸ í•„ìš”!)
 	UGameplayStatics::OpenLevel(this, FName("L_Lobby"));
 }

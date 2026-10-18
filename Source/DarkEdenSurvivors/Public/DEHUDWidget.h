@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -15,10 +15,10 @@ class DARKEDENSURVIVORS_API UDEHUDWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	// Ä³¸¯ÅÍ¿Í ¿¬°áÇØ¼­ µ¨¸®°ÔÀÌÆ® ±¸µ¶ÇÏ´Â ÇÔ¼ö
+	// ìºë¦­í„°ì™€ ì—°ê²°í•´ì„œ ë¸ë¦¬ê²Œì´íŠ¸ êµ¬ë…í•˜ëŠ” í•¨ìˆ˜
 	void BindCharacterStat(class ADECharacterBase* Character);
 
-	// °ªÀ» °»½ÅÇÏ´Â ÇÔ¼ö
+	// ê°’ì„ ê°±ì‹ í•˜ëŠ” í•¨ìˆ˜
 	void UpdateHP(float CurrentHP, float MaxHP);
 	void UpdateExp(float CurrentExp, float MaxExp);
 
@@ -26,15 +26,15 @@ protected:
 	virtual void NativeConstruct() override;
 
 protected:
-	// --- [1. ¿¡µğÅÍ ¹ÙÀÎµù] ---
-	// ÀÌ¸§ ²À ¸ÂÃç¾ß ÇÕ´Ï´Ù!
+	// --- [1. ì—ë””í„° ë°”ì¸ë”©] ---
+	// ì´ë¦„ ê¼­ ë§ì¶°ì•¼ í•©ë‹ˆë‹¤!
 	UPROPERTY(meta = (BindWidget))
 	class UProgressBar* PB_HP;  // hp
 
 	UPROPERTY(meta = (BindWidget))
 	class UProgressBar* PB_Exp; // exp
 
-	// (¼±ÅÃ) ·¹º§ ÅØ½ºÆ®µµ ÀÖ´Ù¸é?
+	// (ì„ íƒ) ë ˆë²¨ í…ìŠ¤íŠ¸ë„ ìˆë‹¤ë©´?
 	// UPROPERTY(meta = (BindWidget))
 	// class UTextBlock* Text_Level;
 

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -21,9 +21,9 @@ class DARKEDENSURVIVORS_API UDEAutoSkillBase : public UDESkillBase, public IDEDa
 	GENERATED_BODY()
 
 public:
-	// ¿ÜºÎ(¸Å´ÏÀú)¿¡¼­ È£ÃâÇÏ´Â ½ÇÇà ÇÔ¼ö
+	// ì™¸ë¶€(ë§¤ë‹ˆì €)ì—ì„œ í˜¸ì¶œí•˜ëŠ” ì‹¤í–‰ í•¨ìˆ˜
 	virtual void Activate();
-	// ¸Å´ÏÀú°¡ ÀÌ ½ºÅ³ÀÌ '½ÃÀü(À¯Áö) Áß'ÀÎÁö È®ÀÎÇÏ´Â ¿ëµµ
+	// ë§¤ë‹ˆì €ê°€ ì´ ìŠ¤í‚¬ì´ 'ì‹œì „(ìœ ì§€) ì¤‘'ì¸ì§€ í™•ì¸í•˜ëŠ” ìš©ë„
 	bool IsRunning() const { return bIsRunning; }
 
 protected:
@@ -34,17 +34,17 @@ protected:
 	bool bIsRunning = false;
 	FTimerHandle DurationTimerHandle;
 
-	// Áö¼Ó½Ã°£ÀÌ ³¡³µÀ» ¶§ È£ÃâµÉ ÇÔ¼ö
+	// ì§€ì†ì‹œê°„ì´ ëë‚¬ì„ ë•Œ í˜¸ì¶œë  í•¨ìˆ˜
 	virtual void FinishSkill();
 
 protected:
 	FDESkillContext CachedContext;
 	virtual void ExecuteWithContext(FDESkillContext& Context);
 
-public:	// µ¥ÀÌÅÍ ÁÖÀÔ (·¹º§¾÷ ½Ã È£Ãâ)
+public:	// ë°ì´í„° ì£¼ì… (ë ˆë²¨ì—… ì‹œ í˜¸ì¶œ)
 	void SetSkillData(const FDESkillData* NewData);
 
-	// ÀÚ½Ä Å¬·¡½º¿¡¼­ Behavior Á¶¸³
+	// ìì‹ í´ë˜ìŠ¤ì—ì„œ Behavior ì¡°ë¦½
 	virtual void InitBehaviors();
 
 public:
@@ -55,7 +55,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Instanced, Category = "Skill Behaviors")
 	TArray<class UDESkillBehavior*> Behaviors;
 
-	// ÇöÀç ½ºÅ³ ½ºÆå (Æ÷ÀÎÅÍ¸¸ ÂüÁ¶)
+	// í˜„ì¬ ìŠ¤í‚¬ ìŠ¤í™ (í¬ì¸í„°ë§Œ ì°¸ì¡°)
 	const FDESkillData* SkillData = nullptr;
 
 	float CurrentFinalCooldown = 0.0f;
@@ -69,32 +69,32 @@ public:
 public:
 	virtual void EndSkill();
 public:
-	// ÀÎÅÍÆäÀÌ½º ÇÔ¼ö ¼±¾ğ (±âº»ÀûÀ¸·Î´Â ¾Æ¹«°Íµµ ¾È ÇÔ)
+	// ì¸í„°í˜ì´ìŠ¤ í•¨ìˆ˜ ì„ ì–¸ (ê¸°ë³¸ì ìœ¼ë¡œëŠ” ì•„ë¬´ê²ƒë„ ì•ˆ í•¨)
 	virtual void OnTargetKilled(const FDEDamageResult& Result) override;
 	int32 GetBaseAmount() const;
 
-	// ¸Å´ÏÀú°¡ ¹ß»ç Á÷Àü¿¡ ÄğÅ¸ÀÓÀ» ²È¾ÆÁÖ´Â ÇÔ¼ö
+	// ë§¤ë‹ˆì €ê°€ ë°œì‚¬ ì§ì „ì— ì¿¨íƒ€ì„ì„ ê½‚ì•„ì£¼ëŠ” í•¨ìˆ˜
 	void SetCurrentFinalCooldown(float InCooldown) { CurrentFinalCooldown = InCooldown; }
 
-	// ºñÇìÀÌºñ¾î°¡ ³ªÁß¿¡ ÄğÅ¸ÀÓÀ» ¹°¾îº¼ ¶§ ´ë´äÇØÁÖ´Â ÇÔ¼ö
+	// ë¹„í—¤ì´ë¹„ì–´ê°€ ë‚˜ì¤‘ì— ì¿¨íƒ€ì„ì„ ë¬¼ì–´ë³¼ ë•Œ ëŒ€ë‹µí•´ì£¼ëŠ” í•¨ìˆ˜
 	float GetCurrentFinalCooldown() const { return CurrentFinalCooldown; }
 
 	ESkillExecutionType GetExecutionType() const;
 	void RefreshContext();
 
 protected:
-	// ÆÄÀÌÇÁ¶óÀÎ ÁøÇà »óÅÂ¸¦ ±â¾ïÇÒ ÀÎµ¦½º
+	// íŒŒì´í”„ë¼ì¸ ì§„í–‰ ìƒíƒœë¥¼ ê¸°ì–µí•  ì¸ë±ìŠ¤
 	int32 CurrentBehaviorIndex = 0;
 
-	// ÆÄÀÌÇÁ¶óÀÎ ÀÏ½ÃÁ¤Áö(´ë±â)¿ë Å¸ÀÌ¸Ó ÇÚµé
+	// íŒŒì´í”„ë¼ì¸ ì¼ì‹œì •ì§€(ëŒ€ê¸°)ìš© íƒ€ì´ë¨¸ í•¸ë“¤
 	FTimerHandle PipelineTimerHandle;
 
-	// ÆÄÀÌÇÁ¶óÀÎÀ» ½ÇÁ¦·Î ÇÑ Ä­¾¿ ÁøÇà½ÃÅ°´Â ÇÔ¼ö
+	// íŒŒì´í”„ë¼ì¸ì„ ì‹¤ì œë¡œ í•œ ì¹¸ì”© ì§„í–‰ì‹œí‚¤ëŠ” í•¨ìˆ˜
 	UFUNCTION()
 	void ExecutePipeline();
 
 public:
-	// ½ºÅ³ °­Á¦ Ãë¼Ò ÇÔ¼ö (maybe on death?)
+	// ìŠ¤í‚¬ ê°•ì œ ì·¨ì†Œ í•¨ìˆ˜ (maybe on death?)
 	UFUNCTION(BlueprintCallable, Category = "Skill")
 	virtual void CancelSkill();
 

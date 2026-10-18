@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -23,10 +23,10 @@ class DARKEDENSURVIVORS_API UDECharacterSlotWidget : public UUserWidget
     GENERATED_BODY()
 
 public:
-    // ¸ŞÀÎ ¸Ş´º°¡ µ¥ÀÌÅÍ¸¦ ´øÁ®ÁÖ¸é, ¾ó±¼°ú ÀÌ¸§À» ¼¼ÆÃÇÏ´Â ÇÔ¼ö
+    // ë©”ì¸ ë©”ë‰´ê°€ ë°ì´í„°ë¥¼ ë˜ì ¸ì£¼ë©´, ì–¼êµ´ê³¼ ì´ë¦„ì„ ì„¸íŒ…í•˜ëŠ” í•¨ìˆ˜
     void InitSlot(const FDECharacterRow& InRowData);
 
-    // ¸ŞÀÎ ¸Ş´º¿¡¼­ ÀÌ ¾Ë¶÷À» ±¸µ¶(Bind)ÇÒ ¼ö ÀÖ°Ô publicÀ¸·Î ¿­¾îµÓ´Ï´Ù.
+    // ë©”ì¸ ë©”ë‰´ì—ì„œ ì´ ì•ŒëŒì„ êµ¬ë…(Bind)í•  ìˆ˜ ìˆê²Œ publicìœ¼ë¡œ ì—´ì–´ë‘¡ë‹ˆë‹¤.
     UPROPERTY(BlueprintAssignable, Category = "Events")
     FOnCharacterSlotClicked OnSlotClicked;
 
@@ -35,7 +35,7 @@ protected:
 
 private:
     // ==========================================
-    // UI ÄÄÆ÷³ÍÆ® (À§Á¬ ºí·çÇÁ¸°Æ®¿Í ¿¬°á!)
+    // UI ì»´í¬ë„ŒíŠ¸ (ìœ„ì ¯ ë¸”ë£¨í”„ë¦°íŠ¸ì™€ ì—°ê²°!)
     // ==========================================
     UPROPERTY(meta = (BindWidget))
     UButton* Btn_Slot;
@@ -46,10 +46,10 @@ private:
     UPROPERTY(meta = (BindWidget))
     UTextBlock* Txt_Name;
 
-    // ³»°¡ ¸î ¹ø Ä³¸¯ÅÍ ½½·ÔÀÎÁö ±â¾ïÇØµÑ º¯¼ö
+    // ë‚´ê°€ ëª‡ ë²ˆ ìºë¦­í„° ìŠ¬ë¡¯ì¸ì§€ ê¸°ì–µí•´ë‘˜ ë³€ìˆ˜
     int32 MyCharacterID;
 
-    // ¹öÆ°ÀÌ ´­·ÈÀ» ¶§ ³»ºÎÀûÀ¸·Î ½ÇÇàµÉ ÇÔ¼ö
+    // ë²„íŠ¼ì´ ëˆŒë ¸ì„ ë•Œ ë‚´ë¶€ì ìœ¼ë¡œ ì‹¤í–‰ë  í•¨ìˆ˜
     UFUNCTION()
     void OnButtonClicked();
 	

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -22,22 +22,22 @@ class DARKEDENSURVIVORS_API UDEBehavior_SpawnOnMove : public UDESkillBehavior
 public:
     virtual void Execute(FDESkillContext& Context) override;
 
-    // ¿µ±¸ ½ºÅ³ ½ºÅÈ °»½Å ½Ã È£Ãâ: ÀÌ¹Ì ±ò¸° ¾×ÅÍµéÀÇ ½ºÅÈ ¾÷µ¥ÀÌÆ® ¹× Á×Àº ¾×ÅÍ Ã»¼Ò
+    // ì˜êµ¬ ìŠ¤í‚¬ ìŠ¤íƒ¯ ê°±ì‹  ì‹œ í˜¸ì¶œ: ì´ë¯¸ ê¹”ë¦° ì•¡í„°ë“¤ì˜ ìŠ¤íƒ¯ ì—…ë°ì´íŠ¸ ë° ì£½ì€ ì•¡í„° ì²­ì†Œ
     virtual void OnContextRefreshed(const FDESkillContext& Context) override;
 
-    // ½ºÅ³ ÁøÈ­/ÇØÁ¦ ½Ã Å¸ÀÌ¸Ó¸¦ ¾ÈÀüÇÏ°Ô ²ô±â À§ÇÑ °¡»ó ÇÔ¼ö ¿À¹ö¶óÀÌµå
+    // ìŠ¤í‚¬ ì§„í™”/í•´ì œ ì‹œ íƒ€ì´ë¨¸ë¥¼ ì•ˆì „í•˜ê²Œ ë„ê¸° ìœ„í•œ ê°€ìƒ í•¨ìˆ˜ ì˜¤ë²„ë¼ì´ë“œ
     virtual void EndBehavior() override;
 
 protected:
-    // ¡Ú ÀåÆÇ(AOE)¿¡ ±¹ÇÑµÇÁö ¾Ê´Â ¿Ïº®ÇÑ ´ÙÇü¼º! Åõ»çÃ¼, ¼ÒÈ¯¼ö ¹¹µç ´Ù µÊ
+    // â˜… ì¥íŒ(AOE)ì— êµ­í•œë˜ì§€ ì•ŠëŠ” ì™„ë²½í•œ ë‹¤í˜•ì„±! íˆ¬ì‚¬ì²´, ì†Œí™˜ìˆ˜ ë­ë“  ë‹¤ ë¨
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spawn Settings")
     TSubclassOf<ADESkillActorBase> SpawnActorClass;
 
-    // ÀÌ °Å¸® ÀÌ»ó ÀÌµ¿ÇÏ¸é »ı¼º (±âº» 50cm)
+    // ì´ ê±°ë¦¬ ì´ìƒ ì´ë™í•˜ë©´ ìƒì„± (ê¸°ë³¸ 50cm)
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spawn Settings")
     float SpawnDistanceThreshold = 50.0f;
 
-    // °Å¸® °Ë»ç ÁÖ±â (0.1 ~ 0.2ÃÊ ±ÇÀå)
+    // ê±°ë¦¬ ê²€ì‚¬ ì£¼ê¸° (0.1 ~ 0.2ì´ˆ ê¶Œì¥)
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Spawn Settings")
     float CheckInterval = 0.2f;
 
@@ -47,7 +47,7 @@ private:
     FVector LastSpawnLocation;
     FTimerHandle DistanceCheckTimerHandle;
 
-    // Å¸ÀÌ¸Ó Äİ¹é ³»ºÎ Å©·¡½Ã ¹æÁö¿ë ¾ÈÀüÇÑ Ä³½Ì
+    // íƒ€ì´ë¨¸ ì½œë°± ë‚´ë¶€ í¬ë˜ì‹œ ë°©ì§€ìš© ì•ˆì „í•œ ìºì‹±
     TWeakObjectPtr<AActor> CachedInstigator;
     TWeakObjectPtr<UDEAutoSkillBase> CachedSourceSkill;
 	

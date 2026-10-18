@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEStatusEffectComponent.h"
@@ -11,7 +11,7 @@ UDEStatusEffectComponent::UDEStatusEffectComponent()
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-	PrimaryComponentTick.bStartWithTickEnabled = false; // °É¸° °Ô ¾øÀ» ¶© Tick ²ô±â!
+	PrimaryComponentTick.bStartWithTickEnabled = false; // ê±¸ë¦° ê²Œ ì—†ì„ ë• Tick ë„ê¸°!
 
 	// ...
 }
@@ -22,7 +22,7 @@ void UDEStatusEffectComponent::BeginPlay()
 {
     Super::BeginPlay();
 
-    // ÄÄÆ÷³ÍÆ®¸¦ ¼ÒÀ¯ÇÑ ¾×ÅÍ(ÇÃ·¹ÀÌ¾î ¶Ç´Â ¸ó½ºÅÍ) Ä³½Ì
+    // ì»´í¬ë„ŒíŠ¸ë¥¼ ì†Œìœ í•œ ì•¡í„°(í”Œë ˆì´ì–´ ë˜ëŠ” ëª¬ìŠ¤í„°) ìºì‹±
     OwnerActor = GetOwner();
 	
 }
@@ -69,14 +69,14 @@ void UDEStatusEffectComponent::AddEffect(TSubclassOf<UDEStatusEffectBase> Effect
 	if (!CDO) return;
 
 	// =========================================================
-	// ¡Ú 1. ¸é¿ª Ã¼Å© (ÅÂ±× °¡¹æ ±³ÁıÇÕ °Ë»ç!)
-	// ³» ¸é¿ª °¡¹æ(ImmuneTags)°ú µé¾î¿À´Â µğ¹öÇÁÀÇ Á¤Ã¼¼º(StatusTags)ÀÌ ÇÏ³ª¶óµµ °ãÄ¡¸é ¹«½Ã!
+	// â˜… 1. ë©´ì—­ ì²´í¬ (íƒœê·¸ ê°€ë°© êµì§‘í•© ê²€ì‚¬!)
+	// ë‚´ ë©´ì—­ ê°€ë°©(ImmuneTags)ê³¼ ë“¤ì–´ì˜¤ëŠ” ë””ë²„í”„ì˜ ì •ì²´ì„±(StatusTags)ì´ í•˜ë‚˜ë¼ë„ ê²¹ì¹˜ë©´ ë¬´ì‹œ!
 	// =========================================================
 	if (ImmuneTags.HasAny(CDO->StatusTags)) return;
 
 	// =========================================================
-	// ¡Ú 2. ÁßÃ¸(Stack) Á¤Ã¥ Ã³¸®
-	// ÀÌÁ¦ Enum ´ë½Å, "ÀÌ¹Ì ³» ¸ö¿¡ ¶È°°Àº ½ºÅ³(Class)ÀÌ ¹¯¾îÀÖ´Â°¡?"·Î °Ë»çÇÕ´Ï´Ù.
+	// â˜… 2. ì¤‘ì²©(Stack) ì •ì±… ì²˜ë¦¬
+	// ì´ì œ Enum ëŒ€ì‹ , "ì´ë¯¸ ë‚´ ëª¸ì— ë˜‘ê°™ì€ ìŠ¤í‚¬(Class)ì´ ë¬»ì–´ìˆëŠ”ê°€?"ë¡œ ê²€ì‚¬í•©ë‹ˆë‹¤.
 	// =========================================================
 	FActiveStatusEffect* Existing = nullptr;
 	if (CDO->StackPolicy != EStackPolicy::Independent)
@@ -104,8 +104,8 @@ void UDEStatusEffectComponent::AddEffect(TSubclassOf<UDEStatusEffectBase> Effect
 			return;
 
 		case EStackPolicy::Stack:
-			// (Âü°í: CDO¿¡ MaxStacks º¯¼ö°¡ ÀÖ´Ù°í °¡Á¤ÇÕ´Ï´Ù)
-			// ¡Ú MaxStacks°¡ 0 ÀÌÇÏ¸é ¹«ÇÑ ÁßÃ¸, ¾ç¼ö¸é Á¦ÇÑ °Ë»ç
+			// (ì°¸ê³ : CDOì— MaxStacks ë³€ìˆ˜ê°€ ìˆë‹¤ê³  ê°€ì •í•©ë‹ˆë‹¤)
+			// â˜… MaxStacksê°€ 0 ì´í•˜ë©´ ë¬´í•œ ì¤‘ì²©, ì–‘ìˆ˜ë©´ ì œí•œ ê²€ì‚¬
 			if (CDO->MaxStacks <= 0 || Existing->CurrentStacks < CDO->MaxStacks)
 			{
 				Existing->CurrentStacks++;
@@ -117,9 +117,9 @@ void UDEStatusEffectComponent::AddEffect(TSubclassOf<UDEStatusEffectBase> Effect
 			}
 			else
 			{
-				// (¼±ÅÃ »çÇ×) ÃÖ´ë ½ºÅÃ¿¡ µµ´ŞÇÑ »óÅÂ¿¡¼­ ¶Ç ¶§·ÈÀ» ¶§, 
-				// ½ºÅÃÀº ¾È ¿À¸£´õ¶óµµ Áö¼Ó½Ã°£Àº °è¼Ó °»½ÅµÇ°Ô ÇÒ °ÍÀÎ°¡?
-				// ±âÈ¹ ÀÇµµ¿¡ µû¶ó ¾Æ·¡ ÁÙÀ» Ãß°¡ÇÒÁö ¸»Áö °áÁ¤ÇÏ¼¼¿ä.
+				// (ì„ íƒ ì‚¬í•­) ìµœëŒ€ ìŠ¤íƒì— ë„ë‹¬í•œ ìƒíƒœì—ì„œ ë˜ ë•Œë ¸ì„ ë•Œ, 
+				// ìŠ¤íƒì€ ì•ˆ ì˜¤ë¥´ë”ë¼ë„ ì§€ì†ì‹œê°„ì€ ê³„ì† ê°±ì‹ ë˜ê²Œ í•  ê²ƒì¸ê°€?
+				// ê¸°íš ì˜ë„ì— ë”°ë¼ ì•„ë˜ ì¤„ì„ ì¶”ê°€í• ì§€ ë§ì§€ ê²°ì •í•˜ì„¸ìš”.
 				//Existing->ElapsedTime = 0.0f;
 			}
 			//UE_LOG(LogTemp, Warning, TEXT("Status Effect : %s Stacked : %d"), *EffectClass->GetName(),Existing->CurrentStacks);
@@ -141,7 +141,7 @@ void UDEStatusEffectComponent::AddEffect(TSubclassOf<UDEStatusEffectBase> Effect
 		}
 	}
 
-	// 3. ÇÊÅÍ¸¦ ¸ğµÎ Åë°úÇß´Ù¸é »õ ±¸Á¶Ã¼ Àû¿ë
+	// 3. í•„í„°ë¥¼ ëª¨ë‘ í†µê³¼í–ˆë‹¤ë©´ ìƒˆ êµ¬ì¡°ì²´ ì ìš©
 	FActiveStatusEffect NewEffect;
 	NewEffect.EffectDef = CDO;
 	NewEffect.Instigator = Instigator;
@@ -155,13 +155,13 @@ void UDEStatusEffectComponent::AddEffect(TSubclassOf<UDEStatusEffectBase> Effect
 
 	if (Duration == 0.f)
 	{
-		// 1. Àû¿ë Áï½Ã
+		// 1. ì ìš© ì¦‰ì‹œ
 		CDO->OnApply(OwnerActor.Get(), NewEffect);
 
-		// 2. ÇØÁ¦ ·ÎÁ÷(Æø¹ß, Áï¹ß Èú µî) ¹Ù·Î ½ÇÇà!
+		// 2. í•´ì œ ë¡œì§(í­ë°œ, ì¦‰ë°œ í ë“±) ë°”ë¡œ ì‹¤í–‰!
 		CDO->OnRemove(OwnerActor.Get(), NewEffect);
 
-		// 3. ¹è¿­¿¡ ³ÖÁö ¾Ê°í ¿©±â¼­ ±ò²ûÇÏ°Ô Åğ±Ù!
+		// 3. ë°°ì—´ì— ë„£ì§€ ì•Šê³  ì—¬ê¸°ì„œ ê¹”ë”í•˜ê²Œ í‡´ê·¼!
 		return;
 	}
 
@@ -174,14 +174,14 @@ void UDEStatusEffectComponent::AddEffect(TSubclassOf<UDEStatusEffectBase> Effect
 
 void UDEStatusEffectComponent::RemoveEffectsByTag(FGameplayTag Tag)
 {
-	// ÅÂ±×°¡ ºñ¾îÀÖÀ¸¸é ¹«½Ã
+	// íƒœê·¸ê°€ ë¹„ì–´ìˆìœ¼ë©´ ë¬´ì‹œ
 	if (!Tag.IsValid() || !OwnerActor.IsValid()) return;
 
 	for (int32 i = ActiveEffects.Num() - 1; i >= 0; --i)
 	{
 		FActiveStatusEffect& EffectData = ActiveEffects[i];
 
-		// ÀÌ »óÅÂÀÌ»ó °ÅÇªÁıÀÇ 'Á¤Ã¼¼º ÅÂ±× °¡¹æ' ¾È¿¡ ÇØ´ç ÅÂ±×°¡ µé¾îÀÖ´Ù¸é? »èÁ¦!
+		// ì´ ìƒíƒœì´ìƒ ê±°í‘¸ì§‘ì˜ 'ì •ì²´ì„± íƒœê·¸ ê°€ë°©' ì•ˆì— í•´ë‹¹ íƒœê·¸ê°€ ë“¤ì–´ìˆë‹¤ë©´? ì‚­ì œ!
 		if (EffectData.EffectDef && EffectData.EffectDef->StatusTags.HasTag(Tag))
 		{
 			EffectData.EffectDef->OnRemove(OwnerActor.Get(), EffectData);
@@ -200,22 +200,22 @@ void UDEStatusEffectComponent::RemoveAllEffects()
 	//UE_LOG(LogTemp, Warning, TEXT("Try RemoveAllEffects"));
 	if (!OwnerActor.IsValid()) return;
 	//UE_LOG(LogTemp, Warning, TEXT("RemoveAllEffects executed at least"));
-	// Ä³¸¯ÅÍ »ç¸Á, È¤Àº º¸½ºÀÇ ÆäÀÌÁî ÀüÈ¯(¿ÏÀü Á¤È­) ÆĞÅÏ ½Ã È£ÃâµË´Ï´Ù.
+	// ìºë¦­í„° ì‚¬ë§, í˜¹ì€ ë³´ìŠ¤ì˜ í˜ì´ì¦ˆ ì „í™˜(ì™„ì „ ì •í™”) íŒ¨í„´ ì‹œ í˜¸ì¶œë©ë‹ˆë‹¤.
 	for (int32 i = ActiveEffects.Num() - 1; i >= 0; --i)
 	{
 		FActiveStatusEffect& EffectData = ActiveEffects[i];
 		if (EffectData.EffectDef)
 		{
-			// ½Ï ´Ù ¿ø»óº¹±¸ ·ÎÁ÷ ½ÇÇà
+			// ì‹¹ ë‹¤ ì›ìƒë³µêµ¬ ë¡œì§ ì‹¤í–‰
 			EffectData.EffectDef->OnRemove(OwnerActor.Get(), EffectData);
 			UE_LOG(LogTemp, Warning, TEXT("Status Effect : %s Removed by RemoveAllEffects"), *EffectData.EffectDef->GetName());
 		}
 	}
 
-	// ¹è¿­ ¸Ş¸ğ¸®¸¦ ³¯¸®Áö ¾Ê°í Å©±â¸¸ 0À¸·Î ¸¸µì´Ï´Ù (TArrayÀÇ Empty ÀçÇÒ´ç ¹æÁö ÃÖÀûÈ­)
+	// ë°°ì—´ ë©”ëª¨ë¦¬ë¥¼ ë‚ ë¦¬ì§€ ì•Šê³  í¬ê¸°ë§Œ 0ìœ¼ë¡œ ë§Œë“­ë‹ˆë‹¤ (TArrayì˜ Empty ì¬í• ë‹¹ ë°©ì§€ ìµœì í™”)
 	ActiveEffects.Reset();
 
-	// ÄÄÆ÷³ÍÆ® Æ½ ²ô±â
+	// ì»´í¬ë„ŒíŠ¸ í‹± ë„ê¸°
 	SetComponentTickEnabled(false);
 }
 
@@ -225,7 +225,7 @@ bool UDEStatusEffectComponent::HasEffectWithTag(FGameplayTag Tag) const
 
 	for (const FActiveStatusEffect& EffectData : ActiveEffects)
 	{
-		// ÅÂ±× °¡¹æ °Ë»ç!
+		// íƒœê·¸ ê°€ë°© ê²€ì‚¬!
 		if (EffectData.EffectDef && EffectData.EffectDef->StatusTags.HasTag(Tag))
 		{
 			return true;
@@ -237,11 +237,11 @@ bool UDEStatusEffectComponent::HasEffectWithTag(FGameplayTag Tag) const
 
 void UDEStatusEffectComponent::ProcessIncomingDamageModifiers(FDEDamageRequest& InOutRequest)
 {
-	for (const FActiveStatusEffect& EffectData : ActiveEffects) // (¹è¿­ ÀÌ¸§Àº °³¹ßÀÚ´Ô ÄÚµå¿¡ ¸Â°Ô!)
+	for (const FActiveStatusEffect& EffectData : ActiveEffects) // (ë°°ì—´ ì´ë¦„ì€ ê°œë°œìë‹˜ ì½”ë“œì— ë§ê²Œ!)
 	{
 		if (EffectData.EffectDef)
 		{
-			// °¢ »óÅÂÀÌ»ó Å¬·¡½º(ºÎ½Ä, ¹æ¾î·Â °¨¼Ò µî)ÀÇ ÈÅÀ» Â÷·Ê´ë·Î ½ÇÇà!
+			// ê° ìƒíƒœì´ìƒ í´ë˜ìŠ¤(ë¶€ì‹, ë°©ì–´ë ¥ ê°ì†Œ ë“±)ì˜ í›…ì„ ì°¨ë¡€ëŒ€ë¡œ ì‹¤í–‰!
 			EffectData.EffectDef->ModifyIncomingDamage(EffectData, InOutRequest);
 		}
 	}
@@ -251,7 +251,7 @@ FActiveStatusEffect* UDEStatusEffectComponent::GetEffectByTag(FGameplayTag Tag)
 {
 	for (FActiveStatusEffect& Effect : ActiveEffects)
 	{
-		// ÀÌ »óÅÂÀÌ»ó °ÅÇªÁıÀÇ 'Á¤Ã¼¼º ÅÂ±× °¡¹æ' ¾È¿¡ ÇØ´ç ÅÂ±×°¡ µé¾îÀÖ´ÂÁö °Ë»ç!
+		// ì´ ìƒíƒœì´ìƒ ê±°í‘¸ì§‘ì˜ 'ì •ì²´ì„± íƒœê·¸ ê°€ë°©' ì•ˆì— í•´ë‹¹ íƒœê·¸ê°€ ë“¤ì–´ìˆëŠ”ì§€ ê²€ì‚¬!
 		if (Effect.EffectDef && Effect.EffectDef->StatusTags.HasTag(Tag))
 		{
 			return &Effect;

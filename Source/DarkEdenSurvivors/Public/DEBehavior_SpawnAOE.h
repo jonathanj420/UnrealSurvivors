@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -9,9 +9,9 @@
 UENUM(BlueprintType)
 enum class EAOESpawnTarget : uint8
 {
-    Instigator,        // ³» ¸ö¶×ÀÌ
-    AllTargets,        // ÇÊÅÍ¸µµÈ Å¸°Ù ¸ó½ºÅÍµé Àü¿ø (°¢°¢ 1°³¾¿)
-    CustomLocations    // Æ¯Á¤ ¹Ù´Ú ÁÂÇ¥ (¸ŞÅ×¿À, ´«º¸¶ó µî)
+    Instigator,        // ë‚´ ëª¸ëš±ì´
+    AllTargets,        // í•„í„°ë§ëœ íƒ€ê²Ÿ ëª¬ìŠ¤í„°ë“¤ ì „ì› (ê°ê° 1ê°œì”©)
+    CustomLocations    // íŠ¹ì • ë°”ë‹¥ ì¢Œí‘œ (ë©”í…Œì˜¤, ëˆˆë³´ë¼ ë“±)
 };
 
 
@@ -27,11 +27,11 @@ public:
     UPROPERTY(EditAnywhere, Category = "AOE")
     TSubclassOf<class ADESimpleAOEBase> AOEClass;
 
-    // ¡Ú ÇÙ½É: ÀåÆÇÀ» ´©±¸ÇÑÅ×/¾îµğ¿¡ ±òÁö °áÁ¤!
+    // â˜… í•µì‹¬: ì¥íŒì„ ëˆ„êµ¬í•œí…Œ/ì–´ë””ì— ê¹”ì§€ ê²°ì •!
     UPROPERTY(EditAnywhere, Category = "AOE")
     EAOESpawnTarget SpawnTarget = EAOESpawnTarget::Instigator;
 
-    // ¡Ú ÇÙ½É: ½ºÆùµÈ À§Ä¡ÀÇ ÁÖÀÎ(Actor)¿¡°Ô Âû½Ï ´Ş¶óºÙÀ» °ÍÀÎ°¡?
+    // â˜… í•µì‹¬: ìŠ¤í°ëœ ìœ„ì¹˜ì˜ ì£¼ì¸(Actor)ì—ê²Œ ì°°ì‹¹ ë‹¬ë¼ë¶™ì„ ê²ƒì¸ê°€?
     UPROPERTY(EditAnywhere, Category = "AOE")
     bool bAttachToTarget = false;
 

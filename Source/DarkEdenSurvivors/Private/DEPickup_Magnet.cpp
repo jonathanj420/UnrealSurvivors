@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEPickup_Magnet.h"
@@ -14,15 +14,15 @@ void ADEPickup_Magnet::ApplyEffect(AActor* TargetActor)
 {
 	if (!TargetActor) return;
 
-	// 1. ¸Å´ÏÀú ¼­ºê½Ã½ºÅÛ °¡Á®¿À±â
+	// 1. ë§¤ë‹ˆì € ì„œë¸Œì‹œìŠ¤í…œ ê°€ì ¸ì˜¤ê¸°
 	UDEPickupManager* PickupMgr = GetWorld()->GetSubsystem<UDEPickupManager>();
 	if (PickupMgr)
 	{
-		// 2. ¸¸µé¾îµÎ½Å ±Û·Î¹ú ÀÚ¼® ¹ßµ¿ ÇÔ¼ö È£Ãâ!
+		// 2. ë§Œë“¤ì–´ë‘ì‹  ê¸€ë¡œë²Œ ìì„ ë°œë™ í•¨ìˆ˜ í˜¸ì¶œ!
 		PickupMgr->TriggerGlobalMagnet(TargetActor);
 		UE_LOG(LogTemp, Warning, TEXT("Magnet On Action"));
 	}
 
-	// 3. ±âº» »ç¿îµå/ÆÄÆ¼Å¬ Àç»ı ¹× Ç®(Pool)¿¡ ÀÚ±â ÀÚ½Å ¹İÈ¯
+	// 3. ê¸°ë³¸ ì‚¬ìš´ë“œ/íŒŒí‹°í´ ì¬ìƒ ë° í’€(Pool)ì— ìê¸° ìì‹  ë°˜í™˜
 	Super::ApplyEffect(TargetActor);
 }

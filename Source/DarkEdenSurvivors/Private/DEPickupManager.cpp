@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEPickupManager.h"
@@ -17,7 +17,7 @@ void UDEPickupManager::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
 
-	// ÃÊ±âÈ­
+	// ì´ˆê¸°í™”
 	ActivePickups.Empty();
 	MagnetizingPickups.Empty();
 	CachedStatComponent = nullptr;
@@ -42,7 +42,7 @@ void UDEPickupManager::SpawnPickup(const FVector& Location, float ItemValue, TSu
 
 	if (ADEPickupBase* Pickup = Cast<ADEPickupBase>(SpawnedActor))
 	{
-		// ¡Ú ±¸Á¶Ã¼¿¡¼­ °¡Á®¿Â Value¸¦ ÇÈ¾÷ ¾ÆÀÌÅÛ¿¡°Ô ÁÖÀÔ!
+		// â˜… êµ¬ì¡°ì²´ì—ì„œ ê°€ì ¸ì˜¨ Valueë¥¼ í”½ì—… ì•„ì´í…œì—ê²Œ ì£¼ì…!
 		Pickup->ActivatePickup(Location, ItemValue);
 		ActivePickups.Add(Pickup);
 	}
@@ -56,7 +56,7 @@ void UDEPickupManager::Tick(float DeltaTime)
 	}
 
 	// -------------------------------------------------------------
-	// 0. ÇÃ·¹ÀÌ¾î & ½ºÅÈ ÄÄÆ÷³ÍÆ® Ä³½Ì (¾øÀ¸¸é Ã£±â)
+	// 0. í”Œë ˆì´ì–´ & ìŠ¤íƒ¯ ì»´í¬ë„ŒíŠ¸ ìºì‹± (ì—†ìœ¼ë©´ ì°¾ê¸°)
 	// -------------------------------------------------------------
 	if (!CachedStatComponent.IsValid())
 	{
@@ -67,7 +67,7 @@ void UDEPickupManager::Tick(float DeltaTime)
 		}
 	}
 
-	// ÇÃ·¹ÀÌ¾î°¡ ¾ø°Å³ª Á×¾úÀ¸¸é ·ÎÁ÷ Áß´Ü
+	// í”Œë ˆì´ì–´ê°€ ì—†ê±°ë‚˜ ì£½ì—ˆìœ¼ë©´ ë¡œì§ ì¤‘ë‹¨
 	if (!CachedStatComponent.IsValid()) return;
 
 	AActor* PlayerActor = CachedStatComponent->GetOwner();
@@ -75,17 +75,17 @@ void UDEPickupManager::Tick(float DeltaTime)
 
 
 	// -------------------------------------------------------------
-	// [1´Ü°è] ·¹ÀÌ´õ °¡µ¿: "³» ÀÚ¼® ¹üÀ§ ¾È¿¡ µé¾î¿Â ³ğ ÀÖ³ª?"
+	// [1ë‹¨ê³„] ë ˆì´ë” ê°€ë™: "ë‚´ ìì„ ë²”ìœ„ ì•ˆì— ë“¤ì–´ì˜¨ ë†ˆ ìˆë‚˜?"
 	// -------------------------------------------------------------
 
-	// ¡Ú ½ºÅÈ ÄÄÆ÷³ÍÆ®¿¡¼­ ¹üÀ§ °¡Á®¿À±â
-	// (±¸Á¶Ã¼ ¸â¹ö ÀÌ¸§ÀÌ Value¶ó¸é .Value, ÇÔ¼ö¶ó¸é .GetValue()·Î ¼öÁ¤ÇÏ¼¼¿ä)
+	// â˜… ìŠ¤íƒ¯ ì»´í¬ë„ŒíŠ¸ì—ì„œ ë²”ìœ„ ê°€ì ¸ì˜¤ê¸°
+	// (êµ¬ì¡°ì²´ ë©¤ë²„ ì´ë¦„ì´ Valueë¼ë©´ .Value, í•¨ìˆ˜ë¼ë©´ .GetValue()ë¡œ ìˆ˜ì •í•˜ì„¸ìš”)
 	float CurrentRange = CachedStatComponent->GetMagnetRange();
-	float PickupRadiusSq = CurrentRange * CurrentRange; // Á¦°ö °Å¸® »ç¿ë
+	float PickupRadiusSq = CurrentRange * CurrentRange; // ì œê³± ê±°ë¦¬ ì‚¬ìš©
 
 	FVector PlayerLoc = PlayerActor->GetActorLocation();
 
-	// ÀüÃ¼ ¾ÆÀÌÅÛ ½ºÄµ (RemoveAtSwapÀ» À§ÇØ ¿ª¼ø)
+	// ì „ì²´ ì•„ì´í…œ ìŠ¤ìº” (RemoveAtSwapì„ ìœ„í•´ ì—­ìˆœ)
 	for (int32 i = ActivePickups.Num() - 1; i >= 0; --i)
 	{
 		if (!ActivePickups[i].IsValid())
@@ -96,13 +96,13 @@ void UDEPickupManager::Tick(float DeltaTime)
 
 		ADEPickupBase* Pickup = ActivePickups[i].Get();
 
-		// ÀÌ¹Ì »¡·Á¿À´Â ÁßÀÌ°Å³ª, ¼û°ÜÁø(¸ÔÈù) ³ğÀº ÆĞ½º
+		// ì´ë¯¸ ë¹¨ë ¤ì˜¤ëŠ” ì¤‘ì´ê±°ë‚˜, ìˆ¨ê²¨ì§„(ë¨¹íŒ) ë†ˆì€ íŒ¨ìŠ¤
 		if (Pickup->bIsMagnetized || Pickup->IsHidden()) continue;
 
-		// °Å¸® Ã¼Å©
+		// ê±°ë¦¬ ì²´í¬
 		float DistSq = FVector::DistSquared(Pickup->GetActorLocation(), PlayerLoc);
 
-		// ¹üÀ§ ¾È¿¡ µé¾î¿Ô´Ù! -> ÀÚ¼® ¸®½ºÆ® µî·Ï
+		// ë²”ìœ„ ì•ˆì— ë“¤ì–´ì™”ë‹¤! -> ìì„ ë¦¬ìŠ¤íŠ¸ ë“±ë¡
 		if (DistSq < PickupRadiusSq)
 		{
 			RegisterMagnetRequest(Pickup, PlayerActor);
@@ -112,7 +112,7 @@ void UDEPickupManager::Tick(float DeltaTime)
 
 
 	// -------------------------------------------------------------
-	// [2´Ü°è] ÀÚ¼® ÀÌµ¿: "»¡·Á¿À±â·Î ÇÑ ³ğµé ½ÇÁ¦·Î ¿Å±â±â"
+	// [2ë‹¨ê³„] ìì„ ì´ë™: "ë¹¨ë ¤ì˜¤ê¸°ë¡œ í•œ ë†ˆë“¤ ì‹¤ì œë¡œ ì˜®ê¸°ê¸°"
 	// -------------------------------------------------------------
 
 	for (int32 i = MagnetizingPickups.Num() - 1; i >= 0; --i)
@@ -125,19 +125,19 @@ void UDEPickupManager::Tick(float DeltaTime)
 
 		ADEPickupBase* Pickup = MagnetizingPickups[i].Get();
 
-		// Å¸°ÙÀÌ »ç¶óÁ³°Å³ª, (Ãæµ¹ ÀÌº¥Æ®¿¡ ÀÇÇØ) ÀÌ¹Ì ¸ÔÇô¼­ ¼û°ÜÁ³´Ù¸é ¸®½ºÆ®¿¡¼­ ¾Æ¿ô!
+		// íƒ€ê²Ÿì´ ì‚¬ë¼ì¡Œê±°ë‚˜, (ì¶©ëŒ ì´ë²¤íŠ¸ì— ì˜í•´) ì´ë¯¸ ë¨¹í˜€ì„œ ìˆ¨ê²¨ì¡Œë‹¤ë©´ ë¦¬ìŠ¤íŠ¸ì—ì„œ ì•„ì›ƒ!
 		if (!Pickup || !Pickup->MagnetTarget || Pickup->IsHidden())
 		{
 			MagnetizingPickups.RemoveAtSwap(i);
 			continue;
 		}
 
-		// ÀÌµ¿ ·ÎÁ÷ (¸Å´ÏÀú´Â ¹è´Ş¸¸ ÇÑ´Ù!)
+		// ì´ë™ ë¡œì§ (ë§¤ë‹ˆì €ëŠ” ë°°ë‹¬ë§Œ í•œë‹¤!)
 		FVector MyLoc = Pickup->GetActorLocation();
 		FVector TargetLoc = Pickup->MagnetTarget->GetActorLocation();
-		TargetLoc.Z += 50.0f; // Çã¸® ³ôÀÌ
+		TargetLoc.Z += 50.0f; // í—ˆë¦¬ ë†’ì´
 
-		// ¹æÇâ ±¸ÇÏ°í °¡¼ÓÇØ¼­ ÀÌµ¿
+		// ë°©í–¥ êµ¬í•˜ê³  ê°€ì†í•´ì„œ ì´ë™
 		FVector Dir = (TargetLoc - MyLoc).GetSafeNormal();
 		Pickup->CurrentSpeed += (2500.0f * DeltaTime);
 		Pickup->SetActorLocation(MyLoc + (Dir * Pickup->CurrentSpeed * DeltaTime));
@@ -169,16 +169,16 @@ void UDEPickupManager::RegisterMagnetRequest(ADEPickupBase* Pickup, AActor* Targ
 	{
 		Pickup->MagnetTarget = Target;
 		Pickup->bIsMagnetized = true;
-		Pickup->CurrentSpeed = 300.0f; // ÃÊ±â ¼Óµµ (»ìÂ¦ Æ¢¾î¿À¸§)
+		Pickup->CurrentSpeed = 300.0f; // ì´ˆê¸° ì†ë„ (ì‚´ì§ íŠ€ì–´ì˜¤ë¦„)
 
-		// ÀÌµ¿ Ã³¸® ¸ñ·Ï¿¡ Ãß°¡
+		// ì´ë™ ì²˜ë¦¬ ëª©ë¡ì— ì¶”ê°€
 		MagnetizingPickups.Add(Pickup);
 	}
 }
 
 void UDEPickupManager::ClearAllPickups()
 {
-	// ¸ğµç ¾ÆÀÌÅÛ °­Á¦ ¹İÈ¯
+	// ëª¨ë“  ì•„ì´í…œ ê°•ì œ ë°˜í™˜
 	for (auto& WeakPickup : ActivePickups)
 	{
 		if (WeakPickup.IsValid())

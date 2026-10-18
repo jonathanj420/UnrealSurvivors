@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEInfiniteMapSection.h"
@@ -12,7 +12,7 @@ ADEInfiniteMapSection::ADEInfiniteMapSection()
 	MeshComponent->SetCastShadow(false);
 	RootComponent = MeshComponent;
 
-	// 1. »ç¿ëÇÒ ¹è°æ ¸Ş½¬ ·Îµå
+	// 1. ì‚¬ìš©í•  ë°°ê²½ ë©”ì‰¬ ë¡œë“œ
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> MapMeshAsset(
 		TEXT("/Engine/BasicShapes/Plane.Plane")
 	);
@@ -24,8 +24,8 @@ ADEInfiniteMapSection::ADEInfiniteMapSection()
 
 	MeshComponent->SetRelativeScale3D(FVector(20.0f, 20.0f, 1.0f));
 
-	// 3. Ãæµ¹ ¼³Á¤
-	// ÇÃ·¹ÀÌ¾î°¡ ¹â°í ´Ù³à¾ß ÇÏ´Ï±î BlockAll·Î ¼³Á¤ÇÕ´Ï´Ù.
+	// 3. ì¶©ëŒ ì„¤ì •
+	// í”Œë ˆì´ì–´ê°€ ë°Ÿê³  ë‹¤ë…€ì•¼ í•˜ë‹ˆê¹Œ BlockAllë¡œ ì„¤ì •í•©ë‹ˆë‹¤.
 	MeshComponent->SetCollisionProfileName(TEXT("BlockAll"));
 }
 
@@ -37,14 +37,14 @@ void ADEInfiniteMapSection::BeginPlay()
 	if (MeshComponent->GetStaticMesh())
 	{
 		FVector MeshExtent = MeshComponent->Bounds.BoxExtent;
-		// Á¤»ç°¢Çü Å¸ÀÏÀÌ¶ó°í °¡Á¤ÇÏ°í XÃà ±æÀÌ¸¦ ±âÁØÀ¸·Î Àâ½À´Ï´Ù.
+		// ì •ì‚¬ê°í˜• íƒ€ì¼ì´ë¼ê³  ê°€ì •í•˜ê³  Xì¶• ê¸¸ì´ë¥¼ ê¸°ì¤€ìœ¼ë¡œ ì¡ìŠµë‹ˆë‹¤.
 		MapSize = MeshExtent.X * 2.0f;
 
 		//UE_LOG(LogTemp, Warning, TEXT("MapSection Initialized. Auto-Calculated MapSize: %f"), MapSize);
 	}
 	else
 	{
-		// È¤½Ã¶óµµ ¸Ş½¬ ·Îµå ½ÇÆĞ ½Ã ±âº»°ª (¾ÈÀüÀåÄ¡)
+		// í˜¹ì‹œë¼ë„ ë©”ì‰¬ ë¡œë“œ ì‹¤íŒ¨ ì‹œ ê¸°ë³¸ê°’ (ì•ˆì „ì¥ì¹˜)
 		MapSize = 2000.0f;
 		//UE_LOG(LogTemp, Error, TEXT("MapSection Mesh Missing! Defaulting MapSize to 2000.0f"));
 	}

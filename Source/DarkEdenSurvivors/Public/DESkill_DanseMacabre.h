@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -17,7 +17,7 @@ class DARKEDENSURVIVORS_API UDESkill_DanseMacabre : public UDEAutoSkillBase
 public:
     UDESkill_DanseMacabre();
 
-    // ½ºÅ³ ½ÇÇà ½Ã ÆÄÀÌÇÁ¶óÀÎÀ» ±¸¼ºÇÏ´Â ÇÔ¼ö
+    // ìŠ¤í‚¬ ì‹¤í–‰ ì‹œ íŒŒì´í”„ë¼ì¸ì„ êµ¬ì„±í•˜ëŠ” í•¨ìˆ˜
     virtual void InitBehaviors() override;
 	
 };

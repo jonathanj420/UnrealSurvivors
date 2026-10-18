@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEPlayerController.h"
@@ -46,8 +46,8 @@ void ADEPlayerController::BeginPlay()
     SetInputMode(FInputModeGameOnly());
     bShowMouseCursor = false;
 
-    // 1. ÇöÀç °ÔÀÓ ¸ğµå°¡ "½ºÅ×ÀÌÁö"ÀÎÁö È®ÀÎ (·Îºñ¿¡¼­´Â ¾È ¶ç¿ì·Á°í)
-    // (¸¸¾à ·Îºñ¿ë ÄÁÆ®·Ñ·¯¸¦ µû·Î ¾È ¸¸µé°í ÇÏ³ª·Î ¾´´Ù¸é ÀÌ Ã¼Å©°¡ ÇÊ¼öÀÔ´Ï´Ù)
+    // 1. í˜„ì¬ ê²Œì„ ëª¨ë“œê°€ "ìŠ¤í…Œì´ì§€"ì¸ì§€ í™•ì¸ (ë¡œë¹„ì—ì„œëŠ” ì•ˆ ë„ìš°ë ¤ê³ )
+    // (ë§Œì•½ ë¡œë¹„ìš© ì»¨íŠ¸ë¡¤ëŸ¬ë¥¼ ë”°ë¡œ ì•ˆ ë§Œë“¤ê³  í•˜ë‚˜ë¡œ ì“´ë‹¤ë©´ ì´ ì²´í¬ê°€ í•„ìˆ˜ì…ë‹ˆë‹¤)
     if (GetWorld()->GetAuthGameMode<ADEGameMode_Stage>())
     {
         if (GameHUDWidgetClass)
@@ -67,7 +67,7 @@ void ADEPlayerController::BeginPlay()
             UE_LOG(LogTemp, Warning, TEXT("NO GAME HUD"));
         }
 
-        // 3. ÀÔ·Â ¸ğµå °ÔÀÓÀ¸·Î ÀüÈ¯ (HUD ¶ç¿üÀ¸´Ï±î)
+        // 3. ì…ë ¥ ëª¨ë“œ ê²Œì„ìœ¼ë¡œ ì „í™˜ (HUD ë„ì› ìœ¼ë‹ˆê¹Œ)
         FInputModeGameOnly GameInputMode;
         SetInputMode(GameInputMode);
         bShowMouseCursor = false;
@@ -97,11 +97,11 @@ void ADEPlayerController::PostInitializeComponents()
 void ADEPlayerController::OnPossess(APawn* aPawn)
 {
     Super::OnPossess(aPawn);
-    // »õ·Î µé¾î¿Â ÆùÀÌ ¿ì¸® Ä³¸¯ÅÍ°í, HUD°¡ ÄÑÁ® ÀÖ´Ù¸é
+    // ìƒˆë¡œ ë“¤ì–´ì˜¨ í°ì´ ìš°ë¦¬ ìºë¦­í„°ê³ , HUDê°€ ì¼œì ¸ ìˆë‹¤ë©´
     ADECharacterBase* MyChar = Cast<ADECharacterBase>(aPawn);
     if (MyChar && GameHUDWidget)
     {
-        // HUDÇÑÅ× »õ Ä³¸¯ÅÍ ½ºÅÈ ¿¬°áÇÏ¶ó°í ¸í·É
+        // HUDí•œí…Œ ìƒˆ ìºë¦­í„° ìŠ¤íƒ¯ ì—°ê²°í•˜ë¼ê³  ëª…ë ¹
         GameHUDWidget->BindCharacterStat(MyChar);
     }
 
@@ -126,10 +126,10 @@ void ADEPlayerController::SetupInputComponent()
 {
     Super::SetupInputComponent();
 
-    // ÀÔ·Â ÄÄÆ÷³ÍÆ®°¡ Á¦´ë·Î ÀÖ´ÂÁö È®ÀÎ
+    // ì…ë ¥ ì»´í¬ë„ŒíŠ¸ê°€ ì œëŒ€ë¡œ ìˆëŠ”ì§€ í™•ì¸
     if (InputComponent)
     {
-        // "PauseGame" ¾×¼ÇÀ» ´­·¶À» ¶§(IE_Pressed), ³» ÄÁÆ®·Ñ·¯ÀÇ TogglePauseMenu ÇÔ¼ö¸¦ ½ÇÇàÇØ¶ó!
+        // "PauseGame" ì•¡ì…˜ì„ ëˆŒë €ì„ ë•Œ(IE_Pressed), ë‚´ ì»¨íŠ¸ë¡¤ëŸ¬ì˜ TogglePauseMenu í•¨ìˆ˜ë¥¼ ì‹¤í–‰í•´ë¼!
         FInputActionBinding& PauseBinding = InputComponent->BindAction(
             TEXT("PauseGame"),
             IE_Pressed,
@@ -138,7 +138,7 @@ void ADEPlayerController::SetupInputComponent()
         );
 
         // =========================================================
-        // ¡Ú [ÇÙ½É] ÀÌ°Å ¾È ¾²¸é ÀÏ½ÃÁ¤Áö ÈÄ ESC Å°°¡ ¸ÔÅëÀÌ µÊ!!!
+        // â˜… [í•µì‹¬] ì´ê±° ì•ˆ ì“°ë©´ ì¼ì‹œì •ì§€ í›„ ESC í‚¤ê°€ ë¨¹í†µì´ ë¨!!!
         // =========================================================
         PauseBinding.bExecuteWhenPaused = true;
     }
@@ -179,14 +179,14 @@ void ADEPlayerController::ResumeGame()
 
 void ADEPlayerController::ShowChestWidget(const TArray<UDELevelUpChoiceBase*>& Rewards)
 {
-    // 1. À§Á¬ Å¬·¡½º ÇÒ´ç ¿©ºÎ Ã¼Å© (¹æ¾î ÄÚµå)
+    // 1. ìœ„ì ¯ í´ë˜ìŠ¤ í• ë‹¹ ì—¬ë¶€ ì²´í¬ (ë°©ì–´ ì½”ë“œ)
     if (!ChestWidgetClass)
     {
         UE_LOG(LogTemp, Error, TEXT("No Chest Widget"));
         return;
     }
 
-    // 2. À§Á¬ ÀÎ½ºÅÏ½º°¡ ¾øÀ¸¸é µ¿Àû »ı¼º
+    // 2. ìœ„ì ¯ ì¸ìŠ¤í„´ìŠ¤ê°€ ì—†ìœ¼ë©´ ë™ì  ìƒì„±
     if (!ChestWidget)
     {
         ChestWidget = CreateWidget<UDEChestWidget>(this, ChestWidgetClass);
@@ -194,7 +194,7 @@ void ADEPlayerController::ShowChestWidget(const TArray<UDELevelUpChoiceBase*>& R
 
     if (ChestWidget)
     {
-        // 3. È­¸é¿¡ ¾øÀ¸¸é ¶ç¿ì±â
+        // 3. í™”ë©´ì— ì—†ìœ¼ë©´ ë„ìš°ê¸°
         if (!ChestWidget->IsInViewport())
         {
             ChestWidget->AddToViewport();
@@ -202,37 +202,37 @@ void ADEPlayerController::ShowChestWidget(const TArray<UDELevelUpChoiceBase*>& R
 
         ChestWidget->SetupChestRewards(Rewards);
 
-        // 5. ¸¶¿ì½º Ä¿¼­ ÄÑ°í, ÀÔ·Â ¸ğµå¸¦ 'UI Àü¿ë'À¸·Î º¯°æ
+        // 5. ë§ˆìš°ìŠ¤ ì»¤ì„œ ì¼œê³ , ì…ë ¥ ëª¨ë“œë¥¼ 'UI ì „ìš©'ìœ¼ë¡œ ë³€ê²½
         bShowMouseCursor = true;
         FInputModeUIOnly InputMode;
         InputMode.SetWidgetToFocus(ChestWidget->TakeWidget());
         SetInputMode(InputMode);
 
-        // (Âü°í: SetPause(true)´Â ÀÌ¹Ì »óÀÚ ÇÈ¾÷ÀÇ ApplyEffect¿¡¼­ ÇÏ¼ÌÀ¸¹Ç·Î ¿©±â¼± ÆĞ½º!)
+        // (ì°¸ê³ : SetPause(true)ëŠ” ì´ë¯¸ ìƒì í”½ì—…ì˜ ApplyEffectì—ì„œ í•˜ì…¨ìœ¼ë¯€ë¡œ ì—¬ê¸°ì„  íŒ¨ìŠ¤!)
     }
 }
 
 void ADEPlayerController::TogglePauseMenu()
 {
-    // ÀÌ¹Ì ÀÏ½ÃÁ¤Áö »óÅÂ¶ó¸é? -> °ÔÀÓ Àç°³
+    // ì´ë¯¸ ì¼ì‹œì •ì§€ ìƒíƒœë¼ë©´? -> ê²Œì„ ì¬ê°œ
     if (IsPaused())
     {
-        SetPause(false); // ½Ã°£ ´Ù½Ã Èå¸£°Ô
+        SetPause(false); // ì‹œê°„ ë‹¤ì‹œ íë¥´ê²Œ
 
         if (PauseMenuInstance)
         {
-            PauseMenuInstance->RemoveFromParent(); // È­¸é¿¡¼­ UI Á¦°Å
+            PauseMenuInstance->RemoveFromParent(); // í™”ë©´ì—ì„œ UI ì œê±°
         }
 
-        bShowMouseCursor = false; // ¸¶¿ì½º ¼û±â±â
-        SetInputMode(FInputModeGameOnly()); // Å°º¸µå/¸¶¿ì½º ÀÔ·ÂÀ» ´Ù½Ã °ÔÀÓÀ¸·Î
+        bShowMouseCursor = false; // ë§ˆìš°ìŠ¤ ìˆ¨ê¸°ê¸°
+        SetInputMode(FInputModeGameOnly()); // í‚¤ë³´ë“œ/ë§ˆìš°ìŠ¤ ì…ë ¥ì„ ë‹¤ì‹œ ê²Œì„ìœ¼ë¡œ
     }
-    // °ÔÀÓ ÁßÀÌ¾ú´Ù¸é? -> ÀÏ½ÃÁ¤Áö
+    // ê²Œì„ ì¤‘ì´ì—ˆë‹¤ë©´? -> ì¼ì‹œì •ì§€
     else
     {
         if (PauseMenuClass)
         {
-            // À§Á¬ »ı¼º ¹× È­¸é¿¡ ¶ç¿ì±â
+            // ìœ„ì ¯ ìƒì„± ë° í™”ë©´ì— ë„ìš°ê¸°
             if (!PauseMenuInstance)
             {
                 PauseMenuInstance = CreateWidget<UUserWidget>(this, PauseMenuClass);
@@ -240,14 +240,14 @@ void ADEPlayerController::TogglePauseMenu()
 
             if (PauseMenuInstance)
             {
-                PauseMenuInstance->AddToViewport(100); // ZOrder ³ô°Ô Áà¼­ ¸Ç À§¿¡ ¶ß°Ô
+                PauseMenuInstance->AddToViewport(100); // ZOrder ë†’ê²Œ ì¤˜ì„œ ë§¨ ìœ„ì— ëœ¨ê²Œ
 
-                SetPause(true); // ½Ã°£ ¸ØÃç!
+                SetPause(true); // ì‹œê°„ ë©ˆì¶°!
 
-                bShowMouseCursor = true; // ¸¶¿ì½º Ä¿¼­ Â§
+                bShowMouseCursor = true; // ë§ˆìš°ìŠ¤ ì»¤ì„œ ì§ 
 
                 FInputModeGameAndUI InputMode;
-                InputMode.SetWidgetToFocus(PauseMenuInstance->TakeWidget()); // Æ÷Ä¿½º¸¦ ¸Ş´º·Î
+                InputMode.SetWidgetToFocus(PauseMenuInstance->TakeWidget()); // í¬ì»¤ìŠ¤ë¥¼ ë©”ë‰´ë¡œ
                 SetInputMode(InputMode);
             }
         }

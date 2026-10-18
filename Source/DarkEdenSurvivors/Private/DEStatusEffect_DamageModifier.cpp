@@ -1,11 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEStatusEffect_DamageModifier.h"
 
 void UDEStatusEffect_DamageModifier::ModifyIncomingDamage(const FActiveStatusEffect& EffectData, FDEDamageRequest& InOutRequest) const
 {
-	// Æ½µ©(Poison, Bleed)Àº ÁõÆø½ÃÅ°Áö ¾ÊÀ½ (¹«ÇÑ·çÇÁ ¹æÁö)
+	// í‹±ë€(Poison, Bleed)ì€ ì¦í­ì‹œí‚¤ì§€ ì•ŠìŒ (ë¬´í•œë£¨í”„ ë°©ì§€)
 	static const FGameplayTag Tag_DoT = FGameplayTag::RequestGameplayTag(FName("Damage.Mechanic.DoT"));
 	if (InOutRequest.DamageTags.HasTag(Tag_DoT))
 	{
@@ -18,14 +18,14 @@ void UDEStatusEffect_DamageModifier::ModifyIncomingDamage(const FActiveStatusEff
 	{
 	case EDamageModifierType::Flat:
 	{
-		// °íÁ¤ µ¥¹ÌÁö Áõ°¨
+		// ê³ ì • ë°ë¯¸ì§€ ì¦ê°
 		InOutRequest.BaseDamage += TotalModifier;
 		InOutRequest.BaseDamage = FMath::Max(0.0f, InOutRequest.BaseDamage);
 		break;
 	}
 	case EDamageModifierType::Percentage:
 	{
-		// ÆÛ¼¾Æ® ÁõÆø
+		// í¼ì„¼íŠ¸ ì¦í­
 		InOutRequest.BaseDamage *= (1.0f + TotalModifier);
 		break;
 	}

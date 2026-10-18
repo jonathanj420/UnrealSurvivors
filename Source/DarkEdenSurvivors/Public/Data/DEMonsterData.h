@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
@@ -29,7 +29,7 @@ struct FDEMonsterDropInfo
 };
 
 /**
- * ¸ó½ºÅÍÀÇ ¸ğµç Á¤º¸(½ºÅÈ, ¿ÜÇü, º¸»ó µî)¸¦ Á¤ÀÇÇÏ´Â µ¥ÀÌÅÍ Å×ÀÌºí¿ë ±¸Á¶Ã¼
+ * ëª¬ìŠ¤í„°ì˜ ëª¨ë“  ì •ë³´(ìŠ¤íƒ¯, ì™¸í˜•, ë³´ìƒ ë“±)ë¥¼ ì •ì˜í•˜ëŠ” ë°ì´í„° í…Œì´ë¸”ìš© êµ¬ì¡°ì²´
  */
 USTRUCT(BlueprintType)
 struct FDEMonsterData : public FTableRowBase
@@ -37,7 +37,7 @@ struct FDEMonsterData : public FTableRowBase
 	GENERATED_BODY()
 
 public:
-	// [2. ½ºÅÈ µ¥ÀÌÅÍ (±âÁ¸ µ¿ÀÏ)]
+	// [2. ìŠ¤íƒ¯ ë°ì´í„° (ê¸°ì¡´ ë™ì¼)]
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 	FText DisplayName;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
@@ -57,27 +57,27 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "System")
 	TSoftClassPtr<class ADEMonsterBase> OverrideClass;
 
-	// [1. ¿ÜÇü µ¥ÀÌÅÍ (ÇÙ½É)]
-	// ¸Ş¸ğ¸® °ü¸®¸¦ À§ÇØ Soft Reference »ç¿ë
+	// [1. ì™¸í˜• ë°ì´í„° (í•µì‹¬)]
+	// ë©”ëª¨ë¦¬ ê´€ë¦¬ë¥¼ ìœ„í•´ Soft Reference ì‚¬ìš©
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
 	TSoftObjectPtr<USkeletalMesh> MonsterMesh;
 
-	// AnimBPµµ ÇÊ¿ä ¾øÀ½. ±×³É '°È±â ¸ğ¼Ç' ÆÄÀÏ ÇÏ³ª¸¸ ÀÖÀ¸¸é µÊ.
+	// AnimBPë„ í•„ìš” ì—†ìŒ. ê·¸ëƒ¥ 'ê±·ê¸° ëª¨ì…˜' íŒŒì¼ í•˜ë‚˜ë§Œ ìˆìœ¼ë©´ ë¨.
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
 	TSoftObjectPtr<UAnimSequence> WalkAnim;
 
-	// ¸Ş½¬¸¶´Ù Áß½ÉÁ¡ÀÌ ´Ù¸£´Ï ³ôÀÌ º¸Á¤¿ë
+	// ë©”ì‰¬ë§ˆë‹¤ ì¤‘ì‹¬ì ì´ ë‹¤ë¥´ë‹ˆ ë†’ì´ ë³´ì •ìš©
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
-	float MeshZOffset = 0.0f; // ¿¹: -90.0f
+	float MeshZOffset = 0.0f; // ì˜ˆ: -90.0f
 
-	// ¸Ş½¬¸¶´Ù µ¢Ä¡°¡ ´Ù¸£´Ï Ä¸½¶ Å©±â º¸Á¤¿ë
+	// ë©”ì‰¬ë§ˆë‹¤ ë©ì¹˜ê°€ ë‹¤ë¥´ë‹ˆ ìº¡ìŠ í¬ê¸° ë³´ì •ìš©
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
 	float CapsuleRadius = 42.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
 	float CapsuleHalfHeight = 96.0f;
 
-	// Å©±â ¹èÀ²
+	// í¬ê¸° ë°°ìœ¨
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
 	float ScaleMultiplier = 1.0f;
 

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -9,15 +9,15 @@
 UENUM()
 enum class EBoomerangPhase : uint8
 {
-    Going,      // ³ª°¡´Â Áß
-    Returning   // µ¹¾Æ¿À´Â Áß
+    Going,      // ë‚˜ê°€ëŠ” ì¤‘
+    Returning   // ëŒì•„ì˜¤ëŠ” ì¤‘
 };
 
 UENUM()
 enum class EReturnMode : uint8
 {
-    Linear,  // ´Ü¼ø Á÷¼± ¹İÀü
-    Homing   // ½ÃÀüÀÚ À¯µµ
+    Linear,  // ë‹¨ìˆœ ì§ì„  ë°˜ì „
+    Homing   // ì‹œì „ì ìœ ë„
 };
 
 /**
@@ -31,22 +31,22 @@ class DARKEDENSURVIVORS_API ADEProjectile_Boomerang : public ADESimpleProjectile
 public:
     ADEProjectile_Boomerang();
 
-    // ÃÖ´ë »ç°Å¸®
+    // ìµœëŒ€ ì‚¬ê±°ë¦¬
     UPROPERTY(EditAnywhere, Category = "Boomerang")
     float MaxDistance = 600.f;
 
-    // º¹±Í ¼Óµµ
+    // ë³µê·€ ì†ë„
     UPROPERTY(EditAnywhere, Category = "Boomerang")
     float ReturnSpeed = 900.f;
 
     UPROPERTY(EditAnywhere, Category = "Boomerang")
     float RetractionAcceleration = 1000.0f;
 
-    // º¹±Í ¹æ½Ä
+    // ë³µê·€ ë°©ì‹
     UPROPERTY(EditAnywhere, Category = "Boomerang")
     EReturnMode ReturnMode = EReturnMode::Linear;
 
-    // ½ÃÀüÀÚ µµ´Ş ÆÇÁ¤ °Å¸®
+    // ì‹œì „ì ë„ë‹¬ íŒì • ê±°ë¦¬
     UPROPERTY(EditAnywhere, Category = "Boomerang")
     float ReturnCompleteDistance = 80.f;
 
@@ -57,7 +57,7 @@ protected:
 
     EBoomerangPhase Phase = EBoomerangPhase::Going;
     float TravelDistance = 0.f;
-    bool bCanBeReturned = false; //È¸¼ö °¡´É?
+    bool bCanBeReturned = false; //íšŒìˆ˜ ê°€ëŠ¥?
 
 
 };

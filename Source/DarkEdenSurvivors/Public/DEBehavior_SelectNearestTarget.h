@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -18,11 +18,11 @@ public:
 	virtual void Execute(FDESkillContext& Context) override;
 
 public:
-	// Å½»ö ¹üÀ§ (Context¿¡ "Range" °ªÀÌ ÀÖÀ¸¸é ±×°É ¾²°í, ¾øÀ¸¸é ÀÌ °ªÀ» ¾¸)
+	// íƒìƒ‰ ë²”ìœ„ (Contextì— "Range" ê°’ì´ ìˆìœ¼ë©´ ê·¸ê±¸ ì“°ê³ , ì—†ìœ¼ë©´ ì´ ê°’ì„ ì”€)
 	UPROPERTY(EditAnywhere)
 	float DefaultSearchRadius = 2000.0f;
 
-	// Àû ÅÂ±× (¿¹: "Enemy", "Monster")
+	// ì  íƒœê·¸ (ì˜ˆ: "Enemy", "Monster")
 	UPROPERTY(EditAnywhere)
 	FName EnemyTag = TEXT("Enemy");
 

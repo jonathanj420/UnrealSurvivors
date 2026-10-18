@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEProjectile_CrimsonHarvest.h"
@@ -6,61 +6,61 @@
 #include "DEHealthComponent.h"
 ADEProjectile_CrimsonHarvest::ADEProjectile_CrimsonHarvest()
 {
-    // »ı¼ºÀÚ ÃÊ±âÈ­
+    // ìƒì„±ì ì´ˆê¸°í™”
 }
 
 void ADEProjectile_CrimsonHarvest::ResetState()
 {
     Super::ResetState();
-    CurrentPhase = EBatPhase::Hunting; // Ç®¿¡¼­ ²¨³¾ ¶§ ´Ù½Ã »ç³É ¸ğµå·Î!
+    CurrentPhase = EBatPhase::Hunting; // í’€ì—ì„œ êº¼ë‚¼ ë•Œ ë‹¤ì‹œ ì‚¬ëƒ¥ ëª¨ë“œë¡œ!
     bHasEverDealt = false;
 
 }
 
-// 1. [ÇÙ½É] ¼ö¸íÀÌ ´ÙÇßÀ» ¶§ ¼Ò¸êÇÏÁö ¾Ê°í ÆäÀÌÁî ÀüÈ¯!
+// 1. [í•µì‹¬] ìˆ˜ëª…ì´ ë‹¤í–ˆì„ ë•Œ ì†Œë©¸í•˜ì§€ ì•Šê³  í˜ì´ì¦ˆ ì „í™˜!
 void ADEProjectile_CrimsonHarvest::OnLifeTimeExpired()
 {
     if (CurrentPhase == EBatPhase::Hunting)
     {
         CurrentPhase = EBatPhase::Returning;
 
-        // Åõ»çÃ¼ ¼ö¸íÀ» ÀÓÀÇ·Î ´Ã·ÁÁÖ°Å³ª (È¤Àº Æ½¿¡¼­ ReturningÀÏ ¶§´Â LifeTime Ã¼Å©¸¦ ¹«½ÃÇÏµµ·Ï Ã³¸®)
+        // íˆ¬ì‚¬ì²´ ìˆ˜ëª…ì„ ì„ì˜ë¡œ ëŠ˜ë ¤ì£¼ê±°ë‚˜ (í˜¹ì€ í‹±ì—ì„œ Returningì¼ ë•ŒëŠ” LifeTime ì²´í¬ë¥¼ ë¬´ì‹œí•˜ë„ë¡ ì²˜ë¦¬)
 
-        // µ¹¾Æ¿Ã ¶§ º®¿¡ Æ¨±â´Â °ÍÀ» ¹æÁöÇÏ·Á¸é Ãæµ¹ ¼³Á¤À» °ãÄ§(Overlap) Àü¿ëÀ¸·Î ¹Ù²Ù´Â °Íµµ ÁÁ½À´Ï´Ù.
+        // ëŒì•„ì˜¬ ë•Œ ë²½ì— íŠ•ê¸°ëŠ” ê²ƒì„ ë°©ì§€í•˜ë ¤ë©´ ì¶©ëŒ ì„¤ì •ì„ ê²¹ì¹¨(Overlap) ì „ìš©ìœ¼ë¡œ ë°”ê¾¸ëŠ” ê²ƒë„ ì¢‹ìŠµë‹ˆë‹¤.
         // CollisionComponent->SetCollisionProfileName(TEXT("OverlapAll")); 
     }
 }
 
-// 2. ÀÌµ¿ ·ÎÁ÷: »óÅÂ¿¡ µû¶ó ´Ù¸£°Ô ¿òÁ÷ÀÓ
+// 2. ì´ë™ ë¡œì§: ìƒíƒœì— ë”°ë¼ ë‹¤ë¥´ê²Œ ì›€ì§ì„
 void ADEProjectile_CrimsonHarvest::UpdateMovement(float DeltaTime)
 {
     if (CurrentPhase == EBatPhase::Hunting)
     {
-        // Æ¨°Ü´Ù´Ï´Â ·ÎÁ÷Àº ºÎ¸ğ(SanguineBat ¶Ç´Â SimpleProjectileBase)ÀÇ °ÍÀ» ±×´ë·Î »ç¿ë
+        // íŠ•ê²¨ë‹¤ë‹ˆëŠ” ë¡œì§ì€ ë¶€ëª¨(SanguineBat ë˜ëŠ” SimpleProjectileBase)ì˜ ê²ƒì„ ê·¸ëŒ€ë¡œ ì‚¬ìš©
         Super::UpdateMovement(DeltaTime);
         return;
     }
     else if (CurrentPhase == EBatPhase::Returning && CachedContext.Instigator)
     {
-        // [È£¹Ö ·ÎÁ÷] ÇÃ·¹ÀÌ¾î(Instigator)¸¦ ÇâÇØ ºÎµå·´°Ô ¹æÇâÀ» Æµ´Ï´Ù.
+        // [í˜¸ë° ë¡œì§] í”Œë ˆì´ì–´(Instigator)ë¥¼ í–¥í•´ ë¶€ë“œëŸ½ê²Œ ë°©í–¥ì„ í‹‰ë‹ˆë‹¤.
         FVector TargetLoc = CachedContext.Instigator->GetActorLocation();
         FVector CurrentLoc = GetActorLocation();
         FVector ToTarget = (TargetLoc - CurrentLoc).GetSafeNormal();
 
-        // ¹ì¼­·ù Æ¯À¯ÀÇ ¸Å²ô·¯¿î À¯µµÅº ±ËÀû ¸¸µé±â (FMath::VInterpTo »ç¿ë)
+        // ë±€ì„œë¥˜ íŠ¹ìœ ì˜ ë§¤ë„ëŸ¬ìš´ ìœ ë„íƒ„ ê¶¤ì  ë§Œë“¤ê¸° (FMath::VInterpTo ì‚¬ìš©)
         ShootDirection = FMath::VInterpTo(ShootDirection, ToTarget, DeltaTime, HomingTurnSpeed).GetSafeNormal();
 
-        // ¼Óµµ °»½Å
+        // ì†ë„ ê°±ì‹ 
         if (MovementComponent)
         {
             MovementComponent->Velocity = ShootDirection * ReturnSpeed;
         }
 
-        // °Å¸® Ã¼Å© (ºÎ¸Ş¶ûÃ³·³)
+        // ê±°ë¦¬ ì²´í¬ (ë¶€ë©”ë‘ì²˜ëŸ¼)
         float DistSq = FVector::DistSquared(CurrentLoc, TargetLoc);
-        if (DistSq <= 10000.0f) // ÇÃ·¹ÀÌ¾î ¹İ°æ 100 ÀÌ³» µµ´Ş ½Ã
+        if (DistSq <= 10000.0f) // í”Œë ˆì´ì–´ ë°˜ê²½ 100 ì´ë‚´ ë„ë‹¬ ì‹œ
         {
-            // ¿©±â¼­ ÇÃ·¹ÀÌ¾î Ã¼·Â È¸º¹ ·ÎÁ÷(Heal Effect) È£Ãâ!
+            // ì—¬ê¸°ì„œ í”Œë ˆì´ì–´ ì²´ë ¥ íšŒë³µ ë¡œì§(Heal Effect) í˜¸ì¶œ!
             if (UDEHealthComponent* Health = CachedContext.Instigator->FindComponentByClass<UDEHealthComponent>())
             {
                 if (bHasEverDealt)
@@ -70,7 +70,7 @@ void ADEProjectile_CrimsonHarvest::UpdateMovement(float DeltaTime)
                 
             }
 
-            ReturnToPool(); // È¸º¹ ÈÄ ¼Ò¸ê
+            ReturnToPool(); // íšŒë³µ í›„ ì†Œë©¸
         }
     }
 }
@@ -79,15 +79,15 @@ void ADEProjectile_CrimsonHarvest::OnTargetHit(AActor* Target)
 {
     if (CurrentPhase == EBatPhase::Hunting)
     {
-        // »ç³É ÁßÀÏ ¶§´Â ±âÁ¸ SanguineBatÀÇ Æ¨±â´Â ·ÎÁ÷ ½ÇÇà
+        // ì‚¬ëƒ¥ ì¤‘ì¼ ë•ŒëŠ” ê¸°ì¡´ SanguineBatì˜ íŠ•ê¸°ëŠ” ë¡œì§ ì‹¤í–‰
         Super::OnTargetHit(Target);
         bHasEverDealt = true;
     }
     else if (CurrentPhase == EBatPhase::Returning)
     {
         UE_LOG(LogTemp, Warning, TEXT("do no harm but did"));
-        // ±ÍÈ¯ ÁßÀÏ ¶§ ÀûÀ» Åë°úÇÏ¸ç µ¥¹ÌÁö¸¦ ÁÙÁö, ¹«½ÃÇÒÁö °áÁ¤
-        // ¸¸¾à °üÅëÇÏ¸ç µ¹¾Æ¿À°Ô ÇÏ°í ½Í´Ù¸é ¿©±â¼­ TryDealDamage(OtherActor); È£Ãâ ÈÄ Æ¨±â±â(Reflection) ·ÎÁ÷Àº »ı·«!
+        // ê·€í™˜ ì¤‘ì¼ ë•Œ ì ì„ í†µê³¼í•˜ë©° ë°ë¯¸ì§€ë¥¼ ì¤„ì§€, ë¬´ì‹œí• ì§€ ê²°ì •
+        // ë§Œì•½ ê´€í†µí•˜ë©° ëŒì•„ì˜¤ê²Œ í•˜ê³  ì‹¶ë‹¤ë©´ ì—¬ê¸°ì„œ TryDealDamage(OtherActor); í˜¸ì¶œ í›„ íŠ•ê¸°ê¸°(Reflection) ë¡œì§ì€ ìƒëµ!
     }
 }
 

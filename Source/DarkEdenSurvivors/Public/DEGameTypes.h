@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -14,24 +14,24 @@ struct FDEStageRow : public FTableRowBase
 {
     GENERATED_BODY()
 
-    // 1. ½ºÅ×ÀÌÁö ID
+    // 1. ìŠ¤í…Œì´ì§€ ID
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Info")
     int32 StageID = 0;
 
-    // 2. ¸Ê ÀÌ¸§ (¿¹: "¿¡½½¶ó´Ï¾Æ ½Ã³»", "Æä¸®°í¸£ Å»È¯Àü")
+    // 2. ë§µ ì´ë¦„ (ì˜ˆ: "ì—ìŠ¬ë¼ë‹ˆì•„ ì‹œë‚´", "í˜ë¦¬ê³ ë¥´ íƒˆí™˜ì „")
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Info")
     FText StageName;
 
-    // 3. ¸Ê ¼³¸í (ÃâÇö ¸ó½ºÅÍ³ª ¹è°æ ½ºÅä¸®)
+    // 3. ë§µ ì„¤ëª… (ì¶œí˜„ ëª¬ìŠ¤í„°ë‚˜ ë°°ê²½ ìŠ¤í† ë¦¬)
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Info")
     FText Description;
 
-    // 4. ¿ìÃø¿¡ Å©°Ô ¶ç¿öÁÙ ¸Ê ÇÁ¸®ºä/½æ³×ÀÏ ÀÌ¹ÌÁö
+    // 4. ìš°ì¸¡ì— í¬ê²Œ ë„ì›Œì¤„ ë§µ í”„ë¦¬ë·°/ì¸ë„¤ì¼ ì´ë¯¸ì§€
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
     class UTexture2D* StageThumbnail = nullptr;
 
     // ==========================================
-    // ¡Ú 5. (°¡Àå Áß¿ä) ½ÇÁ¦·Î ¿­¾î¾ß ÇÒ ¾ğ¸®¾ó ¸Ê(·¹º§)ÀÇ Á¤È®ÇÑ ÀÌ¸§!
+    // â˜… 5. (ê°€ì¥ ì¤‘ìš”) ì‹¤ì œë¡œ ì—´ì–´ì•¼ í•  ì–¸ë¦¬ì–¼ ë§µ(ë ˆë²¨)ì˜ ì •í™•í•œ ì´ë¦„!
     // ==========================================
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Level")
     FName LevelName;

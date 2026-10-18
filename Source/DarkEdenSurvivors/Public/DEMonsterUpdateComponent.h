@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -17,13 +17,13 @@ class DARKEDENSURVIVORS_API UDEMonsterUpdateComponent : public UActorComponent
 public:
     UDEMonsterUpdateComponent();
 
-    // SpawnManagerÀÇ Tick¿¡¼­ È£Ãâ
+    // SpawnManagerì˜ Tickì—ì„œ í˜¸ì¶œ
     void UpdateMonsters(float DeltaTime, TArray<ADEMonsterBase*>& ActiveMonsters);
 
-    // ÇÃ·¹ÀÌ¾î ÂüÁ¶ (SpawnManager¿¡¼­ ÁÖÀÔ)
+    // í”Œë ˆì´ì–´ ì°¸ì¡° (SpawnManagerì—ì„œ ì£¼ì…)
     void SetPlayer(ADECharacterBase* InPlayer) { Player = InPlayer; }
 
-    // ===== Ãæµ¹ ¼³Á¤ =====
+    // ===== ì¶©ëŒ ì„¤ì • =====
     UPROPERTY(EditAnywhere, Category = "Collision")
     float ChainKnockbackTransfer = 0.5f;
 
@@ -46,17 +46,17 @@ private:
 
 //Grid Spatial Partitioning
 private:
-    // 1. ¼¿ »çÀÌÁî´Â ±âÈ¹ÀÚ°¡ ¿¡µğÅÍ¿¡¼­ Æ©´×ÇÒ ¼ö ÀÖ°Ô UPROPERTY·Î »©ÁÖ´Â °Ô ±¹·ê!
+    // 1. ì…€ ì‚¬ì´ì¦ˆëŠ” ê¸°íšìê°€ ì—ë””í„°ì—ì„œ íŠœë‹í•  ìˆ˜ ìˆê²Œ UPROPERTYë¡œ ë¹¼ì£¼ëŠ” ê²Œ êµ­ë£°!
     UPROPERTY(EditAnywhere, Category = "Optimization")
     float CellSize = 200.0f;
 
-    // 2. ¸Å ÇÁ·¹ÀÓ ÀçÈ°¿ëÇÒ °ø°£ ºĞÇÒ ¹Ù±¸´Ï (Àı´ë Tick ¾È¿¡¼­ »ı¼ºÇÏÁö ¾ÊÀ½!)
+    // 2. ë§¤ í”„ë ˆì„ ì¬í™œìš©í•  ê³µê°„ ë¶„í•  ë°”êµ¬ë‹ˆ (ì ˆëŒ€ Tick ì•ˆì—ì„œ ìƒì„±í•˜ì§€ ì•ŠìŒ!)
     TMap<FIntPoint, TArray<ADEMonsterBase*>> SpatialGrid;
 
     TSet<FIntPoint> LastFrameTouchedCells;
 
-    // [ÃÖÀûÈ­ #1] ÇÁ·¹ÀÓ´ç GetActorLocation() Áßº¹ È£Ãâ Á¦°Å¿ë Ä³½Ã
-    // SetNumUninitialized()·Î Å©±â¸¸ ¸ÂÃß°í Àç»ç¿ë ¡æ ¸Å ÇÁ·¹ÀÓ Èü ÇÒ´ç ¾øÀ½
+    // [ìµœì í™” #1] í”„ë ˆì„ë‹¹ GetActorLocation() ì¤‘ë³µ í˜¸ì¶œ ì œê±°ìš© ìºì‹œ
+    // SetNumUninitialized()ë¡œ í¬ê¸°ë§Œ ë§ì¶”ê³  ì¬ì‚¬ìš© â†’ ë§¤ í”„ë ˆì„ í™ í• ë‹¹ ì—†ìŒ
     TArray<FVector> CachedPositions;
 
 		

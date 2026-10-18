@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "TestAIController.h"
@@ -18,13 +18,13 @@ void ATestAIController::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    // 1. ÇÃ·¹ÀÌ¾î ÆùÀ» °¡Á®¿É´Ï´Ù.
+    // 1. í”Œë ˆì´ì–´ í°ì„ ê°€ì ¸ì˜µë‹ˆë‹¤.
     APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 
     if (PlayerPawn)
     {
-        // 2. ÇÃ·¹ÀÌ¾î¸¦ ÇâÇØ ÀÌµ¿ ¸í·ÉÀ» ³»¸³´Ï´Ù.
-        // Ãß°İ °Å¸® 1.0f: ÇÃ·¹ÀÌ¾î¿¡°Ô ¾ÆÁÖ °¡±õ°Ô ºÙÀ¸¶ó´Â ÀÇ¹ÌÀÔ´Ï´Ù.
+        // 2. í”Œë ˆì´ì–´ë¥¼ í–¥í•´ ì´ë™ ëª…ë ¹ì„ ë‚´ë¦½ë‹ˆë‹¤.
+        // ì¶”ê²© ê±°ë¦¬ 1.0f: í”Œë ˆì´ì–´ì—ê²Œ ì•„ì£¼ ê°€ê¹ê²Œ ë¶™ìœ¼ë¼ëŠ” ì˜ë¯¸ì…ë‹ˆë‹¤.
         MoveToActor(PlayerPawn, 1.0f);
     }
 }

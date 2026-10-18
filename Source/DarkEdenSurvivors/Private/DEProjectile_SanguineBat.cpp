@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEProjectile_SanguineBat.h"
@@ -18,18 +18,18 @@ ADEProjectile_SanguineBat::ADEProjectile_SanguineBat()
         //UE_LOG(LogTemp, Warning, TEXT("Bat Set"));
     }
 
-    // 2. ºÎ¸ğ Å¬·¡½º¿¡ ÀÖ´Â ·çÆ® ÄÄÆ÷³ÍÆ®(CollisionComponent)¿¡ µü ºÙ¿©Áİ´Ï´Ù.
+    // 2. ë¶€ëª¨ í´ë˜ìŠ¤ì— ìˆëŠ” ë£¨íŠ¸ ì»´í¬ë„ŒíŠ¸(CollisionComponent)ì— ë”± ë¶™ì—¬ì¤ë‹ˆë‹¤.
     if (CollisionComponent)
     {
         SkeletalMesh->SetupAttachment(CollisionComponent);
     }
 
-    // 3. ºÎ¸ğ´ÔÀÌ ¹°·ÁÁÖ½Å StaticMesh´Â ¾È ¾µ °Å´Ï±î È®½ÇÇÏ°Ô ²¨¹ö¸®±â!
+    // 3. ë¶€ëª¨ë‹˜ì´ ë¬¼ë ¤ì£¼ì‹  StaticMeshëŠ” ì•ˆ ì“¸ ê±°ë‹ˆê¹Œ í™•ì‹¤í•˜ê²Œ êº¼ë²„ë¦¬ê¸°!
     if (Mesh)
     {
         Mesh->SetVisibility(false);
         Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-        Mesh->SetComponentTickEnabled(false); // ÃÖÀûÈ­ ²ÜÆÁ
+        Mesh->SetComponentTickEnabled(false); // ìµœì í™” ê¿€íŒ
     }
 }
 
@@ -37,7 +37,7 @@ void ADEProjectile_SanguineBat::OnTargetHit(AActor* Target)
 {
     FVector ImpactNormal = (GetActorLocation() - Target->GetActorLocation()).GetSafeNormal();
 
-    ImpactNormal.Z = 0.0f; // Æ¨±æ ¶§ À§·Î ¼Ú±¸Ä¡Áö ¾Ê°Ô Å¾´Ù¿î À¯Áö
+    ImpactNormal.Z = 0.0f; // íŠ•ê¸¸ ë•Œ ìœ„ë¡œ ì†Ÿêµ¬ì¹˜ì§€ ì•Šê²Œ íƒ‘ë‹¤ìš´ ìœ ì§€
     ImpactNormal.Normalize();
 
     if (MovementComponent)
@@ -48,7 +48,7 @@ void ADEProjectile_SanguineBat::OnTargetHit(AActor* Target)
         ShootDirection = NewVelocity.GetSafeNormal();
     }
 
-    // 4. ¹«ÇÑ ´Ù´Ü È÷Æ® ÃÊ±âÈ­
-    // ´ÙÀ½ ¹ø Æ¨°Ü¼­ ¾êÇÑÅ× ¶Ç ¿ÔÀ» ¶§ ´Ù½Ã ¶§¸± ¼ö ÀÖ°Ô ¼¼ÆÃÀ» ºñ¿öÁİ´Ï´Ù.
+    // 4. ë¬´í•œ ë‹¤ë‹¨ íˆíŠ¸ ì´ˆê¸°í™”
+    // ë‹¤ìŒ ë²ˆ íŠ•ê²¨ì„œ ì–˜í•œí…Œ ë˜ ì™”ì„ ë•Œ ë‹¤ì‹œ ë•Œë¦´ ìˆ˜ ìˆê²Œ ì„¸íŒ…ì„ ë¹„ì›Œì¤ë‹ˆë‹¤.
     HitActors.Reset();
 }

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -20,23 +20,23 @@ class DARKEDENSURVIVORS_API UDEChestRewardSlotWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	// ¸ŞÀÎ »óÀÚ À§Á¬ÀÌ ÀÌ ½½·ÔÀ» »ı¼ºÇÒ ¶§ µ¥ÀÌÅÍ¸¦ ¹Ğ¾î³Ö¾î ÁÙ ÇÔ¼ö!
+	// ë©”ì¸ ìƒì ìœ„ì ¯ì´ ì´ ìŠ¬ë¡¯ì„ ìƒì„±í•  ë•Œ ë°ì´í„°ë¥¼ ë°€ì–´ë„£ì–´ ì¤„ í•¨ìˆ˜!
 	UFUNCTION(BlueprintCallable, Category = "Chest UI")
 	void InitSlot(UDELevelUpChoiceBase* RewardData);
 
 protected:
-	// UMG¿¡¼­ ¶È°°Àº ÀÌ¸§À¸·Î ¸¸µé¸é ÀÚµ¿ ¿¬°áµÊ
+	// UMGì—ì„œ ë˜‘ê°™ì€ ì´ë¦„ìœ¼ë¡œ ë§Œë“¤ë©´ ìë™ ì—°ê²°ë¨
 	UPROPERTY(meta = (BindWidget))
 	UImage* Img_RewardIcon;
 
 	UPROPERTY(meta = (BindWidget))
 	UTextBlock* Txt_RewardName;
 
-	// (¼±ÅÃ) ·¹º§¾÷ÀÎÁö, ÁøÈ­ÀÎÁö ¶ç¿öÁÙ ÅØ½ºÆ®
+	// (ì„ íƒ) ë ˆë²¨ì—…ì¸ì§€, ì§„í™”ì¸ì§€ ë„ì›Œì¤„ í…ìŠ¤íŠ¸
 	//UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	//UTextBlock* Txt_LevelInfo;
 
-	// C++ µ¥ÀÌÅÍ ¼¼ÆÃÀÌ ³¡³ª¸é, ºí·çÇÁ¸°Æ® ÂÊ¿¡ "ÀÌÁ¦ ÈÄ±¤(ºû¹«¸®) µ¹·Á¶ó!" ÇÏ°í ¾Ë·ÁÁÖ´Â ÀÌº¥Æ®
+	// C++ ë°ì´í„° ì„¸íŒ…ì´ ëë‚˜ë©´, ë¸”ë£¨í”„ë¦°íŠ¸ ìª½ì— "ì´ì œ í›„ê´‘(ë¹›ë¬´ë¦¬) ëŒë ¤ë¼!" í•˜ê³  ì•Œë ¤ì£¼ëŠ” ì´ë²¤íŠ¸
 	UFUNCTION(BlueprintImplementableEvent, Category = "Chest UI")
 	void OnSlotRevealed();
 	

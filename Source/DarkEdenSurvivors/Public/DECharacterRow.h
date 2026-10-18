@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -16,19 +16,19 @@ struct FDECharacterRow : public FTableRowBase
 {
     GENERATED_BODY()
 
-    // 1. Ä³¸¯ÅÍ ½Äº°¿ë °íÀ¯ ID
+    // 1. ìºë¦­í„° ì‹ë³„ìš© ê³ ìœ  ID
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Info")
     int32 CharacterID = 0;
 
-    // 2. Ä³¸¯ÅÍ ÀÌ¸§ (¿¹: "¾ÈÅä´Ï¿À", "´ÙÅ©¿¡µ§ ¹ìÆÄÀÌ¾î")
+    // 2. ìºë¦­í„° ì´ë¦„ (ì˜ˆ: "ì•ˆí† ë‹ˆì˜¤", "ë‹¤í¬ì—ë´ ë±€íŒŒì´ì–´")
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Info")
     FText CharacterName;
 
-    // 3. °íÀ¯ ÆĞ½Ãºê/Æ¯¼º ¼³¸í (¿¹: "10·¹º§¸¶´Ù µ¥¹ÌÁö°¡ 10% Áõ°¡ÇÕ´Ï´Ù.")
+    // 3. ê³ ìœ  íŒ¨ì‹œë¸Œ/íŠ¹ì„± ì„¤ëª… (ì˜ˆ: "10ë ˆë²¨ë§ˆë‹¤ ë°ë¯¸ì§€ê°€ 10% ì¦ê°€í•©ë‹ˆë‹¤.")
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Info")
     FText Description;
 
-    // 4. Ä³¸¯ÅÍ ÃÊ»óÈ­ (·Îºñ ¼±ÅÃÃ¢ ¹× ÀÎ°ÔÀÓ UI¿¡ ¾²ÀÏ ÀÌ¹ÌÁö)
+    // 4. ìºë¦­í„° ì´ˆìƒí™” (ë¡œë¹„ ì„ íƒì°½ ë° ì¸ê²Œì„ UIì— ì“°ì¼ ì´ë¯¸ì§€)
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "UI")
     UTexture2D* Portrait = nullptr;
 

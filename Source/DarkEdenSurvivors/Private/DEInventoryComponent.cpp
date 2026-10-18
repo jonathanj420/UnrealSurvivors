@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEInventoryComponent.h"
@@ -20,7 +20,7 @@ void UDEInventoryComponent::BeginPlay()
     Super::BeginPlay();
 }
 
-/* ================= Á¶È¸ ================= */
+/* ================= ì¡°íšŒ ================= */
 
 bool UDEInventoryComponent::HasSkill(int32 SkillID) const
 {
@@ -47,7 +47,7 @@ const TArray<int32>& UDEInventoryComponent::GetOwnedSkillIDs() const
     return OwnedSkillIDs;
 }
 
-/* ================= Ãß°¡ ================= */
+/* ================= ì¶”ê°€ ================= */
 
 bool UDEInventoryComponent::TryAddSkill(int32 SkillID)
 {
@@ -69,7 +69,7 @@ bool UDEInventoryComponent::TryAddAccessory(int32 AccessoryID)
     return true;
 }
 
-/* ================= Á¦°Å ================= */
+/* ================= ì œê±° ================= */
 
 bool UDEInventoryComponent::RemoveSkill(int32 SkillID)
 {

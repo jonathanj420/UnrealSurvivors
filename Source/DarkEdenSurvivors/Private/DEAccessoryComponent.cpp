@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEAccessoryComponent.h"
@@ -9,7 +9,7 @@
 
 UDEAccessoryComponent::UDEAccessoryComponent()
 {
-	PrimaryComponentTick.bCanEverTick = false; // Æ½ ÇÊ¿ä ¾øÀ½ (¼º´É ÃÖÀûÈ­)
+	PrimaryComponentTick.bCanEverTick = false; // í‹± í•„ìš” ì—†ìŒ (ì„±ëŠ¥ ìµœì í™”)
 }
 
 void UDEAccessoryComponent::BeginPlay()
@@ -18,35 +18,35 @@ void UDEAccessoryComponent::BeginPlay()
 }
 
 // =========================================================
-// 1. ÀåÂø °ü¸®
+// 1. ì¥ì°© ê´€ë¦¬
 // =========================================================
 
 void UDEAccessoryComponent::LevelUpAccessory(const UDEAccessoryData* InData)
 {
 	if (!InData) return;
 
-	// ¸Ê¿¡ ÀÖÀ¸¸é ÇöÀç ·¹º§À» °¡Á®¿À°í, ¾øÀ¸¸é 0À¸·Î ½ÃÀÛÇØ¼­ ·¹ÆÛ·±½º(&)·Î °¡Á®¿É´Ï´Ù.
+	// ë§µì— ìˆìœ¼ë©´ í˜„ì¬ ë ˆë²¨ì„ ê°€ì ¸ì˜¤ê³ , ì—†ìœ¼ë©´ 0ìœ¼ë¡œ ì‹œì‘í•´ì„œ ë ˆí¼ëŸ°ìŠ¤(&)ë¡œ ê°€ì ¸ì˜µë‹ˆë‹¤.
 	int32& CurrentLevel = EquippedAccessories.FindOrAdd(InData, 0);
 
-	// ÃÖ´ë ·¹º§ °Ë»ç
+	// ìµœëŒ€ ë ˆë²¨ ê²€ì‚¬
 	if (CurrentLevel < InData->MaxLevel)
 	{
-		// 1. ·¹º§ 1 Áõ°¡
+		// 1. ë ˆë²¨ 1 ì¦ê°€
 		CurrentLevel++;
 
-		// 2. ½ºÅÈ Àû¿ë (¿ì¸®°¡ Â§ StatComponent°¡ ¾Ë¾Æ¼­ ÁßÃ¸ ¿¬»ê ÇØÁÜ!)
+		// 2. ìŠ¤íƒ¯ ì ìš© (ìš°ë¦¬ê°€ ì§  StatComponentê°€ ì•Œì•„ì„œ ì¤‘ì²© ì—°ì‚° í•´ì¤Œ!)
 		ApplyStaticStats(InData);
 
-		//  3. ±¸½Ã´ëÀÇ À¯¹°(±¸Á¶Ã¼ Ä³½Ì)Àº »èÁ¦!
+		//  3. êµ¬ì‹œëŒ€ì˜ ìœ ë¬¼(êµ¬ì¡°ì²´ ìºì‹±)ì€ ì‚­ì œ!
 		// RebuildEffectCache();
 
-		// 4. [NEW] CombatComponent »ç·É°ü¿¡°Ô Àü¼³ ±â¹Í ÀåÂø/½ºÅÃ¾÷ Áö½Ã!
+		// 4. [NEW] CombatComponent ì‚¬ë ¹ê´€ì—ê²Œ ì „ì„¤ ê¸°ë¯¹ ì¥ì°©/ìŠ¤íƒì—… ì§€ì‹œ!
 		if (UDECombatComponent* CombatComp = GetOwner()->FindComponentByClass<UDECombatComponent>())
 		{
-			// µ¥ÀÌÅÍ ¿¡¼Â¿¡ µé¾îÀÖ´Â ÀÌÆåÆ® Å¬·¡½ºµéÀ» ÂÓ »Ì¾Æ¼­ »ç·É°üÇÑÅ× ´øÁ®Áİ´Ï´Ù
+			// ë°ì´í„° ì—ì…‹ì— ë“¤ì–´ìˆëŠ” ì´í™íŠ¸ í´ë˜ìŠ¤ë“¤ì„ ì«™ ë½‘ì•„ì„œ ì‚¬ë ¹ê´€í•œí…Œ ë˜ì ¸ì¤ë‹ˆë‹¤
 			for (UDECombatEffect* TemplateEffect : InData->AccessoryEffects)
 			{
-				// »ç·É°üÀÌ ¾Ë¾Æ¼­ "¾î? »õ°Å³× ÀåÂø!", "¾î? ÀÖ´ø°Å³× ½ºÅÃ¾÷!" ´Ù ÇØÁİ´Ï´Ù.
+				// ì‚¬ë ¹ê´€ì´ ì•Œì•„ì„œ "ì–´? ìƒˆê±°ë„¤ ì¥ì°©!", "ì–´? ìˆë˜ê±°ë„¤ ìŠ¤íƒì—…!" ë‹¤ í•´ì¤ë‹ˆë‹¤.
 				CombatComp->AddCombatEffect(TemplateEffect);
 			}
 		}
@@ -55,7 +55,7 @@ void UDEAccessoryComponent::LevelUpAccessory(const UDEAccessoryData* InData)
 
 		CachedInventoryComp->TryAddAccessory(InData->ID);
 
-		// 5. UI °»½Å ¾Ë¶÷ ¹ß¼Û!
+		// 5. UI ê°±ì‹  ì•ŒëŒ ë°œì†¡!
 		OnAccUpdated.Broadcast(InData);
 	}
 	else
@@ -69,26 +69,26 @@ void UDEAccessoryComponent::RemoveAccessory(const UDEAccessoryData* InData)
 {
 	if (!InData) return;
 
-	if (EquippedAccessories.Remove(InData) > 0) // ÇÏ³ª¶óµµ Áö¿öÁ³´Ù¸é
+	if (EquippedAccessories.Remove(InData) > 0) // í•˜ë‚˜ë¼ë„ ì§€ì›Œì¡Œë‹¤ë©´
 	{
-		// Á¤Àû ½ºÅÈ Á¦°Å
+		// ì •ì  ìŠ¤íƒ¯ ì œê±°
 		RemoveStaticStats(InData);
 
-		// Ä³½Ã ´Ù½Ã ±Á±â
+		// ìºì‹œ ë‹¤ì‹œ êµ½ê¸°
 		//RebuildEffectCache();
 	}
 }
 
 //void UDEAccessoryComponent::RebuildEffectCache()
 //{
-//	// ±âÁ¸ Ä³½Ã ÃÊ±âÈ­
+//	// ê¸°ì¡´ ìºì‹œ ì´ˆê¸°í™”
 //	CachedTriggerEffects.Empty();
 //
-//	// ¡Ú ÀÌÁ¦ TArray°¡ ¾Æ´Ï¶ó TMapÀ» ¼øÈ¸ÇÕ´Ï´Ù! (Key: µ¥ÀÌÅÍ, Value: ·¹º§)
+//	// â˜… ì´ì œ TArrayê°€ ì•„ë‹ˆë¼ TMapì„ ìˆœíšŒí•©ë‹ˆë‹¤! (Key: ë°ì´í„°, Value: ë ˆë²¨)
 //	for (const auto& Pair : EquippedAccessories)
 //	{
 //		const UDEAccessoryData* Data = Pair.Key;
-//		int32 CurrentLevel = Pair.Value; // ÇöÀç ¾Ç¼¼¼­¸®ÀÇ ·¹º§ (1, 2, 3...)
+//		int32 CurrentLevel = Pair.Value; // í˜„ì¬ ì•…ì„¸ì„œë¦¬ì˜ ë ˆë²¨ (1, 2, 3...)
 //
 //		if (!Data) continue;
 //
@@ -96,18 +96,18 @@ void UDEAccessoryComponent::RemoveAccessory(const UDEAccessoryData* InData)
 //		{
 //			if (BaseEffect.Trigger == EEffectTrigger::None) continue;
 //
-//			// 1. ¿øº» µ¥ÀÌÅÍ¸¦ º¹»çÇÕ´Ï´Ù.
+//			// 1. ì›ë³¸ ë°ì´í„°ë¥¼ ë³µì‚¬í•©ë‹ˆë‹¤.
 //			FEffectData ScaledEffect = BaseEffect;
 //
-//			// 2. ¡Ú ÇÙ½É: ·¹º§¿¡ ºñ·ÊÇØ¼­ ¼öÄ¡¸¦ »½Æ¢±âÇØ Áİ´Ï´Ù!
-//			// (1·¾¶§ 10% ¿´´Ù¸é, 2·¾¶§´Â 20%, 5·¾¶§´Â 50%°¡ µÊ)
+//			// 2. â˜… í•µì‹¬: ë ˆë²¨ì— ë¹„ë¡€í•´ì„œ ìˆ˜ì¹˜ë¥¼ ë»¥íŠ€ê¸°í•´ ì¤ë‹ˆë‹¤!
+//			// (1ë ™ë•Œ 10% ì˜€ë‹¤ë©´, 2ë ™ë•ŒëŠ” 20%, 5ë ™ë•ŒëŠ” 50%ê°€ ë¨)
 //			ScaledEffect.Chance = BaseEffect.Chance * CurrentLevel;
 //			ScaledEffect.Value = BaseEffect.Value * CurrentLevel;
 //
-//			// ¸¸¾à Áö¼Ó½Ã°£(Duration)ÀÌ³ª ´Ù¸¥ ¼öÄ¡°¡ ÀÖ´Ù¸é ¶È°°ÀÌ °öÇØÁÖ¸é µË´Ï´Ù.
+//			// ë§Œì•½ ì§€ì†ì‹œê°„(Duration)ì´ë‚˜ ë‹¤ë¥¸ ìˆ˜ì¹˜ê°€ ìˆë‹¤ë©´ ë˜‘ê°™ì´ ê³±í•´ì£¼ë©´ ë©ë‹ˆë‹¤.
 //			// ScaledEffect.Duration = BaseEffect.Duration * CurrentLevel;
 //
-//			// 3. »½Æ¢±âµÈ È¿°ú¸¦ Ä³½Ã¿¡ µî·Ï!
+//			// 3. ë»¥íŠ€ê¸°ëœ íš¨ê³¼ë¥¼ ìºì‹œì— ë“±ë¡!
 //			CachedTriggerEffects.FindOrAdd(ScaledEffect.Trigger).Add(ScaledEffect);
 //		}
 //	}
@@ -115,7 +115,7 @@ void UDEAccessoryComponent::RemoveAccessory(const UDEAccessoryData* InData)
 
 void UDEAccessoryComponent::ApplyStaticStats(const UDEAccessoryData* InData)
 {
-	// Ä³¸¯ÅÍÀÇ StatComponent Ã£±â
+	// ìºë¦­í„°ì˜ StatComponent ì°¾ê¸°
 	if (UDEStatComponent* StatComp = GetOwner()->FindComponentByClass<UDEStatComponent>())
 	{
 		for (const FDEStatModifier& Mod : InData->StatModifiers)
@@ -128,9 +128,9 @@ void UDEAccessoryComponent::ApplyStaticStats(const UDEAccessoryData* InData)
 
 void UDEAccessoryComponent::RemoveStaticStats(const UDEAccessoryData* InData)
 {
-	// Á¦°Å ·ÎÁ÷Àº StatComponent¿¡ RemoveModifier°¡ ÀÖ°Å³ª, 
-	// È¤Àº StatComponent¸¦ ResetÇÏ°í ÀüÃ¼ Àç°è»êÇÏ´Â ¹æ½Ä ÃßÃµ
-	// ¿©±â¼­´Â °³³äÀûÀ¸·Î¸¸ ÀÛ¼º:
+	// ì œê±° ë¡œì§ì€ StatComponentì— RemoveModifierê°€ ìˆê±°ë‚˜, 
+	// í˜¹ì€ StatComponentë¥¼ Resetí•˜ê³  ì „ì²´ ì¬ê³„ì‚°í•˜ëŠ” ë°©ì‹ ì¶”ì²œ
+	// ì—¬ê¸°ì„œëŠ” ê°œë…ì ìœ¼ë¡œë§Œ ì‘ì„±:
 	/*
 	if (UDEStatComponent* StatComp = GetOwner()->FindComponentByClass<UDEStatComponent>())
 	{
@@ -143,25 +143,25 @@ void UDEAccessoryComponent::RemoveStaticStats(const UDEAccessoryData* InData)
 }
 
 // =========================================================
-// 2. Äõ¸® (CombatComponent°¡ »ç¿ë)
+// 2. ì¿¼ë¦¬ (CombatComponentê°€ ì‚¬ìš©)
 // =========================================================
 
 //const TArray<FEffectData>& UDEAccessoryComponent::GetEffectsByTrigger(EEffectTrigger InTrigger) const
 //{
-//	// ¹Ì¸® ºĞ·ùÇØµĞ ¹è¿­ÀÌ ÀÖÀ¸¸é ¹İÈ¯ (O(1))
+//	// ë¯¸ë¦¬ ë¶„ë¥˜í•´ë‘” ë°°ì—´ì´ ìˆìœ¼ë©´ ë°˜í™˜ (O(1))
 //	if (const TArray<FEffectData>* FoundEffects = CachedTriggerEffects.Find(InTrigger))
 //	{
 //		return *FoundEffects;
 //	}
 //
-//	// ¾øÀ¸¸é ºó ¹è¿­ ¹İÈ¯ (staticÀ¸·Î ¼±¾ğÇØ ¸Ş¸ğ¸® ³¶ºñ ¹æÁö)
+//	// ì—†ìœ¼ë©´ ë¹ˆ ë°°ì—´ ë°˜í™˜ (staticìœ¼ë¡œ ì„ ì–¸í•´ ë©”ëª¨ë¦¬ ë‚­ë¹„ ë°©ì§€)
 //	static const TArray<FEffectData> EmptyArray;
 //	return EmptyArray;
 //}
 //
 //float UDEAccessoryComponent::GetTotalStackValue(EEffectType InType) const
 //{
-//	// ÇØ´ç Å¸ÀÔÀÇ ´©ÀûµÈ °ª ¹İÈ¯ (¿¹: µ¥¹ÌÁö Áõ°¡·® ÃÑÇÕ)
+//	// í•´ë‹¹ íƒ€ì…ì˜ ëˆ„ì ëœ ê°’ ë°˜í™˜ (ì˜ˆ: ë°ë¯¸ì§€ ì¦ê°€ëŸ‰ ì´í•©)
 //	if (const float* Val = CurrentStackValues.Find(InType))
 //	{
 //		return *Val;
@@ -170,25 +170,25 @@ void UDEAccessoryComponent::RemoveStaticStats(const UDEAccessoryData* InData)
 //}
 
 // =========================================================
-// 3. »óÅÂ º¯°æ (CombatComponent°¡ ½ÇÇà)
+// 3. ìƒíƒœ ë³€ê²½ (CombatComponentê°€ ì‹¤í–‰)
 // =========================================================
 
 //void UDEAccessoryComponent::AddStack(EEffectType InType, float InValue, int32 InMaxStack)
 //{
-//	// 1. ÇöÀç ½ºÅÃ ¼ö °¡Á®¿À±â
+//	// 1. í˜„ì¬ ìŠ¤íƒ ìˆ˜ ê°€ì ¸ì˜¤ê¸°
 //	int32& CurrentCount = CurrentStackCounts.FindOrAdd(InType);
 //
-//	// 2. ÃÖ´ë ½ºÅÃ Ã¼Å©
+//	// 2. ìµœëŒ€ ìŠ¤íƒ ì²´í¬
 //	if (CurrentCount < InMaxStack)
 //	{
-//		// 3. ½ºÅÃ Áõ°¡
+//		// 3. ìŠ¤íƒ ì¦ê°€
 //		CurrentCount++;
 //
-//		// 4. °ª ´©Àû (¿¹: 0.1¾¿ Áõ°¡)
+//		// 4. ê°’ ëˆ„ì  (ì˜ˆ: 0.1ì”© ì¦ê°€)
 //		float& CurrentValue = CurrentStackValues.FindOrAdd(InType);
 //		CurrentValue += InValue;
 //
-//		// (·Î±× µğ¹ö±ë¿ë)
+//		// (ë¡œê·¸ ë””ë²„ê¹…ìš©)
 //		// UE_LOG(LogTemp, Log, TEXT("Stack Added! Type: %d, Count: %d, TotalVal: %f"), (int32)InType, CurrentCount, CurrentValue);
 //	}
 //}

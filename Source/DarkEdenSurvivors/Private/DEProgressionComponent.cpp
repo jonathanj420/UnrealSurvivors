@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEProgressionComponent.h"
@@ -23,11 +23,11 @@ void UDEProgressionComponent::BeginPlay()
 	CurrentExp = 0.0f;
 	CalculateNextLevelExp();
 
-	// ½ÃÀÛ ½Ã UI ÃÊ±âÈ­
+	// ì‹œìž‘ ì‹œ UI ì´ˆê¸°í™”
 	OnExpChanged.Broadcast(CurrentExp, MaxExp);
 	// ...
 	
-	// ¡Ú °ÔÀÓ ½ÃÀÛ(»ý¼º) ½ÃÁ¡¿¡ µü ÇÑ ¹ø¸¸ Ã£¾Æ¼­ Æ÷ÀÎÅÍ¸¦ Áã°í ÀÖ´Â´Ù!
+	// â˜… ê²Œìž„ ì‹œìž‘(ìƒì„±) ì‹œì ì— ë”± í•œ ë²ˆë§Œ ì°¾ì•„ì„œ í¬ì¸í„°ë¥¼ ì¥ê³  ìžˆëŠ”ë‹¤!
 	if (AActor* Owner = GetOwner())
 	{
 		CachedStatComp = Owner->FindComponentByClass<UDEStatComponent>();
@@ -60,7 +60,7 @@ void UDEProgressionComponent::CalculateNextLevelExp()
 		RequiredVal = BaseXP_Lv40 + (CurrentLevel - 40) * Inc_Lv41;
 	}
 
-	// [¼ºÀå º®] Lv 20, 40ÀÏ ¶§ ¿ä±¸·® ÆøÁõ
+	// [ì„±ìž¥ ë²½] Lv 20, 40ì¼ ë•Œ ìš”êµ¬ëŸ‰ í­ì¦
 	if (CurrentLevel == 20) RequiredVal += WallXP_Lv20;
 	if (CurrentLevel == 40) RequiredVal += WallXP_Lv40;
 
@@ -68,8 +68,8 @@ void UDEProgressionComponent::CalculateNextLevelExp()
 
 
 	//older
-	//// ´Ü¼ø °ø½Ä: ÀÌÀü Åë * 1.2¹è
-	//// ±âÈ¹¿¡ µû¶ó ¿¢¼¿ µ¥ÀÌÅÍ Å×ÀÌºíÀ» ÀÐ¾î¿À´Â ¹æ½Ä µîÀ¸·Î º¯°æ °¡´É
+	//// ë‹¨ìˆœ ê³µì‹: ì´ì „ í†µ * 1.2ë°°
+	//// ê¸°íšì— ë”°ë¼ ì—‘ì…€ ë°ì´í„° í…Œì´ë¸”ì„ ì½ì–´ì˜¤ëŠ” ë°©ì‹ ë“±ìœ¼ë¡œ ë³€ê²½ ê°€ëŠ¥
 	//if (CurrentLevel == 1)
 	//{
 	//	MaxExp = BaseExpRequirement;
@@ -82,7 +82,7 @@ void UDEProgressionComponent::CalculateNextLevelExp()
 
 void UDEProgressionComponent::LevelUp()
 {
-	// Ä¡Æ®¿ë: °æÇèÄ¡ ½Ã½ºÅÛ ¹«½ÃÇÏ°í ·¹º§¸¸ +1
+	// ì¹˜íŠ¸ìš©: ê²½í—˜ì¹˜ ì‹œìŠ¤í…œ ë¬´ì‹œí•˜ê³  ë ˆë²¨ë§Œ +1
 	CurrentLevel++;
 	CurrentExp = 0.f;
 	CalculateNextLevelExp();
@@ -91,7 +91,7 @@ void UDEProgressionComponent::LevelUp()
 }
 void UDEProgressionComponent::AddExp(float Amount)
 {
-	// [¼ºÀå º® ¹öÇÁ] 20, 40·¹º§ÀÏ ¶§ È¹µæ·® 2¹è (Áö·çÇÔ ¹æÁö)
+	// [ì„±ìž¥ ë²½ ë²„í”„] 20, 40ë ˆë²¨ì¼ ë•Œ íšë“ëŸ‰ 2ë°° (ì§€ë£¨í•¨ ë°©ì§€)
 	if (CurrentLevel == 20 || CurrentLevel == 40)
 	{
 		Amount *= 2.0f;
@@ -99,36 +99,36 @@ void UDEProgressionComponent::AddExp(float Amount)
 
 	float FinalExp = Amount;
 
-	// [StatComponent ¿¬µ¿] (´ÔÀÌ Â¥½Å ÄÚµå À¯Áö! ¾ÆÁÖ ÁÁ½À´Ï´Ù)
+	// [StatComponent ì—°ë™] (ë‹˜ì´ ì§œì‹  ì½”ë“œ ìœ ì§€! ì•„ì£¼ ì¢‹ìŠµë‹ˆë‹¤)
 	if (CachedStatComp)
 	{
 		FinalExp *= CachedStatComp->GetGrowth();
 		//if (UDEStatComponent* StatComp = Owner->FindComponentByClass<UDEStatComponent>())
 		//{
-		//	// StatComponent¿¡ GetGrowth() ÇÔ¼ö°¡ ÀÖ´Ù°í °¡Á¤
-		//	// (¾øÀ¸¸é StatComp->GrowthStat.GetValue() µîÀ¸·Î ¼öÁ¤ÇÏ¼¼¿ä)
+		//	// StatComponentì— GetGrowth() í•¨ìˆ˜ê°€ ìžˆë‹¤ê³  ê°€ì •
+		//	// (ì—†ìœ¼ë©´ StatComp->GrowthStat.GetValue() ë“±ìœ¼ë¡œ ìˆ˜ì •í•˜ì„¸ìš”)
 		//	 FinalExp *= CachedStatComp->GetGrowth();
 		//}
 	}
 
-	// °æÇèÄ¡ Àû¿ë
+	// ê²½í—˜ì¹˜ ì ìš©
 	CurrentExp += FinalExp;
 
-	// [·¹º§¾÷ ·çÇÁ] ÇÑ ¹ø¿¡ ¿©·¯ ·¹º§¾÷ °¡´ÉÇÏ°Ô Ã³¸®
+	// [ë ˆë²¨ì—… ë£¨í”„] í•œ ë²ˆì— ì—¬ëŸ¬ ë ˆë²¨ì—… ê°€ëŠ¥í•˜ê²Œ ì²˜ë¦¬
 	while (CurrentExp >= MaxExp)
 	{
-		CurrentExp -= MaxExp; // ³²Àº °æÇèÄ¡ ÀÌ¿ù
+		CurrentExp -= MaxExp; // ë‚¨ì€ ê²½í—˜ì¹˜ ì´ì›”
 		CurrentLevel++;
 
-		// ·¹º§¾÷ ÇßÀ¸´Ï ´ÙÀ½ Åë °è»ê
+		// ë ˆë²¨ì—… í–ˆìœ¼ë‹ˆ ë‹¤ìŒ í†µ ê³„ì‚°
 		CalculateNextLevelExp();
 
-		// ¾Ë¸²
+		// ì•Œë¦¼
 		OnLevelUp.Broadcast(CurrentLevel);
 		UE_LOG(LogTemp, Warning, TEXT("Level Up! New Level: %d"), CurrentLevel);
 	}
 
-	// UI °»½Å (Safety Check Ãß°¡)
+	// UI ê°±ì‹  (Safety Check ì¶”ê°€)
 	float Percent = (MaxExp > KINDA_SMALL_NUMBER) ? FMath::Clamp(CurrentExp / MaxExp, 0.0f, 1.0f) : 0.0f;
 	OnExpChanged.Broadcast(CurrentExp, MaxExp);
 }

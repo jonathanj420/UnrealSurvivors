@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DESkill_BloodyScarify.h"
@@ -20,7 +20,7 @@ UDESkill_BloodyScarify::UDESkill_BloodyScarify()
 		UE_LOG(LogTemp, Warning, TEXT("Bloody spear niagara set"));
 	}
 
-	// 1-2. sound ÀÌÆåÆ®
+	// 1-2. sound ì´í™íŠ¸
 	static ConstructorHelpers::FObjectFinder<USoundBase> SoundRef(TEXT("/Game/DarkEden/Data/Sound/SkillSoundEffect/SC_BloodySpear.SC_BloodySpear"));
 	if (SoundRef.Succeeded())
 	{
@@ -29,10 +29,10 @@ UDESkill_BloodyScarify::UDESkill_BloodyScarify()
 
 	static ConstructorHelpers::FClassFinder<UDEStatusEffectBase> StatusEffectBP(TEXT("/Game/DarkEden/Blueprint/StatusEffects/BP_StatusEffect_BloodyScarifyExplosion.BP_StatusEffect_BloodyScarifyExplosion_C"));
 
-	// 2. ¿¡¼ÂÀ» ¼º°øÀûÀ¸·Î Ã£¾Ò´ÂÁö È®ÀÎ ÈÄ º¯¼ö¿¡ ÇÒ´ç
+	// 2. ì—ì…‹ì„ ì„±ê³µì ìœ¼ë¡œ ì°¾ì•˜ëŠ”ì§€ í™•ì¸ í›„ ë³€ìˆ˜ì— í• ë‹¹
 	if (StatusEffectBP.Succeeded())
 	{
-		// SummonClass ´Â º¸Åë Çì´õ¿¡ TSubclassOf<AActor>·Î ¼±¾ğÇÕ´Ï´Ù.
+		// SummonClass ëŠ” ë³´í†µ í—¤ë”ì— TSubclassOf<AActor>ë¡œ ì„ ì–¸í•©ë‹ˆë‹¤.
 		StatusEffectClass = StatusEffectBP.Class;
 	}
 
@@ -57,28 +57,28 @@ void UDESkill_BloodyScarify::InitBehaviors()
 	UDEBehavior_PlayEffect* HitVFX = NewObject<UDEBehavior_PlayEffect>(this, TEXT("HitVFX"));
 	if (HitVFX)
 	{
-		// ½Ã°¢ È¿°ú: ÇÊÅÍ¸µÀ¸·Î °É·¯Áø "¸ğµç Å¸°Ù(AllTargets)" ¸Ó¸® À§¿¡ ²ÈÈû!
+		// ì‹œê° íš¨ê³¼: í•„í„°ë§ìœ¼ë¡œ ê±¸ëŸ¬ì§„ "ëª¨ë“  íƒ€ê²Ÿ(AllTargets)" ë¨¸ë¦¬ ìœ„ì— ê½‚í˜!
 		HitVFX->NiagaraTargetType = EEffectTargetType::AllTargets;
-		HitVFX->NiagaraEffect = NiagaraFx; // ºí·¯µğ ½ºÇÇ¾î ¶³¾îÁö´Â ³ªÀÌ¾Æ°¡¶ó ¿¡¼Â
+		HitVFX->NiagaraEffect = NiagaraFx; // ë¸”ëŸ¬ë”” ìŠ¤í”¼ì–´ ë–¨ì–´ì§€ëŠ” ë‚˜ì´ì•„ê°€ë¼ ì—ì…‹
 
-		// Ã»°¢ È¿°ú: ½ÃÀüÀÚ(Instigator) ±âÁØÀ¸·Î 2D »ç¿îµå 1¹ø¸¸ Â¼··Â¼··ÇÏ°Ô Àç»ı!
+		// ì²­ê° íš¨ê³¼: ì‹œì „ì(Instigator) ê¸°ì¤€ìœ¼ë¡œ 2D ì‚¬ìš´ë“œ 1ë²ˆë§Œ ì©Œë ì©Œë í•˜ê²Œ ì¬ìƒ!
 		HitVFX->SoundTargetType = EEffectTargetType::Instigator;
-		HitVFX->SoundEffect = SoundFx; // ¹æ±İ ¸¸µå½Å ÇÇ ÅÍÁö´Â »ç¿îµå Å¥ ¿¡¼Â!
+		HitVFX->SoundEffect = SoundFx; // ë°©ê¸ˆ ë§Œë“œì‹  í”¼ í„°ì§€ëŠ” ì‚¬ìš´ë“œ í ì—ì…‹!
 
-		Behaviors.Add(HitVFX); // µ¥¹ÌÁö µé¾î°¡±â Á÷Àü¿¡ ²È¾ÆÁİ´Ï´Ù!
+		Behaviors.Add(HitVFX); // ë°ë¯¸ì§€ ë“¤ì–´ê°€ê¸° ì§ì „ì— ê½‚ì•„ì¤ë‹ˆë‹¤!
 	}
 
 	UDEBehavior_InstantDamage* Damage = NewObject<UDEBehavior_InstantDamage>(this, TEXT("Damage"));
 	if (Damage)
 	{
-		Damage->DamageMultiplier = 1.0f; // ±âº» µ¥¹ÌÁöÀÇ 100%
+		Damage->DamageMultiplier = 1.0f; // ê¸°ë³¸ ë°ë¯¸ì§€ì˜ 100%
 		Behaviors.Add(Damage);
 	}
 
 	UDECombatEffect_ApplyStatusEffect* ApplyStatusEffect = NewObject<UDECombatEffect_ApplyStatusEffect>(this);
 	ApplyStatusEffect->TriggerCondition = ECombatEventTrigger::OnHit;
 
-	// ¡Ú ÇÙ½É: ÇÏµåÄÚµù 10 ´ë½Å, ºí·çÇÁ¸°Æ®¿¡¼­ ¼¼ÆÃÇÑ ³» ID¸¦ µ¿ÀûÀ¸·Î °¡Á®¿È!
+	// â˜… í•µì‹¬: í•˜ë“œì½”ë”© 10 ëŒ€ì‹ , ë¸”ë£¨í”„ë¦°íŠ¸ì—ì„œ ì„¸íŒ…í•œ ë‚´ IDë¥¼ ë™ì ìœ¼ë¡œ ê°€ì ¸ì˜´!
 	ApplyStatusEffect->StatusEffectClass = StatusEffectClass;
 	ApplyStatusEffect->Interval = 0.0f;
 	ApplyStatusEffect->Duration = 100.0f;

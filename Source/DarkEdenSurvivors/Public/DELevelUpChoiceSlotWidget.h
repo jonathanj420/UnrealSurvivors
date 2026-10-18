@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -24,7 +24,7 @@ class DARKEDENSURVIVORS_API UDELevelUpChoiceSlotWidget : public UUserWidget
 public:
 	virtual void NativeConstruct() override;
 
-	// ¿ÜºÎ(¸ŞÀÎ À§Á¬)¿¡¼­ µ¥ÀÌÅÍ¸¦ ³Ö¾îÁÖ´Â ÇÔ¼ö
+	// ì™¸ë¶€(ë©”ì¸ ìœ„ì ¯)ì—ì„œ ë°ì´í„°ë¥¼ ë„£ì–´ì£¼ëŠ” í•¨ìˆ˜
 	UFUNCTION(BlueprintCallable)
 	void InitSlot(UDELevelUpChoiceBase* InChoice);
 
@@ -34,27 +34,27 @@ protected:
 
 public:
 	// =========================================================
-	// [UI ÄÄÆ÷³ÍÆ® ¹ÙÀÎµù] ÀÌ¸§ ²À ¸ÂÃç¾ß ÇÔ!
+	// [UI ì»´í¬ë„ŒíŠ¸ ë°”ì¸ë”©] ì´ë¦„ ê¼­ ë§ì¶°ì•¼ í•¨!
 	// =========================================================
 	UPROPERTY(meta = (BindWidget))
-	UButton* Btn_Select; // ¹öÆ° (ÀüÃ¼ µ¤´Â Åõ¸í ¹öÆ° ÃßÃµ)
+	UButton* Btn_Select; // ë²„íŠ¼ (ì „ì²´ ë®ëŠ” íˆ¬ëª… ë²„íŠ¼ ì¶”ì²œ)
 
 	UPROPERTY(meta = (BindWidget))
-	UImage* Img_Icon;    // ½ºÅ³/¾ÆÀÌÅÛ ¾ÆÀÌÄÜ
+	UImage* Img_Icon;    // ìŠ¤í‚¬/ì•„ì´í…œ ì•„ì´ì½˜
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* Txt_Name; // ÀÌ¸§
+	UTextBlock* Txt_Name; // ì´ë¦„
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* Txt_Desc; // ¼³¸í (µ¥¹ÌÁö Áõ°¡·® µî)
+	UTextBlock* Txt_Desc; // ì„¤ëª… (ë°ë¯¸ì§€ ì¦ê°€ëŸ‰ ë“±)
 
 	// =========================================================
-	// [µ¥ÀÌÅÍ]
+	// [ë°ì´í„°]
 	// =========================================================
 	UPROPERTY(BlueprintReadOnly)
 	UDELevelUpChoiceBase* ChoiceData;
 
-	// ºÎ¸ğ°¡ µè°Ô µÉ ÀÌº¥Æ®
+	// ë¶€ëª¨ê°€ ë“£ê²Œ ë  ì´ë²¤íŠ¸
 	UPROPERTY(BlueprintAssignable)
 	FOnSlotSelected OnSlotSelected;
 	

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -17,16 +17,16 @@ class DARKEDENSURVIVORS_API UDEBehavior_InstantDamage : public UDESkillBehavior
 public:
 	virtual void Execute(FDESkillContext& Context) override;
 
-	// ¡Ú [NEW] ÀÌ ·¹°í ºí·ÏÀÌ ÅÍ¶ß¸± µ¥¹ÌÁöÀÇ ¼Ó¼º°ú ÆÇÁ¤ ÅÂ±×µé!
+	// â˜… [NEW] ì´ ë ˆê³  ë¸”ë¡ì´ í„°ëœ¨ë¦´ ë°ë¯¸ì§€ì˜ ì†ì„±ê³¼ íŒì • íƒœê·¸ë“¤!
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage", meta = (Categories = "Damage"))
 	FGameplayTagContainer SkillDamageTags;
 
-	// µ¥¹ÌÁö ¹èÀ² (Ã¹ Å¸°İ 2¹è! °°Àº °Å ÇÒ ¶§ ¾¸)
+	// ë°ë¯¸ì§€ ë°°ìœ¨ (ì²« íƒ€ê²© 2ë°°! ê°™ì€ ê±° í•  ë•Œ ì”€)
 	UPROPERTY(EditAnywhere)
 	float DamageMultiplier = 1.0f;
 
 	UPROPERTY(EditAnywhere)
-	int32 HitCount = 1; // Å¸°İ È½¼ö
+	int32 HitCount = 1; // íƒ€ê²© íšŸìˆ˜
 
 	UPROPERTY(EditAnywhere)
 	float HitInterval = 0.0f;

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -20,25 +20,25 @@ public:
 protected:
 	/* ===================== Garlic Specific ===================== */
 
-	/** È÷Æ® ½Ã Ãß°¡ Knockback */
+	/** íˆíŠ¸ ì‹œ ì¶”ê°€ Knockback */
 	UPROPERTY(EditDefaultsOnly, Category = "Darkness")
 	float KnockbackPerHit = 0.3f;
 
-	/** È÷Æ® ½Ã Freeze ÀúÇ× °¨¼Ò */
+	/** íˆíŠ¸ ì‹œ Freeze ì €í•­ ê°ì†Œ */
 	UPROPERTY(EditDefaultsOnly, Category = "Darkness")
 	float FreezeResistReduction = 0.1f;
 
-	/** ÃÖ´ë Knockback ´©Àû */
+	/** ìµœëŒ€ Knockback ëˆ„ì  */
 	UPROPERTY(EditDefaultsOnly, Category = "Darkness")
 	float MaxAdditionalKnockback = 2.0f;
 
 	/* ===================== Runtime ===================== */
 
-	/** Enemyº° ´©Àû Knockback */
+	/** Enemyë³„ ëˆ„ì  Knockback */
 	UPROPERTY()
 	TMap<TWeakObjectPtr<AActor>, float> AccumulatedKnockback;
 
-	/** Enemyº° Freeze ÀúÇ× */
+	/** Enemyë³„ Freeze ì €í•­ */
 	UPROPERTY()
 	TMap<TWeakObjectPtr<AActor>, float> CurrentFreezeResist;
 

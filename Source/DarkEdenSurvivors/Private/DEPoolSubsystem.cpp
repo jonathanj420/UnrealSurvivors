@@ -1,4 +1,4 @@
-#include "DEPoolSubsystem.h"
+ï»¿#include "DEPoolSubsystem.h"
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
 #include "Components/PrimitiveComponent.h"
@@ -24,7 +24,7 @@ void UDEPoolSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 
 void UDEPoolSubsystem::Deinitialize()
 {
-    // Ç® ³» ¸ğµç ¾×ÅÍ »èÁ¦
+    // í’€ ë‚´ ëª¨ë“  ì•¡í„° ì‚­ì œ
     for (auto& Pair : PoolMap)
     {
         for (AActor* Actor : Pair.Value)
@@ -66,14 +66,14 @@ bool UDEPoolSubsystem::IsActorInactive(AActor* Actor) const
 
 AActor* UDEPoolSubsystem::CreateNewPooledActor(TSubclassOf<AActor> ActorClass, UWorld* World)
 {
-    //SpawnActorDeferred (Áö¿¬ ¼ÒÈ¯)
+    //SpawnActorDeferred (ì§€ì—° ì†Œí™˜)
     if (!World || !ActorClass) return nullptr;
 
-    // 1. [Áö¿¬ ¼ÒÈ¯ ½ÃÀÛ] ¾ÆÁ÷ ¿ùµå¿¡ ¿ÏÀüÈ÷ µî·ÏµÇÁö ¾ÊÀº »óÅÂ·Î ¾×ÅÍ¸¸ ¸¸µì´Ï´Ù.
-    // BeginPlayµµ ¾È ºÒ¸®°í, ¹°¸® ¿£Áø¿¡µµ µî·Ï ¾È µÈ »óÅÂÀÔ´Ï´Ù.
+    // 1. [ì§€ì—° ì†Œí™˜ ì‹œì‘] ì•„ì§ ì›”ë“œì— ì™„ì „íˆ ë“±ë¡ë˜ì§€ ì•Šì€ ìƒíƒœë¡œ ì•¡í„°ë§Œ ë§Œë“­ë‹ˆë‹¤.
+    // BeginPlayë„ ì•ˆ ë¶ˆë¦¬ê³ , ë¬¼ë¦¬ ì—”ì§„ì—ë„ ë“±ë¡ ì•ˆ ëœ ìƒíƒœì…ë‹ˆë‹¤.
     AActor* NewActor = World->SpawnActorDeferred<AActor>(
         ActorClass,
-        FTransform::Identity, // À§Ä¡/È¸Àü (³ªÁß¿¡ ¾îÂ÷ÇÇ ´Ù½Ã ÀâÀ½)
+        FTransform::Identity, // ìœ„ì¹˜/íšŒì „ (ë‚˜ì¤‘ì— ì–´ì°¨í”¼ ë‹¤ì‹œ ì¡ìŒ)
         nullptr,              // Owner
         nullptr,              // Instigator
         ESpawnActorCollisionHandlingMethod::AlwaysSpawn
@@ -81,17 +81,17 @@ AActor* UDEPoolSubsystem::CreateNewPooledActor(TSubclassOf<AActor> ActorClass, U
 
     if (NewActor)
     {
-        // 2. [ÇÙ½É] ¼¼»ó¿¡ ³ª¿À±â Àü¿¡ ¹Ì¸® Ãæµ¹°ú Æ½À» ²¨¹ö¸³´Ï´Ù!
-        // ÀÌ ÇÔ¼ö°¡ ½ÇÇàµÉ ¶§´Â Ãæµ¹ÀÌ ²¨Áø »óÅÂ·Î ¼³Á¤°ª¸¸ ¹Ù²ò´Ï´Ù.
+        // 2. [í•µì‹¬] ì„¸ìƒì— ë‚˜ì˜¤ê¸° ì „ì— ë¯¸ë¦¬ ì¶©ëŒê³¼ í‹±ì„ êº¼ë²„ë¦½ë‹ˆë‹¤!
+        // ì´ í•¨ìˆ˜ê°€ ì‹¤í–‰ë  ë•ŒëŠ” ì¶©ëŒì´ êº¼ì§„ ìƒíƒœë¡œ ì„¤ì •ê°’ë§Œ ë°”ë€ë‹ˆë‹¤.
         ActivateActor(NewActor, false);
 
-        // ActivateActor¿¡¼­´Â »°Áö¸¸, ¿©±â¼­¸¸Å­Àº ÇØÁà¾ß ¾ÈÀüÇÏ°Ô Ç®¿¡ µé¾î°©´Ï´Ù.
+        // ActivateActorì—ì„œëŠ” ëºì§€ë§Œ, ì—¬ê¸°ì„œë§Œí¼ì€ í•´ì¤˜ì•¼ ì•ˆì „í•˜ê²Œ í’€ì— ë“¤ì–´ê°‘ë‹ˆë‹¤.
         if (UPrimitiveComponent* Root = Cast<UPrimitiveComponent>(NewActor->GetRootComponent()))
         {
             Root->SetCollisionEnabled(ECollisionEnabled::NoCollision);
         }
-        // 3. [¼ÒÈ¯ ¿Ï·á] ÀÌÁ¦ ¼³Á¤µÈ °ª(Ãæµ¹ ²¨Áü)À» µé°í ¼¼»ó¿¡ µîÀåÇÕ´Ï´Ù.
-        // ÀÌ¶§ ÄÄÆ÷³ÍÆ®°¡ µî·ÏµÇ´Âµ¥, ÀÌ¹Ì NoCollisionÀÌ¶ó¼­ ¿À¹ö·¦ÀÌ ¾È ÅÍÁı´Ï´Ù.
+        // 3. [ì†Œí™˜ ì™„ë£Œ] ì´ì œ ì„¤ì •ëœ ê°’(ì¶©ëŒ êº¼ì§)ì„ ë“¤ê³  ì„¸ìƒì— ë“±ì¥í•©ë‹ˆë‹¤.
+        // ì´ë•Œ ì»´í¬ë„ŒíŠ¸ê°€ ë“±ë¡ë˜ëŠ”ë°, ì´ë¯¸ NoCollisionì´ë¼ì„œ ì˜¤ë²„ë©ì´ ì•ˆ í„°ì§‘ë‹ˆë‹¤.
         UGameplayStatics::FinishSpawningActor(NewActor, FTransform::Identity);
     }
 
@@ -120,7 +120,7 @@ AActor* UDEPoolSubsystem::CreateNewPooledActor(TSubclassOf<AActor> ActorClass, U
     //AActor* NewActor = World->SpawnActor<AActor>(ActorClass, FVector::ZeroVector, FRotator::ZeroRotator, Params);
     //if (NewActor)
     //{
-    //    DeactivateActor(NewActor);  // »ı¼º ÈÄ ±âº»Àº ºñÈ°¼º »óÅÂ
+    //    DeactivateActor(NewActor);  // ìƒì„± í›„ ê¸°ë³¸ì€ ë¹„í™œì„± ìƒíƒœ
     //}
 
     //return NewActor;
@@ -134,12 +134,12 @@ void UDEPoolSubsystem::ActivateActor(
 
     if (!Actor) return;
 
-    // 1. °øÅë Ã³¸®: ÄÑ°í ²ô±â
+    // 1. ê³µí†µ ì²˜ë¦¬: ì¼œê³  ë„ê¸°
     Actor->SetActorHiddenInGame(!bAutoActivate);
     Actor->SetActorTickEnabled(bAutoActivate);
 
     // off this shi would be better i guess
-    //// 2. Ãæµ¹ Ã³¸® (¿©ÀüÈ÷ QueryOnly °­Á¦ÀÎ °Ç ³ªÁß¿¡ ÀÎÅÍÆäÀÌ½º·Î »©¾ß ÇÔ)
+    //// 2. ì¶©ëŒ ì²˜ë¦¬ (ì—¬ì „íˆ QueryOnly ê°•ì œì¸ ê±´ ë‚˜ì¤‘ì— ì¸í„°í˜ì´ìŠ¤ë¡œ ë¹¼ì•¼ í•¨)
     //if (UPrimitiveComponent* Root = Cast<UPrimitiveComponent>(Actor->GetRootComponent()))
     //{
     //    Root->SetCollisionEnabled(
@@ -155,7 +155,7 @@ void UDEPoolSubsystem::ActivateActor(
     //    }
     //}
 
-    // 3. ¸¸¾à ÀÎÅÍÆäÀÌ½º¸¦ ¾´´Ù¸é ¿©±â¼­ È£Ãâ (À§Ä¡ ÀÎÀÚ ¾øÀÌ)
+    // 3. ë§Œì•½ ì¸í„°í˜ì´ìŠ¤ë¥¼ ì“´ë‹¤ë©´ ì—¬ê¸°ì„œ í˜¸ì¶œ (ìœ„ì¹˜ ì¸ì ì—†ì´)
     // if (Actor->Implements<UDEPoolableInterface>()) ...
 
     /*if (!Actor) return;
@@ -190,27 +190,27 @@ void UDEPoolSubsystem::DeactivateActor(AActor* Actor)
 void UDEPoolSubsystem::ShrinkPools()
 {
 
-    //UE_LOG(LogTemp, Warning, TEXT("Shrink Check...")); // ·Î±× ³Ê¹« ÀÚÁÖ ¶ß¸é ¼º´É ÀúÇÏµÇ´Ï ÁÖ¼® ÃßÃµ
+    //UE_LOG(LogTemp, Warning, TEXT("Shrink Check...")); // ë¡œê·¸ ë„ˆë¬´ ìì£¼ ëœ¨ë©´ ì„±ëŠ¥ ì €í•˜ë˜ë‹ˆ ì£¼ì„ ì¶”ì²œ
     for (auto It = PoolMap.CreateIterator(); It; ++It)
     {
         TArray<AActor*>& InactivePool = It.Value();
 
-        // ³î°í ÀÖ´Â ³ğµéÀÌ ÃÖ¼Ò À¯Áö °³¼ö(MinPoolSize)º¸´Ù ÀûÀ¸¸é ³ÀµÒ
+        // ë†€ê³  ìˆëŠ” ë†ˆë“¤ì´ ìµœì†Œ ìœ ì§€ ê°œìˆ˜(MinPoolSize)ë³´ë‹¤ ì ìœ¼ë©´ ëƒ…ë‘ 
         if (InactivePool.Num() <= MinPoolSize) continue;
 
-        // ÃÊ°úºĞ °è»ê
+        // ì´ˆê³¼ë¶„ ê³„ì‚°
         int32 NumToRemove = InactivePool.Num() - MinPoolSize;
 
-        // µÚ¿¡¼­ºÎÅÍ »èÁ¦ (¼º´É»ó ÀÌµæ)
+        // ë’¤ì—ì„œë¶€í„° ì‚­ì œ (ì„±ëŠ¥ìƒ ì´ë“)
         for (int32 i = 0; i < NumToRemove; ++i)
         {
-            // PopÀ¸·Î ²¨³»¼­
+            // Popìœ¼ë¡œ êº¼ë‚´ì„œ
             if (InactivePool.Num() > 0)
             {
                 AActor* Victim = InactivePool.Pop();
                 if (IsValid(Victim))
                 {
-                    Victim->Destroy(); // ÁøÂ¥ »èÁ¦
+                    Victim->Destroy(); // ì§„ì§œ ì‚­ì œ
                 }
             }
         }
@@ -222,7 +222,7 @@ void UDEPoolSubsystem::ShrinkPools()
     //{
     //    TArray<AActor*>& Pool = Elem.Value;
 
-    //    // 1) ºñÈ°¼º ¾×ÅÍ¸¸ ¼öÁı
+    //    // 1) ë¹„í™œì„± ì•¡í„°ë§Œ ìˆ˜ì§‘
     //    TArray<AActor*> InactiveActors;
     //    for (AActor* A : Pool)
     //    {
@@ -230,13 +230,13 @@ void UDEPoolSubsystem::ShrinkPools()
     //            InactiveActors.Add(A);
     //    }
 
-    //    // ÃÖ¼Ò À¯Áö °³¼öº¸´Ù ÀÛÀ¸¸é ¾È ÁÙÀÓ
+    //    // ìµœì†Œ ìœ ì§€ ê°œìˆ˜ë³´ë‹¤ ì‘ìœ¼ë©´ ì•ˆ ì¤„ì„
     //    if (InactiveActors.Num() <= MinPoolSize)
     //        continue;
 
     //    int32 ToRemove = InactiveActors.Num() - MinPoolSize;
 
-    //    // 2) ÃÊ°úºĞ Destroy
+    //    // 2) ì´ˆê³¼ë¶„ Destroy
     //    for (int32 i = 0; i < ToRemove; i++)
     //    {
     //        AActor* A = InactiveActors[i];
@@ -267,13 +267,13 @@ AActor* UDEPoolSubsystem::GetPooledActor(
 
     AActor* SelectedActor = nullptr;
 
-    // A. Ç®¿¡ ³î°í ÀÖ´Â ³ğÀÌ ÀÖ´Ù -> ²¨³» ¾´´Ù (Pop)
+    // A. í’€ì— ë†€ê³  ìˆëŠ” ë†ˆì´ ìˆë‹¤ -> êº¼ë‚´ ì“´ë‹¤ (Pop)
     while (InactivePool.Num() > 0)
     {
-        // ¸Ç µÚ¿¡ ÀÖ´Â ³ğ ÇÏ³ª ²¨³¿ (°¡Àå ºü¸§)
+        // ë§¨ ë’¤ì— ìˆëŠ” ë†ˆ í•˜ë‚˜ êº¼ëƒ„ (ê°€ì¥ ë¹ ë¦„)
         SelectedActor = InactivePool.Pop();
         //UE_LOG(LogTemp, Warning, TEXT("%s got Popped Out from Pool"), *SelectedActor->GetName());
-        // ²¨³Â´Âµ¥ ±× »çÀÌ¿¡ Á×¾ú°Å³ª(Destroy) À¯È¿ÇÏÁö ¾ÊÀ¸¸é ¹ö¸®°í ´Ù½Ã ¹İº¹
+        // êº¼ëƒˆëŠ”ë° ê·¸ ì‚¬ì´ì— ì£½ì—ˆê±°ë‚˜(Destroy) ìœ íš¨í•˜ì§€ ì•Šìœ¼ë©´ ë²„ë¦¬ê³  ë‹¤ì‹œ ë°˜ë³µ
         if (IsValid(SelectedActor))
         {
             break;
@@ -284,21 +284,21 @@ AActor* UDEPoolSubsystem::GetPooledActor(
         }
     }
 
-    // B. Ç®ÀÌ ºñ¾ú´Ù -> »õ·Î ¸¸µç´Ù
+    // B. í’€ì´ ë¹„ì—ˆë‹¤ -> ìƒˆë¡œ ë§Œë“ ë‹¤
     if (!SelectedActor)
     {
         SelectedActor = CreateNewPooledActor(ActorClass, World);
        // UE_LOG(LogTemp, Warning, TEXT("%s New for Pool"), *SelectedActor->GetName());
     }
 
-    // C. °øÅë È°¼ºÈ­ Ã³¸®
+    // C. ê³µí†µ í™œì„±í™” ì²˜ë¦¬
     if (SelectedActor)
     {
-        // 1. [¸ÕÀú] À§Ä¡¿Í È¸ÀüÀ» È®½ÇÇÏ°Ô Àâ¾ÆÁØ´Ù. (ÅÚ·¹Æ÷Æ®)
-        // Teleport flag¸¦ true·Î Áà¼­ ¹°¸® ¿£Áø ²¿ÀÓ ¹æÁö
+        // 1. [ë¨¼ì €] ìœ„ì¹˜ì™€ íšŒì „ì„ í™•ì‹¤í•˜ê²Œ ì¡ì•„ì¤€ë‹¤. (í…”ë ˆí¬íŠ¸)
+        // Teleport flagë¥¼ trueë¡œ ì¤˜ì„œ ë¬¼ë¦¬ ì—”ì§„ ê¼¬ì„ ë°©ì§€
         SelectedActor->SetActorLocationAndRotation(Location, Rotation, false, nullptr, ETeleportType::TeleportPhysics);
         //UE_LOG(LogTemp, Warning, TEXT("%s SetLocAndRotFromPool"), *SelectedActor->GetName());
-        // 2. [³ªÁß] ÀÌÁ¦ ±ú¿î´Ù. (Ãæµ¹ ON)
+        // 2. [ë‚˜ì¤‘] ì´ì œ ê¹¨ìš´ë‹¤. (ì¶©ëŒ ON)
         ActivateActor(SelectedActor, bAutoActivate);
     }
 
@@ -312,7 +312,7 @@ AActor* UDEPoolSubsystem::GetPooledActor(
 
     //TArray<AActor*>& Pool = PoolMap.FindOrAdd(ActorClass);
 
-    //// 1) ºñÈ°¼º ¾×ÅÍ Àç»ç¿ë
+    //// 1) ë¹„í™œì„± ì•¡í„° ì¬ì‚¬ìš©
     //for (AActor* Actor : Pool)
     //{
     //    if (IsActorInactive(Actor))
@@ -322,7 +322,7 @@ AActor* UDEPoolSubsystem::GetPooledActor(
     //    }
     //}
 
-    //// 2) ¾øÀ¸¸é »õ·Î »ı¼º
+    //// 2) ì—†ìœ¼ë©´ ìƒˆë¡œ ìƒì„±
     //AActor* NewActor = CreateNewPooledActor(ActorClass, World);
     //if (NewActor)
     //{
@@ -339,12 +339,12 @@ void UDEPoolSubsystem::ReturnActorToPool(AActor* Actor)
 {
     if (!IsValid(Actor)) return;
 
-    // 1. ²ô±â
+    // 1. ë„ê¸°
     DeactivateActor(Actor);
 
-    // 2. Ç®(Ã¢°í)¿¡ Áı¾î³Ö±â
-    // [ÁÖÀÇ] ÀÌ¹Ì Ç®¿¡ ÀÖ´Âµ¥ ¶Ç ³Ö´Â ½Ç¼ö¸¦ ¹æÁöÇÏ±â À§ÇØ AddUnique ´ë½Å ·ÎÁ÷À¸·Î °ü¸®ÇÏ°Å³ª
-    // ¼º´ÉÀ» À§ÇØ ±×³É Add¸¦ ÇÏµÇ, ÀÌ ÇÔ¼ö´Â ¹İµå½Ã "»ç¿ë ÁßÀÎ ³ğ"ÇÑÅ×¸¸ È£ÃâÇØ¾ß ÇÔ.
+    // 2. í’€(ì°½ê³ )ì— ì§‘ì–´ë„£ê¸°
+    // [ì£¼ì˜] ì´ë¯¸ í’€ì— ìˆëŠ”ë° ë˜ ë„£ëŠ” ì‹¤ìˆ˜ë¥¼ ë°©ì§€í•˜ê¸° ìœ„í•´ AddUnique ëŒ€ì‹  ë¡œì§ìœ¼ë¡œ ê´€ë¦¬í•˜ê±°ë‚˜
+    // ì„±ëŠ¥ì„ ìœ„í•´ ê·¸ëƒ¥ Addë¥¼ í•˜ë˜, ì´ í•¨ìˆ˜ëŠ” ë°˜ë“œì‹œ "ì‚¬ìš© ì¤‘ì¸ ë†ˆ"í•œí…Œë§Œ í˜¸ì¶œí•´ì•¼ í•¨.
     TArray<AActor*>& InactivePool = PoolMap.FindOrAdd(Actor->GetClass());
     InactivePool.Add(Actor); // Stack Push
     /*if (!Actor) return;

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DESkillSlotWidget.h"
@@ -15,7 +15,7 @@ void UDESkillSlotWidget::SetSkill(const FText& InSkillName, int32 InSkillLevel, 
 	SkillLevel = InSkillLevel;
 
     // --------------------
-    // ≈ÿΩ∫∆Æ ¿ß¡¨ º≥¡§
+    // ÌÖçÏä§Ìä∏ ÏúÑÏ†Ø ÏÑ§Ï†ï
     // --------------------
 
     if (SkillLevelText)
@@ -26,7 +26,7 @@ void UDESkillSlotWidget::SetSkill(const FText& InSkillName, int32 InSkillLevel, 
     }
 
     // --------------------
-    // ¿ÃπÃ¡ˆ ¿ß¡¨ º≥¡§
+    // Ïù¥ÎØ∏ÏßÄ ÏúÑÏ†Ø ÏÑ§Ï†ï
     // --------------------
     if (SkillIconImage)
     {

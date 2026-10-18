@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DECombatEffect.h"
@@ -8,13 +8,13 @@ void UDECombatEffect::ExecuteEffect(FCombatEventData& EventData)
     //UE_LOG(LogTemp, Error, TEXT("%s ::ExecuteEffect"),*GetName());
     if (!EventData.Instigator) return;
 
-    // 1. ºÎ¸ğ°¡ °­Á¦·Î ÄğÅ¸ÀÓ °Ë¹®¼Ò °Ë»ç! (ÀÚ½ÄµéÀº ÀÌÁ¦ ÀÌ°Å ½Å°æ ¾µ ÇÊ¿ä ¾øÀ½)
+    // 1. ë¶€ëª¨ê°€ ê°•ì œë¡œ ì¿¨íƒ€ì„ ê²€ë¬¸ì†Œ ê²€ì‚¬! (ìì‹ë“¤ì€ ì´ì œ ì´ê±° ì‹ ê²½ ì“¸ í•„ìš” ì—†ìŒ)
     if (!CanTriggerEffect(EventData.Instigator->GetWorld()))
     {
-        return; // Åë°ú ¸ø ÇÏ¸é ¿©±â¼­ ÄÆ!
+        return; // í†µê³¼ ëª» í•˜ë©´ ì—¬ê¸°ì„œ ì»·!
     }
 
-    // 2. °Ë¹®¼Ò¸¦ ¹«»çÈ÷ Åë°úÇß´Ù¸é? ÀÚ½ÄµéÀÌ °¢ÀÚ Â¥µĞ ÁøÂ¥ È¿°ú ¹ßµ¿!
+    // 2. ê²€ë¬¸ì†Œë¥¼ ë¬´ì‚¬íˆ í†µê³¼í–ˆë‹¤ë©´? ìì‹ë“¤ì´ ê°ì ì§œë‘” ì§„ì§œ íš¨ê³¼ ë°œë™!
     OnExecuteEffect(EventData);
 }
 
@@ -23,39 +23,39 @@ bool UDECombatEffect::CanTriggerEffect(UWorld* World)
 
     if (!World) return false;
 
-    // 1. [µµÆÄ¹Î] ÀÏ´Ü ¶§¸± ¶§¸¶´Ù ¹«Á¶°Ç ÁÖ»çÀ§ºÎÅÍ ±¼¸°´Ù! (È®·ü °Ë»ç)
+    // 1. [ë„íŒŒë¯¼] ì¼ë‹¨ ë•Œë¦´ ë•Œë§ˆë‹¤ ë¬´ì¡°ê±´ ì£¼ì‚¬ìœ„ë¶€í„° êµ´ë¦°ë‹¤! (í™•ë¥  ê²€ì‚¬)
     if (FMath::FRand() > Chance)
     {
-        return false; // ¿îÀÌ ¾ø¾î¼­ ¾È ÅÍÁü (ÄğÅ¸ÀÓ ½ºÅé¿öÄ¡´Â °Çµå¸®Áöµµ ¾ÊÀ½)
+        return false; // ìš´ì´ ì—†ì–´ì„œ ì•ˆ í„°ì§ (ì¿¨íƒ€ì„ ìŠ¤í†±ì›Œì¹˜ëŠ” ê±´ë“œë¦¬ì§€ë„ ì•ŠìŒ)
     }
 
-    // 2. ÄğÅ¸ÀÓÀÌ ¾ø´Â È¿°ú¸é ¹Ù·Î ÇÁ¸®ÆĞ½º ¹ßµ¿!
+    // 2. ì¿¨íƒ€ì„ì´ ì—†ëŠ” íš¨ê³¼ë©´ ë°”ë¡œ í”„ë¦¬íŒ¨ìŠ¤ ë°œë™!
     if (InternalCooldown <= 0.0f) return true;
 
-    // 3. [¹ë·±½º] ÁÖ»çÀ§´Â ¼º°øÇß´Âµ¥, È¤½Ã Áö±İ ÄğÅ¸ÀÓ µ¹°í ÀÖ´Â ÁßÀÎ°¡?
+    // 3. [ë°¸ëŸ°ìŠ¤] ì£¼ì‚¬ìœ„ëŠ” ì„±ê³µí–ˆëŠ”ë°, í˜¹ì‹œ ì§€ê¸ˆ ì¿¨íƒ€ì„ ëŒê³  ìˆëŠ” ì¤‘ì¸ê°€?
     float CurrentTime = World->GetTimeSeconds();
     if (CurrentTime - LastTriggerTime < InternalCooldown)
     {
-        return false; // ¾Æ±õ´Ù! ÁÖ»çÀ§ ¼º°øÇßÁö¸¸ ¾ÆÁ÷ ÄğÅ¸ÀÓÀÌ¶ó ¹«È¿!
+        return false; // ì•„ê¹ë‹¤! ì£¼ì‚¬ìœ„ ì„±ê³µí–ˆì§€ë§Œ ì•„ì§ ì¿¨íƒ€ì„ì´ë¼ ë¬´íš¨!
     }
 
-    // 4. [ÃÖÁ¾ ½ÂÀÎ] ÁÖ»çÀ§µµ ¶Õ°í ÄğÅ¸ÀÓµµ Áö³µ´Ù! 
-    // ¹ßµ¿ ½ºÅé¿öÄ¡¸¦ Áö±İ µü ´©¸£°í ÁøÂ¥ È¿°ú¸¦ ÅÍ¶ß¸°´Ù!
+    // 4. [ìµœì¢… ìŠ¹ì¸] ì£¼ì‚¬ìœ„ë„ ëš«ê³  ì¿¨íƒ€ì„ë„ ì§€ë‚¬ë‹¤! 
+    // ë°œë™ ìŠ¤í†±ì›Œì¹˜ë¥¼ ì§€ê¸ˆ ë”± ëˆ„ë¥´ê³  ì§„ì§œ íš¨ê³¼ë¥¼ í„°ëœ¨ë¦°ë‹¤!
     LastTriggerTime = CurrentTime;
     return true;
 
-    //// ¿ùµå°¡ ¾ø°Å³ª, ±âÈ¹ÀÚ°¡ ÄğÅ¸ÀÓÀ» 0À¸·Î ÇØµ×À¸¸é ÇÁ¸®ÆĞ½º! y no world?
+    //// ì›”ë“œê°€ ì—†ê±°ë‚˜, ê¸°íšìê°€ ì¿¨íƒ€ì„ì„ 0ìœ¼ë¡œ í•´ë’€ìœ¼ë©´ í”„ë¦¬íŒ¨ìŠ¤! y no world?
     //if (!World || InternalCooldown <= 0.0f) return true;
 
     //float CurrentTime = World->GetTimeSeconds();
 
-    //// ¾ÆÁ÷ ÄğÀÌ ´ú µ¹¾Ò´Ù¸é ÄÆ!
+    //// ì•„ì§ ì¿¨ì´ ëœ ëŒì•˜ë‹¤ë©´ ì»·!
     //if (CurrentTime - LastTriggerTime < InternalCooldown)
     //{
     //    return false;
     //}
 
-    //// Åë°úÇßÀ¸¸é ¸¶Áö¸· ¹ßµ¿ ½Ã°£ °»½Å
+    //// í†µê³¼í–ˆìœ¼ë©´ ë§ˆì§€ë§‰ ë°œë™ ì‹œê°„ ê°±ì‹ 
     //LastTriggerTime = CurrentTime;
     //return true;
 }

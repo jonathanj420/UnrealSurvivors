@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DECombatEffect_CooldownReduction.h"
@@ -15,7 +15,7 @@ void UDECombatEffect_CooldownReduction::OnExecuteEffect(FCombatEventData& EventD
     switch (TargetSkill)
     {
     case ECDRTargetSkill::AllSkills:
-        // ¸ðµç ½ºÅ³ ¼øÈ¸ÇÏ¸é¼­ ±ð¾ÆÁÖ±â
+        // ëª¨ë“  ìŠ¤í‚¬ ìˆœíšŒí•˜ë©´ì„œ ê¹Žì•„ì£¼ê¸°
         for (const auto& Pair : SkillMgr->GetActiveSkills())
         {
             if (bInstantReset)

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -19,7 +19,7 @@ public:
     virtual void Initialize(FSubsystemCollectionBase& Collection) override;
     virtual void Deinitialize() override;
 
-    /** Ç®¿¡¼­ ¾×ÅÍ¸¦ ²¨³»°Å³ª ÇÊ¿ä ½Ã »ı¼º */
+    /** í’€ì—ì„œ ì•¡í„°ë¥¼ êº¼ë‚´ê±°ë‚˜ í•„ìš” ì‹œ ìƒì„± */
     AActor* GetPooledActor(
         TSubclassOf<AActor> ActorClass,
         const FVector& Location,
@@ -27,57 +27,57 @@ public:
         bool bAutoActivate = false
     );
 
-    /** ¾×ÅÍ¸¦ Ç®·Î µ¹·Áº¸³»´Â ÇÔ¼ö */
+    /** ì•¡í„°ë¥¼ í’€ë¡œ ëŒë ¤ë³´ë‚´ëŠ” í•¨ìˆ˜ */
     void ReturnActorToPool(AActor* Actor);
-    /** ¹Ì¸® ¾×ÅÍ¸¦ Ç®¿¡ Ã¤¿ì´Â ±â´É */
+    /** ë¯¸ë¦¬ ì•¡í„°ë¥¼ í’€ì— ì±„ìš°ëŠ” ê¸°ëŠ¥ */
     //void PreloadActors(TSubclassOf<AActor> ActorClass, int32 Count);
 private:
 
-    /** Å¬·¡½ºº° Ç® ÀúÀå¼Ò */
+    /** í´ë˜ìŠ¤ë³„ í’€ ì €ì¥ì†Œ */
     TMap<TSubclassOf<AActor>, TArray<AActor*>> PoolMap;
 
-    /** Å¬·¡½º ¿ªÁ¶È¸¿ë: Actor ¡æ Class */
+    /** í´ë˜ìŠ¤ ì—­ì¡°íšŒìš©: Actor â†’ Class */
     TMap<AActor*, TSubclassOf<AActor>> ActorClassMap;
 
-    /** Ç® Shrink Å¸ÀÌ¸Ó ÇÚµé */
+    /** í’€ Shrink íƒ€ì´ë¨¸ í•¸ë“¤ */
     FTimerHandle ShrinkTimerHandle;
 
-    /** ----- ³»ºÎ À¯Æ¿ ÇÔ¼ö ----- */
+    /** ----- ë‚´ë¶€ ìœ í‹¸ í•¨ìˆ˜ ----- */
 
-    /** Ç®¿¡ »õ ¾×ÅÍ »ı¼º */
+    /** í’€ì— ìƒˆ ì•¡í„° ìƒì„± */
     AActor* CreateNewPooledActor(TSubclassOf<AActor> ActorClass, UWorld* World);
 
-    /** Actor°¡ "ºñÈ°¼º »óÅÂ(Àç»ç¿ë °¡´É)"ÀÎÁö ÆÇ´Ü */
+    /** Actorê°€ "ë¹„í™œì„± ìƒíƒœ(ì¬ì‚¬ìš© ê°€ëŠ¥)"ì¸ì§€ íŒë‹¨ */
     bool IsActorInactive(AActor* Actor) const;
 
-    /** Actor È°¼ºÈ­ */
+    /** Actor í™œì„±í™” */
     void ActivateActor(
         AActor* Actor,
         bool bAutoActivate
     );
 
-    /** Actor ºñÈ°¼ºÈ­ */
+    /** Actor ë¹„í™œì„±í™” */
     void DeactivateActor(AActor* Actor);
 
-    /** ÀÚµ¿ Ãà¼Ò ½ÇÇà */
+    /** ìë™ ì¶•ì†Œ ì‹¤í–‰ */
     void ShrinkPools();
 
-    /** ¿ùµå °¡Á®¿À±â */
+    /** ì›”ë“œ ê°€ì ¸ì˜¤ê¸° */
     //UWorld* GetWorldSafe() const;
 
-    /** Å¬·¡½ºº° ÃÖ´ë Ç® Å©±â (±âº» 50) */
+    /** í´ë˜ìŠ¤ë³„ ìµœëŒ€ í’€ í¬ê¸° (ê¸°ë³¸ 50) */
     UPROPERTY(EditAnywhere, Category = "Pooling")
     int32 MaxPoolSize = 50;
 
-    /** ÀÚµ¿ Ãà¼Ò ±â´É ÄÑ±â */
+    /** ìë™ ì¶•ì†Œ ê¸°ëŠ¥ ì¼œê¸° */
     UPROPERTY(EditAnywhere, Category = "Pooling")
     bool bEnableAutoShrink = true;
 
-    /** ¸î ÃÊ¸¶´Ù Shrink Ã¼Å©ÇÒÁö */
+    /** ëª‡ ì´ˆë§ˆë‹¤ Shrink ì²´í¬í• ì§€ */
     UPROPERTY(EditAnywhere, Category = "Pooling")
     float ShrinkCheckInterval = 60.0f;
 
-    /** Shrink ½Ã Ç® Å©±â¸¦ ÀÌ ¼ö±îÁö ÁÙÀÓ */
+    /** Shrink ì‹œ í’€ í¬ê¸°ë¥¼ ì´ ìˆ˜ê¹Œì§€ ì¤„ì„ */
     UPROPERTY(EditAnywhere, Category = "Pooling")
     int32 MinPoolSize = 100;
 

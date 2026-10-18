@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -29,7 +29,7 @@ protected:
     void OnSkillUpdated(int32 InSkillID);
 
 public:
-    // PawnÀ» ¿ÜºÎ¿¡¼­ ³Ö¾îÁÖ´Â ÃÊ±âÈ­ ÇÔ¼ö
+    // Pawnì„ ì™¸ë¶€ì—ì„œ ë„£ì–´ì£¼ëŠ” ì´ˆê¸°í™” í•¨ìˆ˜
     void InitializeSkillWidget(APawn* NewPawn);
 
 protected:

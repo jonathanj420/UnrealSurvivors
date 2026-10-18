@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -7,11 +7,11 @@
 #include "DEDamageTypes.h"
 #include "DEHealthComponent.generated.h"
 
-// Ã¼·Â º¯°æ (ÇöÀç HP, ÃÖ´ë HP)
+// ì²´ë ¥ ë³€ê²½ (í˜„ì¬ HP, ìµœëŒ€ HP)
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHPChanged, float /*CurrentHP*/, float /*MaxHP*/);
 
 
-// »ç¸Á ÀÌº¥Æ®
+// ì‚¬ë§ ì´ë²¤íŠ¸
 DECLARE_MULTICAST_DELEGATE(FOnDying);
 DECLARE_MULTICAST_DELEGATE(FOnDeath);
 
@@ -79,14 +79,14 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Combat")
     FDEDamageResult ProcessDamage(const FDEDamageRequest& Request);
 
-    // µ¥¹ÌÁö °ø½ÄÀ» ¹«½ÃÇÏ°í Áï½Ã Ã³Çü (Execute)
+    // ë°ë¯¸ì§€ ê³µì‹ì„ ë¬´ì‹œí•˜ê³  ì¦‰ì‹œ ì²˜í˜• (Execute)
     UFUNCTION(BlueprintCallable, Category = "Health")
     void InstantKill(AActor* Executioner, bool bShowDamage /* = false */);
 protected:
     void ApplyFinalDamage(float InDamage, AActor* InCauser, bool bInIsCritical, const FGameplayTagContainer& InDamageTags);
 
 public:
-    // ±âº» Å¸°İÀ½ (»ìÁ¡ ¸Â´Â ¼Ò¸® µî)
+    // ê¸°ë³¸ íƒ€ê²©ìŒ (ì‚´ì  ë§ëŠ” ì†Œë¦¬ ë“±)
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
     USoundBase* DefaultHitSound;
 

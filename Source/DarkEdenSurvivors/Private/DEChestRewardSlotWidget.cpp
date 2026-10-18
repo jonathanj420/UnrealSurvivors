@@ -1,8 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEChestRewardSlotWidget.h"
-#include "DELevelUpChoiceBase.h" // ³×°¡ ¸¸µç Choice ±âº» Å¬·¡½º
+#include "DELevelUpChoiceBase.h" // ë„¤ê°€ ë§Œë“  Choice ê¸°ë³¸ í´ëž˜ìŠ¤
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 
@@ -10,25 +10,25 @@ void UDEChestRewardSlotWidget::InitSlot(UDELevelUpChoiceBase* RewardData)
 {
 	if (!RewardData) return;
 
-	// 1. ¾ÆÀÌÄÜ ¼¼ÆÃ (³×°¡ ¸¸µç GetIcon() ÇÔ¼ö »ç¿ë!)
+	// 1. ì•„ì´ì½˜ ì„¸íŒ… (ë„¤ê°€ ë§Œë“  GetIcon() í•¨ìˆ˜ ì‚¬ìš©!)
 	if (Img_RewardIcon && RewardData->GetIcon())
 	{
 		Img_RewardIcon->SetBrushFromTexture(RewardData->GetIcon());
 	}
 
-	// 2. ÀÌ¸§ ¼¼ÆÃ (³×°¡ ¸¸µç GetDisplayName() ÇÔ¼ö »ç¿ë!)
+	// 2. ì´ë¦„ ì„¸íŒ… (ë„¤ê°€ ë§Œë“  GetDisplayName() í•¨ìˆ˜ ì‚¬ìš©!)
 	if (Txt_RewardName)
 	{
 		Txt_RewardName->SetText(RewardData->GetDisplayName());
 	}
 
-	// 3. (¼±ÅÃ) ÁøÈ­ ½ºÅ³ ÅØ½ºÆ® Ã³¸® 
+	// 3. (ì„ íƒ) ì§„í™” ìŠ¤í‚¬ í…ìŠ¤íŠ¸ ì²˜ë¦¬ 
 	//if (Txt_LevelInfo)
 	//{
-	//	// ³ªÁß¿¡ ÇÊ¿äÇÏ¸é ChoiceBase¿¡ IsEvolution() °°Àº °¡»ó ÇÔ¼ö ¶Õ¾î¼­ ÆÇº°ÇÏ¸é µÊ!
+	//	// ë‚˜ì¤‘ì— í•„ìš”í•˜ë©´ ChoiceBaseì— IsEvolution() ê°™ì€ ê°€ìƒ í•¨ìˆ˜ ëš«ì–´ì„œ íŒë³„í•˜ë©´ ë¨!
 	//	Txt_LevelInfo->SetText(FText::FromString(TEXT("Level Up!")));
 	//}
 
-	// 4. µ¥ÀÌÅÍ ¼¼ÆÃ ³¡! ºí·çÇÁ¸°Æ® ¿¬Ãâ(ºû¹«¸® È¸Àü µî) Å¥!
+	// 4. ë°ì´í„° ì„¸íŒ… ë! ë¸”ë£¨í”„ë¦°íŠ¸ ì—°ì¶œ(ë¹›ë¬´ë¦¬ íšŒì „ ë“±) í!
 	OnSlotRevealed();
 }

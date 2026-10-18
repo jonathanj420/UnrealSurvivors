@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEGameMode_Stage.h"
@@ -6,7 +6,7 @@
 #include "DEPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "DEMonsterSpawnManager.h"
-#include "DEResultWidget.h" // ¾Æ±î ¸¸µç À§Á¬ Çì´õ
+#include "DEResultWidget.h" // ì•„ê¹Œ ë§Œë“  ìœ„ì ¯ í—¤ë”
 #include "DEGameInstance.h"
 #include "DECombatComponent.h"
 
@@ -50,8 +50,8 @@ void ADEGameMode_Stage::BeginPlay()
     APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(this, 0);
     if (ADECharacterBase* Player = Cast<ADECharacterBase>(PlayerPawn))
     {
-        // [¼öÁ¤] AddDynamic -> AddUObject
-        // ÀÌÁ¦ ÇÔ¼ö ÀÌ¸§(String)ÀÌ ¾Æ´Ï¶ó ÇÔ¼ö ÁÖ¼Ò(&)¸¦ Á÷Á¢ ¿¬°áÇÕ´Ï´Ù. ÈÎ¾À ºü¸¨´Ï´Ù.
+        // [ìˆ˜ì •] AddDynamic -> AddUObject
+        // ì´ì œ í•¨ìˆ˜ ì´ë¦„(String)ì´ ì•„ë‹ˆë¼ í•¨ìˆ˜ ì£¼ì†Œ(&)ë¥¼ ì§ì ‘ ì—°ê²°í•©ë‹ˆë‹¤. í›¨ì”¬ ë¹ ë¦…ë‹ˆë‹¤.
         Player->OnPlayerDied.AddUObject(this, &ADEGameMode_Stage::GameOver);
     }
 
@@ -59,8 +59,8 @@ void ADEGameMode_Stage::BeginPlay()
     if (World)
     {
         FActorSpawnParameters SpawnParams;
-        SpawnParams.Owner = this; // GameMode¸¦ ¼ÒÀ¯ÀÚ·Î ÁöÁ¤
-        // ... ³ª¸ÓÁö SpawnerManager¿Í PlayerSystemManagerµµ µ¿ÀÏÇÏ°Ô »ı¼ºÇÕ´Ï´Ù.
+        SpawnParams.Owner = this; // GameModeë¥¼ ì†Œìœ ìë¡œ ì§€ì •
+        // ... ë‚˜ë¨¸ì§€ SpawnerManagerì™€ PlayerSystemManagerë„ ë™ì¼í•˜ê²Œ ìƒì„±í•©ë‹ˆë‹¤.
     }
 
 }
@@ -85,32 +85,32 @@ void ADEGameMode_Stage::GameOver()
 {
     UE_LOG(LogTemp, Warning, TEXT("=== GAME OVER ==="));
 
-    // 1. °ÔÀÓ ÀÏ½Ã Á¤Áö (¼±ÅÃ »çÇ×: ¸ó½ºÅÍ ¸ØÃß°Ô ÇÏ·Á¸é true)
+    // 1. ê²Œì„ ì¼ì‹œ ì •ì§€ (ì„ íƒ ì‚¬í•­: ëª¬ìŠ¤í„° ë©ˆì¶”ê²Œ í•˜ë ¤ë©´ true)
      UGameplayStatics::SetGamePaused(this, true);
 
-    // 2. À§Á¬ »ı¼º
+    // 2. ìœ„ì ¯ ìƒì„±
     if (ResultWidgetClass)
     {
         UDEResultWidget* ResultUI = CreateWidget<UDEResultWidget>(GetWorld(), ResultWidgetClass);
         if (ResultUI)
         {
-            ResultUI->AddToViewport(9999); // ÃÖ»ó´Ü ³ëÃâ
+            ResultUI->AddToViewport(9999); // ìµœìƒë‹¨ ë…¸ì¶œ
 
-            // 3. µ¥ÀÌÅÍ ¼öÁı (¿¹½Ã °ª)
+            // 3. ë°ì´í„° ìˆ˜ì§‘ (ì˜ˆì‹œ ê°’)
             int32 FinalGold = 0;
             int32 FinalKills = 0;
             float FinalDamageDealt = 0.0f;
-            float FinalTime = GetElapsedTime(); // GameMode¿¡ ÀÖ´Â ½Ã°£
+            float FinalTime = GetElapsedTime(); // GameModeì— ìˆëŠ” ì‹œê°„
 
             if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
             {
-                // ÇÃ·¹ÀÌ¾î°¡ Á¶Á¾ ÁßÀÎ Ä³¸¯ÅÍ(Pawn)¸¦ °¡Á®¿È
+                // í”Œë ˆì´ì–´ê°€ ì¡°ì¢… ì¤‘ì¸ ìºë¦­í„°(Pawn)ë¥¼ ê°€ì ¸ì˜´
                 if (APawn* PlayerPawn = PC->GetPawn())
                 {
-                    // Ä³¸¯ÅÍ ¸ö¿¡ ºÙ¾îÀÖ´Â CombatComponent¸¦ Ã£À½!
+                    // ìºë¦­í„° ëª¸ì— ë¶™ì–´ìˆëŠ” CombatComponentë¥¼ ì°¾ìŒ!
                     if (UDECombatComponent* CombatComp = PlayerPawn->FindComponentByClass<UDECombatComponent>())
                     {
-                        // ÄÄÆ÷³ÍÆ®¿¡¼­ Å³ ¼ö °¡Á®¿À±â (º¯¼ö°¡ publicÀÌ ¾Æ´Ï¶ó¸é Getter ÇÔ¼ö¸¦ ½áÁà!)
+                        // ì»´í¬ë„ŒíŠ¸ì—ì„œ í‚¬ ìˆ˜ ê°€ì ¸ì˜¤ê¸° (ë³€ìˆ˜ê°€ publicì´ ì•„ë‹ˆë¼ë©´ Getter í•¨ìˆ˜ë¥¼ ì¨ì¤˜!)
                         FinalKills = CombatComp->GetTotalKillCount();
                         FinalDamageDealt = CombatComp->GetTotalDamageDealt();
                     }
@@ -118,33 +118,33 @@ void ADEGameMode_Stage::GameOver()
             }
 
             // ========================================================
-            // ¡Ú [°ñµå Á¤»ê ·ÎÁ÷] 
+            // â˜… [ê³¨ë“œ ì •ì‚° ë¡œì§] 
             // ========================================================
-            FinalGold = EarnedGold; // 1. ÀÌ¹ø ÆÇ ÀåºÎ¿¡¼­ µ·À» È®ÀÎÇÑ´Ù.
+            FinalGold = EarnedGold; // 1. ì´ë²ˆ íŒ ì¥ë¶€ì—ì„œ ëˆì„ í™•ì¸í•œë‹¤.
 
-            // 2. ÀºÇà(GameInstance)¿¡ °¡¼­ ÀÌ¹ø ÆÇ¿¡ ¹ø µ·À» Àú±İÇÑ´Ù!
+            // 2. ì€í–‰(GameInstance)ì— ê°€ì„œ ì´ë²ˆ íŒì— ë²ˆ ëˆì„ ì €ê¸ˆí•œë‹¤!
             if (UDEGameInstance* GI = Cast<UDEGameInstance>(GetGameInstance()))
             {
-                // (GI ÂÊ¿¡ AddTotalGold °°Àº ´©Àû ÇÔ¼ö°¡ ÀÖ´Ù°í °¡Á¤)
+                // (GI ìª½ì— AddTotalGold ê°™ì€ ëˆ„ì  í•¨ìˆ˜ê°€ ìˆë‹¤ê³  ê°€ì •)
                 GI->AddGold(FinalGold);
 
-                // UE_LOG(LogTemp, Warning, TEXT("Àü Àç»ê: %d"), GI->GetTotalGold());
+                // UE_LOG(LogTemp, Warning, TEXT("ì „ ì¬ì‚°: %d"), GI->GetTotalGold());
             }
-            //// GameInstance¿¡¼­ ½ÇÁ¦ °ñµå °¡Á®¿À±â (È¤Àº ÀÌ¹ø ÆÇ ¹ø µ·)
+            //// GameInstanceì—ì„œ ì‹¤ì œ ê³¨ë“œ ê°€ì ¸ì˜¤ê¸° (í˜¹ì€ ì´ë²ˆ íŒ ë²ˆ ëˆ)
             //if (UDEGameInstance* GI = Cast<UDEGameInstance>(GetGameInstance()))
             //{
             //    FinalGold = GI->GetTotalGold();
-            //    // Âü°í: ÀÌ¹ø ÆÇ¿¡ ¹ø µ·¸¸ º¸¿©ÁÖ°í ½Í´Ù¸é GameMode¿¡ 'EarnedGold' º¯¼ö¸¦ µû·Î µÖ¾ß ÇÔ
+            //    // ì°¸ê³ : ì´ë²ˆ íŒì— ë²ˆ ëˆë§Œ ë³´ì—¬ì£¼ê³  ì‹¶ë‹¤ë©´ GameModeì— 'EarnedGold' ë³€ìˆ˜ë¥¼ ë”°ë¡œ ë‘¬ì•¼ í•¨
             //}
 
-            // 4. À§Á¬¿¡ µ¥ÀÌÅÍ Àü´Ş
+            // 4. ìœ„ì ¯ì— ë°ì´í„° ì „ë‹¬
             ResultUI->SetResultData(FinalGold, FinalKills, FinalDamageDealt, FinalTime);
 
-            // 5. ¸¶¿ì½º Ä¿¼­ º¸ÀÌ°Ô ¼³Á¤ (Áß¿ä! ¾È ÇÏ¸é ¹öÆ° ¸ø ´©¸§)
+            // 5. ë§ˆìš°ìŠ¤ ì»¤ì„œ ë³´ì´ê²Œ ì„¤ì • (ì¤‘ìš”! ì•ˆ í•˜ë©´ ë²„íŠ¼ ëª» ëˆ„ë¦„)
             if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
             {
                 PC->bShowMouseCursor = true;
-                PC->SetInputMode(FInputModeUIOnly()); // °ÔÀÓ Á¶ÀÛ ¸·°í UI¸¸
+                PC->SetInputMode(FInputModeUIOnly()); // ê²Œì„ ì¡°ì‘ ë§‰ê³  UIë§Œ
             }
         }
     }
@@ -157,5 +157,5 @@ void ADEGameMode_Stage::AddGold(int32 Amount)
 
     EarnedGold += Amount;
 
-    // (º¸³Ê½º) ³ªÁß¿¡ È­¸é ¿ì»ó´Ü¿¡ "ÇöÀç °ñµå: 150" ÀÌ·± UI°¡ ÀÖ´Ù¸é ¿©±â¼­ °»½ÅÇØÁÖ¸é µÊ!
+    // (ë³´ë„ˆìŠ¤) ë‚˜ì¤‘ì— í™”ë©´ ìš°ìƒë‹¨ì— "í˜„ì¬ ê³¨ë“œ: 150" ì´ëŸ° UIê°€ ìˆë‹¤ë©´ ì—¬ê¸°ì„œ ê°±ì‹ í•´ì£¼ë©´ ë¨!
 }

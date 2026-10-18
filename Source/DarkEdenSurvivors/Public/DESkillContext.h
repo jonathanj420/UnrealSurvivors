@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "CoreMinimal.h"
 #include "Templates/SubclassOf.h"
@@ -11,7 +11,7 @@ class UDEAutoSkillBase;
 
 
 /**
- * ½ºÅ³ ½ÇÇà ½Ã Àü´ŞµÇ´Â ½ÇÇà ÄÁÅØ½ºÆ®
+ * ìŠ¤í‚¬ ì‹¤í–‰ ì‹œ ì „ë‹¬ë˜ëŠ” ì‹¤í–‰ ì»¨í…ìŠ¤íŠ¸
  */
 USTRUCT()
 struct FDESkillContext
@@ -19,8 +19,8 @@ struct FDESkillContext
 	GENERATED_BODY()
 
 public:
-	// --- [1. ÇÊ¼ö ÂüÁ¶ µ¥ÀÌÅÍ] ---
-	// GC°¡ °Çµå¸®Áö ¸øÇÏ°Ô UPROPERTY() ÇÊ¼ö
+	// --- [1. í•„ìˆ˜ ì°¸ì¡° ë°ì´í„°] ---
+	// GCê°€ ê±´ë“œë¦¬ì§€ ëª»í•˜ê²Œ UPROPERTY() í•„ìˆ˜
 	UPROPERTY(Transient)
 	AActor* Instigator = nullptr;
 
@@ -31,16 +31,16 @@ public:
 	TArray<AActor*> Targets;
 
 
-	// Spawn °á°ú ±â·Ï (¼±ÅÃ, SpawnAOE¿¡¼­ »ç¿ë)
+	// Spawn ê²°ê³¼ ê¸°ë¡ (ì„ íƒ, SpawnAOEì—ì„œ ì‚¬ìš©)
 	TArray<TWeakObjectPtr<class ADESimpleAOEBase>> SpawnedAOEs;
 
-	// [Áß¿ä Ãß°¡] ÀÌ ÄÁÅØ½ºÆ®¸¦ ¸¸µç ½ºÅ³ ÀÎ½ºÅÏ½º (»óÅÂ Á¢±Ù¿ë)
-	// ¿¹: SourceSkill->SpawnedAura ¿¡ Á¢±ÙÇÏ±â À§ÇØ ÇÊ¼ö
+	// [ì¤‘ìš” ì¶”ê°€] ì´ ì»¨í…ìŠ¤íŠ¸ë¥¼ ë§Œë“  ìŠ¤í‚¬ ì¸ìŠ¤í„´ìŠ¤ (ìƒíƒœ ì ‘ê·¼ìš©)
+	// ì˜ˆ: SourceSkill->SpawnedAura ì— ì ‘ê·¼í•˜ê¸° ìœ„í•´ í•„ìˆ˜
 	UPROPERTY(Transient)
 	UDEAutoSkillBase* SourceSkill = nullptr;
-	// --- [2. ¸ŞÀÌÀú ½ºÅÈ (Raw C++ Type)] ---
-	// ÀÏ¹İ º¯¼ö´Â UPROPERTY ¾ø¾îµµ µÇÁö¸¸, TMap Á÷·ÄÈ­/ÃÊ±âÈ­¸¦ À§ÇØ ³²±è
-	// (ÇÊ¿ä ¾øÀ¸¸é float´Â ±×³É float·Î ½áµµ µË´Ï´Ù. ¿©±â¼± ÅëÀÏ¼ºÀ» À§ÇØ µÒ)
+	// --- [2. ë©”ì´ì € ìŠ¤íƒ¯ (Raw C++ Type)] ---
+	// ì¼ë°˜ ë³€ìˆ˜ëŠ” UPROPERTY ì—†ì–´ë„ ë˜ì§€ë§Œ, TMap ì§ë ¬í™”/ì´ˆê¸°í™”ë¥¼ ìœ„í•´ ë‚¨ê¹€
+	// (í•„ìš” ì—†ìœ¼ë©´ floatëŠ” ê·¸ëƒ¥ floatë¡œ ì¨ë„ ë©ë‹ˆë‹¤. ì—¬ê¸°ì„  í†µì¼ì„±ì„ ìœ„í•´ ë‘ )
 
 	float Damage = 0.f;
 	int32 Amount = 1;
@@ -51,11 +51,11 @@ public:
 	float Duration = 0.f;
 	float CritChance = 0.f;
 	float CritDamageMultiplier = 2.0f;
-	// --- [3. È®Àå µ¥ÀÌÅÍ] ---
+	// --- [3. í™•ì¥ ë°ì´í„°] ---
 	UPROPERTY(Transient)
 	TMap<FName, float> CustomValues;
 
-	// ÇïÆÛ ÇÔ¼ö
+	// í—¬í¼ í•¨ìˆ˜
 	float GetValue(FName Key, float DefaultValue = 0.f) const
 	{
 		if (const float* Val = CustomValues.Find(Key))
@@ -68,6 +68,6 @@ public:
 	FVector TargetDirection = FVector::ZeroVector;
 
 	UPROPERTY(Transient)
-	TArray<FVector> CustomLocations; // ´ÙÁß ÁÂÇ¥ ÀúÀå¿ë
+	TArray<FVector> CustomLocations; // ë‹¤ì¤‘ ì¢Œí‘œ ì €ì¥ìš©
 };
 

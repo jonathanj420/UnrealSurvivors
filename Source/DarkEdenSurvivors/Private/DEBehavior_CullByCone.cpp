@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEBehavior_CullByCone.h"
@@ -7,7 +7,7 @@
 #include "CollisionShape.h"
 #include "CollisionQueryParams.h"
 
-// --- µð¹ö±× µå·ÎÀ× ---
+// --- ë””ë²„ê·¸ ë“œë¡œìž‰ ---
 #include "DrawDebugHelpers.h"
 #include "DESkillContext.h"
 
@@ -24,18 +24,18 @@ void UDEBehavior_CullByCone::Execute(FDESkillContext& Context)
 
     if (Context.Targets.Num() > 0 && Context.Targets[0])
     {
-        // (Å¸°Ù À§Ä¡ - ³» À§Ä¡)¸¦ ÇÏ¸é Å¸°ÙÀ» ÇâÇÑ '¹æÇâ º¤ÅÍ'°¡ ³ª¿É´Ï´Ù.
+        // (íƒ€ê²Ÿ ìœ„ì¹˜ - ë‚´ ìœ„ì¹˜)ë¥¼ í•˜ë©´ íƒ€ê²Ÿì„ í–¥í•œ 'ë°©í–¥ ë²¡í„°'ê°€ ë‚˜ì˜µë‹ˆë‹¤.
         ForwardDir = (Context.Targets[0]->GetActorLocation() - Context.Instigator->GetActorLocation()).GetSafeNormal();
         Context.Targets.Reset();
     }
 
-    // 1. Context¿¡ µ¿Àû ½ºÅÈÀÌ ÀÖÀ¸¸é ¾²°í, ¾øÀ¸¸é ±âº»°ª(this) »ç¿ë
+    // 1. Contextì— ë™ì  ìŠ¤íƒ¯ì´ ìžˆìœ¼ë©´ ì“°ê³ , ì—†ìœ¼ë©´ ê¸°ë³¸ê°’(this) ì‚¬ìš©
     float FinalRadius = (Context.Radius > 0.f) ? Context.Radius : this->Radius;
     float FinalAngle = Context.GetValue(TEXT("Angle"), 60.0f);
 
 
     // ==========================================
-    // 2. ºÎÃ¤²Ã µð¹ö±× ±×¸®±â (ÇÇÀÚ Á¶°¢)
+    // 2. ë¶€ì±„ê¼´ ë””ë²„ê·¸ ê·¸ë¦¬ê¸° (í”¼ìž ì¡°ê°)
     // ==========================================
     if (bShowDebug)
     {
@@ -46,11 +46,11 @@ void UDEBehavior_CullByCone::Execute(FDESkillContext& Context)
         FVector LeftEnd = MyLoc + (LeftDir * FinalRadius);
         FVector RightEnd = MyLoc + (RightDir * FinalRadius);
 
-        // ¾ç¿· Å×µÎ¸® (»¡°£»ö, 2ÃÊ À¯Áö)
+        // ì–‘ì˜† í…Œë‘ë¦¬ (ë¹¨ê°„ìƒ‰, 2ì´ˆ ìœ ì§€)
         DrawDebugLine(World, MyLoc, LeftEnd, FColor::Red, false, 0.5f, 0, 2.0f);
         DrawDebugLine(World, MyLoc, RightEnd, FColor::Red, false, 0.5f, 0, 2.0f);
 
-        // µÕ±Ù È£(Arc) ±×¸®±â
+        // ë‘¥ê·¼ í˜¸(Arc) ê·¸ë¦¬ê¸°
         int32 Segments = FMath::Max(4, FMath::CeilToInt(FinalAngle / 10.0f));
         float AngleStep = FinalAngle / Segments;
         FVector PrevPoint = LeftEnd;
@@ -67,7 +67,7 @@ void UDEBehavior_CullByCone::Execute(FDESkillContext& Context)
     }
 
     // ==========================================
-    //  3. UWorld ´ÙÀÌ·ºÆ® Ãæµ¹ °Ë»ç (ÃÖÀûÈ­)
+    //  3. UWorld ë‹¤ì´ë ‰íŠ¸ ì¶©ëŒ ê²€ì‚¬ (ìµœì í™”)
     // ==========================================
     FCollisionShape SphereShape = FCollisionShape::MakeSphere(FinalRadius);
     //DrawDebugSphere(World, MyLoc, FinalRadius, 12, FColor::Green, false, 1.0f, 0, 1.0f);
@@ -86,7 +86,7 @@ void UDEBehavior_CullByCone::Execute(FDESkillContext& Context)
         SphereShape,
         QueryParams);
 
-    //Context.Targets.Reset(); // Âî²¨±â ºñ¿ì±â
+    //Context.Targets.Reset(); // ì°Œêº¼ê¸° ë¹„ìš°ê¸°
 
     //THIS MOFOKIN OverlapMultiByProfile NEVER RETURNS FUCKIN TRUE FOR OVERLAPS ONLY TRUE FOR FUCKING BLOCKS
     if (OverlapResults.Num() > 0)
@@ -97,18 +97,18 @@ void UDEBehavior_CullByCone::Execute(FDESkillContext& Context)
         {
             AActor* TargetActor = Result.GetActor();
             if (!TargetActor) continue;
-            // Å¸°ÙÀ» ÇâÇÏ´Â ¹æÇâ º¤ÅÍ
+            // íƒ€ê²Ÿì„ í–¥í•˜ëŠ” ë°©í–¥ ë²¡í„°
             FVector DirToTarget = (TargetActor->GetActorLocation() - MyLoc).GetSafeNormal();
 
-            // ³»Àû °è»ê
+            // ë‚´ì  ê³„ì‚°
             float DotResult = FVector::DotProduct(ForwardDir, DirToTarget);
 
-            // ºÎÃ¤²Ã °¢µµ ¾È¿¡ µé¾î¿Ô´Ù¸é? ÇÕ°Ý!
+            // ë¶€ì±„ê¼´ ê°ë„ ì•ˆì— ë“¤ì–´ì™”ë‹¤ë©´? í•©ê²©!
             if (DotResult >= CosHalfAngle)
             {
                 Context.Targets.Add(TargetActor);
 
-                // µð¹ö±× ÄÑÁ® ÀÖÀ¸¸é ¸ÂÀº ³ð ¸ö¿¡ ÃÊ·Ï»ö ±¸Ã¼ ¶ç¿öÁÖ±â!
+                // ë””ë²„ê·¸ ì¼œì ¸ ìžˆìœ¼ë©´ ë§žì€ ë†ˆ ëª¸ì— ì´ˆë¡ìƒ‰ êµ¬ì²´ ë„ì›Œì£¼ê¸°!
                 if (bShowDebug)
                 {
                     DrawDebugSphere(World, TargetActor->GetActorLocation(), 50.0f, 12, FColor::Green, false, 2.0f, 0, 2.0f);

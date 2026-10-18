@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -15,11 +15,11 @@ class DARKEDENSURVIVORS_API UDEBehavior_PlayUI : public UDESkillBehavior
     GENERATED_BODY()
 
 public:
-    // ±âÈ¹ÀÚ°¡ ¶ç¿ï UI Å¬·¡½º¸¦ ¼±ÅÃÇÒ ¼ö ÀÖ°Ô ¶Õ¾îÁİ´Ï´Ù.
+    // ê¸°íšìê°€ ë„ìš¸ UI í´ë˜ìŠ¤ë¥¼ ì„ íƒí•  ìˆ˜ ìˆê²Œ ëš«ì–´ì¤ë‹ˆë‹¤.
     UPROPERTY(EditAnywhere, Category = "UI")
     TSubclassOf<class UUserWidget> CinematicWidgetClass;
 
-    // UI°¡ ´Ù¸¥ ¸ğµç °ÍµéÀ» µ¤µµ·Ï Z-Order ¼³Á¤ (±âº»°ª 100)
+    // UIê°€ ë‹¤ë¥¸ ëª¨ë“  ê²ƒë“¤ì„ ë®ë„ë¡ Z-Order ì„¤ì • (ê¸°ë³¸ê°’ 100)
     UPROPERTY(EditAnywhere, Category = "UI")
     int32 ZOrder = 100;
 

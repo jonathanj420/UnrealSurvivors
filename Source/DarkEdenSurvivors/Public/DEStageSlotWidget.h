@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -21,10 +21,10 @@ class DARKEDENSURVIVORS_API UDEStageSlotWidget : public UUserWidget
     GENERATED_BODY()
 
 public:
-    // ¸ŞÀÎ ¸Ş´º°¡ µ¥ÀÌÅÍ¸¦ ´øÁ®ÁÖ¸é, ¸Ê ÀÌ¸§À» ¼¼ÆÃÇÏ´Â ÇÔ¼ö
+    // ë©”ì¸ ë©”ë‰´ê°€ ë°ì´í„°ë¥¼ ë˜ì ¸ì£¼ë©´, ë§µ ì´ë¦„ì„ ì„¸íŒ…í•˜ëŠ” í•¨ìˆ˜
     void InitSlot(const FDEStageRow& InStageData);
 
-    // ¸ŞÀÎ ¸Ş´º¿¡¼­ ±¸µ¶(Bind)ÇÒ ¼ö ÀÖ°Ô ¿­¾îµÓ´Ï´Ù.
+    // ë©”ì¸ ë©”ë‰´ì—ì„œ êµ¬ë…(Bind)í•  ìˆ˜ ìˆê²Œ ì—´ì–´ë‘¡ë‹ˆë‹¤.
     UPROPERTY(BlueprintAssignable, Category = "Events")
     FOnStageSlotClicked OnSlotClicked;
 
@@ -33,18 +33,18 @@ protected:
 
 private:
     // ==========================================
-    // UI ÄÄÆ÷³ÍÆ® (À§Á¬ ºí·çÇÁ¸°Æ®¿Í ¿¬°á!)
+    // UI ì»´í¬ë„ŒíŠ¸ (ìœ„ì ¯ ë¸”ë£¨í”„ë¦°íŠ¸ì™€ ì—°ê²°!)
     // ==========================================
     UPROPERTY(meta = (BindWidget))
     UButton* Btn_Slot;
 
     UPROPERTY(meta = (BindWidget))
-    UTextBlock* Txt_StageName; // "¿¡½½¶ó´Ï¾Æ ½Ã³»" ±Û¾¾°¡ µé¾î°¥ °÷
+    UTextBlock* Txt_StageName; // "ì—ìŠ¬ë¼ë‹ˆì•„ ì‹œë‚´" ê¸€ì”¨ê°€ ë“¤ì–´ê°ˆ ê³³
 
-    // ³»°¡ ¸î ¹ø ¸Ê ½½·ÔÀÎÁö ±â¾ïÇØµÑ º¯¼ö
+    // ë‚´ê°€ ëª‡ ë²ˆ ë§µ ìŠ¬ë¡¯ì¸ì§€ ê¸°ì–µí•´ë‘˜ ë³€ìˆ˜
     int32 MyStageID;
 
-    // ¹öÆ°ÀÌ ´­·ÈÀ» ¶§ ½ÇÇàµÉ ³»ºÎ ÇÔ¼ö
+    // ë²„íŠ¼ì´ ëˆŒë ¸ì„ ë•Œ ì‹¤í–‰ë  ë‚´ë¶€ í•¨ìˆ˜
     UFUNCTION()
     void OnButtonClicked();
 	

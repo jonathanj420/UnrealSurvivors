@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -11,9 +11,9 @@
 UENUM(BlueprintType)
 enum class ECooldownReduceType : uint8
 {
-    Flat        UMETA(DisplayName = "°íÁ¤ ½Ã°£ °¨¼Ò (ÃÊ)"),
-    PercentageOfMax         UMETA(DisplayName = "ÃÖ´ë ÄğÅ¸ÀÓ ºñ·Ê °¨¼Ò (%)"),
-    PercentageOfRemaining   UMETA(DisplayName = "ÇöÀç ³²Àº ÄğÅ¸ÀÓ ºñ·Ê °¨¼Ò (%)") // ¡Ú Ãß°¡µÊ!
+    Flat        UMETA(DisplayName = "ê³ ì • ì‹œê°„ ê°ì†Œ (ì´ˆ)"),
+    PercentageOfMax         UMETA(DisplayName = "ìµœëŒ€ ì¿¨íƒ€ì„ ë¹„ë¡€ ê°ì†Œ (%)"),
+    PercentageOfRemaining   UMETA(DisplayName = "í˜„ì¬ ë‚¨ì€ ì¿¨íƒ€ì„ ë¹„ë¡€ ê°ì†Œ (%)") // â˜… ì¶”ê°€ë¨!
 };
 
 UENUM(BlueprintType)

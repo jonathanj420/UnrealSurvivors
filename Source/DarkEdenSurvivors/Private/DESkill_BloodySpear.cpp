@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DESkill_BloodySpear.h"
@@ -20,7 +20,7 @@ UDESkill_BloodySpear::UDESkill_BloodySpear()
 		//UE_LOG(LogTemp, Warning, TEXT("Bloody spear niagara set"));
 	}
 
-	// 1-2. Å¸°İ ÀÌÆåÆ® (ÇÇ°İ ½Ã)
+	// 1-2. íƒ€ê²© ì´í™íŠ¸ (í”¼ê²© ì‹œ)
 	static ConstructorHelpers::FObjectFinder<USoundBase> SoundRef(TEXT("/Game/DarkEden/Data/Sound/SkillSoundEffect/SC_BloodySpear.SC_BloodySpear"));
 	if (SoundRef.Succeeded())
 	{
@@ -48,21 +48,21 @@ void UDESkill_BloodySpear::InitBehaviors()
 	UDEBehavior_PlayEffect* HitVFX = NewObject<UDEBehavior_PlayEffect>(this, TEXT("HitVFX"));
 	if (HitVFX)
 	{
-		// ½Ã°¢ È¿°ú: ÇÊÅÍ¸µÀ¸·Î °É·¯Áø "¸ğµç Å¸°Ù(AllTargets)" ¸Ó¸® À§¿¡ ²ÈÈû!
+		// ì‹œê° íš¨ê³¼: í•„í„°ë§ìœ¼ë¡œ ê±¸ëŸ¬ì§„ "ëª¨ë“  íƒ€ê²Ÿ(AllTargets)" ë¨¸ë¦¬ ìœ„ì— ê½‚í˜!
 		HitVFX->NiagaraTargetType = EEffectTargetType::AllTargets;
-		HitVFX->NiagaraEffect = NiagaraFx; // ºí·¯µğ ½ºÇÇ¾î ¶³¾îÁö´Â ³ªÀÌ¾Æ°¡¶ó ¿¡¼Â
+		HitVFX->NiagaraEffect = NiagaraFx; // ë¸”ëŸ¬ë”” ìŠ¤í”¼ì–´ ë–¨ì–´ì§€ëŠ” ë‚˜ì´ì•„ê°€ë¼ ì—ì…‹
 
-		// Ã»°¢ È¿°ú: ½ÃÀüÀÚ(Instigator) ±âÁØÀ¸·Î 2D »ç¿îµå 1¹ø¸¸ Â¼··Â¼··ÇÏ°Ô Àç»ı!
+		// ì²­ê° íš¨ê³¼: ì‹œì „ì(Instigator) ê¸°ì¤€ìœ¼ë¡œ 2D ì‚¬ìš´ë“œ 1ë²ˆë§Œ ì©Œë ì©Œë í•˜ê²Œ ì¬ìƒ!
 		HitVFX->SoundTargetType = EEffectTargetType::Instigator;
-		HitVFX->SoundEffect = SoundFx; // ¹æ±İ ¸¸µå½Å ÇÇ ÅÍÁö´Â »ç¿îµå Å¥ ¿¡¼Â!
+		HitVFX->SoundEffect = SoundFx; // ë°©ê¸ˆ ë§Œë“œì‹  í”¼ í„°ì§€ëŠ” ì‚¬ìš´ë“œ í ì—ì…‹!
 
-		Behaviors.Add(HitVFX); // µ¥¹ÌÁö µé¾î°¡±â Á÷Àü¿¡ ²È¾ÆÁİ´Ï´Ù!
+		Behaviors.Add(HitVFX); // ë°ë¯¸ì§€ ë“¤ì–´ê°€ê¸° ì§ì „ì— ê½‚ì•„ì¤ë‹ˆë‹¤!
 	}
 
 	UDEBehavior_InstantDamage* Damage = NewObject<UDEBehavior_InstantDamage>(this, TEXT("Damage"));
 	if (Damage)
 	{
-		Damage->DamageMultiplier = 1.0f; // ±âº» µ¥¹ÌÁöÀÇ 100%
+		Damage->DamageMultiplier = 1.0f; // ê¸°ë³¸ ë°ë¯¸ì§€ì˜ 100%
 		Behaviors.Add(Damage);
 	}
 

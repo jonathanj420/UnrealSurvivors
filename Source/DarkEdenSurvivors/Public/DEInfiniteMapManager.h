@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -24,19 +24,19 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 private:
-	// »ı¼ºÇÒ Å¸ÀÏ Å¬·¡½º (ºí·çÇÁ¸°Æ®·Î ¸¸µç Å¸ÀÏ BP¸¦ ¿©±â¿¡ ³ÖÀ¸¼¼¿ä)
+	// ìƒì„±í•  íƒ€ì¼ í´ë˜ìŠ¤ (ë¸”ë£¨í”„ë¦°íŠ¸ë¡œ ë§Œë“  íƒ€ì¼ BPë¥¼ ì—¬ê¸°ì— ë„£ìœ¼ì„¸ìš”)
 	UPROPERTY(EditAnywhere, Category = "Map Setting")
 	TSubclassOf<class ADEInfiniteMapSection> MapSectionClass;
 
 	UPROPERTY(EditAnywhere, Category = "Map Setting", meta = (ClampMin = "2"))
 	int32 GridSize = 3;
-	// Å¸ÀÏ ÇÏ³ªÀÇ Å©±â (Ã¹ Å¸ÀÏ »ı¼º ½Ã ÀÚµ¿ ÃøÁ¤)
+	// íƒ€ì¼ í•˜ë‚˜ì˜ í¬ê¸° (ì²« íƒ€ì¼ ìƒì„± ì‹œ ìë™ ì¸¡ì •)
 	float TileSize = 0.0f;
-	// °ü¸®ÇÒ Å¸ÀÏ ¸ñ·Ï
+	// ê´€ë¦¬í•  íƒ€ì¼ ëª©ë¡
 	UPROPERTY(VisibleAnywhere, Category = "Map")
 	TArray<TObjectPtr<class ADEInfiniteMapSection>> MapSections;
 
-	// ¾÷µ¥ÀÌÆ® ÁÖ±â (Å¸ÀÌ¸Ó)
+	// ì—…ë°ì´íŠ¸ ì£¼ê¸° (íƒ€ì´ë¨¸)
 	void UpdateMapSections();
 	FTimerHandle MapUpdateTimerHandle;
 };

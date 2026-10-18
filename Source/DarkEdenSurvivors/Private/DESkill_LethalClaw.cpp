@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DESkill_LethalClaw.h"
@@ -10,7 +10,7 @@
 
 UDESkill_LethalClaw::UDESkill_LethalClaw()
 {
-    // 1. »ı¼ºÀÚ¿¡¼­ ¿¡¼Â °æ·Î¸¦ ÇÏµåÄÚµùÇØ¼­ Ã£¾Æ¿È (¿ìÅ¬¸¯ -> ·¹ÆÛ·±½º º¹»ç)
+    // 1. ìƒì„±ìì—ì„œ ì—ì…‹ ê²½ë¡œë¥¼ í•˜ë“œì½”ë”©í•´ì„œ ì°¾ì•„ì˜´ (ìš°í´ë¦­ -> ë ˆí¼ëŸ°ìŠ¤ ë³µì‚¬)
     static ConstructorHelpers::FObjectFinder<UNiagaraSystem> FXAsset(TEXT("/Game/DarkEden/Data/Niagara/NS_LethalClaw.NS_LethalClaw"));
     if (FXAsset.Succeeded())
     {
@@ -26,44 +26,44 @@ UDESkill_LethalClaw::UDESkill_LethalClaw()
 
 void UDESkill_LethalClaw::InitBehaviors()
 {
-	Super::InitBehaviors(); // Behaviors ¹è¿­ ÃÊ±âÈ­
+	Super::InitBehaviors(); // Behaviors ë°°ì—´ ì´ˆê¸°í™”
 
 	// -------------------------------------------------------------------------
-	// [2. Behavior ÆÄÀÌÇÁ¶óÀÎ Á¶¸³]
-	// ¼ø¼­: ½ÃÀüVFX -> Å¸°ÙÅ½»ö -> µ¥¹ÌÁö -> Å¸°İVFX -> µ¶ºÎ¿©
+	// [2. Behavior íŒŒì´í”„ë¼ì¸ ì¡°ë¦½]
+	// ìˆœì„œ: ì‹œì „VFX -> íƒ€ê²Ÿíƒìƒ‰ -> ë°ë¯¸ì§€ -> íƒ€ê²©VFX -> ë…ë¶€ì—¬
 	// -------------------------------------------------------------------------
 
-	// Step 1. [VFX] ½ÃÀü ÀÌÆåÆ® Àç»ı
+	// Step 1. [VFX] ì‹œì „ ì´í™íŠ¸ ì¬ìƒ
 	auto* CastVFX = NewObject<UDEBehavior_PlayEffect>(this, TEXT("CastVFX"));
 	if (CastVFX)
 	{
-		CastVFX->TargetType = EEffectTargetType::Instigator; // ½ÃÀüÀÚ À§Ä¡
-		CastVFX->bAttachToActor = false; // ¹Ù´Ú¿¡ ÆÛÁö°í ³¡³² (µû¶ó¿ÀÁö ¾ÊÀ½)
-		CastVFX->NiagaraEffect = CastEffectAsset; // À§¿¡¼­ ·ÎµåÇÑ ¿¡¼Â ¿¬°á
+		CastVFX->TargetType = EEffectTargetType::Instigator; // ì‹œì „ì ìœ„ì¹˜
+		CastVFX->bAttachToActor = false; // ë°”ë‹¥ì— í¼ì§€ê³  ëë‚¨ (ë”°ë¼ì˜¤ì§€ ì•ŠìŒ)
+		CastVFX->NiagaraEffect = CastEffectAsset; // ìœ„ì—ì„œ ë¡œë“œí•œ ì—ì…‹ ì—°ê²°
 		CastVFX->SoundEffect = CastSound;
 		CastVFX->SizeVariableName = TEXT("User.CircleRadius");
 		CastVFX->RotationType = EEffectRotation::InstigatorForward;
 		Behaviors.Add(CastVFX);
 	}
 
-	// Step 2. [Logic] ÁÖº¯ Àû Å½»ö
+	// Step 2. [Logic] ì£¼ë³€ ì  íƒìƒ‰
 	auto* Selector = NewObject<UDEBehavior_SelectTargetsInRadius>(this, TEXT("Selector"));
 	if (Selector)
 	{
-		Selector->OriginType = ESearchOrigin::Instigator; // ³» ÁÖº¯
-		Selector->bAllowOverlap = false; // Áßº¹ Å¸°İ ¹æÁö (ÇÑ ³ğ´ç ÇÑ ´ë¸¸)
+		Selector->OriginType = ESearchOrigin::Instigator; // ë‚´ ì£¼ë³€
+		Selector->bAllowOverlap = false; // ì¤‘ë³µ íƒ€ê²© ë°©ì§€ (í•œ ë†ˆë‹¹ í•œ ëŒ€ë§Œ)
 
-		// ¡Ø Áß¿ä: Radius °ªÀº ¿©±â¼­ ³ÖÁö ¾Ê½À´Ï´Ù. 
-		// ½ÇÇà ½Ã Context.Radius (µ¥ÀÌÅÍ Å×ÀÌºí °ª)°¡ ÀÚµ¿À¸·Î Àû¿ëµË´Ï´Ù.
+		// â€» ì¤‘ìš”: Radius ê°’ì€ ì—¬ê¸°ì„œ ë„£ì§€ ì•ŠìŠµë‹ˆë‹¤. 
+		// ì‹¤í–‰ ì‹œ Context.Radius (ë°ì´í„° í…Œì´ë¸” ê°’)ê°€ ìë™ìœ¼ë¡œ ì ìš©ë©ë‹ˆë‹¤.
 
 		Behaviors.Add(Selector);
 	}
 
-	// Step 3. [Logic] Áï¹ß µ¥¹ÌÁö (100%)
+	// Step 3. [Logic] ì¦‰ë°œ ë°ë¯¸ì§€ (100%)
 	auto* Damage = NewObject<UDEBehavior_InstantDamage>(this, TEXT("Damage"));
 	if (Damage)
 	{
-		Damage->DamageMultiplier = 1.0f; // ±âº» µ¥¹ÌÁöÀÇ 100%
+		Damage->DamageMultiplier = 1.0f; // ê¸°ë³¸ ë°ë¯¸ì§€ì˜ 100%
 		Behaviors.Add(Damage);
 	}
 
@@ -74,26 +74,26 @@ void UDESkill_LethalClaw::InitBehaviors()
 		Behaviors.Add(Knockback);
 
 	}
-	//// Step 4. [VFX] Å¸°İ ÀÌÆåÆ® (¸ÂÀº Àûµé)
+	//// Step 4. [VFX] íƒ€ê²© ì´í™íŠ¸ (ë§ì€ ì ë“¤)
 	//auto* HitVFX = NewObject<UDEBehavior_PlayNiagara>(this, TEXT("HitVFX"));
 	//if (HitVFX)
 	//{
-	//	HitVFX->SpawnLocation = EEffectSpawnLocation::TargetActors; // ¸ÂÀº ³ğµé À§Ä¡
-	//	HitVFX->Offset = FVector(0.f, 0.f, 60.f); // °¡½¿ ³ôÀÌ º¸Á¤
+	//	HitVFX->SpawnLocation = EEffectSpawnLocation::TargetActors; // ë§ì€ ë†ˆë“¤ ìœ„ì¹˜
+	//	HitVFX->Offset = FVector(0.f, 0.f, 60.f); // ê°€ìŠ´ ë†’ì´ ë³´ì •
 	//	HitVFX->NiagaraAsset = HitEffectAsset;
 
 	//	Behaviors.Add(HitVFX);
 	//}
 
-	//// Step 5. [Logic] µ¶ »óÅÂÀÌ»ó ºÎ¿©
+	//// Step 5. [Logic] ë… ìƒíƒœì´ìƒ ë¶€ì—¬
 	//auto* Poison = NewObject<UDEBehavior_ApplyStatusEffect>(this, TEXT("Poison"));
 	//if (Poison)
 	//{
-	//	// EDEStatusType ¿­°ÅÇüÀÌ Á¤ÀÇµÇ¾î ÀÖ¾î¾ß ÇÔ
+	//	// EDEStatusType ì—´ê±°í˜•ì´ ì •ì˜ë˜ì–´ ìˆì–´ì•¼ í•¨
 	//	Poison->StatusType = EDEStatusType::Poison;
 
-	//	// Áö¼Ó½Ã°£, Æ½ µ¥¹ÌÁö µîÀº Context.CustomValues¿¡¼­ 
-	//	// Behavior°¡ ¾Ë¾Æ¼­ ²¨³» ¾²µµ·Ï ±¸Çö (ApplyStatusEffect ³»ºÎ ·ÎÁ÷)
+	//	// ì§€ì†ì‹œê°„, í‹± ë°ë¯¸ì§€ ë“±ì€ Context.CustomValuesì—ì„œ 
+	//	// Behaviorê°€ ì•Œì•„ì„œ êº¼ë‚´ ì“°ë„ë¡ êµ¬í˜„ (ApplyStatusEffect ë‚´ë¶€ ë¡œì§)
 
 	//	Behaviors.Add(Poison);
 	//}

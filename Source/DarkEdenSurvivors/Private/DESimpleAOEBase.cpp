@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DESimpleAOEBase.h"
@@ -15,11 +15,11 @@
 
 ADESimpleAOEBase::ADESimpleAOEBase()
 {
-    // [Áß¿ä] Áö¼Ó µ¥¹ÌÁö(Tick)¸¦ Áà¾ß ÇÏ¹Ç·Î TickÀ» ÄÑ¾ß ÇÕ´Ï´Ù.
+    // [ì¤‘ìš”] ì§€ì† ë°ë¯¸ì§€(Tick)ë¥¼ ì¤˜ì•¼ í•˜ë¯€ë¡œ Tickì„ ì¼œì•¼ í•©ë‹ˆë‹¤.
     PrimaryActorTick.bCanEverTick = true;
 
 
-    // [Áß¿ä] Ãæµ¹À» ÄÑ¾ß °¨Áö°¡ µË´Ï´Ù. 'OverlapAllDynamic' ÃßÃµ (Pawn, Enemy µî °¨Áö)
+    // [ì¤‘ìš”] ì¶©ëŒì„ ì¼œì•¼ ê°ì§€ê°€ ë©ë‹ˆë‹¤. 'OverlapAllDynamic' ì¶”ì²œ (Pawn, Enemy ë“± ê°ì§€)
     CollisionComponent->SetCollisionProfileName(TEXT("PlayerAttack"));
     CollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ADESimpleAOEBase::OnOverlapBegin);
 }
@@ -28,26 +28,26 @@ void ADESimpleAOEBase::BeginPlay()
 {
     Super::BeginPlay();
 
-    // µ¿Àû µ¨¸®°ÔÀÌÆ® ¹ÙÀÎµù (µé¾î¿ÀÀÚ¸¶ÀÚ ¶§¸®±â À§ÇØ)
+    // ë™ì  ë¸ë¦¬ê²Œì´íŠ¸ ë°”ì¸ë”© (ë“¤ì–´ì˜¤ìë§ˆì ë•Œë¦¬ê¸° ìœ„í•´)
     
 }
 
 
 void ADESimpleAOEBase::InitializeFromContext(const FDESkillContext& Context)
 {
-    // 2. ÀåÆÇ(AOE) Àü¿ë µ¥ÀÌÅÍ ¼¼ÆÃ
+    // 2. ì¥íŒ(AOE) ì „ìš© ë°ì´í„° ì„¸íŒ…
     HitCooldown = Context.GetValue(TEXT("HitInterval"), 0.5f);
     //UE_LOG(LogTemp, Warning, TEXT("%s Try Init from ContXXt"), *GetName());
-    // 1. °øÅë ½ºÅÈ(µ¥¹ÌÁö, ¹üÀ§, ¿À³Ê, ¼ö¸í, Ç®¸µ ¸®¼Â µî)Àº ºÎ¸ğ¿¡°Ô Â«Ã³¸®!
+    // 1. ê³µí†µ ìŠ¤íƒ¯(ë°ë¯¸ì§€, ë²”ìœ„, ì˜¤ë„ˆ, ìˆ˜ëª…, í’€ë§ ë¦¬ì…‹ ë“±)ì€ ë¶€ëª¨ì—ê²Œ ì§¬ì²˜ë¦¬!
     Super::InitializeFromContext(Context);
 
    
 
-    // 3. ¿µ±¸ Áö¼Ó ÀåÆÇ Ã³¸® (µ¶ ÀåÆÇ, ¸¶´Ã µî)
+    // 3. ì˜êµ¬ ì§€ì† ì¥íŒ ì²˜ë¦¬ (ë… ì¥íŒ, ë§ˆëŠ˜ ë“±)
     if (LifeTime < 0.0f)
     {
         bInfiniteDuration = true;
-        // ºÎ¸ğ°¡ ÄÑµĞ ¼ö¸í Å¸ÀÌ¸Ó¸¦ ÀåÆÇÀº °­Á¦·Î ²ü´Ï´Ù (¿µ¿øÈ÷ ¾È Á×À½)
+        // ë¶€ëª¨ê°€ ì¼œë‘” ìˆ˜ëª… íƒ€ì´ë¨¸ë¥¼ ì¥íŒì€ ê°•ì œë¡œ ë•ë‹ˆë‹¤ (ì˜ì›íˆ ì•ˆ ì£½ìŒ)
         GetWorldTimerManager().ClearTimer(LifeTimeTimerHandle);
     }
     else
@@ -55,47 +55,47 @@ void ADESimpleAOEBase::InitializeFromContext(const FDESkillContext& Context)
         bInfiniteDuration = false;
     }
 
-    // 4. (¼±ÅÃ) ³ªÀÌ¾Æ°¡¶ó Å©±â ÀÚµ¿ Á¶Àı ¿¬µ¿
+    // 4. (ì„ íƒ) ë‚˜ì´ì•„ê°€ë¼ í¬ê¸° ìë™ ì¡°ì ˆ ì—°ë™
     if (NiagaraComponent)
     {
-        // ºÎ¸ğ°¡ ¼¼ÆÃÇØµĞ Size(¶Ç´Â Context.Radius) È°¿ë
+        // ë¶€ëª¨ê°€ ì„¸íŒ…í•´ë‘” Size(ë˜ëŠ” Context.Radius) í™œìš©
         NiagaraComponent->SetFloatParameter(FName("SkillRadius"), Context.Radius);
     }
 
     CollisionComponent->SetSphereRadius(Radius);
 
 
-    //// 1. »óÅÂ ¸®¼Â (Ç®¸µ Àç»ç¿ë ½Ã ÇÊ¼ö)
-    //// (InitializeAOE ¾È¿¡¼­ HitCooldownMap.Empty()¸¦ ÇÏ±ä ÇÏÁö¸¸, ¸í½ÃÀûÀ¸·Î ÃÊ±âÈ­ ·ÎÁ÷ÀÌ ÀÖ´Ù¸é ¿©±â¼­ È£Ãâ)
+    //// 1. ìƒíƒœ ë¦¬ì…‹ (í’€ë§ ì¬ì‚¬ìš© ì‹œ í•„ìˆ˜)
+    //// (InitializeAOE ì•ˆì—ì„œ HitCooldownMap.Empty()ë¥¼ í•˜ê¸´ í•˜ì§€ë§Œ, ëª…ì‹œì ìœ¼ë¡œ ì´ˆê¸°í™” ë¡œì§ì´ ìˆë‹¤ë©´ ì—¬ê¸°ì„œ í˜¸ì¶œ)
     //ResetState(); 
 
-    //// 2. µ¥ÀÌÅÍ ÃßÃâ
-    //// µ¥¹ÌÁö, ¹üÀ§, Áö¼Ó½Ã°£Àº ÄÁÅØ½ºÆ®ÀÇ ±âº» ½ºÅÈ »ç¿ë
+    //// 2. ë°ì´í„° ì¶”ì¶œ
+    //// ë°ë¯¸ì§€, ë²”ìœ„, ì§€ì†ì‹œê°„ì€ ì»¨í…ìŠ¤íŠ¸ì˜ ê¸°ë³¸ ìŠ¤íƒ¯ ì‚¬ìš©
     //CachedContext = Context;
     //float FinalDamage = Context.Damage;
-    //float FinalRadius = Context.Radius; // È¤Àº Context.Range µî ½ºÅÈ ÀÌ¸§¿¡ ¸ÂÃç »ç¿ë
+    //float FinalRadius = Context.Radius; // í˜¹ì€ Context.Range ë“± ìŠ¤íƒ¯ ì´ë¦„ì— ë§ì¶° ì‚¬ìš©
     //float FinalDuration = Context.Duration;
 
-    //// [Áß¿ä] Å¸°İ °£°İ(HitCooldown) °áÁ¤ ·ÎÁ÷
-    //// ¹æ¹ı A: ÄÁÅØ½ºÆ® Map¿¡ "HitInterval"ÀÌ¶ó´Â °ªÀÌ ÀÖÀ¸¸é ¾²°í, ¾øÀ¸¸é 0.5ÃÊ ±âº»°ª
+    //// [ì¤‘ìš”] íƒ€ê²© ê°„ê²©(HitCooldown) ê²°ì • ë¡œì§
+    //// ë°©ë²• A: ì»¨í…ìŠ¤íŠ¸ Mapì— "HitInterval"ì´ë¼ëŠ” ê°’ì´ ìˆìœ¼ë©´ ì“°ê³ , ì—†ìœ¼ë©´ 0.5ì´ˆ ê¸°ë³¸ê°’
     //float FinalHitCooldown = Context.GetValue(TEXT("HitInterval"), 0.5f);
 
-    //// ¹æ¹ı B: (¼±ÅÃ»çÇ×) °ø°İ ¼Óµµ(Speed) ½ºÅÈÀÌ ³ôÀ¸¸é Å¸°İ °£°İÀÌ Âª¾ÆÁö°Ô ÇÏ·Á¸é?
+    //// ë°©ë²• B: (ì„ íƒì‚¬í•­) ê³µê²© ì†ë„(Speed) ìŠ¤íƒ¯ì´ ë†’ìœ¼ë©´ íƒ€ê²© ê°„ê²©ì´ ì§§ì•„ì§€ê²Œ í•˜ë ¤ë©´?
     //// if (Context.Speed > 0.f) FinalHitCooldown = 1.0f / Context.Speed;
 
-    //// 3. ¸ŞÀÎ ÃÊ±âÈ­ ÇÔ¼ö È£Ãâ
+    //// 3. ë©”ì¸ ì´ˆê¸°í™” í•¨ìˆ˜ í˜¸ì¶œ
     //InitializeAOE(FinalDamage, FinalRadius, FinalHitCooldown, FinalDuration);
 
-    //// 4. È®Àå ½ºÅÈ Àû¿ë (Map¿¡¼­ ²¨³»¿À±â)
-    //// ³Ë¹é (Knockback)
-    //float KForce = Context.KnockbackForce; // È¤Àº Context.GetValue("Knockback")
+    //// 4. í™•ì¥ ìŠ¤íƒ¯ ì ìš© (Mapì—ì„œ êº¼ë‚´ì˜¤ê¸°)
+    //// ë„‰ë°± (Knockback)
+    //float KForce = Context.KnockbackForce; // í˜¹ì€ Context.GetValue("Knockback")
     //if (KForce > 0.f)
     //{
-    //    // ³Ë¹é ÈûÀ» ¸â¹ö º¯¼ö¿¡ ÀúÀåÇÏ°Å³ª ¼³Á¤ (¸â¹ö º¯¼ö°¡ ÀÖ´Ù°í °¡Á¤)
+    //    // ë„‰ë°± í˜ì„ ë©¤ë²„ ë³€ìˆ˜ì— ì €ì¥í•˜ê±°ë‚˜ ì„¤ì • (ë©¤ë²„ ë³€ìˆ˜ê°€ ìˆë‹¤ê³  ê°€ì •)
     //    // KnockbackForce = KForce; 
     //}
 
-    //// Å©±â º¸Á¤ (Radius¿Í º°°³·Î ºñÁÖ¾ó¸¸ Å°¿ì°í ½ÍÀ» ¶§)
+    //// í¬ê¸° ë³´ì • (Radiusì™€ ë³„ê°œë¡œ ë¹„ì£¼ì–¼ë§Œ í‚¤ìš°ê³  ì‹¶ì„ ë•Œ)
     //float VisualScale = Context.GetValue(TEXT("Scale"), 1.0f);
     //if (VisualScale != 1.0f)
     //{
@@ -106,19 +106,19 @@ void ADESimpleAOEBase::InitializeFromContext(const FDESkillContext& Context)
 void ADESimpleAOEBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
     
-    // ³ª ÀÚ½ÅÀÌ³ª ÁÖÀÎÀº ¹«½Ã
+    // ë‚˜ ìì‹ ì´ë‚˜ ì£¼ì¸ì€ ë¬´ì‹œ
     if (!OtherActor || OtherActor == this || OtherActor == GetOwner()) return;
-    // 3. [ÇÙ½É] ¸ó½ºÅÍÀÇ "ÇÙ½É ºÎÀ§(Root)"°¡ ¾Æ´Ï¸é ¹«½Ã! (ÆÈ, ´Ù¸®, ¸Ş½¬ Ãæµ¹ ¹æÁö)
+    // 3. [í•µì‹¬] ëª¬ìŠ¤í„°ì˜ "í•µì‹¬ ë¶€ìœ„(Root)"ê°€ ì•„ë‹ˆë©´ ë¬´ì‹œ! (íŒ”, ë‹¤ë¦¬, ë©”ì‰¬ ì¶©ëŒ ë°©ì§€)
     if (OtherComp != OtherActor->GetRootComponent())
     {
         return;
     }
     UE_LOG(LogTemp, Warning, TEXT("%s OnOverlapBegin"), *GetName());
-    // µé¾î¿ÀÀÚ¸¶ÀÚ ÄğÅ¸ÀÓ Ã¼Å© ÈÄ Áï½Ã Å¸°İ (¹İÀÀ¼º UP)
+    // ë“¤ì–´ì˜¤ìë§ˆì ì¿¨íƒ€ì„ ì²´í¬ í›„ ì¦‰ì‹œ íƒ€ê²© (ë°˜ì‘ì„± UP)
     if (CanHitTarget(OtherActor))
     {
         OnHitTarget(OtherActor);
-        // ´ÙÀ½ Å¸°İ ½Ã°£ ±â·Ï but y here? ?
+        // ë‹¤ìŒ íƒ€ê²© ì‹œê°„ ê¸°ë¡ but y here? ?
         /*double CurrentTime = GetWorld()->GetTimeSeconds();
         HitCooldownMap.Add(OtherActor, CurrentTime + HitCooldown);*/
     }
@@ -128,7 +128,7 @@ void ADESimpleAOEBase::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    // ÇöÀç °ãÃÄÀÖ´Â ¸ğµç ¾×ÅÍ °¡Á®¿À±â
+    // í˜„ì¬ ê²¹ì³ìˆëŠ” ëª¨ë“  ì•¡í„° ê°€ì ¸ì˜¤ê¸°
     TArray<AActor*> OverlappingActors;
     CollisionComponent->GetOverlappingActors(OverlappingActors);
 
@@ -138,7 +138,7 @@ void ADESimpleAOEBase::Tick(float DeltaTime)
     {
         if (!Target || Target == GetOwner()) continue;
 
-        // ÄğÅ¸ÀÓ Áö³µ´ÂÁö È®ÀÎ
+        // ì¿¨íƒ€ì„ ì§€ë‚¬ëŠ”ì§€ í™•ì¸
         if (CanHitTarget(Target))
         {
             OnHitTarget(Target);
@@ -147,10 +147,10 @@ void ADESimpleAOEBase::Tick(float DeltaTime)
         }
     }
 
-    // [ÃÖÀûÈ­ ÆÁ] 
-    // HitCooldownMap¿¡ ÀÖÁö¸¸ ÇöÀç OverlappingActors¿¡ ¾ø´Â(¹üÀ§ ¹ÛÀ¸·Î ³ª°£) 
-    // ÀûµéÀº Map¿¡¼­ Á¦°ÅÇØÁÖ¸é ¸Ş¸ğ¸®¸¦ ¾Æ³¥ ¼ö ÀÖ½À´Ï´Ù. 
-    // ÇÏÁö¸¸ ¹ì¼­·ù´Â ÀûÀÌ ±İ¹æ Á×À¸¹Ç·Î ±»ÀÌ ¾È ÇØµµ ¹«¹æÇÕ´Ï´Ù.
+    // [ìµœì í™” íŒ] 
+    // HitCooldownMapì— ìˆì§€ë§Œ í˜„ì¬ OverlappingActorsì— ì—†ëŠ”(ë²”ìœ„ ë°–ìœ¼ë¡œ ë‚˜ê°„) 
+    // ì ë“¤ì€ Mapì—ì„œ ì œê±°í•´ì£¼ë©´ ë©”ëª¨ë¦¬ë¥¼ ì•„ë‚„ ìˆ˜ ìˆìŠµë‹ˆë‹¤. 
+    // í•˜ì§€ë§Œ ë±€ì„œë¥˜ëŠ” ì ì´ ê¸ˆë°© ì£½ìœ¼ë¯€ë¡œ êµ³ì´ ì•ˆ í•´ë„ ë¬´ë°©í•©ë‹ˆë‹¤.
 }
 
 bool ADESimpleAOEBase::CanHitTarget(AActor* Target) const
@@ -159,14 +159,14 @@ bool ADESimpleAOEBase::CanHitTarget(AActor* Target) const
 
     const double CurrentTime = GetWorld()->GetTimeSeconds();
 
-    // ¸Ê¿¡ ±â·ÏÀÌ ÀÖ´Ù¸é, ½Ã°£ Ã¼Å©
+    // ë§µì— ê¸°ë¡ì´ ìˆë‹¤ë©´, ì‹œê°„ ì²´í¬
     if (const double* NextHitTime = HitCooldownMap.Find(Target))
     {
         //UE_LOG(LogTemp, Warning, TEXT("%s CHECKED CanHitTarget, Target already exist"),*GetName());
         return CurrentTime >= *NextHitTime;
     }
 
-    // ±â·ÏÀÌ ¾øÀ¸¸é(Ã³À½ ¸¸³²) Áï½Ã Å¸°İ °¡´É
+    // ê¸°ë¡ì´ ì—†ìœ¼ë©´(ì²˜ìŒ ë§Œë‚¨) ì¦‰ì‹œ íƒ€ê²© ê°€ëŠ¥
     //UE_LOG(LogTemp, Warning, TEXT("%s CHECKED CanHitTarget, New Target Hit immediately"), *GetName());
     return true;
 }
@@ -178,15 +178,15 @@ void ADESimpleAOEBase::OnHitTarget(AActor* Target)
     TryDealDamage(Target);
     UE_LOG(LogTemp, Warning, TEXT("AOE %s Hit : %s"), *GetName(), *Target->GetName());
     //UE_LOG(LogTemp, Warning, TEXT("%s got hit by : %s"), *Target->GetName(), *GetName());
-    // [È®Àå Æ÷ÀÎÆ®]
-    // ¿©±â¼­ ³Ë¹é(Knockback)ÀÌ³ª »óÅÂÀÌ»ó(ApplyStatus) ·ÎÁ÷À» Ãß°¡ÇÏ¸é µË´Ï´Ù.
-    // ¿¹: ApplyKnockback(Target);
+    // [í™•ì¥ í¬ì¸íŠ¸]
+    // ì—¬ê¸°ì„œ ë„‰ë°±(Knockback)ì´ë‚˜ ìƒíƒœì´ìƒ(ApplyStatus) ë¡œì§ì„ ì¶”ê°€í•˜ë©´ ë©ë‹ˆë‹¤.
+    // ì˜ˆ: ApplyKnockback(Target);
 }
 
 
 void ADESimpleAOEBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-    // È¤½Ã¶óµµ Destroy·Î »èÁ¦µÉ ¶§ Å¸ÀÌ¸Ó³ª ¹ÙÀÎµù Á¤¸®
+    // í˜¹ì‹œë¼ë„ Destroyë¡œ ì‚­ì œë  ë•Œ íƒ€ì´ë¨¸ë‚˜ ë°”ì¸ë”© ì •ë¦¬
     CollisionComponent->OnComponentBeginOverlap.RemoveDynamic(this, &ADESimpleAOEBase::OnOverlapBegin);
     Super::EndPlay(EndPlayReason);
 }
@@ -196,7 +196,7 @@ void ADESimpleAOEBase::ResetState()
     
     Super::ResetState();
 
-    // ¸Ê ÃÊ±âÈ­
+    // ë§µ ì´ˆê¸°í™”
     
 }
 

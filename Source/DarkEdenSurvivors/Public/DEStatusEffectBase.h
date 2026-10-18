@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -20,9 +20,9 @@ class DARKEDENSURVIVORS_API UDEStatusEffectBase : public UObject
 public:
 	UDEStatusEffectBase();
 
-	// --- ±âÈ¹ÀÚ°¡ ¿¡µğÅÍ¿¡¼­ ¼¼ÆÃÇÒ º¯ÇÏÁö ¾Ê´Â µ¥ÀÌÅÍ (CDO) ---
-	// ¡Ú [NEW] ÀÌ »óÅÂÀÌ»óÀÇ Á¤Ã¼¼º (¿¹: Status.Debuff.Poison, Status.Buff.MoveSpeed)
-	// ³ªÁß¿¡ ÇØÁ¦ ½ºÅ³(Á¤È­)À» ¸¸µé ¶§ ÀÌ ¸íÂûÀ» º¸°í Áö¿ó´Ï´Ù.
+	// --- ê¸°íšìê°€ ì—ë””í„°ì—ì„œ ì„¸íŒ…í•  ë³€í•˜ì§€ ì•ŠëŠ” ë°ì´í„° (CDO) ---
+	// â˜… [NEW] ì´ ìƒíƒœì´ìƒì˜ ì •ì²´ì„± (ì˜ˆ: Status.Debuff.Poison, Status.Buff.MoveSpeed)
+	// ë‚˜ì¤‘ì— í•´ì œ ìŠ¤í‚¬(ì •í™”)ì„ ë§Œë“¤ ë•Œ ì´ ëª…ì°°ì„ ë³´ê³  ì§€ì›ë‹ˆë‹¤.
 	// =========================================================
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect|Tags", meta = (Categories = "Status"))
 	FGameplayTagContainer StatusTags;
@@ -35,28 +35,28 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Status Effect|Core")
 	bool bRefreshDurationOnStack = true;
 
-	// (¼±ÅÃ) ½Ã°¢ È¿°ú: ´ÙÅ©¿¡µ§ Æ¯À¯ÀÇ ¼¼ÇÇ¾Æ Åæ, Å×µÎ¸® ¾ø´Â(Borderless) °íµñ ÀÌÆåÆ® µî
+	// (ì„ íƒ) ì‹œê° íš¨ê³¼: ë‹¤í¬ì—ë´ íŠ¹ìœ ì˜ ì„¸í”¼ì•„ í†¤, í…Œë‘ë¦¬ ì—†ëŠ”(Borderless) ê³ ë”• ì´í™íŠ¸ ë“±
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect|Visual")
 	class UNiagaraSystem* EffectParticle;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect|Visual")
 	bool bApplyMaterialTint = false;
 
-	// ¸ÓÆ¼¸®¾ó¿¡¼­ »ö»óÀ» Á¶ÀÛÇÒ ÆÄ¶ó¹ÌÅÍ ÀÌ¸§ (¿¹: "BaseColor", "Tint" µî)
+	// ë¨¸í‹°ë¦¬ì–¼ì—ì„œ ìƒ‰ìƒì„ ì¡°ì‘í•  íŒŒë¼ë¯¸í„° ì´ë¦„ (ì˜ˆ: "BaseColor", "Tint" ë“±)
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect|Visual", meta = (EditCondition = "bApplyMaterialTint"))
 	FName TintParameterName = TEXT("ColorTint");
 
-	// »óÅÂÀÌ»óÀÌ °É·ÈÀ» ¶§ Ä¥ÇÒ »ö»ó (¸Íµ¶ = ÃÊ·Ï»ö)
+	// ìƒíƒœì´ìƒì´ ê±¸ë ¸ì„ ë•Œ ì¹ í•  ìƒ‰ìƒ (ë§¹ë… = ì´ˆë¡ìƒ‰)
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect|Visual", meta = (EditCondition = "bApplyMaterialTint"))
-	FLinearColor TintColor = FLinearColor(0.0f, 1.0f, 0.0f, 1.0f); // ±âº»°ª ÃÊ·Ï»ö
+	FLinearColor TintColor = FLinearColor(0.0f, 1.0f, 0.0f, 1.0f); // ê¸°ë³¸ê°’ ì´ˆë¡ìƒ‰
 
-	// »óÅÂÀÌ»óÀÌ ³¡³µÀ» ¶§ µ¹¾Æ°¥ ¿ø·¡ »ö»ó (º¸Åë Èò»ö)
+	// ìƒíƒœì´ìƒì´ ëë‚¬ì„ ë•Œ ëŒì•„ê°ˆ ì›ë˜ ìƒ‰ìƒ (ë³´í†µ í°ìƒ‰)
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect|Visual", meta = (EditCondition = "bApplyMaterialTint"))
 	FLinearColor OriginalColor = FLinearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-	// --- ÇÙ½É ·ÎÁ÷ (¸ğµç ÇÔ¼ö´Â const·Î ¼±¾ğµÇ¾î °´Ã¼ ÀÚÃ¼ÀÇ º¯ÇüÀ» ¸·½À´Ï´Ù) ---
+	// --- í•µì‹¬ ë¡œì§ (ëª¨ë“  í•¨ìˆ˜ëŠ” constë¡œ ì„ ì–¸ë˜ì–´ ê°ì²´ ìì²´ì˜ ë³€í˜•ì„ ë§‰ìŠµë‹ˆë‹¤) ---
 
-	// ºí·çÇÁ¸°Æ®¿ë UFUNCTION, UPARAM(ref), _Implementation ²¿¸®Ç¥ ¸ğµÎ »èÁ¦!
+	// ë¸”ë£¨í”„ë¦°íŠ¸ìš© UFUNCTION, UPARAM(ref), _Implementation ê¼¬ë¦¬í‘œ ëª¨ë‘ ì‚­ì œ!
 	virtual void OnApply(AActor* Target, FActiveStatusEffect& EffectData) const;
 
 	virtual void OnRemove(AActor* Target, FActiveStatusEffect& EffectData) const;
@@ -65,7 +65,7 @@ public:
 
 	virtual void OnStacked(AActor* Target, FActiveStatusEffect& EffectData, int32 NewStackCount) const;
 
-	// TickÀº ¸Å ÇÁ·¹ÀÓ ¼ö¹é~¼öÃµ ¹ø ºÒ¸®¹Ç·Î ¿ø·¡ºÎÅÍ ¼ø¼ö °¡»ó ÇÔ¼ö¿´½À´Ï´Ù. À¯Áö!
+	// Tickì€ ë§¤ í”„ë ˆì„ ìˆ˜ë°±~ìˆ˜ì²œ ë²ˆ ë¶ˆë¦¬ë¯€ë¡œ ì›ë˜ë¶€í„° ìˆœìˆ˜ ê°€ìƒ í•¨ìˆ˜ì˜€ìŠµë‹ˆë‹¤. ìœ ì§€!
 	virtual void Tick(AActor* Target, FActiveStatusEffect& EffectData, float DeltaTime) const;
 
 	virtual void ModifyIncomingDamage(const FActiveStatusEffect& EffectData, FDEDamageRequest& InOutRequest) const {};

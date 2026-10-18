@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DESkill_DeathSentence.h"
@@ -47,7 +47,7 @@ void UDESkill_DeathSentence::InitBehaviors()
 	Behaviors.Add(Filtering);
 
 
-	// 2. [¹ß»ç Çàµ¿] Ã£Àº Àû ¹æÇâÀ» ±âÁØÀ¸·Î ÆÛÁö°Ô ½÷¶ó
+	// 2. [ë°œì‚¬ í–‰ë™] ì°¾ì€ ì  ë°©í–¥ì„ ê¸°ì¤€ìœ¼ë¡œ í¼ì§€ê²Œ ì´ë¼
 	UDEBehavior_FireProjectile* FireProjectile = NewObject<UDEBehavior_FireProjectile>(this);
 	FireProjectile->ProjectileClass = this->ProjectileClass;
 	FireProjectile->FireSound = this->FireSound;

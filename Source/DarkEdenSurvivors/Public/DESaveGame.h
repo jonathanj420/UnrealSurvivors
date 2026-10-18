@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -25,7 +25,7 @@ struct FDEUpgradeData
     int32 BonusAmountLevel = 0;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int32 GreedLevel = 0; // ∞ÒµÂ »πµÊ∑Æ ¡ı∞°
+    int32 GreedLevel = 0; // Í≥®Îìú ÌöçÎìùÎüâ Ï¶ùÍ∞Ä
 };
 
 
@@ -46,7 +46,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SaveData")
     int32 UserIndex;
 
-    // --- «ŸΩ… µ•¿Ã≈Õ ---
+    // --- ÌïµÏã¨ Îç∞Ïù¥ÌÑ∞ ---
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Progression")
     int32 TotalGold;
 

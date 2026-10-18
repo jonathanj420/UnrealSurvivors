@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DESkillActorBase.h"
@@ -16,7 +16,7 @@ ADESkillActorBase::ADESkillActorBase()
 {
     PrimaryActorTick.bCanEverTick = true;
 
-    // 1. °øÅë Ãæµ¹Ã¼
+    // 1. ê³µí†µ ì¶©ëŒì²´
     CollisionComponent = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
     RootComponent = CollisionComponent;
     CollisionComponent->InitSphereRadius(30.0f);
@@ -26,7 +26,7 @@ ADESkillActorBase::ADESkillActorBase()
         CollisionComponent->SetGenerateOverlapEvents(false);
     }
 
-    // 2. °øÅë ¸Ş½Ã
+    // 2. ê³µí†µ ë©”ì‹œ
     Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
     Mesh->SetupAttachment(RootComponent);
     Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -34,7 +34,7 @@ ADESkillActorBase::ADESkillActorBase()
     Mesh->SetSimulatePhysics(false);
     Mesh->SetEnableGravity(false);
 
-    // 3. °øÅë ÀÌÆåÆ®
+    // 3. ê³µí†µ ì´í™íŠ¸
     NiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComponent"));
     NiagaraComponent->SetupAttachment(RootComponent);
     NiagaraComponent->SetAutoActivate(false);
@@ -61,7 +61,7 @@ void ADESkillActorBase::InitializeFromContext(const FDESkillContext& Context)
     }
 
 
-    // µ¥ÀÌÅÍ Ä³½Ì
+    // ë°ì´í„° ìºì‹±
     CachedContext = Context;
     Snapshot = Context.FinalSnapshot;
     Damage = Context.Damage;
@@ -77,7 +77,7 @@ void ADESkillActorBase::InitializeFromContext(const FDESkillContext& Context)
     KnockbackForce = Context.KnockbackForce;
     LifeTime = Context.Duration;
 
-    // Å©±â Á¶Àı
+    // í¬ê¸° ì¡°ì ˆ
     if (Radius > 0.f)
     {
         SetSize(Radius);
@@ -95,7 +95,7 @@ void ADESkillActorBase::BeginPlay()
 {
     Super::BeginPlay();
 
-    // ¡Ú °ÔÀÓ ½ÃÀÛÇÒ ¶§ µü 1¹ø¸¸ ¸ğµç ³ªÀÌ¾Æ°¡¶ó¸¦ µÚÁ®¼­ ¸íºÎ¿¡ Àû¾îµĞ´Ù!
+    // â˜… ê²Œì„ ì‹œì‘í•  ë•Œ ë”± 1ë²ˆë§Œ ëª¨ë“  ë‚˜ì´ì•„ê°€ë¼ë¥¼ ë’¤ì ¸ì„œ ëª…ë¶€ì— ì ì–´ë‘”ë‹¤!
     GetComponents<UNiagaraComponent>(CachedNiagaraComps);
 }
 
@@ -109,17 +109,17 @@ void ADESkillActorBase::ResetState()
         {
             NComp->SetVisibility(true);
 
-            // 1. Ç¥ÁØÈ­µÈ ÆÄ¶ó¹ÌÅÍ ¹«Áö¼º ÁÖÀÔ (ÀÌÆåÆ®¿¡ ÇØ´ç ÆÄ¶ó¹ÌÅÍ°¡ ¾ø¾îµµ ¿¡·¯ ¾È ³²!)
+            // 1. í‘œì¤€í™”ëœ íŒŒë¼ë¯¸í„° ë¬´ì§€ì„± ì£¼ì… (ì´í™íŠ¸ì— í•´ë‹¹ íŒŒë¼ë¯¸í„°ê°€ ì—†ì–´ë„ ì—ëŸ¬ ì•ˆ ë‚¨!)
             NComp->SetFloatParameter(FName("SkillRadius"), Radius);
 
-            // ¼ö¸íµµ ÆÄ¶ó¹ÌÅÍ·Î ³Ñ°ÜÁÖ¸é, ÆÄÆ¼Å¬ ·çÇÁ ½Ã°£ÀÌ³ª »ö»ó ÆäÀÌµå¾Æ¿ô µî¿¡ ¿¬µ¿ÇÏ±â ¸Å¿ì ÁÁ½À´Ï´Ù.
+            // ìˆ˜ëª…ë„ íŒŒë¼ë¯¸í„°ë¡œ ë„˜ê²¨ì£¼ë©´, íŒŒí‹°í´ ë£¨í”„ ì‹œê°„ì´ë‚˜ ìƒ‰ìƒ í˜ì´ë“œì•„ì›ƒ ë“±ì— ì—°ë™í•˜ê¸° ë§¤ìš° ì¢‹ìŠµë‹ˆë‹¤.
             if (LifeTime > 0.0f)
             {
                 NComp->SetFloatParameter(FName("SkillDuration"), LifeTime);
             }
 
-            // ¡Ú [ÇÙ½É] ÆÄÆ¼Å¬ÀÌ ²¨Á® ÀÖÀ» ¶§¸¸ ÄÕ´Ï´Ù.
-            // (¿µ±¸ Áö¼Ó ¿À¶ó°¡ ½ºÅÈ °»½ÅÀ» À§ÇØ ResetState¸¦ Å» ¶§´Â ±ôºıÀÌÁö ¾Ê°í ºÎµå·´°Ô À¯ÁöµÊ!)
+            // â˜… [í•µì‹¬] íŒŒí‹°í´ì´ êº¼ì ¸ ìˆì„ ë•Œë§Œ ì¼­ë‹ˆë‹¤.
+            // (ì˜êµ¬ ì§€ì† ì˜¤ë¼ê°€ ìŠ¤íƒ¯ ê°±ì‹ ì„ ìœ„í•´ ResetStateë¥¼ íƒˆ ë•ŒëŠ” ê¹œë¹¡ì´ì§€ ì•Šê³  ë¶€ë“œëŸ½ê²Œ ìœ ì§€ë¨!)
             if (!NComp->IsActive())
             {
                 NComp->Activate(true);
@@ -129,8 +129,8 @@ void ADESkillActorBase::ResetState()
 
     //if (NiagaraComponent)
     //{
-    //    NiagaraComponent->DeactivateImmediate(); // Æ®·¹ÀÏ È÷½ºÅä¸® Áï½Ã ²÷±â
-    //    NiagaraComponent->ResetSystem();         // ÆÄÆ¼Å¬ ¿ÏÀü ÃÊ±âÈ­
+    //    NiagaraComponent->DeactivateImmediate(); // íŠ¸ë ˆì¼ íˆìŠ¤í† ë¦¬ ì¦‰ì‹œ ëŠê¸°
+    //    NiagaraComponent->ResetSystem();         // íŒŒí‹°í´ ì™„ì „ ì´ˆê¸°í™”
     //    NiagaraComponent->SetVisibility(true);
     //    NiagaraComponent->Activate(true);
     //}

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -39,8 +39,8 @@ public:
 
 	int32 CurrentFireIndex = 0;
 
-	// (¿É¼Ç) 360µµ ÀüÃ¼°¡ ¾Æ´Ï¶ó 180µµ¸¸ ½î°í ½ÍÀ» ¶§¸¦ ´ëºñÇØ º¯¼öÈ­ °¡´É
-	// ±âº»°ª 360.0f
+	// (ì˜µì…˜) 360ë„ ì „ì²´ê°€ ì•„ë‹ˆë¼ 180ë„ë§Œ ì˜ê³  ì‹¶ì„ ë•Œë¥¼ ëŒ€ë¹„í•´ ë³€ìˆ˜í™” ê°€ëŠ¥
+	// ê¸°ë³¸ê°’ 360.0f
 	UPROPERTY(EditAnywhere)
 	float ArcAngle = 360.f;
 };

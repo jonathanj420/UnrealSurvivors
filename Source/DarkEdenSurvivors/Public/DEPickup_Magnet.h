@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -18,7 +18,7 @@ public:
 	ADEPickup_Magnet();
 
 protected:
-	// ÇÃ·¹ÀÌ¾î°¡ ¸Ô¾úÀ» ¶§ ½ÇÇàµÉ ÇÔ¼ö
+	// í”Œë ˆì´ì–´ê°€ ë¨¹ì—ˆì„ ë•Œ ì‹¤í–‰ë  í•¨ìˆ˜
 	virtual void ApplyEffect(AActor* TargetActor) override;
 	
 };

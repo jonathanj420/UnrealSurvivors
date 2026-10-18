@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+ï»¿// Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "DarkEdenSurvivorsGameMode.h"
 
@@ -9,8 +9,8 @@ void ADarkEdenSurvivorsGameMode::StartPlay()
 
     check(GEngine != nullptr);
 
-    // µð¹ö±× ¸Þ½ÃÁö¸¦ 5ÃÊ°£ Ç¥½ÃÇÕ´Ï´Ù. 
-    // -1 'Å°' °ª ½ÇÇàÀÎÀÚ°¡ ¸Þ½ÃÁö°¡ ¾÷µ¥ÀÌÆ®µÇ°Å³ª »õ·Î°íÄ§µÇÁö ¾Êµµ·Ï ¹æÁöÇÕ´Ï´Ù.
+    // ë””ë²„ê·¸ ë©”ì‹œì§€ë¥¼ 5ì´ˆê°„ í‘œì‹œí•©ë‹ˆë‹¤. 
+    // -1 'í‚¤' ê°’ ì‹¤í–‰ì¸ìžê°€ ë©”ì‹œì§€ê°€ ì—…ë°ì´íŠ¸ë˜ê±°ë‚˜ ìƒˆë¡œê³ ì¹¨ë˜ì§€ ì•Šë„ë¡ ë°©ì§€í•©ë‹ˆë‹¤.
     GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, TEXT("Hello World, this is FPSGameModeBase!"));
 
 }
@@ -30,22 +30,22 @@ void ADarkEdenSurvivorsGameMode::SpawnMonsters(TSubclassOf<APawn> MonsterClass, 
 
     for (int32 i = 0; i < Count; ++i)
     {
-        // 1. ½ºÆùÇÒ À§Ä¡¸¦ ·£´ýÇÏ°Ô °è»êÇÕ´Ï´Ù.
-        // Æ¯Á¤ ¹Ý°æ(Radius) ³»¿¡¼­ ·£´ýÇÑ À§Ä¡¸¦ ±¸ÇÕ´Ï´Ù.
+        // 1. ìŠ¤í°í•  ìœ„ì¹˜ë¥¼ ëžœë¤í•˜ê²Œ ê³„ì‚°í•©ë‹ˆë‹¤.
+        // íŠ¹ì • ë°˜ê²½(Radius) ë‚´ì—ì„œ ëžœë¤í•œ ìœ„ì¹˜ë¥¼ êµ¬í•©ë‹ˆë‹¤.
         float RandAngle = FMath::RandRange(0.0f, 360.0f);
         float RandDistance = FMath::RandRange(0.0f, Radius);
 
         float XOffset = FMath::Cos(FMath::DegreesToRadians(RandAngle)) * RandDistance;
         float YOffset = FMath::Sin(FMath::DegreesToRadians(RandAngle)) * RandDistance;
 
-        // CenterLocationÀ» ±âÁØÀ¸·Î ¿ÀÇÁ¼ÂÀ» Àû¿ëÇÕ´Ï´Ù. (Z´Â ¹Ù´Ú¿¡ °íÁ¤)
+        // CenterLocationì„ ê¸°ì¤€ìœ¼ë¡œ ì˜¤í”„ì…‹ì„ ì ìš©í•©ë‹ˆë‹¤. (ZëŠ” ë°”ë‹¥ì— ê³ ì •)
         FVector SpawnLocation = CenterLocation + FVector(XOffset, YOffset, 0.0f);
 
-        // 2. ½ºÆù È¸Àü°ª ¼³Á¤ (ZÃàÀ» À§·Î)
+        // 2. ìŠ¤í° íšŒì „ê°’ ì„¤ì • (Zì¶•ì„ ìœ„ë¡œ)
         FRotator SpawnRotation = FRotator::ZeroRotator;
 
-        // 3. ¸ó½ºÅÍ ½ºÆù
-        // FActorSpawnParameters¸¦ »ç¿ëÇÏ¿© Ãæµ¹ ¹«½ÃÇÏ°í ½ºÆù
+        // 3. ëª¬ìŠ¤í„° ìŠ¤í°
+        // FActorSpawnParametersë¥¼ ì‚¬ìš©í•˜ì—¬ ì¶©ëŒ ë¬´ì‹œí•˜ê³  ìŠ¤í°
         FActorSpawnParameters SpawnParams;
         SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEInfiniteMapManager.h"
@@ -25,17 +25,17 @@ void ADEInfiniteMapManager::BeginPlay()
         return;
     }
 
-    // 1. Å¸ÀÏ ÀÚµ¿ »ı¼º
-    // ÇÃ·¹ÀÌ¾î À§Ä¡¸¦ ±âÁØÀ¸·Î »ı¼ºÇØµµ µÇÁö¸¸, ÀÏ´Ü (0,0) ÁÖº¯¿¡ ±ò¾ÆµÎ¸é
-    // ¾îÂ÷ÇÇ Update ·ÎÁ÷ÀÌ ¹Ù·Î ÇÃ·¹ÀÌ¾î ÁÖº¯À¸·Î ²ø°í ¿É´Ï´Ù.
+    // 1. íƒ€ì¼ ìë™ ìƒì„±
+    // í”Œë ˆì´ì–´ ìœ„ì¹˜ë¥¼ ê¸°ì¤€ìœ¼ë¡œ ìƒì„±í•´ë„ ë˜ì§€ë§Œ, ì¼ë‹¨ (0,0) ì£¼ë³€ì— ê¹”ì•„ë‘ë©´
+    // ì–´ì°¨í”¼ Update ë¡œì§ì´ ë°”ë¡œ í”Œë ˆì´ì–´ ì£¼ë³€ìœ¼ë¡œ ëŒê³  ì˜µë‹ˆë‹¤.
 
-    const int32 HalfSize = GridSize / 2; // ¿¹: 3ÀÌ¸é 1, 4¸é 2
-    // ÃÊ±â »ı¼º ½Ã ÀÓ½Ã À§Ä¡ °è»êÀ» À§ÇØ MapSize°¡ ÇÊ¿äÇÑµ¥, 
-    // ¾ÆÁ÷ »ı¼ºÀÌ ¾È µÅ¼­ ¸ğ¸§. ÀÏ´Ü 0À¸·Î ¹¶ÃÄ¼­ »ı¼ºÇÏ°í Ã¹ ³ğÇÑÅ× ¹°¾îº½.
+    const int32 HalfSize = GridSize / 2; // ì˜ˆ: 3ì´ë©´ 1, 4ë©´ 2
+    // ì´ˆê¸° ìƒì„± ì‹œ ì„ì‹œ ìœ„ì¹˜ ê³„ì‚°ì„ ìœ„í•´ MapSizeê°€ í•„ìš”í•œë°, 
+    // ì•„ì§ ìƒì„±ì´ ì•ˆ ë¼ì„œ ëª¨ë¦„. ì¼ë‹¨ 0ìœ¼ë¡œ ë­‰ì³ì„œ ìƒì„±í•˜ê³  ì²« ë†ˆí•œí…Œ ë¬¼ì–´ë´„.
 
     for (int32 i = 0; i < GridSize * GridSize; i++)
     {
-        FVector SpawnLocation(0, 0, -100.0f); // ÀÏ´Ü ´ëÃæ ¾Æ·¡¿¡ »ı¼º
+        FVector SpawnLocation(0, 0, -100.0f); // ì¼ë‹¨ ëŒ€ì¶© ì•„ë˜ì— ìƒì„±
         FActorSpawnParameters SpawnParams;
         SpawnParams.Owner = this;
 
@@ -47,19 +47,19 @@ void ADEInfiniteMapManager::BeginPlay()
         {
             MapSections.Add(NewSection);
 
-            // Ã¹ Å¸ÀÏÀÌ¸é »çÀÌÁî¸¦ ÃøÁ¤ÇØ¼­ ÀúÀå
+            // ì²« íƒ€ì¼ì´ë©´ ì‚¬ì´ì¦ˆë¥¼ ì¸¡ì •í•´ì„œ ì €ì¥
             if (i == 0)
             {
                 TileSize = NewSection->GetMapSize();
-                if (TileSize <= 0.0f) TileSize = 2000.0f; // ¾ÈÀüÀåÄ¡
+                if (TileSize <= 0.0f) TileSize = 2000.0f; // ì•ˆì „ì¥ì¹˜
             }
         }
     }
 
     UE_LOG(LogTemp, Warning, TEXT("MapManager Spawned %d Tiles. TileSize: %f"), MapSections.Num(), TileSize);
 
-    // 2. ÃÊ±â ¹èÄ¡ Á¤·Ä (¹ÙµÏÆÇ ¸ğ¾çÀ¸·Î ¿¹»Ú°Ô ÆìÁÖ±â)
-    // ÀÌ°É ¾È ÇÏ¸é ÇÑ Á¡¿¡ ¹¶ÃÄ ÀÖ´Ù°¡ 0.2ÃÊ µÚ¿¡ ÆÅ ÆÛÁö´Âµ¥, º¸±â¿¡ ¾È ÁÁÀ» ¼ö ÀÖÀ½.
+    // 2. ì´ˆê¸° ë°°ì¹˜ ì •ë ¬ (ë°”ë‘‘íŒ ëª¨ì–‘ìœ¼ë¡œ ì˜ˆì˜ê²Œ í´ì£¼ê¸°)
+    // ì´ê±¸ ì•ˆ í•˜ë©´ í•œ ì ì— ë­‰ì³ ìˆë‹¤ê°€ 0.2ì´ˆ ë’¤ì— íŒ í¼ì§€ëŠ”ë°, ë³´ê¸°ì— ì•ˆ ì¢‹ì„ ìˆ˜ ìˆìŒ.
     int32 Index = 0;
     for (int32 X = 0; X < GridSize; X++)
     {
@@ -67,19 +67,19 @@ void ADEInfiniteMapManager::BeginPlay()
         {
             if (MapSections.IsValidIndex(Index))
             {
-                // (X, Y) ÀÎµ¦½º¸¦ ¿ùµå ÁÂÇ¥·Î º¯È¯ (Áß½É ±âÁØ)
+                // (X, Y) ì¸ë±ìŠ¤ë¥¼ ì›”ë“œ ì¢Œí‘œë¡œ ë³€í™˜ (ì¤‘ì‹¬ ê¸°ì¤€)
                 float PosX = (X - HalfSize) * TileSize;
                 float PosY = (Y - HalfSize) * TileSize;
 
-                // ÇÃ·¹ÀÌ¾î ÃÊ±â À§Ä¡°¡ ÀÖ´Ù¸é ±× ÁÖº¯¿¡ »ı¼ºÇÏ´Â °Ô ÁÁÀ½
-                // (¿©±â¼­´Â ±×³É ¿ùµå ¿øÁ¡ ±âÁØ ¹èÄ¡)
+                // í”Œë ˆì´ì–´ ì´ˆê¸° ìœ„ì¹˜ê°€ ìˆë‹¤ë©´ ê·¸ ì£¼ë³€ì— ìƒì„±í•˜ëŠ” ê²Œ ì¢‹ìŒ
+                // (ì—¬ê¸°ì„œëŠ” ê·¸ëƒ¥ ì›”ë“œ ì›ì  ê¸°ì¤€ ë°°ì¹˜)
                 MapSections[Index]->SetActorLocation(FVector(PosX, PosY, 0.0f));
                 Index++;
             }
         }
     }
 
-    // 3. Å¸ÀÌ¸Ó ½ÃÀÛ (0.2ÃÊ¸¶´Ù °Ë»ç)
+    // 3. íƒ€ì´ë¨¸ ì‹œì‘ (0.2ì´ˆë§ˆë‹¤ ê²€ì‚¬)
     GetWorld()->GetTimerManager().SetTimer(
         MapUpdateTimerHandle,
         this,
@@ -103,9 +103,9 @@ void ADEInfiniteMapManager::UpdateMapSections()
 
     FVector PlayerLocation = Player->GetActorLocation();
 
-    // [Áß¿ä] ÀüÃ¼ ¸ÊÀÇ ³Êºñ/³ôÀÌ °è»ê
-    // 3x3ÀÌ°í Å¸ÀÏÀÌ 2000ÀÌ¸é, ÀüÃ¼ Ä¿¹ö ¹üÀ§´Â 6000ÀÌ ¾Æ´Ô.
-    // Å¸ÀÏÀÌ Á¡ÇÁÇØ¾ß ÇÒ °Å¸®´Â 'TileSize * GridSize' ÀÔ´Ï´Ù.
+    // [ì¤‘ìš”] ì „ì²´ ë§µì˜ ë„ˆë¹„/ë†’ì´ ê³„ì‚°
+    // 3x3ì´ê³  íƒ€ì¼ì´ 2000ì´ë©´, ì „ì²´ ì»¤ë²„ ë²”ìœ„ëŠ” 6000ì´ ì•„ë‹˜.
+    // íƒ€ì¼ì´ ì í”„í•´ì•¼ í•  ê±°ë¦¬ëŠ” 'TileSize * GridSize' ì…ë‹ˆë‹¤.
     float MapTotalWidth = TileSize * GridSize;
     float HalfTotalWidth = MapTotalWidth * 0.5f;
 
@@ -116,10 +116,10 @@ void ADEInfiniteMapManager::UpdateMapSections()
         FVector SectLocation = Section->GetActorLocation();
         FVector NewLocation = SectLocation;
 
-        // °ø½Ä ÀÏ¹İÈ­: ÇÃ·¹ÀÌ¾î¿Í Å¸ÀÏÀÇ °Å¸®°¡ 'ÀüÃ¼ ÆøÀÇ Àı¹İ'º¸´Ù ¸Ö¾îÁö¸é
-        // ¹İ´ëÆíÀ¸·Î 'ÀüÃ¼ Æø(MapTotalWidth)'¸¸Å­ ¼ø°£ÀÌµ¿ ½ÃÅ²´Ù.
+        // ê³µì‹ ì¼ë°˜í™”: í”Œë ˆì´ì–´ì™€ íƒ€ì¼ì˜ ê±°ë¦¬ê°€ 'ì „ì²´ í­ì˜ ì ˆë°˜'ë³´ë‹¤ ë©€ì–´ì§€ë©´
+        // ë°˜ëŒ€í¸ìœ¼ë¡œ 'ì „ì²´ í­(MapTotalWidth)'ë§Œí¼ ìˆœê°„ì´ë™ ì‹œí‚¨ë‹¤.
 
-        // XÃà (À§/¾Æ·¡)
+        // Xì¶• (ìœ„/ì•„ë˜)
         if (PlayerLocation.X - SectLocation.X > HalfTotalWidth)
         {
             NewLocation.X += MapTotalWidth;
@@ -129,7 +129,7 @@ void ADEInfiniteMapManager::UpdateMapSections()
             NewLocation.X -= MapTotalWidth;
         }
 
-        // YÃà (ÁÂ/¿ì)
+        // Yì¶• (ì¢Œ/ìš°)
         if (PlayerLocation.Y - SectLocation.Y > HalfTotalWidth)
         {
             NewLocation.Y += MapTotalWidth;

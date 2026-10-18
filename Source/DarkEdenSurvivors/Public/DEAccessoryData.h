@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -42,8 +42,8 @@ public:
    /* UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Effects")
     TArray<FEffectData> Effects;*/
 
-    //  ±¸¹öÀü: TArray<FEffectData> Effects; (»èÁ¦!)
-    //  ½Å¹öÀü: ¾î¶² ÀÌÆåÆ®(Å¬·¡½º)µéÀ» °¡Áö°í ÀÖ´ÂÁö Å¬·¡½º Á¤º¸¸¸ ÀúÀå!
+    //  êµ¬ë²„ì „: TArray<FEffectData> Effects; (ì‚­ì œ!)
+    //  ì‹ ë²„ì „: ì–´ë–¤ ì´í™íŠ¸(í´ë˜ìŠ¤)ë“¤ì„ ê°€ì§€ê³  ìˆëŠ”ì§€ í´ë˜ìŠ¤ ì •ë³´ë§Œ ì €ì¥!
     UPROPERTY(EditAnywhere, Instanced, Category = "Effects")
     TArray<UDECombatEffect*> AccessoryEffects;
 
@@ -58,11 +58,11 @@ struct FDEAccessoryRow : public FTableRowBase
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     int32 ID = 0;
 
-    // ¾î¶² ¾Ç¼¼¼­¸®ÀÎ°¡? (À§¿¡¼­ ¸¸µç µ¥ÀÌÅÍ ¿¡¼ÂÀ» ½ï ³ÖÀ½)
+    // ì–´ë–¤ ì•…ì„¸ì„œë¦¬ì¸ê°€? (ìœ„ì—ì„œ ë§Œë“  ë°ì´í„° ì—ì…‹ì„ ì™ ë„£ìŒ)
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     UDEAccessoryData* AccessoryData = nullptr;
 
-    // µîÀå È®·ü °¡ÁßÄ¡ (±âº» 100. Àü¼³ÅÛÀº 10~20À¸·Î ³·Ãß¸é µÊ!)
+    // ë“±ì¥ í™•ë¥  ê°€ì¤‘ì¹˜ (ê¸°ë³¸ 100. ì „ì„¤í…œì€ 10~20ìœ¼ë¡œ ë‚®ì¶”ë©´ ë¨!)
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     float DropWeight = 100.0f;
 };

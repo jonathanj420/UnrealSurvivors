@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -15,10 +15,10 @@ class DARKEDENSURVIVORS_API UDEGameHUDWidget : public UUserWidget
 	GENERATED_BODY()
 	
 public:
-	// Ä³¸¯ÅÍ¿Í ¿¬°áÇØ¼­ µ¨¸®°ÔÀÌÆ® ±¸µ¶ÇÏ´Â ÇÔ¼ö
+	// ìºë¦­í„°ì™€ ì—°ê²°í•´ì„œ ë¸ë¦¬ê²Œì´íŠ¸ êµ¬ë…í•˜ëŠ” í•¨ìˆ˜
 	void BindCharacterStat(class ADECharacterBase* Character);
 
-	// °ªÀ» °»½ÅÇÏ´Â ÇÔ¼ö
+	// ê°’ì„ ê°±ì‹ í•˜ëŠ” í•¨ìˆ˜
 	void UpdateHP(float CurrentHP, float MaxHP);
 	void UpdateExp(float CurrentExp, float MaxExp);
 	void UpdateTime(float TimeSeconds);
@@ -29,16 +29,16 @@ protected:
 	//virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	int32 LastSeconds = -1;
 
-	// ¾Ë¶÷½Ã°è ¼ÕÀâÀÌ
+	// ì•ŒëŒì‹œê³„ ì†ì¡ì´
 	FTimerHandle TimeUpdateTimerHandle;
 
-	// Å¸ÀÌ¸Ó°¡ 1ÃÊ¸¶´Ù ºÎ¸¦ ÇÔ¼ö
+	// íƒ€ì´ë¨¸ê°€ 1ì´ˆë§ˆë‹¤ ë¶€ë¥¼ í•¨ìˆ˜
 	UFUNCTION()
 	void UpdateTimeTick();
 
 protected:
-	// --- [1. ¿¡µğÅÍ ¹ÙÀÎµù] ---
-	// ÀÌ¸§ ²À ¸ÂÃç¾ß ÇÕ´Ï´Ù!
+	// --- [1. ì—ë””í„° ë°”ì¸ë”©] ---
+	// ì´ë¦„ ê¼­ ë§ì¶°ì•¼ í•©ë‹ˆë‹¤!
 	UPROPERTY(meta = (BindWidget))
 	class UProgressBar* PB_HP;  // hp
 

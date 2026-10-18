@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEAutoSkillBase.h"
@@ -60,7 +60,7 @@ void UDEAutoSkillBase::ExecuteWithContext(FDESkillContext& Context)
 
 
 
-    // ±âº» ¿ªÇÒ: Behaviorµé ½ÇÇà
+    // ê¸°ë³¸ ì—­í• : Behaviorë“¤ ì‹¤í–‰
   /*  for (UDESkillBehavior* Behavior : Behaviors)
     {
         if (Behavior) Behavior->Execute(Context);
@@ -86,13 +86,13 @@ void UDEAutoSkillBase::InitBehaviors()
 
 void UDEAutoSkillBase::BuildContext(FDESkillContext& OutContext)
 {
-    // 1. ÇÊ¼ö ÂüÁ¶ ¿¬°á
+    // 1. í•„ìˆ˜ ì°¸ì¡° ì—°ê²°
     OutContext.Instigator = SkillOwner;
     OutContext.SourceSkill = this;
-    // µ¥ÀÌÅÍ°¡ ¾øÀ¸¸é Áß´Ü
+    // ë°ì´í„°ê°€ ì—†ìœ¼ë©´ ì¤‘ë‹¨
     if (!SkillData) return;
 
-    //// 2. ÄÄÆ÷³ÍÆ® °¡Á®¿À±â (Ä³½Ì)
+    //// 2. ì»´í¬ë„ŒíŠ¸ ê°€ì ¸ì˜¤ê¸° (ìºì‹±)
     //UDECombatComponent* Combat = nullptr;
     //if (SkillOwner)
     //{
@@ -100,7 +100,7 @@ void UDEAutoSkillBase::BuildContext(FDESkillContext& OutContext)
     //}
 
     // =========================================================
-    // [3. ÃÊ±â°ª ¼³Á¤: µ¥ÀÌÅÍÅ×ÀÌºí(Raw Data)]
+    // [3. ì´ˆê¸°ê°’ ì„¤ì •: ë°ì´í„°í…Œì´ë¸”(Raw Data)]
     // =========================================================
     float FinalDamage = SkillData->Damage;
     int32 FinalAmount = SkillData->Amount;
@@ -110,73 +110,73 @@ void UDEAutoSkillBase::BuildContext(FDESkillContext& OutContext)
     float FinalKnockback = SkillData->KnockbackForce;
     int32 FinalPenetration = SkillData->Penetration;
 
-    // Ä¡¸íÅ¸ °ü·Ã (±âº»°ª ¼³Á¤)
+    // ì¹˜ëª…íƒ€ ê´€ë ¨ (ê¸°ë³¸ê°’ ì„¤ì •)
     float FinalCritChance = SkillData->CritChance;
-    float FinalCritDmgMultiplier = 2.0f; // ¾ÈÀüÀåÄ¡: ÄÄÆ÷³ÍÆ® ¾øÀ» ¶§ÀÇ ±âº» ¹èÀ²
+    float FinalCritDmgMultiplier = 2.0f; // ì•ˆì „ì¥ì¹˜: ì»´í¬ë„ŒíŠ¸ ì—†ì„ ë•Œì˜ ê¸°ë³¸ ë°°ìœ¨
 
     // =========================================================
-    // [4. ÄÄÆ÷³ÍÆ® º¸Á¤°ª Àû¿ë (Modifiers via Snapshot)]
+    // [4. ì»´í¬ë„ŒíŠ¸ ë³´ì •ê°’ ì ìš© (Modifiers via Snapshot)]
     // =========================================================
     if (CachedCombatComp)
     {
-        // ¡Ú ÇÙ½É: CombatComponent¿¡¼­ Á¤Á¦µÈ ½º³À¼¦À» °¡Á®¿É´Ï´Ù.
-        // (ÄğÅ¸ÀÓ Ä¸, ¼Ò¼öÁ¡ Ã³¸® µîÀÌ ÀÌ¹Ì ¿Ï·áµÈ »óÅÂ)
+        // â˜… í•µì‹¬: CombatComponentì—ì„œ ì •ì œëœ ìŠ¤ëƒ…ìƒ·ì„ ê°€ì ¸ì˜µë‹ˆë‹¤.
+        // (ì¿¨íƒ€ì„ ìº¡, ì†Œìˆ˜ì  ì²˜ë¦¬ ë“±ì´ ì´ë¯¸ ì™„ë£Œëœ ìƒíƒœ)
         FCombatSnapshot PlayerStat = CachedCombatComp->GetCombatSnapshot();
         OutContext.FinalSnapshot = PlayerStat;
-        // 1. µ¥¹ÌÁö °ø½Ä: (±âº»µ©) * µ¥¹ÌÁö¹èÀ²
-        // ¡Ø ÃßÈÄ '°íÁ¤ °ø°İ·Â(Atk)'ÀÌ »ı±ä´Ù¸é: (FinalDamage + PlayerStat.AttackPower) * PlayerStat.FinalDamageMultiplier;
+        // 1. ë°ë¯¸ì§€ ê³µì‹: (ê¸°ë³¸ë€) * ë°ë¯¸ì§€ë°°ìœ¨
+        // â€» ì¶”í›„ 'ê³ ì • ê³µê²©ë ¥(Atk)'ì´ ìƒê¸´ë‹¤ë©´: (FinalDamage + PlayerStat.AttackPower) * PlayerStat.FinalDamageMultiplier;
         FinalDamage = FinalDamage * PlayerStat.FinalDamageMultiplier;
 
-        // 2. Åõ»çÃ¼ °³¼ö: ±âº» + º¸³Ê½º °³¼ö
+        // 2. íˆ¬ì‚¬ì²´ ê°œìˆ˜: ê¸°ë³¸ + ë³´ë„ˆìŠ¤ ê°œìˆ˜
         FinalAmount += PlayerStat.BonusAmount;
 
-        // 3. À¯Æ¿¸®Æ¼ ½ºÅÈ (¼Óµµ, Áö¼Ó½Ã°£, ¹üÀ§ µî): ±âº» * ¹èÀ²
+        // 3. ìœ í‹¸ë¦¬í‹° ìŠ¤íƒ¯ (ì†ë„, ì§€ì†ì‹œê°„, ë²”ìœ„ ë“±): ê¸°ë³¸ * ë°°ìœ¨
         FinalSpeed *= PlayerStat.ProjectileSpeedMultiplier;
         FinalDuration *= PlayerStat.DurationMultiplier;
         FinalRadius *= PlayerStat.EffectSizeMultiplier;
 
-        // (Âü°í: ³Ë¹éÀÌ³ª °üÅëµµ ÇÊ¿äÇÏ´Ù¸é ¿©±â¼­ PlayerStatÀ» ÀÌ¿ëÇØ º¸Á¤ °¡´É)
+        // (ì°¸ê³ : ë„‰ë°±ì´ë‚˜ ê´€í†µë„ í•„ìš”í•˜ë‹¤ë©´ ì—¬ê¸°ì„œ PlayerStatì„ ì´ìš©í•´ ë³´ì • ê°€ëŠ¥)
         //so i did
         FinalKnockback *= PlayerStat.KnockbackMultiplier;
 
-        // 4. Ä¡¸íÅ¸ ·ÎÁ÷ (AAA ½ºÅ¸ÀÏ ÇÕ»ê ¹æ½Ä)
-        // -1.0f´Â "Ä¡¸íÅ¸ Àı´ë ¹ßµ¿ ¾È ÇÔ"À» ÀÇ¹Ì (µµÆ®µô, ÀåÆÇ µî)
+        // 4. ì¹˜ëª…íƒ€ ë¡œì§ (AAA ìŠ¤íƒ€ì¼ í•©ì‚° ë°©ì‹)
+        // -1.0fëŠ” "ì¹˜ëª…íƒ€ ì ˆëŒ€ ë°œë™ ì•ˆ í•¨"ì„ ì˜ë¯¸ (ë„íŠ¸ë”œ, ì¥íŒ ë“±)
         if (FinalCritChance >= 0.0f)
         {
-            // [A] È®·ü: ´Ü¼ø ÇÕ¿¬»ê (5% + 10% = 15%)
+            // [A] í™•ë¥ : ë‹¨ìˆœ í•©ì—°ì‚° (5% + 10% = 15%)
             FinalCritChance += PlayerStat.CritChance;
 
-            // [B] µ¥¹ÌÁö ¹èÀ²: "¾ÆÀÌÅÛ º¸³Ê½º¸¸ ÃßÃâÇØ¼­ ÇÕ»ê"
-            // °ø½Ä: ½ºÅ³°íÀ¯¹èÀ² + (ÇÃ·¹ÀÌ¾îÇöÀç - ÇÃ·¹ÀÌ¾î±âº»(2.0))
+            // [B] ë°ë¯¸ì§€ ë°°ìœ¨: "ì•„ì´í…œ ë³´ë„ˆìŠ¤ë§Œ ì¶”ì¶œí•´ì„œ í•©ì‚°"
+            // ê³µì‹: ìŠ¤í‚¬ê³ ìœ ë°°ìœ¨ + (í”Œë ˆì´ì–´í˜„ì¬ - í”Œë ˆì´ì–´ê¸°ë³¸(2.0))
 
-            // µ¥ÀÌÅÍÅ×ÀÌºí¿¡ ¼³Á¤µÈ ½ºÅ³ °íÀ¯ ¹èÀ² (¿¹: Àú°İ = 5.0)
-            float SkillBaseCrit = SkillData->CritDamageMultiplier; // FDESkillData¿¡ ÀÌ º¯¼ö°¡ ÀÖ¾î¾ß ÇÔ
+            // ë°ì´í„°í…Œì´ë¸”ì— ì„¤ì •ëœ ìŠ¤í‚¬ ê³ ìœ  ë°°ìœ¨ (ì˜ˆ: ì €ê²© = 5.0)
+            float SkillBaseCrit = SkillData->CritDamageMultiplier; // FDESkillDataì— ì´ ë³€ìˆ˜ê°€ ìˆì–´ì•¼ í•¨
 
             if (SkillBaseCrit > 0.0f)
             {
-                // Æ¯¼ö ½ºÅ³(Àú°İ µî): ½ºÅ³ ¹èÀ²(5.0) + ¾ÆÀÌÅÛ¼ºÀåÄ¡(0.8) = 5.8
-                // 2.0f´Â ½Ã½ºÅÛ ±âº» Ä¡¸íÅ¸ ¹èÀ²
+                // íŠ¹ìˆ˜ ìŠ¤í‚¬(ì €ê²© ë“±): ìŠ¤í‚¬ ë°°ìœ¨(5.0) + ì•„ì´í…œì„±ì¥ì¹˜(0.8) = 5.8
+                // 2.0fëŠ” ì‹œìŠ¤í…œ ê¸°ë³¸ ì¹˜ëª…íƒ€ ë°°ìœ¨
                 FinalCritDmgMultiplier = SkillBaseCrit + (PlayerStat.CritDamageMultiplier - 2.0f);
             }
             else
             {
-                // ÀÏ¹İ ½ºÅ³: ±×³É ÇÃ·¹ÀÌ¾î ½ºÅÈÀ» ±×´ë·Î »ç¿ë (¿¹: 2.8)
+                // ì¼ë°˜ ìŠ¤í‚¬: ê·¸ëƒ¥ í”Œë ˆì´ì–´ ìŠ¤íƒ¯ì„ ê·¸ëŒ€ë¡œ ì‚¬ìš© (ì˜ˆ: 2.8)
                 FinalCritDmgMultiplier = PlayerStat.CritDamageMultiplier;
             }
         }
         else
         {
-            // Ä¡¸íÅ¸ ºÒ°¡ ½ºÅ³
+            // ì¹˜ëª…íƒ€ ë¶ˆê°€ ìŠ¤í‚¬
             FinalCritChance = 0.0f;
-            FinalCritDmgMultiplier = 1.0f; // ¹èÀ² 1.0 (³ëÅ©¸®)
+            FinalCritDmgMultiplier = 1.0f; // ë°°ìœ¨ 1.0 (ë…¸í¬ë¦¬)
         }
     }
 
     // =========================================================
-    // [5. ÃÖÁ¾ °á°ú ÀúÀå (Final Snapshot)]
+    // [5. ìµœì¢… ê²°ê³¼ ì €ì¥ (Final Snapshot)]
     // =========================================================
 
-    // ÀÌÁ¦ Context¿¡´Â "¸ğµç °è»êÀÌ ³¡³­ ÃÖÁ¾°ª"ÀÌ µé¾î°©´Ï´Ù.
+    // ì´ì œ Contextì—ëŠ” "ëª¨ë“  ê³„ì‚°ì´ ëë‚œ ìµœì¢…ê°’"ì´ ë“¤ì–´ê°‘ë‹ˆë‹¤.
     OutContext.Damage = FinalDamage;
     OutContext.Amount = FinalAmount;
     OutContext.Penetration = FinalPenetration;
@@ -185,12 +185,12 @@ void UDEAutoSkillBase::BuildContext(FDESkillContext& OutContext)
     OutContext.Radius = FinalRadius;
     OutContext.Duration = FinalDuration;
 
-    // [Áß¿ä] Ä¡¸íÅ¸ Á¤º¸ ½º³À¼¦
+    // [ì¤‘ìš”] ì¹˜ëª…íƒ€ ì •ë³´ ìŠ¤ëƒ…ìƒ·
     OutContext.CritChance = FinalCritChance;
     OutContext.CritDamageMultiplier = FinalCritDmgMultiplier;
     
-    // 6. ¸Ê µ¥ÀÌÅÍ(¿É¼Ç) ÅëÂ°·Î º¹»ç
-    // (Æ¯¼ö ±â¹ÍÀ» À§ÇÑ Ä¿½ºÅÒ µ¥ÀÌÅÍ)
+    // 6. ë§µ ë°ì´í„°(ì˜µì…˜) í†µì§¸ë¡œ ë³µì‚¬
+    // (íŠ¹ìˆ˜ ê¸°ë¯¹ì„ ìœ„í•œ ì»¤ìŠ¤í…€ ë°ì´í„°)
     OutContext.CustomValues = SkillData->OptionValues;
 }
 
@@ -199,14 +199,14 @@ void UDEAutoSkillBase::FinishSkill()
 {
    // CurrentBehaviorIndex = 0;
 
-    bIsRunning = false; // ¸Å´ÏÀúÇÑÅ× "ÄğÅ¸ÀÓ µ¹·Á¶ó!" ¶ó°í Çã¶ôÇÔ
+    bIsRunning = false; // ë§¤ë‹ˆì €í•œí…Œ "ì¿¨íƒ€ì„ ëŒë ¤ë¼!" ë¼ê³  í—ˆë½í•¨
 
-    EndSkill(); // ±âÁ¸ AOE, ÀÌÆåÆ® Ç®¸µ Á¤¸® ÇÔ¼ö ÀçÈ°¿ë
+    EndSkill(); // ê¸°ì¡´ AOE, ì´í™íŠ¸ í’€ë§ ì •ë¦¬ í•¨ìˆ˜ ì¬í™œìš©
 }
 
 void UDEAutoSkillBase::EndSkill()
 {
-    //// AOE Á¤¸®
+    //// AOE ì •ë¦¬
     //for (auto& Pair : OwnedSkillActorMap)
     //{
     //    if (Pair.Value.IsValid())
@@ -229,13 +229,13 @@ void UDEAutoSkillBase::OnTargetKilled(const FDEDamageResult& Result)
 
 int32 UDEAutoSkillBase::GetBaseAmount() const
 {
-    // ½ºÅ³ µ¥ÀÌÅÍ°¡ Ä³½ÌµÇ¾î ÀÖ´Ù¸é ±× °ªÀ» ±×´ë·Î µ¹·ÁÁÜ
+    // ìŠ¤í‚¬ ë°ì´í„°ê°€ ìºì‹±ë˜ì–´ ìˆë‹¤ë©´ ê·¸ ê°’ì„ ê·¸ëŒ€ë¡œ ëŒë ¤ì¤Œ
     if (SkillData)
     {
         return SkillData->Amount;
     }
 
-    // µ¥ÀÌÅÍ°¡ ¼¼ÆÃµÇÁö ¾Ê¾ÒÀ» °æ¿ìÀÇ ¾ÈÀüÀåÄ¡
+    // ë°ì´í„°ê°€ ì„¸íŒ…ë˜ì§€ ì•Šì•˜ì„ ê²½ìš°ì˜ ì•ˆì „ì¥ì¹˜
     return 1;
 }
 
@@ -279,22 +279,22 @@ void UDEAutoSkillBase::ExecutePipeline()
                     false
                 );
             }
-            return; // ¡Ú ·çÇÁ °­Á¦ Å»Ãâ (¸Å¿ì Áß¿ä)
+            return; // â˜… ë£¨í”„ ê°•ì œ íƒˆì¶œ (ë§¤ìš° ì¤‘ìš”)
         }
     }
 
-    // (Âü°í) while ¹®À» ¸ğµÎ Åë°úÇß´Ù = ¹è¿­ ³¡±îÁö ´Ù µ¹¾Ò´Ù.
-    // ¸¸¾à ÆÄÀÌÇÁ¶óÀÎÀÌ ³¡³ª´Â ½ÃÁ¡¿¡ ½ºÅ³À» ¿ÏÀü Á¾·áÇÏ°í ½Í´Ù¸é ¿©±â¼­ Ã³¸®ÇÒ ¼ö ÀÖ½À´Ï´Ù.
-    // ÇÏÁö¸¸ ÇöÀç À¯ÀúºĞ ±¸Á¶´Â Activate()ÀÇ ExecutionType Å¸ÀÌ¸Ó°¡ FinishSkillÀ» ºÎ¸£¹Ç·Î »ı·«ÇØµµ ¹«¹æÇÕ´Ï´Ù.
+    // (ì°¸ê³ ) while ë¬¸ì„ ëª¨ë‘ í†µê³¼í–ˆë‹¤ = ë°°ì—´ ëê¹Œì§€ ë‹¤ ëŒì•˜ë‹¤.
+    // ë§Œì•½ íŒŒì´í”„ë¼ì¸ì´ ëë‚˜ëŠ” ì‹œì ì— ìŠ¤í‚¬ì„ ì™„ì „ ì¢…ë£Œí•˜ê³  ì‹¶ë‹¤ë©´ ì—¬ê¸°ì„œ ì²˜ë¦¬í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
+    // í•˜ì§€ë§Œ í˜„ì¬ ìœ ì €ë¶„ êµ¬ì¡°ëŠ” Activate()ì˜ ExecutionType íƒ€ì´ë¨¸ê°€ FinishSkillì„ ë¶€ë¥´ë¯€ë¡œ ìƒëµí•´ë„ ë¬´ë°©í•©ë‹ˆë‹¤.
 }
 
 void UDEAutoSkillBase::CancelSkill()
 {
-    // ¡Ú Çã°ø¿¡ ½ºÅ³ ³ª°¡´Â 'À¯·É ½ºÅ³' ¹ö±× ¿Ïº® Â÷´Ü
+    // â˜… í—ˆê³µì— ìŠ¤í‚¬ ë‚˜ê°€ëŠ” 'ìœ ë ¹ ìŠ¤í‚¬' ë²„ê·¸ ì™„ë²½ ì°¨ë‹¨
     if (SkillOwner)
     {
         SkillOwner->GetWorldTimerManager().ClearTimer(PipelineTimerHandle);
-        SkillOwner->GetWorldTimerManager().ClearTimer(DurationTimerHandle); // È¤½Ã ¸ğ¸¦ Áö¼Ó½Ã°£ Å¸ÀÌ¸Óµµ ÇØÁ¦
+        SkillOwner->GetWorldTimerManager().ClearTimer(DurationTimerHandle); // í˜¹ì‹œ ëª¨ë¥¼ ì§€ì†ì‹œê°„ íƒ€ì´ë¨¸ë„ í•´ì œ
     }
 
     CurrentBehaviorIndex = 0;
@@ -307,5 +307,5 @@ void UDEAutoSkillBase::CancelSkill()
     }
     OwnedSkillActorMap.Reset(); // this for player death maybe
 
-    EndSkill(); // ½ºÆùµÈ ÀÌÆåÆ®³ª ÀåÆÇ Ä¡¿ì±â
+    EndSkill(); // ìŠ¤í°ëœ ì´í™íŠ¸ë‚˜ ì¥íŒ ì¹˜ìš°ê¸°
 }

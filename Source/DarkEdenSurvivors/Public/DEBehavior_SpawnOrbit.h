@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -13,10 +13,10 @@ UCLASS()
 class DARKEDENSURVIVORS_API UDEBehavior_SpawnOrbit : public UDESkillBehavior
 {
 	/**
- * ¼º¼­Çü(Orbit) AOE¸¦ ¿©·¯ °³ ½ºÆùÇÏ´Â Àü¿ë Behavior
- * - Prepare ´Ü°è ¾øÀ½
- * - AOERequests »ç¿ë ¾È ÇÔ
- * - Skill¿¡¼­ OrbitAOEClass Á÷Á¢ ÁÖÀÔ
+ * ì„±ì„œí˜•(Orbit) AOEë¥¼ ì—¬ëŸ¬ ê°œ ìŠ¤í°í•˜ëŠ” ì „ìš© Behavior
+ * - Prepare ë‹¨ê³„ ì—†ìŒ
+ * - AOERequests ì‚¬ìš© ì•ˆ í•¨
+ * - Skillì—ì„œ OrbitAOEClass ì§ì ‘ ì£¼ì…
  */
 	GENERATED_BODY()
 
@@ -24,7 +24,7 @@ public:
 	virtual void Execute(FDESkillContext& Context) override;
 
 public:
-	/** ½ºÆùÇÒ Orbit AOE Å¬·¡½º (Danse Macabre, Skull µî) */
+	/** ìŠ¤í°í•  Orbit AOE í´ë˜ìŠ¤ (Danse Macabre, Skull ë“±) */
 	UPROPERTY(EditDefaultsOnly, Category = "Orbit")
 	TSubclassOf<class ADEAOE_OrbitBase> OrbitAOEClass;
 };

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEPickup_Chest.h"
@@ -9,30 +9,30 @@
 
 ADEPickup_Chest::ADEPickup_Chest()
 {
-    // 1. »óÀÚ´Â ¹«°Å¿ö¼­ ÀÚ¼®¿¡ ¾È ²ø·Á°©´Ï´Ù!
+    // 1. ìƒìëŠ” ë¬´ê±°ì›Œì„œ ìì„ì— ì•ˆ ëŒë ¤ê°‘ë‹ˆë‹¤!
     bCanBeMagnetized = false;
 
-    // (¼±ÅÃ) »óÀÚ´Â µ¢Ä¡°¡ Å©´Ï±î °æÇèÄ¡ ±¸½½º¸´Ù ¸Ô´Â ¹üÀ§¸¦ ³Ë³ËÇÏ°Ô Áİ´Ï´Ù.
+    // (ì„ íƒ) ìƒìëŠ” ë©ì¹˜ê°€ í¬ë‹ˆê¹Œ ê²½í—˜ì¹˜ êµ¬ìŠ¬ë³´ë‹¤ ë¨¹ëŠ” ë²”ìœ„ë¥¼ ë„‰ë„‰í•˜ê²Œ ì¤ë‹ˆë‹¤.
     SetTriggerRadius(40.0f);
 
 }
 
 void ADEPickup_Chest::ApplyEffect(AActor* TargetActor)
 {
-    // 1. ±âº» ÇÈ¾÷ ÀÌÆåÆ®(¼Ò¸®, ÆÄÆ¼Å¬ µî) ½ÇÇà
+    // 1. ê¸°ë³¸ í”½ì—… ì´í™íŠ¸(ì†Œë¦¬, íŒŒí‹°í´ ë“±) ì‹¤í–‰
     //Super::ApplyEffect(TargetActor);
 
-    // 2. ÇÃ·¹ÀÌ¾îÀÇ ·¹º§¾÷ ¸Å´ÏÀú °¡Á®¿À±â
+    // 2. í”Œë ˆì´ì–´ì˜ ë ˆë²¨ì—… ë§¤ë‹ˆì € ê°€ì ¸ì˜¤ê¸°
     UDELevelUpManagerComponent* LevelUpMgr = TargetActor->FindComponentByClass<UDELevelUpManagerComponent>();
     if (!LevelUpMgr) return;
 
-    // 3. (ÀÓ½Ã) Çà¿î ½ºÅÈ. ³ªÁß¿¡ TargetActor¿¡¼­ Á¦´ë·Î °¡Á®¿À±â
+    // 3. (ì„ì‹œ) í–‰ìš´ ìŠ¤íƒ¯. ë‚˜ì¤‘ì— TargetActorì—ì„œ ì œëŒ€ë¡œ ê°€ì ¸ì˜¤ê¸°
     float PlayerLuck = 0.0f;
 
-    // 4. ³×°¡ Â§ ÀèÆÌ ·ê·¿ µ¹·Á¼­ º¸»ó ¸ñ·Ï(1, 3, 5°³) »Ì¾Æ¿À±â!
+    // 4. ë„¤ê°€ ì§  ì­íŒŸ ë£°ë › ëŒë ¤ì„œ ë³´ìƒ ëª©ë¡(1, 3, 5ê°œ) ë½‘ì•„ì˜¤ê¸°!
     TArray<UDELevelUpChoiceBase*> ChestRewards = LevelUpMgr->GenerateChestRewards(PlayerLuck);
 
-    // 5. °ÔÀÓ ½Ã°£ Áï½Ã ¸ØÃç! (Å¸ÀÌ¸Óµéµµ ´Ù °°ÀÌ ¸ØÃã)
+    // 5. ê²Œì„ ì‹œê°„ ì¦‰ì‹œ ë©ˆì¶°! (íƒ€ì´ë¨¸ë“¤ë„ ë‹¤ ê°™ì´ ë©ˆì¶¤)
     ADEPlayerController* PC = Cast<ADEPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
     if (PC)
     {

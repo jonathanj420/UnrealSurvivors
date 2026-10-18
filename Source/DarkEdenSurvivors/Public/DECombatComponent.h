@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -30,12 +30,12 @@ protected:
 public:
 
 	// =========================================================
-	// [2] ÇÙ½É ±â´É (API)
+	// [2] í•µì‹¬ ê¸°ëŠ¥ (API)
 	// =========================================================
 
 	/**
-	 * ÇöÀç ÇÃ·¹ÀÌ¾îÀÇ ÀüÅõ ´É·ÂÀ» Ä¸Ã³ÇØ¼­ ¹İÈ¯ÇÕ´Ï´Ù.
-	 * ½ºÅ³ ¹ßµ¿ ½Ã(BuildContext) µü ÇÑ ¹ø È£ÃâµË´Ï´Ù.
+	 * í˜„ì¬ í”Œë ˆì´ì–´ì˜ ì „íˆ¬ ëŠ¥ë ¥ì„ ìº¡ì²˜í•´ì„œ ë°˜í™˜í•©ë‹ˆë‹¤.
+	 * ìŠ¤í‚¬ ë°œë™ ì‹œ(BuildContext) ë”± í•œ ë²ˆ í˜¸ì¶œë©ë‹ˆë‹¤.
 	 */
 	UFUNCTION(BlueprintCallable, Category = "Combat")
 	FCombatSnapshot GetCombatSnapshot() const;
@@ -45,15 +45,15 @@ public:
 	float GetTotalDamageDealt() const { return TotalDamageDealt; }
 
 protected:
-	//// ³»ºÎ ·ÎÁ÷ ºĞ¸® (protected³ª private ±ÇÀå)
+	//// ë‚´ë¶€ ë¡œì§ ë¶„ë¦¬ (protectedë‚˜ private ê¶Œì¥)
 
-	//// »ı¸í·Â Èí¼ö Ã³¸®
+	//// ìƒëª…ë ¥ í¡ìˆ˜ ì²˜ë¦¬
 	//void ProcessLifeSteal(const FCombatSnapshot& Snapshot);
 
-	//// Ã³Ä¡ ½Ã È¿°ú Ã³¸® (Å³ Ä«¿îÆ®, Äğ°¨, Æø¹ß µî)
+	//// ì²˜ì¹˜ ì‹œ íš¨ê³¼ ì²˜ë¦¬ (í‚¬ ì¹´ìš´íŠ¸, ì¿¨ê°, í­ë°œ ë“±)
 	//void ProcessOnKillEffect(AActor* Victim);
 
-	// ÄÄÆ÷³ÍÆ® Ä³½Ì (¸Å¹ø FindComponent ¾È ÇÏ·Á°í)
+	// ì»´í¬ë„ŒíŠ¸ ìºì‹± (ë§¤ë²ˆ FindComponent ì•ˆ í•˜ë ¤ê³ )
 	UPROPERTY()
 	UDEStatComponent* CachedStatComp;
 
@@ -65,20 +65,20 @@ protected:
 	float TotalDamageDealt = 0.f;
 
 protected:
-	// ¡Ú ÅëÇÕ ·¹°í ¹Ù±¸´Ï (Instanced ÇÊ¼ö)
+	// â˜… í†µí•© ë ˆê³  ë°”êµ¬ë‹ˆ (Instanced í•„ìˆ˜)
 	UPROPERTY(EditAnywhere, Instanced, Category = "Combat Effects")
 	TArray<UDECombatEffect*> ActiveCombatEffects;
 
 public:
-	// ¡Ú È¿°ú Ãß°¡/Á¦°Å¿ë ÇÔ¼ö (C++ ·±Å¸ÀÓ Àû¿ë¿ë)
+	// â˜… íš¨ê³¼ ì¶”ê°€/ì œê±°ìš© í•¨ìˆ˜ (C++ ëŸ°íƒ€ì„ ì ìš©ìš©)
 	UFUNCTION(BlueprintCallable, Category = "Combat")
 	void AddCombatEffect(UDECombatEffect* TemplateEffect);
 
-	// ¡Ú µ¿³×¹æ³× »ç°ÇÀ» ¾Ë¸®´Â ÇÙ½É ¹æ¼Û±¹ ÇÔ¼ö
+	// â˜… ë™ë„¤ë°©ë„¤ ì‚¬ê±´ì„ ì•Œë¦¬ëŠ” í•µì‹¬ ë°©ì†¡êµ­ í•¨ìˆ˜
 	UFUNCTION(BlueprintCallable, Category = "Combat")
 	void BroadcastCombatEvent(ECombatEventTrigger TriggerType, FCombatEventData& EventData);
 
-	// µ¥¹ÌÁö¸¦ ÁáÀ» ¶§ Ã³¸® (³»¿ë ¼öÁ¤ÇÒ °ÅÀÓ)
+	// ë°ë¯¸ì§€ë¥¼ ì¤¬ì„ ë•Œ ì²˜ë¦¬ (ë‚´ìš© ìˆ˜ì •í•  ê±°ì„)
 	void HandleDamageDealt(const FDEDamageResult& Result);
 
 	FOnEnemyKilledSignature OnEnemyKilled;

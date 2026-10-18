@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -30,14 +30,14 @@ protected:
         UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
         bool bFromSweep, const FHitResult& SweepResult);*/
 
-    // --- Åõ»çÃ¼ Àü¿ë ÄÄÆ÷³ÍÆ® ---
+    // --- íˆ¬ì‚¬ì²´ ì „ìš© ì»´í¬ë„ŒíŠ¸ ---
     UPROPERTY(VisibleAnywhere)
     class UProjectileMovementComponent* MovementComponent;
 
     UPROPERTY(VisibleAnywhere)
     class URotatingMovementComponent* RotatingMovementComponent;
 
-    // --- Åõ»çÃ¼ Àü¿ë º¯¼ö ---
+    // --- íˆ¬ì‚¬ì²´ ì „ìš© ë³€ìˆ˜ ---
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile|Stat")
     int32 Penetration = 1;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile|Movement")
@@ -50,7 +50,7 @@ protected:
     FVector ShootDirection;
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile|Movement")
     bool bEnableRotation = false;
-    // È¸Àü ¼Óµµ (bEnableRotationÀÌ trueÀÏ ¶§¸¸ ¿¡µğÅÍ¿¡¼­ È°¼ºÈ­µÊ!)
+    // íšŒì „ ì†ë„ (bEnableRotationì´ trueì¼ ë•Œë§Œ ì—ë””í„°ì—ì„œ í™œì„±í™”ë¨!)
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile|Movement", meta = (EditCondition = "bEnableRotation"))
     FRotator CustomRotationRate = FRotator(0.f, 720.f, 0.f);
 

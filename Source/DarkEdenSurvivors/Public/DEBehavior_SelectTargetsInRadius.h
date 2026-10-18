@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -9,13 +9,13 @@
 UENUM(BlueprintType)
 enum class ESearchOrigin : uint8
 {
-    //Instigator,      // ½ÃÀüÀÚ(ÇÃ·¹ÀÌ¾î) ±âÁØ -> º£³ğ ¼­Å¬
-    //CurrentTarget,   // ÇöÀç Å¸°Ù ±âÁØ -> ºí·¯µå ½ºÇÇ¾î (½ºÇÃ·¡½Ã)
-    //CustomLocation   // Æ¯Á¤ ÁÂÇ¥ ±âÁØ -> ¾Ö½Ãµå ÀÌ·´¼Ç (³«·Ú)
+    //Instigator,      // ì‹œì „ì(í”Œë ˆì´ì–´) ê¸°ì¤€ -> ë² ë†ˆ ì„œí´
+    //CurrentTarget,   // í˜„ì¬ íƒ€ê²Ÿ ê¸°ì¤€ -> ë¸”ëŸ¬ë“œ ìŠ¤í”¼ì–´ (ìŠ¤í”Œë˜ì‹œ)
+    //CustomLocation   // íŠ¹ì • ì¢Œí‘œ ê¸°ì¤€ -> ì• ì‹œë“œ ì´ëŸ½ì…˜ (ë‚™ë¢°)
 
-    Instigator,      // ½ÃÀüÀÚ (ÇÃ·¹ÀÌ¾î 1¸í)
-    Targets,         // º¯°æ: ÇöÀç Å¸°Ù ¸®½ºÆ® 'ÀüÃ¼' (°¢°¢ÀÇ À§Ä¡°¡ ¸ğµÎ Áß½ÉÁ¡ÀÌ µÊ)
-    CustomLocations  // º¯°æ: ÀúÀåµÈ ÁÂÇ¥ ¸®½ºÆ® 'ÀüÃ¼' (¼º¼ö ¿©·¯ ¹ß)
+    Instigator,      // ì‹œì „ì (í”Œë ˆì´ì–´ 1ëª…)
+    Targets,         // ë³€ê²½: í˜„ì¬ íƒ€ê²Ÿ ë¦¬ìŠ¤íŠ¸ 'ì „ì²´' (ê°ê°ì˜ ìœ„ì¹˜ê°€ ëª¨ë‘ ì¤‘ì‹¬ì ì´ ë¨)
+    CustomLocations  // ë³€ê²½: ì €ì¥ëœ ì¢Œí‘œ ë¦¬ìŠ¤íŠ¸ 'ì „ì²´' (ì„±ìˆ˜ ì—¬ëŸ¬ ë°œ)
 };
 
 /**
@@ -29,25 +29,25 @@ class DARKEDENSURVIVORS_API UDEBehavior_SelectTargetsInRadius : public UDESkillB
 public:
     virtual void Execute(FDESkillContext& Context) override;
 
-    // 1. °Ë»ö ¹İ°æ (ÀÌ°Ç °íÁ¤°ªÀÌ¶ó ¼ıÀÚ ÀÔ·Â)
+    // 1. ê²€ìƒ‰ ë°˜ê²½ (ì´ê±´ ê³ ì •ê°’ì´ë¼ ìˆ«ì ì…ë ¥)
     UPROPERTY(EditAnywhere, Category = "Search")
     float Radius = 400.f;
 
-    // 2. ±âÁØÁ¡ Å¸ÀÔ (ÀÌ°Ç '¹æ¹ı'ÀÌ¶ó Enum ÀÔ·Â)
+    // 2. ê¸°ì¤€ì  íƒ€ì… (ì´ê±´ 'ë°©ë²•'ì´ë¼ Enum ì…ë ¥)
     UPROPERTY(EditAnywhere, Category = "Search")
     ESearchOrigin OriginType = ESearchOrigin::Instigator;
 
-    // 3. (CustomÀÏ ¶§) Context¿¡¼­ ÀĞ¾î¿Ã ÁÂÇ¥ ÀÌ¸§
+    // 3. (Customì¼ ë•Œ) Contextì—ì„œ ì½ì–´ì˜¬ ì¢Œí‘œ ì´ë¦„
     UPROPERTY(EditAnywhere, Category = "Search", meta = (EditCondition = "OriginType == ESearchOrigin::CustomLocation"))
     FName VectorKeyName = TEXT("TargetLocation");
 
-    // 4. ½ÃÀüÀÚ´Â °á°ú¿¡¼­ »¬±î?
+    // 4. ì‹œì „ìëŠ” ê²°ê³¼ì—ì„œ ëº„ê¹Œ?
     UPROPERTY(EditAnywhere, Category = "Search")
     bool bIgnoreInstigator = true;
 
-    // ¡Ú Ãß°¡: Áßº¹ Å¸°İ Çã¿ë ¿©ºÎ
-    // true: ÀåÆÇ 3°³ °ãÄ¡¸é 3¹ø ¸®½ºÆ®¿¡ ³ÖÀ½ (3¹è µ¥¹ÌÁö)
-    // false: ÀåÆÇ 100°³ °ãÃÄµµ 1¹ø¸¸ ³ÖÀ½ (1¹è µ¥¹ÌÁö)
+    // â˜… ì¶”ê°€: ì¤‘ë³µ íƒ€ê²© í—ˆìš© ì—¬ë¶€
+    // true: ì¥íŒ 3ê°œ ê²¹ì¹˜ë©´ 3ë²ˆ ë¦¬ìŠ¤íŠ¸ì— ë„£ìŒ (3ë°° ë°ë¯¸ì§€)
+    // false: ì¥íŒ 100ê°œ ê²¹ì³ë„ 1ë²ˆë§Œ ë„£ìŒ (1ë°° ë°ë¯¸ì§€)
     UPROPERTY(EditAnywhere, Category = "Search")
     bool bAllowOverlap = false;
 	

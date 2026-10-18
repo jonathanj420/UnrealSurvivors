@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEStageSlotWidget.h"
@@ -9,7 +9,7 @@ void UDEStageSlotWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    // ¹öÆ°¿¡ Å¬¸¯ ÀÌº¥Æ® ¿¬°á
+    // ë²„íŠ¼ì— í´ë¦­ ì´ë²¤íŠ¸ ì—°ê²°
     if (Btn_Slot)
     {
         Btn_Slot->OnClicked.AddDynamic(this, &UDEStageSlotWidget::OnButtonClicked);
@@ -18,10 +18,10 @@ void UDEStageSlotWidget::NativeConstruct()
 
 void UDEStageSlotWidget::InitSlot(const FDEStageRow& InStageRow)
 {
-    // ³» ½ºÅ×ÀÌÁö ID ÀúÀå
+    // ë‚´ ìŠ¤í…Œì´ì§€ ID ì €ì¥
     MyStageID = InStageRow.StageID;
 
-    // ¸Ê ÀÌ¸§ ÅØ½ºÆ® ¼¼ÆÃ
+    // ë§µ ì´ë¦„ í…ìŠ¤íŠ¸ ì„¸íŒ…
     if (Txt_StageName)
     {
         Txt_StageName->SetText(InStageRow.StageName);
@@ -31,7 +31,7 @@ void UDEStageSlotWidget::InitSlot(const FDEStageRow& InStageRow)
 
 void UDEStageSlotWidget::OnButtonClicked()
 {
-    // ¹öÆ°ÀÌ ´­¸®¸é, "³» ID(MyStageID)°¡ Å¬¸¯µÆ¾î¿ä!" ÇÏ°í ¾Ë¶÷(Delegate) ¹æ¼Û!
+    // ë²„íŠ¼ì´ ëˆŒë¦¬ë©´, "ë‚´ ID(MyStageID)ê°€ í´ë¦­ëì–´ìš”!" í•˜ê³  ì•ŒëŒ(Delegate) ë°©ì†¡!
     if (OnSlotClicked.IsBound())
     {
         OnSlotClicked.Broadcast(MyStageID);

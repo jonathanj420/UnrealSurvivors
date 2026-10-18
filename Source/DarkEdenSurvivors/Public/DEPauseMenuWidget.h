@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -17,7 +17,7 @@ class DARKEDENSURVIVORS_API UDEPauseMenuWidget : public UUserWidget
 protected:
     virtual void NativeConstruct() override;
     virtual void NativeOnInitialized() override;
-    // ºí·çÇÁ¸°Æ® ¹öÆ°°ú ÀÌ¸§ÀÌ ¶È°°¾Æ¾ß ¸ÅÇÎµÊ!
+    // ë¸”ë£¨í”„ë¦°íŠ¸ ë²„íŠ¼ê³¼ ì´ë¦„ì´ ë˜‘ê°™ì•„ì•¼ ë§¤í•‘ë¨!
     UPROPERTY(meta = (BindWidget))
     class UButton* Btn_Resume;
     UPROPERTY(meta = (BindWidget))

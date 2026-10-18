@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DESkill_BloodyNail.h"
@@ -13,7 +13,7 @@
 
 UDESkill_BloodyNail::UDESkill_BloodyNail()
 {
-    // 1. »ı¼ºÀÚ¿¡¼­ ¿¡¼Â °æ·Î¸¦ ÇÏµåÄÚµùÇØ¼­ Ã£¾Æ¿È (¿ìÅ¬¸¯ -> ·¹ÆÛ·±½º º¹»ç)
+    // 1. ìƒì„±ìì—ì„œ ì—ì…‹ ê²½ë¡œë¥¼ í•˜ë“œì½”ë”©í•´ì„œ ì°¾ì•„ì˜´ (ìš°í´ë¦­ -> ë ˆí¼ëŸ°ìŠ¤ ë³µì‚¬)
     static ConstructorHelpers::FObjectFinder<UNiagaraSystem> FXAsset(TEXT("/Game/DarkEden/Data/Niagara/NS_BloodyNail.NS_BloodyNail"));
     if (FXAsset.Succeeded())
     {
@@ -38,23 +38,23 @@ void UDESkill_BloodyNail::InitBehaviors()
     }
 
     // ==========================================
-    // ºí·¯µğ ³×ÀÏ ºñÇìÀÌºñ¾î ÆÄÀÌÇÁ¶óÀÎ Á¶¸³
+    // ë¸”ëŸ¬ë”” ë„¤ì¼ ë¹„í—¤ì´ë¹„ì–´ íŒŒì´í”„ë¼ì¸ ì¡°ë¦½
     // ==========================================
 
-    // 1. Å¸°Ù ¼öÁı & ÇÊÅÍ¸µ (ÅëÇÕµÈ ºÎÃ¤²Ã ÆÇÁ¤ ÇÑ ¹æ¿¡ Ã³¸®!)
+    // 1. íƒ€ê²Ÿ ìˆ˜ì§‘ & í•„í„°ë§ (í†µí•©ëœ ë¶€ì±„ê¼´ íŒì • í•œ ë°©ì— ì²˜ë¦¬!)
     UDEBehavior_CullByCone* CullCone = NewObject<UDEBehavior_CullByCone>(this);
-    //CullCone->bShowDebug = true;     // ¡Ú ¿¡µğÅÍ¿¡¼­ »¡°£»ö ÇÇÀÚ Á¶°¢ º¸ÀÌ°Ô ÄÑµÒ!
+    //CullCone->bShowDebug = true;     // â˜… ì—ë””í„°ì—ì„œ ë¹¨ê°„ìƒ‰ í”¼ì ì¡°ê° ë³´ì´ê²Œ ì¼œë‘ !
     Behaviors.Add(CullCone);
 
     UDEBehavior_PlayEffect* PlayFX = NewObject<UDEBehavior_PlayEffect>(this);
     PlayFX->TargetType = EEffectTargetType::Instigator;
-    PlayFX->NiagaraEffect = NailHitEffect; // ¡Ú ¿©±â¿¡ ½ï!
+    PlayFX->NiagaraEffect = NailHitEffect; // â˜… ì—¬ê¸°ì— ì™!
     PlayFX->RotationType = EEffectRotation::InstigatorForward;
-    PlayFX->SoundEffect = NailHitSound;    // ¡Ú ¿©±â¿¡ ½ï!
+    PlayFX->SoundEffect = NailHitSound;    // â˜… ì—¬ê¸°ì— ì™!
     PlayFX->SizeVariableName = FName("SkillRadius");
     Behaviors.Add(PlayFX);
 
-    // 3. Áï¹ß µ¥¹ÌÁö Àû¿ë
+    // 3. ì¦‰ë°œ ë°ë¯¸ì§€ ì ìš©
     UDEBehavior_InstantDamage* InstantDmg = NewObject<UDEBehavior_InstantDamage>(this);
     Behaviors.Add(InstantDmg);
 
@@ -70,7 +70,7 @@ void UDESkill_BloodyNail::InitBehaviors()
 //    if (!World) return;
 //
 //    float EffectRoll = bRightSide ? 45.f : -45.f;
-//    bRightSide = !bRightSide; // ´ÙÀ½ °ø°İ¿¡ ¹İ´ë·Î
+//    bRightSide = !bRightSide; // ë‹¤ìŒ ê³µê²©ì— ë°˜ëŒ€ë¡œ
 //
 //    FRotator EffectRotation = FRotator(0.0f, 0.0f, EffectRoll);
 //
@@ -95,7 +95,7 @@ void UDESkill_BloodyNail::InitBehaviors()
 //        //MeleeActor->SetActorRelativeRotation(SpawnRot);
 //        MeleeActor->SetOwner(SkillOwner);
 //
-//        // ½ºÅ³ µ¥ÀÌÅÍ ±â¹İ ½ºÅÈ Àû¿ë
+//        // ìŠ¤í‚¬ ë°ì´í„° ê¸°ë°˜ ìŠ¤íƒ¯ ì ìš©
 //        MeleeActor->SetDamage(SkillData->Damage);
 //        MeleeActor->SetKnockbackForce(SkillData->KnockbackForce);
 //        MeleeActor->SetSweepRadius(SkillData->SweepRadius);
@@ -103,7 +103,7 @@ void UDESkill_BloodyNail::InitBehaviors()
 //        if (AttackSound)
 //            UGameplayStatics::PlaySoundAtLocation(SkillOwner, AttackSound, SkillOwner->GetActorLocation());
 //        DrawDebugSphere(GetWorld(), SpawnLoc, SkillData->SweepRadius, 12, FColor::Green, 0, 1.0f, 0, 1.0f);
-//        // °ø°İ ¼öÇà
+//        // ê³µê²© ìˆ˜í–‰
 //        MeleeActor->PerformSweepAttack();
 //    }
 //    

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEPickup_Exp.h"
@@ -16,19 +16,19 @@ ADEPickup_Exp::ADEPickup_Exp()
 
 void ADEPickup_Exp::ApplyEffect(AActor* TargetActor)
 {
-    // 1. ¹æ¾î ÄÚµå: TargetActor°¡ ¾øÀ» ¼öµµ ÀÖÀ½ (¾ÈÀü Á¦ÀÏ)
+    // 1. ë°©ì–´ ì½”ë“œ: TargetActorê°€ ì—†ì„ ìˆ˜ë„ ìˆìŒ (ì•ˆì „ ì œì¼)
     if (!TargetActor) return;
 
-    // 2. °æÇèÄ¡ ÄÄÆ÷³ÍÆ® Ã£±â
+    // 2. ê²½í—˜ì¹˜ ì»´í¬ë„ŒíŠ¸ ì°¾ê¸°
     UDEProgressionComponent* Prog = TargetActor->FindComponentByClass<UDEProgressionComponent>();
 
-    // 3. ÄÄÆ÷³ÍÆ®°¡ ÀÖÀ» ¶§¸¸ °æÇèÄ¡ Áö±Ş (¾ø´Âµ¥ ¾²¸é Å©·¡½Ã!)
+    // 3. ì»´í¬ë„ŒíŠ¸ê°€ ìˆì„ ë•Œë§Œ ê²½í—˜ì¹˜ ì§€ê¸‰ (ì—†ëŠ”ë° ì“°ë©´ í¬ë˜ì‹œ!)
     if (Prog)
     {
         Prog->AddExp(Value);
     }
 
-    // 4. ¡Ú ºÎ¸ğ È£Ãâ (¿©±â¼­ DeactivatePickupÀÌ ½ÇÇàµÇ¾î Ç®·Î µ¹¾Æ°¨)
+    // 4. â˜… ë¶€ëª¨ í˜¸ì¶œ (ì—¬ê¸°ì„œ DeactivatePickupì´ ì‹¤í–‰ë˜ì–´ í’€ë¡œ ëŒì•„ê°)
     Super::ApplyEffect(TargetActor);
 }
 

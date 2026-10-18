@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -28,7 +28,7 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 protected:
-	// ÀÔ·ÂÀ» ¼¼ÆÃÇÏ´Â ¾ğ¸®¾ó ±âº» ÇÔ¼ö ¿À¹ö¶óÀÌµå
+	// ì…ë ¥ì„ ì„¸íŒ…í•˜ëŠ” ì–¸ë¦¬ì–¼ ê¸°ë³¸ í•¨ìˆ˜ ì˜¤ë²„ë¼ì´ë“œ
 	virtual void SetupInputComponent() override;
 
 
@@ -48,11 +48,11 @@ private:
 	UPROPERTY()
 	class UDESkillInventoryWidget* SkillInventoryWidget;
 
-	// ¿¡µğÅÍ¿¡¼­ ÇÒ´çÇÒ »óÀÚ UI ºí·çÇÁ¸°Æ® Å¬·¡½º (WBP_ChestWidget)
+	// ì—ë””í„°ì—ì„œ í• ë‹¹í•  ìƒì UI ë¸”ë£¨í”„ë¦°íŠ¸ í´ë˜ìŠ¤ (WBP_ChestWidget)
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UDEChestWidget> ChestWidgetClass;
 
-	// »ı¼ºµÈ »óÀÚ UI ÀÎ½ºÅÏ½º
+	// ìƒì„±ëœ ìƒì UI ì¸ìŠ¤í„´ìŠ¤
 	UPROPERTY()
 	UDEChestWidget* ChestWidget;
 
@@ -63,17 +63,17 @@ public:
 	void ResumeGame();
 	void ShowLevelUpUI();
 	void ShowChestWidget(const TArray<UDELevelUpChoiceBase*>& Rewards);
-	// ESC ¸Ş´º ²°´Ù ÄÑ±â
+	// ESC ë©”ë‰´ ê»ë‹¤ ì¼œê¸°
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void TogglePauseMenu();
 
 protected:
-	// ¿¡µğÅÍ¿¡¼­ ¿ì¸®°¡ ¸¸µç WBP_PauseMenu¸¦ ³¢¿ö³ÖÀ» ½½·Ô
+	// ì—ë””í„°ì—ì„œ ìš°ë¦¬ê°€ ë§Œë“  WBP_PauseMenuë¥¼ ë¼ì›Œë„£ì„ ìŠ¬ë¡¯
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<class UUserWidget> PauseMenuClass;
 
 private:
-	// ÇöÀç È­¸é¿¡ ¶°ÀÖ´Â ÀÏ½ÃÁ¤Áö ¸Ş´º ÀÎ½ºÅÏ½º
+	// í˜„ì¬ í™”ë©´ì— ë– ìˆëŠ” ì¼ì‹œì •ì§€ ë©”ë‰´ ì¸ìŠ¤í„´ìŠ¤
 	UPROPERTY()
 	class UUserWidget* PauseMenuInstance;
 

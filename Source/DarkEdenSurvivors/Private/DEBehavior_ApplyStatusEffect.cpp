@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEBehavior_ApplyStatusEffect.h"
@@ -15,20 +15,20 @@ void UDEBehavior_ApplyStatusEffect::Execute(FDESkillContext& Context)
 	float FinalInterval = Context.GetValue(FName("Interval"), this->Interval);
 
 	// ----------------------------------------------------
-	// TODO: FinalDuration, FinalPower¸¦ »ç¿ëÇØ¼­ Å¸°Ùµé¿¡°Ô »óÅÂÀÌ»ó ºÎ¿©
+	// TODO: FinalDuration, FinalPowerë¥¼ ì‚¬ìš©í•´ì„œ íƒ€ê²Ÿë“¤ì—ê²Œ ìƒíƒœì´ìƒ ë¶€ì—¬
 	// ----------------------------------------------------
 	for (AActor* Target : Context.Targets)
 	{
 		if (Target)
 		{
-			// ¿¹: Target->ApplyStatus(StatusClass, FinalDuration, FinalPower);
+			// ì˜ˆ: Target->ApplyStatus(StatusClass, FinalDuration, FinalPower);
 		}
 	}
 
 	if (!StatusClass) return;
 
-	// ¡Ú ÇÙ½É: Context¿¡ ´ã°ÜÀÖ´Â Å¸°Ùµé¿¡°Ô »óÅÂÀÌ»óÀ» °Ì´Ï´Ù.
-	// Áï, ÀÌ Behavior ¾Õ¿¡´Â ¹İµå½Ã "Å¸°ÙÀ» Ã£´Â Behavior"°¡ ½ÇÇàµÇ¾î¾ß ÇÕ´Ï´Ù.
+	// â˜… í•µì‹¬: Contextì— ë‹´ê²¨ìˆëŠ” íƒ€ê²Ÿë“¤ì—ê²Œ ìƒíƒœì´ìƒì„ ê²ë‹ˆë‹¤.
+	// ì¦‰, ì´ Behavior ì•ì—ëŠ” ë°˜ë“œì‹œ "íƒ€ê²Ÿì„ ì°¾ëŠ” Behavior"ê°€ ì‹¤í–‰ë˜ì–´ì•¼ í•©ë‹ˆë‹¤.
 	for (AActor* TargetActor : Context.Targets)
 	{
 		ADEMonsterBase* Monster = Cast<ADEMonsterBase>(TargetActor);

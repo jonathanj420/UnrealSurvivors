@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DESkill_DiabloInferno.h"
@@ -22,22 +22,22 @@ void UDESkill_DiabloInferno::InitBehaviors()
 {
     Super::InitBehaviors();
 
-    // [Àü¹æ ¹ß»ç ºñÇìÀÌºñ¾î]
+    // [ì „ë°© ë°œì‚¬ ë¹„í—¤ì´ë¹„ì–´]
     UDEBehavior_FireProjectile* FireAction = NewObject<UDEBehavior_FireProjectile>(this);
     FireAction->ProjectileClass = this->ProjectileClass;
     FireAction->FireSound = this->FireSound;
     FireAction->BurstInterval = 0.04f;
     FireAction->FireConeAngle = 60.0f;
-    FireAction->AngleOffset = 0.0f; // Á¤¸é!
+    FireAction->AngleOffset = 0.0f; // ì •ë©´!
     Behaviors.Add(FireAction);
 
-    // [ÈÄ¹æ ¹ß»ç ºñÇìÀÌºñ¾î]
+    // [í›„ë°© ë°œì‚¬ ë¹„í—¤ì´ë¹„ì–´]
     UDEBehavior_FireProjectile* FireActionRear = NewObject<UDEBehavior_FireProjectile>(this);
     FireActionRear->ProjectileClass = this->ProjectileClass;
     FireActionRear->FireSound = this->FireSound;
     FireActionRear->BurstInterval = 0.04f;
     FireActionRear->FireConeAngle = 60.0f;
-    FireActionRear->AngleOffset = 180.0f; // ÈÄ¸é! (180µµ È¸Àü)
+    FireActionRear->AngleOffset = 180.0f; // í›„ë©´! (180ë„ íšŒì „)
     Behaviors.Add(FireActionRear);
 
 }

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -32,20 +32,20 @@ protected:
     virtual void BeginPlay() override;
 
 private:
-    // ===== ¼³Á¤°ª =====
+    // ===== ì„¤ì •ê°’ =====
 
-    // ½ºÅ³ È®·ü (0~1)
+    // ìŠ¤í‚¬ í™•ë¥  (0~1)
     UPROPERTY(EditAnywhere, Category = "LevelUp")
     float SkillWeight = 0.7f;
 
     UPROPERTY(EditAnywhere, Category = "LevelUp")
     float AccessoryWeight = 0.3f;
 
-    // [º¯°æ] µ¥ÀÌÅÍ Å×ÀÌºí ÀÚÃ¼¸¦ C++¿¡¼­ º¸°ü
+    // [ë³€ê²½] ë°ì´í„° í…Œì´ë¸” ìì²´ë¥¼ C++ì—ì„œ ë³´ê´€
     UPROPERTY()
     UDataTable* AccessoryDataTable;
 
-    // [Ãß°¡] ½ÃÀÛ ½Ã µ¥ÀÌÅÍ Å×ÀÌºíÀ» ½Ï ´Ù ±Ü¾î¿Í¼­ Ä³½ÌÇØµÑ ¸¶½ºÅÍ Ç®
+    // [ì¶”ê°€] ì‹œì‘ ì‹œ ë°ì´í„° í…Œì´ë¸”ì„ ì‹¹ ë‹¤ ê¸ì–´ì™€ì„œ ìºì‹±í•´ë‘˜ ë§ˆìŠ¤í„° í’€
     TArray<FAccessoryPoolItem> MasterAccessoryPool;
 
 private:
@@ -54,21 +54,21 @@ private:
 
 
 public:
-    // »óÀÚ¸¦ ¿­¾úÀ» ¶§ È£ÃâµÉ ÇÙ½É ÇÔ¼ö! (ÃÖÁ¾ÀûÀ¸·Î 1, 3, 5°³ÀÇ º¸»óÀ» ¹è¿­·Î ¹İÈ¯)
+    // ìƒìë¥¼ ì—´ì—ˆì„ ë•Œ í˜¸ì¶œë  í•µì‹¬ í•¨ìˆ˜! (ìµœì¢…ì ìœ¼ë¡œ 1, 3, 5ê°œì˜ ë³´ìƒì„ ë°°ì—´ë¡œ ë°˜í™˜)
     UFUNCTION(BlueprintCallable, Category = "Chest")
     TArray<UDELevelUpChoiceBase*> GenerateChestRewards(float PlayerLuck);
 
 private:
-    // 1´Ü°è: »óÀÚ µî±Ş(°³¼ö) ±¼¸®±â (1°³, 3°³, 5°³)
+    // 1ë‹¨ê³„: ìƒì ë“±ê¸‰(ê°œìˆ˜) êµ´ë¦¬ê¸° (1ê°œ, 3ê°œ, 5ê°œ)
     int32 CalculateChestJackpot(float Luck);
 
-    // 2´Ü°è: ÇöÀç °¡Áø ½ºÅ³ Áß ÁøÈ­ °¡´ÉÇÑ ³à¼®ÀÌ ÀÖ´ÂÁö Å½»ö
+    // 2ë‹¨ê³„: í˜„ì¬ ê°€ì§„ ìŠ¤í‚¬ ì¤‘ ì§„í™” ê°€ëŠ¥í•œ ë…€ì„ì´ ìˆëŠ”ì§€ íƒìƒ‰
     UDELevelUpChoiceBase* TryGetEvolutionChoice();
 
-    // 3´Ü°è: ÇöÀç °¡Áø ½ºÅ³/¾Ç¼¼ Áß '¸¸·¾ÀÌ ¾Æ´Ñ ³à¼®' ÇÏ³ª¸¦ ·£´ıÀ¸·Î »Ì±â
+    // 3ë‹¨ê³„: í˜„ì¬ ê°€ì§„ ìŠ¤í‚¬/ì•…ì„¸ ì¤‘ 'ë§Œë ™ì´ ì•„ë‹Œ ë…€ì„' í•˜ë‚˜ë¥¼ ëœë¤ìœ¼ë¡œ ë½‘ê¸°
     UDELevelUpChoiceBase* GetRandomUpgradableChoice();
 
-    // 4´Ü°è: ´Ù ¸¸·¾ÀÏ ¶§ ÁÙ ²Î º¸»ó (µ· ÁÖ¸Ó´Ï, Ã¼·Â È¸º¹ µî)
+    // 4ë‹¨ê³„: ë‹¤ ë§Œë ™ì¼ ë•Œ ì¤„ ê½ ë³´ìƒ (ëˆ ì£¼ë¨¸ë‹ˆ, ì²´ë ¥ íšŒë³µ ë“±)
     UDELevelUpChoiceBase* GetFallbackChoice();
 
 

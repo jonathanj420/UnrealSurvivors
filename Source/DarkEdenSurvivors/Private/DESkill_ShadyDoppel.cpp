@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DESkill_ShadyDoppel.h"
@@ -7,13 +7,13 @@
 
 UDESkill_ShadyDoppel::UDESkill_ShadyDoppel()
 {
-    // 1. °æ·Î ¼³Á¤ (ºí·çÇÁ¸°Æ® ¿¡¼Â ¿ìÅ¬¸¯ -> '·¹ÆÛ·±½º º¹»ç' ÈÄ _C¸¦ ²À ºÙ¿©ÁÖ¼¼¿ä)
+    // 1. ê²½ë¡œ ì„¤ì • (ë¸”ë£¨í”„ë¦°íŠ¸ ì—ì…‹ ìš°í´ë¦­ -> 'ë ˆí¼ëŸ°ìŠ¤ ë³µì‚¬' í›„ _Cë¥¼ ê¼­ ë¶™ì—¬ì£¼ì„¸ìš”)
     static ConstructorHelpers::FClassFinder<AActor> ProjectileBP(TEXT("/Game/DarkEden/Blueprint/SkillProjectiles/BP_DEProjectile_ShadyDoppel1.BP_DEProjectile_ShadyDoppel1_C"));
 
-    // 2. ¿¡¼ÂÀ» ¼º°øÀûÀ¸·Î Ã£¾Ò´ÂÁö È®ÀÎ ÈÄ º¯¼ö¿¡ ÇÒ´ç
+    // 2. ì—ì…‹ì„ ì„±ê³µì ìœ¼ë¡œ ì°¾ì•˜ëŠ”ì§€ í™•ì¸ í›„ ë³€ìˆ˜ì— í• ë‹¹
     if (ProjectileBP.Succeeded())
     {
-        // SummonClass ´Â º¸Åë Çì´õ¿¡ TSubclassOf<AActor>·Î ¼±¾ğÇÕ´Ï´Ù.
+        // SummonClass ëŠ” ë³´í†µ í—¤ë”ì— TSubclassOf<AActor>ë¡œ ì„ ì–¸í•©ë‹ˆë‹¤.
         ProjectileClass = ProjectileBP.Class;
     }
 
@@ -30,20 +30,20 @@ UDESkill_ShadyDoppel::UDESkill_ShadyDoppel()
 void UDESkill_ShadyDoppel::InitBehaviors()
 {
     Super::InitBehaviors();
-    // ³ªÁß¿¡ ¿©±â¿¡ °¢ ½ºÅ³¿¡ ¸Â´Â Behavior Ãß°¡ÇÏ¸é µÊ
+    // ë‚˜ì¤‘ì— ì—¬ê¸°ì— ê° ìŠ¤í‚¬ì— ë§ëŠ” Behavior ì¶”ê°€í•˜ë©´ ë¨
     // 
-    // 1. Çàµ¿(ºÎÇ°) »ı¼º
+    // 1. í–‰ë™(ë¶€í’ˆ) ìƒì„±
     UDEBehavior_FireProjectile* FireAction = NewObject<UDEBehavior_FireProjectile>(this);
 
-    // 2. ºÎÇ° ¼³Á¤ (ÀÌ ½ºÅ³¸¸ÀÇ Æ¯Â¡ ÁÖÀÔ)
-    FireAction->ProjectileClass = this->ProjectileClass; // "ºí·¯µğ ³ªÀÌÇÁ¸¦ ´øÁ®¶ó"
-    FireAction->FireSound = this->FireSound;             // "ÀÌ ¼Ò¸®¸¦ ³»¶ó"
+    // 2. ë¶€í’ˆ ì„¤ì • (ì´ ìŠ¤í‚¬ë§Œì˜ íŠ¹ì§• ì£¼ì…)
+    FireAction->ProjectileClass = this->ProjectileClass; // "ë¸”ëŸ¬ë”” ë‚˜ì´í”„ë¥¼ ë˜ì ¸ë¼"
+    FireAction->FireSound = this->FireSound;             // "ì´ ì†Œë¦¬ë¥¼ ë‚´ë¼"
     FireAction->BurstInterval = 0.1f;
     FireAction->FireConeAngle = 180.0f;
     FireAction->RandomPositionRange = 40.0f;
 
 
-    // 3. ÀåÂø
+    // 3. ì¥ì°©
     Behaviors.Add(FireAction);
 }
 
@@ -53,7 +53,7 @@ void UDESkill_ShadyDoppel::ExecuteWithContext(FDESkillContext& Context)
     Context.Targets.Reset();
     Context.Targets.Append(UDEGameplayLibrary::GetRandomTargets(SkillOwner, -1.0f, 1));
 
-    // ºÎ¸ğ ÇÔ¼ö È£Ãâ (PlayFX -> ºÎÃ¤²Ã Å¸°ÙÆÃ -> µ¥¹ÌÁö ÆÄÀÌÇÁ¶óÀÎ ½ÇÇà)
+    // ë¶€ëª¨ í•¨ìˆ˜ í˜¸ì¶œ (PlayFX -> ë¶€ì±„ê¼´ íƒ€ê²ŸíŒ… -> ë°ë¯¸ì§€ íŒŒì´í”„ë¼ì¸ ì‹¤í–‰)
     Super::ExecuteWithContext(Context);
 
 }

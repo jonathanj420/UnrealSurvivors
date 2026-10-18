@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -16,7 +16,7 @@ class DARKEDENSURVIVORS_API UDECombatEffect : public UObject
     GENERATED_BODY()
 
 public:
-    // ±âÈ¹ÀÚ°¡ ÀÌ È¿°ú°¡ '¾ğÁ¦' ÅÍÁúÁö ºí·çÇÁ¸°Æ®¿¡¼­ °í¸£´Â ¸íÂû!
+    // ê¸°íšìê°€ ì´ íš¨ê³¼ê°€ 'ì–¸ì œ' í„°ì§ˆì§€ ë¸”ë£¨í”„ë¦°íŠ¸ì—ì„œ ê³ ë¥´ëŠ” ëª…ì°°!
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trigger")
     ECombatEventTrigger TriggerCondition = ECombatEventTrigger::OnHit;
 
@@ -26,7 +26,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect", meta = (ClampMin = "0.0", ClampMax = "1.0"))
     float Chance = 1.f;
 
-    // 2. ¸Ş°¡ºÀÅ©½Ä ½ºÅÃ(ÁßÃ¸) ½Ã½ºÅÛÀ» À§ÇÑ ¼¼ÆÃ
+    // 2. ë©”ê°€ë´‰í¬ì‹ ìŠ¤íƒ(ì¤‘ì²©) ì‹œìŠ¤í…œì„ ìœ„í•œ ì„¸íŒ…
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stack")
     bool bIsStackable = false;
 
@@ -36,31 +36,31 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stack", meta = (EditCondition = "bIsStackable"))
     float StackMultiplier = 1.f;
 
-    // (NEW) ÇöÀç ÇÃ·¹ÀÌ¾î°¡ ÀÌ È¿°ú¸¦ ¸î ½ºÅÃÀÌ³ª ½×¾Ò´ÂÁö ±â¾ïÇÒ º¯¼ö
+    // (NEW) í˜„ì¬ í”Œë ˆì´ì–´ê°€ ì´ íš¨ê³¼ë¥¼ ëª‡ ìŠ¤íƒì´ë‚˜ ìŒ“ì•˜ëŠ”ì§€ ê¸°ì–µí•  ë³€ìˆ˜
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Stack")
     int32 CurrentStack = 1;
 
-    // ÀÚ½Ä Å¬·¡½ºµéÀÌ ¹«Á¶°Ç ±¸ÇöÇØ¾ß ÇÏ´Â ½ÇÁ¦ ½ÇÇà ·ÎÁ÷
-    // 1. ¿ÜºÎ(½ºÅ³ µî)¿¡¼­ È£ÃâÇÏ´Â ÁøÂ¥ ÀÔ±¸! (´õ ÀÌ»ó virtualÀÌ ¾Æ´Ô!)
+    // ìì‹ í´ë˜ìŠ¤ë“¤ì´ ë¬´ì¡°ê±´ êµ¬í˜„í•´ì•¼ í•˜ëŠ” ì‹¤ì œ ì‹¤í–‰ ë¡œì§
+    // 1. ì™¸ë¶€(ìŠ¤í‚¬ ë“±)ì—ì„œ í˜¸ì¶œí•˜ëŠ” ì§„ì§œ ì…êµ¬! (ë” ì´ìƒ virtualì´ ì•„ë‹˜!)
     void ExecuteEffect(FCombatEventData& EventData);
 protected:
     // =========================================================
-    // ¡Ú 2. ÀÚ½Ä Å¬·¡½ºµéÀÌ '¹«Á¶°Ç' ¿À¹ö¶óÀÌµåÇØ¾ß ÇÏ´Â ½ÇÁ¦ ³»ºÎ ·ÎÁ÷!
+    // â˜… 2. ìì‹ í´ë˜ìŠ¤ë“¤ì´ 'ë¬´ì¡°ê±´' ì˜¤ë²„ë¼ì´ë“œí•´ì•¼ í•˜ëŠ” ì‹¤ì œ ë‚´ë¶€ ë¡œì§!
     // =========================================================
     virtual void OnExecuteEffect(FCombatEventData& EventData) PURE_VIRTUAL(UDECombatEffect::OnExecuteEffect, );
 	
 public:
-    // ¡Ú ¸ğµç ÀÌÆåÆ®°¡ °øÅëÀ¸·Î °¡Áö´Â ³»ºÎ ÄğÅ¸ÀÓ! (0ÀÌ¸é Á¦ÇÑ ¾øÀ½)
+    // â˜… ëª¨ë“  ì´í™íŠ¸ê°€ ê³µí†µìœ¼ë¡œ ê°€ì§€ëŠ” ë‚´ë¶€ ì¿¨íƒ€ì„! (0ì´ë©´ ì œí•œ ì—†ìŒ)
     UPROPERTY(EditAnywhere, Category = "Trigger")
     float InternalCooldown = 0.0f;
 
 private:
-    // ¸¶Áö¸· ¹ßµ¿ ½Ã°£
+    // ë§ˆì§€ë§‰ ë°œë™ ì‹œê°„
     float LastTriggerTime = -FLT_MAX;
 
 public:
-    // ÀÚ½Ä Å¬·¡½ºµéÀÌ ExecuteEffect ¾È¿¡¼­ È£ÃâÇÒ 'ÄğÅ¸ÀÓ °Ë¹®¼Ò' ÇÔ¼ö
+    // ìì‹ í´ë˜ìŠ¤ë“¤ì´ ExecuteEffect ì•ˆì—ì„œ í˜¸ì¶œí•  'ì¿¨íƒ€ì„ ê²€ë¬¸ì†Œ' í•¨ìˆ˜
     bool CanTriggerEffect(UWorld* World);
-    // ½ºÅÃÀÌ ¿Ã¶úÀ» ¶§ ÀÚ½Ä Å¬·¡½º°¡ ¼öÄ¡¸¦ Àç°è»êÇÒ ¼ö ÀÖ°Ô ¿­¾îµÎ´Â Ã¢±¸
+    // ìŠ¤íƒì´ ì˜¬ëì„ ë•Œ ìì‹ í´ë˜ìŠ¤ê°€ ìˆ˜ì¹˜ë¥¼ ì¬ê³„ì‚°í•  ìˆ˜ ìˆê²Œ ì—´ì–´ë‘ëŠ” ì°½êµ¬
     virtual void OnStackUpgraded() {}
 };

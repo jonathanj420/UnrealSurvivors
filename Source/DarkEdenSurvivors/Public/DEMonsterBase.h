@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -76,11 +76,11 @@ protected:
 	bool bIsDying = false;
 
 public:
-	// ³» µî±ŞÀÌ ¹ºÁö ÀúÀåÇÏ´Â º¯¼ö (ºí·çÇÁ¸°Æ®¿¡¼­ ±âÈ¹ÀÚ°¡ ¸÷¸¶´Ù µş±ï ¼³Á¤ °¡´É)
+	// ë‚´ ë“±ê¸‰ì´ ë­”ì§€ ì €ì¥í•˜ëŠ” ë³€ìˆ˜ (ë¸”ë£¨í”„ë¦°íŠ¸ì—ì„œ ê¸°íšìê°€ ëª¹ë§ˆë‹¤ ë”¸ê¹ ì„¤ì • ê°€ëŠ¥)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster|Data")
 	EDEMonsterRank MonsterRank = EDEMonsterRank::Normal;
 
-	// µî±ŞÀ» ¹İÈ¯ÇÏ´Â Get ÇÔ¼ö
+	// ë“±ê¸‰ì„ ë°˜í™˜í•˜ëŠ” Get í•¨ìˆ˜
 	EDEMonsterRank GetMonsterRank() const { return MonsterRank; }
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster|Drop")
 	TArray<FDEMonsterDropInfo> DropTable;
@@ -91,7 +91,7 @@ public:
 	FVector PendingOverlapPush = FVector::ZeroVector;
 	FRotator PendingRotation = FRotator::ZeroRotator;
 public:
-	// ¸Å ÇÁ·¹ÀÓ À§Ä¡¿Í ¹İÁö¸§À» µü ÇÑ ¹ø¸¸ Ä³½ÌÇØµÑ º¯¼ö
+	// ë§¤ í”„ë ˆì„ ìœ„ì¹˜ì™€ ë°˜ì§€ë¦„ì„ ë”± í•œ ë²ˆë§Œ ìºì‹±í•´ë‘˜ ë³€ìˆ˜
 	FVector CachedLocation = FVector::ZeroVector;
 	float CachedRadius = 42.0f;
 
@@ -118,7 +118,7 @@ public:
 	void ResetMonster(const struct FDEMonsterData* Data);
 	void SetCanMove(bool bNewCanMove);
 
-	// ¸Å´ÏÀú°¡ °í¼ÓÀ¸·Î ÀĞ¾î°¥ »óÅÂ ÇÃ·¡±×
+	// ë§¤ë‹ˆì €ê°€ ê³ ì†ìœ¼ë¡œ ì½ì–´ê°ˆ ìƒíƒœ í”Œë˜ê·¸
 	bool bCanMove = true;
 
 	bool IsAlive();
@@ -134,10 +134,10 @@ public:
 	void UpdateCrowdControl(float CurrentTime);
 
 private:
-	// ÇöÀç CC »óÅÂ
+	// í˜„ì¬ CC ìƒíƒœ
 	EMonsterCrowdControl CCState = EMonsterCrowdControl::None;
 
-	// CC Á¾·á ½Ã°£ (World Time)
+	// CC ì¢…ë£Œ ì‹œê°„ (World Time)
 	float CCEndTime = 0.f;
 
 
@@ -151,18 +151,18 @@ protected:
 
 
 protected:
-	// °ãÄ§ ½ÃÀÛ/³¡ °¨Áö (¿£Áø ±âº» ÇÔ¼ö)
+	// ê²¹ì¹¨ ì‹œì‘/ë ê°ì§€ (ì—”ì§„ ê¸°ë³¸ í•¨ìˆ˜)
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 	virtual void NotifyActorEndOverlap(AActor* OtherActor) override;
 
-	// ½ÇÁ¦ µ¥¹ÌÁö ÁÖ´Â ÇÔ¼ö
+	// ì‹¤ì œ ë°ë¯¸ì§€ ì£¼ëŠ” í•¨ìˆ˜
 	bool bIsTouchingPlayer = false;
 	double LastAttackTime = 0.0;
 
 	
 
 public:
-	// ¸Å´ÏÀú°¡ ºÎ¸¦ ÇÔ¼ö
+	// ë§¤ë‹ˆì €ê°€ ë¶€ë¥¼ í•¨ìˆ˜
 	void ExecuteAttackLogic(double CurrentTime);
 
 	//***************** AI ****************

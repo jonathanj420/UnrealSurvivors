@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DECombatEffect_Execution.h"
@@ -12,39 +12,39 @@ void UDECombatEffect_Execution::OnExecuteEffect(FCombatEventData& EventData)
     if (!EventData.Target) return;
 
     UDEHealthComponent* HealthComp = EventData.Target->FindComponentByClass<UDEHealthComponent>();
-    // Á×Àº ³ğÀº µÎ ¹ø Ã³ÇüÇÏÁö ¾ÊÀ½
+    // ì£½ì€ ë†ˆì€ ë‘ ë²ˆ ì²˜í˜•í•˜ì§€ ì•ŠìŒ
     if (!HealthComp || HealthComp->IsDead()) return;
 
-    // ÇöÀç Ã¼·Â ÆÛ¼¾Æ® °è»ê
+    // í˜„ì¬ ì²´ë ¥ í¼ì„¼íŠ¸ ê³„ì‚°
     const float HPPercent = HealthComp->GetCurrentHP() / HealthComp->GetMaxHP();
 
-    // Ã³Çü Á¶°Ç ¸¸Á· ½Ã (¿¹: Ã¼·Â 10% ÀÌÇÏ)
-    if (HPPercent <= Value) // Threshold ´ë½Å ¿ì¸®°¡ ÄÚµå·Î ±ğ¾ÆµĞ 'Value' º¯¼ö »ç¿ë
+    // ì²˜í˜• ì¡°ê±´ ë§Œì¡± ì‹œ (ì˜ˆ: ì²´ë ¥ 10% ì´í•˜)
+    if (HPPercent <= Value) // Threshold ëŒ€ì‹  ìš°ë¦¬ê°€ ì½”ë“œë¡œ ê¹ì•„ë‘” 'Value' ë³€ìˆ˜ ì‚¬ìš©
     {
         UE_LOG(LogTemp, Warning, TEXT("EXECUTED ! ! !"));
         // =========================================================
-        // ¡Ú ¹ÌÄ£ µíÀÌ ±ò²ûÇØÁø AAA±Ş 'Ã³Çü' ¿äÃ»!
+        // â˜… ë¯¸ì¹œ ë“¯ì´ ê¹”ë”í•´ì§„ AAAê¸‰ 'ì²˜í˜•' ìš”ì²­!
         // =========================================================
         FDEDamageRequest ExecutionRequest;
 
-        // 1. ´©°¡, ¹«¾ùÀ¸·Î ¶§¸®´ÂÁö Á¤º¸ ¼¼ÆÃ (Äğ°¨ ¹ö±× ÇØ°á!)
-        ExecutionRequest.Instigator = EventData.Instigator;   // °ø°İÀÚ (ÇÃ·¹ÀÌ¾î)
-        ExecutionRequest.DamageCauser = EventData.Instigator; // °ø°İ µµ±¸ (Åõ»çÃ¼/Ä® µî)
-        ExecutionRequest.SourceObject = EventData.SourceObject;                   // ¡Ú ÀÌ 'Ã³Çü' ÀÌÆåÆ® ÀÚÃ¼¸¦ ¿øÀÎÀ¸·Î ±â·Ï! (½Ã³ÊÁö¿ë)
-        ExecutionRequest.Victim = EventData.Target;           // ¸ÂÀº ³ğ
+        // 1. ëˆ„ê°€, ë¬´ì—‡ìœ¼ë¡œ ë•Œë¦¬ëŠ”ì§€ ì •ë³´ ì„¸íŒ… (ì¿¨ê° ë²„ê·¸ í•´ê²°!)
+        ExecutionRequest.Instigator = EventData.Instigator;   // ê³µê²©ì (í”Œë ˆì´ì–´)
+        ExecutionRequest.DamageCauser = EventData.Instigator; // ê³µê²© ë„êµ¬ (íˆ¬ì‚¬ì²´/ì¹¼ ë“±)
+        ExecutionRequest.SourceObject = EventData.SourceObject;                   // â˜… ì´ 'ì²˜í˜•' ì´í™íŠ¸ ìì²´ë¥¼ ì›ì¸ìœ¼ë¡œ ê¸°ë¡! (ì‹œë„ˆì§€ìš©)
+        ExecutionRequest.Victim = EventData.Target;           // ë§ì€ ë†ˆ
 
 
-        // 2. ¡Ú °¡Àå Áß¿äÇÑ ÇÙ½É: µ¥¹ÌÁö Å¸ÀÔÀ» 'Execution'À¸·Î ÁöÁ¤! ¡Ú
+        // 2. â˜… ê°€ì¥ ì¤‘ìš”í•œ í•µì‹¬: ë°ë¯¸ì§€ íƒ€ì…ì„ 'Execution'ìœ¼ë¡œ ì§€ì •! â˜…
         //ExecutionRequest.DamageType = EDEDamageType::Execution;
         ExecutionRequest.DamageTags.AddTag(FGameplayTag::RequestGameplayTag(FName("Damage.Mechanic.Execution")));
         ExecutionRequest.bCanTriggerOnHit = false;
 
-        // 3. µ¥¹ÌÁö ¼öÄ¡´Â °í¹ÎÇÏÁö ¸¶½Ê¼î! 
-        // HealthComp ¾ÈÀÇ ProcessDamage switch¹®¿¡¼­ MaxHP * 100.0f·Î µ¤¾î¾º¿ï °Ì´Ï´Ù.
+        // 3. ë°ë¯¸ì§€ ìˆ˜ì¹˜ëŠ” ê³ ë¯¼í•˜ì§€ ë§ˆì‹­ì‡¼! 
+        // HealthComp ì•ˆì˜ ProcessDamage switchë¬¸ì—ì„œ MaxHP * 100.0fë¡œ ë®ì–´ì”Œìš¸ ê²ë‹ˆë‹¤.
         ExecutionRequest.BaseDamage = 0.0f;
 
-        // 4. Äç! ¸í·ÉÀ» ÇÏ´ŞÇÔ.
-        // ÀÌ·¯¸é ¿¬Ãâ, µ¥ÀÌÅÍ Ã³¸®, »ç¸Á Ã³¸®, ½Ã³ÊÁö±îÁö ¸ğµç °Ç HealthComp°¡ Ã¥ÀÓÁı´Ï´Ù.
+        // 4. ì¾…! ëª…ë ¹ì„ í•˜ë‹¬í•¨.
+        // ì´ëŸ¬ë©´ ì—°ì¶œ, ë°ì´í„° ì²˜ë¦¬, ì‚¬ë§ ì²˜ë¦¬, ì‹œë„ˆì§€ê¹Œì§€ ëª¨ë“  ê±´ HealthCompê°€ ì±…ì„ì§‘ë‹ˆë‹¤.
         UDEGameplayLibrary::ApplyCombatDamage(ExecutionRequest);
 
         // UE_LOG(LogTemp, Warning, TEXT("Execution request sent for target: %s"), *EventData.Target->GetName());
@@ -53,25 +53,25 @@ void UDECombatEffect_Execution::OnExecuteEffect(FCombatEventData& EventData)
     //if (!EventData.Target) return;
 
     //UDEHealthComponent* HealthComp = EventData.Target->FindComponentByClass<UDEHealthComponent>();
-    //// Á×Àº ³ğÀº µÎ ¹ø Ã³ÇüÇÏÁö ¾ÊÀ½
+    //// ì£½ì€ ë†ˆì€ ë‘ ë²ˆ ì²˜í˜•í•˜ì§€ ì•ŠìŒ
     //if (!HealthComp || HealthComp->IsDead()) return;
 
     //float HPPercent = HealthComp->GetCurrentHP() / HealthComp->GetMaxHP();
 
-    //// Ã³Çü Á¶°Ç ¸¸Á· ½Ã (¿¹: Ã¼·Â 10% ÀÌÇÏ)
+    //// ì²˜í˜• ì¡°ê±´ ë§Œì¡± ì‹œ (ì˜ˆ: ì²´ë ¥ 10% ì´í•˜)
     //if (HPPercent <= Value)
     //{
-    //    // 1. [¿¬Ãâ] ÅØ½ºÆ® ¸ÕÀú ¶ç¿ì±â! (¸ó½ºÅÍ°¡ »ç¶óÁö±â Àü¿¡ À§Ä¡ È®º¸)
+    //    // 1. [ì—°ì¶œ] í…ìŠ¤íŠ¸ ë¨¼ì € ë„ìš°ê¸°! (ëª¬ìŠ¤í„°ê°€ ì‚¬ë¼ì§€ê¸° ì „ì— ìœ„ì¹˜ í™•ë³´)
     //    if (UWorld* World = EventData.Target->GetWorld())
     //    {
     //        if (UDEDamageTextSubsystem* DmgSys = World->GetSubsystem<UDEDamageTextSubsystem>())
     //        {
     //            FDamageVisualInfo DmgInfo;
-    //            // ¸Ó¸® À§ÂÊÀ¸·Î ¶ç¿ì±â À§ÇØ ZÃà »ìÂ¦ ¿Ã¸²
+    //            // ë¨¸ë¦¬ ìœ„ìª½ìœ¼ë¡œ ë„ìš°ê¸° ìœ„í•´ Zì¶• ì‚´ì§ ì˜¬ë¦¼
     //            DmgInfo.WorldLocation = EventData.Target->GetActorLocation() + FVector(0, 0, 100);
-    //            DmgInfo.Amount = HealthComp->GetMaxHP(); // ¼ıÀÚ´Â ¾È º¸ÀÌ°ÚÁö¸¸ °ªÀº Ã¤¿öÁÜ
+    //            DmgInfo.Amount = HealthComp->GetMaxHP(); // ìˆ«ìëŠ” ì•ˆ ë³´ì´ê² ì§€ë§Œ ê°’ì€ ì±„ì›Œì¤Œ
 
-    //            // ¾îÁ¦ ¼¼ÆÃÇØµĞ ÇÍºû EXECUTED Enum Àû¿ë!
+    //            // ì–´ì œ ì„¸íŒ…í•´ë‘” í•ë¹› EXECUTED Enum ì ìš©!
     //            DmgInfo.TextType = EDamageTextType::Execution;
 
     //            DmgSys->ShowDamage(DmgInfo);
@@ -79,7 +79,7 @@ void UDECombatEffect_Execution::OnExecuteEffect(FCombatEventData& EventData)
     //        }
     //    }
 
-    //    // 2. [µ¥ÀÌÅÍ] ±ò²ûÇÏ°Ô ¼ûÅë ²÷±â (HealthComp´Â UI ½Å°æ ¾È ¾²°í ÇÇ¸¸ 0À¸·Î ¸¸µê)
+    //    // 2. [ë°ì´í„°] ê¹”ë”í•˜ê²Œ ìˆ¨í†µ ëŠê¸° (HealthCompëŠ” UI ì‹ ê²½ ì•ˆ ì“°ê³  í”¼ë§Œ 0ìœ¼ë¡œ ë§Œë“¦)
     //    HealthComp->InstantKill(EventData.Instigator, false);
     //}
     // 
@@ -96,10 +96,10 @@ void UDECombatEffect_Execution::OnExecuteEffect(FCombatEventData& EventData)
 
     //float HPPercent = HealthComp->GetCurrentHP() / HealthComp->GetMaxHP();
 
-    //// Ã³Çü Á¶°Ç ¸¸Á· ½Ã
+    //// ì²˜í˜• ì¡°ê±´ ë§Œì¡± ì‹œ
     //if (HPPercent <= Threshold)
     //{
-    //    // ÃÖ´ë Ã¼·Â¸¸Å­ µ¥¹ÌÁö¸¦ Áà¼­ Áï»ç Ã³¸®
+    //    // ìµœëŒ€ ì²´ë ¥ë§Œí¼ ë°ë¯¸ì§€ë¥¼ ì¤˜ì„œ ì¦‰ì‚¬ ì²˜ë¦¬
     //    HealthComp->InstantKill(EventData.Instigator);
     //}
 }

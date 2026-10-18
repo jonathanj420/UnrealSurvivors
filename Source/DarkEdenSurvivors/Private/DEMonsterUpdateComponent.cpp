@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEMonsterUpdateComponent.h"
@@ -7,7 +7,7 @@
 
 UDEMonsterUpdateComponent::UDEMonsterUpdateComponent()
 {
-    // ÀÌ ÄÄÆ÷³ÍÆ® ÀÚÃ¼ÀÇ TickÀº ²û - SpawnManager Tick¿¡¼­ Á÷Á¢ È£ÃâÇÒ °Å¶ó¼­
+    // ì´ ì»´í¬ë„ŒíŠ¸ ìì²´ì˜ Tickì€ ë” - SpawnManager Tickì—ì„œ ì§ì ‘ í˜¸ì¶œí•  ê±°ë¼ì„œ
     PrimaryComponentTick.bCanEverTick = false;
 }
 
@@ -16,8 +16,8 @@ void UDEMonsterUpdateComponent::UpdateMonsters(float DeltaTime, TArray<ADEMonste
     TRACE_CPUPROFILER_EVENT_SCOPE(UDEMonsterUpdateComponent::UpdateMonsters);
     if (!Player || ActiveMonsters.Num() == 0) return;
 
-    // [¿Ïº®ÇÑ ÃÖÀûÈ­] ÇÁ·¹ÀÓ ½ÃÀÛÇÒ ¶§, ¸ğµç ¸ó½ºÅÍÀÇ À§Ä¡¸¦ °¢ÀÚÀÇ ÁÖ¸Ó´Ï¿¡ µü 1¹ø¸¸ Ä³½Ì!
-    // ÀÌÁ¦ ÀÌ ÇÁ·¹ÀÓÀÌ ³¡³¯ ¶§±îÁö GetActorLocation()Àº Àı´ë ºÎ¸£Áö ¾Ê½À´Ï´Ù.
+    // [ì™„ë²½í•œ ìµœì í™”] í”„ë ˆì„ ì‹œì‘í•  ë•Œ, ëª¨ë“  ëª¬ìŠ¤í„°ì˜ ìœ„ì¹˜ë¥¼ ê°ìì˜ ì£¼ë¨¸ë‹ˆì— ë”± 1ë²ˆë§Œ ìºì‹±!
+    // ì´ì œ ì´ í”„ë ˆì„ì´ ëë‚  ë•Œê¹Œì§€ GetActorLocation()ì€ ì ˆëŒ€ ë¶€ë¥´ì§€ ì•ŠìŠµë‹ˆë‹¤.
     const int32 MonsterCount = ActiveMonsters.Num();
     for (int32 i = 0; i < MonsterCount; ++i)
     {
@@ -32,7 +32,7 @@ void UDEMonsterUpdateComponent::UpdateMonsters(float DeltaTime, TArray<ADEMonste
 }
 
 // -------------------------------------------------------
-// ÀÌµ¿ + °ø°İ
+// ì´ë™ + ê³µê²©
 // -------------------------------------------------------
 void UDEMonsterUpdateComponent::UpdateMovementAndAttack(float DeltaTime, TArray<ADEMonsterBase*>& ActiveMonsters)
 {
@@ -51,14 +51,14 @@ void UDEMonsterUpdateComponent::UpdateMovementAndAttack(float DeltaTime, TArray<
         Mob->MoveToPlayer(DeltaTime, PlayerLocation, Mob->CachedLocation);
         Mob->ExecuteAttackLogic(CurrentWorldTime);
 
-        // [¼öÁ¤] ¹è¿­¿¡¼­ ²¨³»Áö ¸»°í, ¾Æ±î À§¿¡¼­ ±¸¿öµĞ Mob ÁÖ¸Ó´Ï(CachedLocation)¿¡¼­ ²¨³¿!
+        // [ìˆ˜ì •] ë°°ì—´ì—ì„œ êº¼ë‚´ì§€ ë§ê³ , ì•„ê¹Œ ìœ„ì—ì„œ êµ¬ì›Œë‘” Mob ì£¼ë¨¸ë‹ˆ(CachedLocation)ì—ì„œ êº¼ëƒ„!
         ResolvePlayerPush(Mob, PlayerLocation, Mob->CachedLocation, PlayerRadius);
     }
 
 }
 
 // -------------------------------------------------------
-// ¸ó½ºÅÍ °£ °ãÄ§ ÇØ¼Ò O(n^2) - ÃßÈÄ °ø°£ºĞÇÒ·Î °³¼± ¿©Áö ÀÖÀ½
+// ëª¬ìŠ¤í„° ê°„ ê²¹ì¹¨ í•´ì†Œ O(n^2) - ì¶”í›„ ê³µê°„ë¶„í• ë¡œ ê°œì„  ì—¬ì§€ ìˆìŒ
 // -------------------------------------------------------
 void UDEMonsterUpdateComponent::ResolveOverlaps(TArray<ADEMonsterBase*>& ActiveMonsters)
 {
@@ -66,7 +66,7 @@ void UDEMonsterUpdateComponent::ResolveOverlaps(TArray<ADEMonsterBase*>& ActiveM
 
     const int32 MonsterCount = ActiveMonsters.Num();
 
-    /// ¡Ú 0. ÀÌÀü ÇÁ·¹ÀÓ¿¡ »ç¿ëµÈ ¼¿¸¸ ºñ¿ì±â (ÀüÃ¼ map ¼øÈ¸ Á¦°Å!!!)
+    /// â˜… 0. ì´ì „ í”„ë ˆì„ì— ì‚¬ìš©ëœ ì…€ë§Œ ë¹„ìš°ê¸° (ì „ì²´ map ìˆœíšŒ ì œê±°!!!)
     for (const FIntPoint& Cell : LastFrameTouchedCells)
     {
         if (TArray<ADEMonsterBase*>* Arr = SpatialGrid.Find(Cell))
@@ -78,23 +78,23 @@ void UDEMonsterUpdateComponent::ResolveOverlaps(TArray<ADEMonsterBase*>& ActiveM
 
 
 
-    // 2. ¸ó½ºÅÍµéÀ» ±×¸®µå ¼¿¿¡ ¹èÁ¤
+    // 2. ëª¬ìŠ¤í„°ë“¤ì„ ê·¸ë¦¬ë“œ ì…€ì— ë°°ì •
     TSet<FIntPoint> ThisFrameCells;
     for (int32 i = 0; i < MonsterCount; ++i)
     {
         ADEMonsterBase* Mob = ActiveMonsters[i];
         if (!Mob) continue;
 
-        const FVector& Loc = Mob->CachedLocation; // ÇÔ¼ö È£Ãâ ¾øÀÌ º¯¼ö¸¸ ½ï »©¸ÔÀ½!
+        const FVector& Loc = Mob->CachedLocation; // í•¨ìˆ˜ í˜¸ì¶œ ì—†ì´ ë³€ìˆ˜ë§Œ ì™ ë¹¼ë¨¹ìŒ!
         FIntPoint CellIndex(FMath::FloorToInt(Loc.X / CellSize), FMath::FloorToInt(Loc.Y / CellSize));
         SpatialGrid.FindOrAdd(CellIndex).Add(Mob);
-        ThisFrameCells.Add(CellIndex);  // Áßº¹ ÀÚµ¿ ¹æÁö
+        ThisFrameCells.Add(CellIndex);  // ì¤‘ë³µ ìë™ ë°©ì§€
     }
 
     
 
     // =========================================================
-    // 3. Ãæµ¹ °Ë»ç (¸ó½ºÅÍ Áß½É -> ¼¿ ´ÜÀ§ 4¹æÇâ ÇÏÇÁ-³×ÀÌ¹ö ÃÖÀûÈ­!)
+    // 3. ì¶©ëŒ ê²€ì‚¬ (ëª¬ìŠ¤í„° ì¤‘ì‹¬ -> ì…€ ë‹¨ìœ„ 4ë°©í–¥ í•˜í”„-ë„¤ì´ë²„ ìµœì í™”!)
     // =========================================================
     for (const FIntPoint& CellIndex : ThisFrameCells)
     {
@@ -104,8 +104,8 @@ void UDEMonsterUpdateComponent::ResolveOverlaps(TArray<ADEMonsterBase*>& ActiveM
         TArray<ADEMonsterBase*>& CellMonsters = *CellMonstersPtr;
         const int32 CellMobCount = CellMonsters.Num();
 
-        // 3-1. [°°Àº ¼¿ ³»ºÎ °Ë»ç] 
-        // A < B ºñ±³ÇÒ ÇÊ¿ä ¾øÀÌ, ÀÎµ¦½º(i, j) Á¶ÇÕÀ¸·Î Áßº¹ ¾øÀÌ µü 1¹ø¾¿¸¸ ¸ÅÄª!
+        // 3-1. [ê°™ì€ ì…€ ë‚´ë¶€ ê²€ì‚¬] 
+        // A < B ë¹„êµí•  í•„ìš” ì—†ì´, ì¸ë±ìŠ¤(i, j) ì¡°í•©ìœ¼ë¡œ ì¤‘ë³µ ì—†ì´ ë”± 1ë²ˆì”©ë§Œ ë§¤ì¹­!
         for (int32 i = 0; i < CellMobCount; ++i)
         {
             for (int32 j = i + 1; j < CellMobCount; ++j)
@@ -114,8 +114,8 @@ void UDEMonsterUpdateComponent::ResolveOverlaps(TArray<ADEMonsterBase*>& ActiveM
             }
         }
 
-        // 3-2. [ÁÖº¯ ¼¿ °Ë»ç] 
-        // 9¹æÇâ ¹ö¸®°í, ¹Ì·¡ ¹æÇâ(¿ì, ¿ìÇÏ, ÇÏ, ÁÂÇÏ) 4°÷¸¸ °Ë»ç!
+        // 3-2. [ì£¼ë³€ ì…€ ê²€ì‚¬] 
+        // 9ë°©í–¥ ë²„ë¦¬ê³ , ë¯¸ë˜ ë°©í–¥(ìš°, ìš°í•˜, í•˜, ì¢Œí•˜) 4ê³³ë§Œ ê²€ì‚¬!
         FIntPoint NeighborOffsets[4] = { FIntPoint(1, 0), FIntPoint(1, 1), FIntPoint(0, 1), FIntPoint(-1, 1) };
 
         for (int32 dir = 0; dir < 4; ++dir)
@@ -124,12 +124,12 @@ void UDEMonsterUpdateComponent::ResolveOverlaps(TArray<ADEMonsterBase*>& ActiveM
             {
                 if (NeighborMonsters->Num() == 0) continue;
 
-                // ³» ¼¿ÀÇ ¸ó½ºÅÍµé°ú, ÀÎÁ¢ÇÑ 4¹æÇâ ¼¿ÀÇ ¸ó½ºÅÍµéÀ» ±³Â÷ °ËÁõ
+                // ë‚´ ì…€ì˜ ëª¬ìŠ¤í„°ë“¤ê³¼, ì¸ì ‘í•œ 4ë°©í–¥ ì…€ì˜ ëª¬ìŠ¤í„°ë“¤ì„ êµì°¨ ê²€ì¦
                 for (ADEMonsterBase* MobA : CellMonsters)
                 {
                     for (ADEMonsterBase* MobB : *NeighborMonsters)
                     {
-                        // ¿©±â¼± ¼Ò¼ÓµÈ ¼¿ ÀÚÃ¼°¡ ¿ÏÀüÈ÷ ´Ù¸£¹Ç·Î, (MobA < MobB) °Ë»ç ¾øÀÌ ³À´Ù ¹Ğ¾î¹ö·Áµµ Áßº¹ Àı´ë ¾È »ı±è!
+                        // ì—¬ê¸°ì„  ì†Œì†ëœ ì…€ ìì²´ê°€ ì™„ì „íˆ ë‹¤ë¥´ë¯€ë¡œ, (MobA < MobB) ê²€ì‚¬ ì—†ì´ ëƒ…ë‹¤ ë°€ì–´ë²„ë ¤ë„ ì¤‘ë³µ ì ˆëŒ€ ì•ˆ ìƒê¹€!
                         ResolveMonsterOverlap(MobA, MobB, MobA->CachedLocation, MobB->CachedLocation);
                     }
                 }
@@ -137,7 +137,7 @@ void UDEMonsterUpdateComponent::ResolveOverlaps(TArray<ADEMonsterBase*>& ActiveM
         }
     }
 
-    //// 3. Ãæµ¹ °Ë»ç
+    //// 3. ì¶©ëŒ ê²€ì‚¬
     //for (int32 i = 0; i < MonsterCount; ++i)
     //{
     //    ADEMonsterBase* MobA = ActiveMonsters[i];
@@ -156,7 +156,7 @@ void UDEMonsterUpdateComponent::ResolveOverlaps(TArray<ADEMonsterBase*>& ActiveM
     //                {
     //                    if (MobA < MobB)
     //                    {
-    //                        // MobB À§Ä¡µµ ÇÔ¼ö È£Ãâ ¾øÀÌ º¯¼ö·Î ¹Ù·Î Àü´Ş!
+    //                        // MobB ìœ„ì¹˜ë„ í•¨ìˆ˜ í˜¸ì¶œ ì—†ì´ ë³€ìˆ˜ë¡œ ë°”ë¡œ ì „ë‹¬!
     //                        ResolveMonsterOverlap(MobA, MobB, LocA, MobB->CachedLocation);
     //                    }
     //                }
@@ -165,24 +165,24 @@ void UDEMonsterUpdateComponent::ResolveOverlaps(TArray<ADEMonsterBase*>& ActiveM
     //    }
     //}
 
-    // 4. ÀÌµ¿ °áÀç (¿£ÁøÀÇ Çê¼ö°í ¹æÁö)
+    // 4. ì´ë™ ê²°ì¬ (ì—”ì§„ì˜ í—›ìˆ˜ê³  ë°©ì§€)
     for (ADEMonsterBase* Mob : ActiveMonsters)
     {
         if (!Mob) continue;
 
-        //  [ºÎÈ°] ¹Ğ¾î³¾ ÈûÀÌ ÀÖÀ» ¶§'¸¸' ¿£ÁøÀ» ±ú¿î´Ù! (ÀÌ°Å ÁøÂ¥ Áß¿äÇÕ´Ï´Ù)
+        //  [ë¶€í™œ] ë°€ì–´ë‚¼ í˜ì´ ìˆì„ ë•Œ'ë§Œ' ì—”ì§„ì„ ê¹¨ìš´ë‹¤! (ì´ê±° ì§„ì§œ ì¤‘ìš”í•©ë‹ˆë‹¤)
         if (!Mob->PendingOverlapPush.IsNearlyZero())
         {
-            // ¹Ğ¾î³»±â º¤ÅÍ (ÁÖÀÇ: ¿©±â¿¡ MoveToPlayer ÀÌµ¿·®±îÁö ÇÕÃÄÁ® ÀÖ´Ù¸é Clamp(10.f) ¼öÄ¡´Â ÇÁ·¹ÀÓ´ç ÃÖ´ë ÀÌµ¿ °Å¸®·Î ³Ë³ËÈ÷ Àâ¾Æ¾ß ÇÕ´Ï´Ù. ¿¹¸¦ µé¾î 20.f)
+            // ë°€ì–´ë‚´ê¸° ë²¡í„° (ì£¼ì˜: ì—¬ê¸°ì— MoveToPlayer ì´ë™ëŸ‰ê¹Œì§€ í•©ì³ì ¸ ìˆë‹¤ë©´ Clamp(10.f) ìˆ˜ì¹˜ëŠ” í”„ë ˆì„ë‹¹ ìµœëŒ€ ì´ë™ ê±°ë¦¬ë¡œ ë„‰ë„‰íˆ ì¡ì•„ì•¼ í•©ë‹ˆë‹¤. ì˜ˆë¥¼ ë“¤ì–´ 20.f)
             FVector FinalPush = Mob->PendingOverlapPush.GetClampedToMaxSize(20.0f);
 
-            // 1. ÃÖÁ¾ À§Ä¡ °è»ê (ÇöÀç Ä³½ÃµÈ À§Ä¡ + ÃÖÁ¾ ÀÌµ¿/¹Ğ¸²·®)
+            // 1. ìµœì¢… ìœ„ì¹˜ ê³„ì‚° (í˜„ì¬ ìºì‹œëœ ìœ„ì¹˜ + ìµœì¢… ì´ë™/ë°€ë¦¼ëŸ‰)
             FVector FinalLocation = Mob->CachedLocation + FinalPush;
 
-            // ¡Ú¡Ú¡Ú 2. ±Ã±ØÀÇ ÇÕ¹è¼Û: À§Ä¡¿Í È¸ÀüÀ» µ¿½Ã¿¡ ¿£Áø¿¡ ´øÁü! ¡Ú¡Ú¡Ú
+            // â˜…â˜…â˜… 2. ê¶ê·¹ì˜ í•©ë°°ì†¡: ìœ„ì¹˜ì™€ íšŒì „ì„ ë™ì‹œì— ì—”ì§„ì— ë˜ì§! â˜…â˜…â˜…
             Mob->SetActorLocationAndRotation(
                 FinalLocation,
-                Mob->PendingRotation, // ¾Æ±î MoveToPlayer¿¡¼­ ´ã¾ÆµĞ È¸Àü°ª
+                Mob->PendingRotation, // ì•„ê¹Œ MoveToPlayerì—ì„œ ë‹´ì•„ë‘” íšŒì „ê°’
                 false,
                 nullptr,
                 ETeleportType::TeleportPhysics
@@ -190,11 +190,11 @@ void UDEMonsterUpdateComponent::ResolveOverlaps(TArray<ADEMonsterBase*>& ActiveM
 
             //Mob->AddActorWorldOffset(FinalPush, false, nullptr, ETeleportType::TeleportPhysics);
 
-            // 3. ´ÙÀ½ ÇÁ·¹ÀÓÀ» À§ÇØ À§Ä¡ Ä³½Ã °»½Å
+            // 3. ë‹¤ìŒ í”„ë ˆì„ì„ ìœ„í•´ ìœ„ì¹˜ ìºì‹œ ê°±ì‹ 
             Mob->CachedLocation = FinalLocation;
         }
 
-        // Àå¹Ù±¸´Ï ¸®¼ÂÀº ¹«Á¶°Ç!
+        // ì¥ë°”êµ¬ë‹ˆ ë¦¬ì…‹ì€ ë¬´ì¡°ê±´!
         Mob->PendingOverlapPush = FVector::ZeroVector;
     }
 
@@ -207,7 +207,7 @@ void UDEMonsterUpdateComponent::ResolveMonsterOverlap(ADEMonsterBase* A, ADEMons
     FVector Delta = FVector(PosB.X - PosA.X, PosB.Y - PosA.Y, 0.f);
     const float DistSq = Delta.SizeSquared();
 
-    // [ÃÖÀûÈ­] ÇÔ¼ö È£Ãâ(GetCollisionRadius) ´Ù »©°í ¾Æ±î ÀúÀåÇØµĞ º¯¼ö·Î µ¡¼À!
+    // [ìµœì í™”] í•¨ìˆ˜ í˜¸ì¶œ(GetCollisionRadius) ë‹¤ ë¹¼ê³  ì•„ê¹Œ ì €ì¥í•´ë‘” ë³€ìˆ˜ë¡œ ë§ì…ˆ!
     const float MinDist = A->CachedRadius + B->CachedRadius + 2.0f;
     const float MinDistSq = MinDist * MinDist;
 
@@ -226,14 +226,14 @@ void UDEMonsterUpdateComponent::ResolveMonsterOverlap(ADEMonsterBase* A, ADEMons
     const FVector PushDir = Delta / Dist;
     FVector PushOffset = PushDir * (Penetration * 0.05f);*/
 
-    // [°³¼±µÈ ÃÖÀûÈ­ ÄÚµå]
-// 1. ¿ªÁ¦°ö±Ù (1 / Sqrt(x)) À» ÇÏµå¿ş¾î °¡¼ÓÀ¸·Î ¼ø½Ä°£¿¡ ±¸ÇÔ
+    // [ê°œì„ ëœ ìµœì í™” ì½”ë“œ]
+// 1. ì—­ì œê³±ê·¼ (1 / Sqrt(x)) ì„ í•˜ë“œì›¨ì–´ ê°€ì†ìœ¼ë¡œ ìˆœì‹ê°„ì— êµ¬í•¨
     const float InvDist = FMath::InvSqrt(DistSq);
 
-    // 2. ¼öÇĞ °ø½Ä: x * (1 / Sqrt(x)) = Sqrt(x) 
+    // 2. ìˆ˜í•™ ê³µì‹: x * (1 / Sqrt(x)) = Sqrt(x) 
     const float Dist = DistSq * InvDist;
 
-    // 3. ³ª´°¼À(/) ´ë½Å °ö¼À(*) »ç¿ë! CPU°¡ ±â¸³¹Ú¼ö Ä¨´Ï´Ù.
+    // 3. ë‚˜ëˆ—ì…ˆ(/) ëŒ€ì‹  ê³±ì…ˆ(*) ì‚¬ìš©! CPUê°€ ê¸°ë¦½ë°•ìˆ˜ ì¹©ë‹ˆë‹¤.
     const FVector PushDir = Delta * InvDist;
     const float Penetration = MinDist - Dist;
     FVector PushOffset = PushDir * (Penetration * 0.05f);
@@ -241,9 +241,9 @@ void UDEMonsterUpdateComponent::ResolveMonsterOverlap(ADEMonsterBase* A, ADEMons
     A->PendingOverlapPush -= PushOffset;
     B->PendingOverlapPush += PushOffset;
 
-    // ³Ë¹é ÃÖÀûÈ­ ·ÎÁ÷Àº ¿Ïº®ÇÏ¹Ç·Î ±×´ë·Î À¯Áö! (SizeSquared ÃÖ°íÀÔ´Ï´Ù)
+    // ë„‰ë°± ìµœì í™” ë¡œì§ì€ ì™„ë²½í•˜ë¯€ë¡œ ê·¸ëŒ€ë¡œ ìœ ì§€! (SizeSquared ìµœê³ ì…ë‹ˆë‹¤)
     const float AKnockSq = A->KnockbackVelocity.SizeSquared();
-    const float BKnockSq = B->KnockbackVelocity.SizeSquared(); // ¡ç ¿©±â·Î ¿Ã·Á¾ß ÇÔ
+    const float BKnockSq = B->KnockbackVelocity.SizeSquared(); // â† ì—¬ê¸°ë¡œ ì˜¬ë ¤ì•¼ í•¨
 
     if (AKnockSq > 1.f)
     {
@@ -293,7 +293,7 @@ void UDEMonsterUpdateComponent::ResolvePlayerPush(ADEMonsterBase* Mob, const FVe
 
     //const float Dist = FMath::Sqrt(DistSq);
     //const FVector PushDir = Delta / Dist;
-    //const float Penetration = (MinDist - Dist) - 2.0f; // 2À¯´Ö ¹öÆÛ (Overlap ÀÌº¥Æ® À¯Áö¿ë)
+    //const float Penetration = (MinDist - Dist) - 2.0f; // 2ìœ ë‹› ë²„í¼ (Overlap ì´ë²¤íŠ¸ ìœ ì§€ìš©)
 
     //Mob->AddActorWorldOffset(PushDir * Penetration, true);
 }

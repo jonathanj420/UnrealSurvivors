@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEBehavior_PlayEffect.h"
@@ -16,13 +16,13 @@ void UDEBehavior_PlayEffect::Execute(FDESkillContext& Context)
     if (!World) return;
 
     // ---------------------------------------------------------
-    // 1. ³ªÀÌ¾Æ°¡¶ó ÀÌÆåÆ® Ã³¸® (½Ã°¢ È¿°ú - Å¸°Ù ¼ö¸¸Å­ º¹»ç)
+    // 1. ë‚˜ì´ì•„ê°€ë¼ ì´í™íŠ¸ ì²˜ë¦¬ (ì‹œê° íš¨ê³¼ - íƒ€ê²Ÿ ìˆ˜ë§Œí¼ ë³µì‚¬)
     // ---------------------------------------------------------
     if (NiagaraEffect)
     {
         TArray<FVector> NiagaraLocs = ResolveLocations(NiagaraTargetType, Context);
 
-        // ¾îÅÂÄ¡ Å¸°Ù ¼öÁı (³ªÀÌ¾Æ°¡¶ó Å¸°Ù Å¸ÀÔÀÌ Instigator³ª AllTargetsÀÏ ¶§¸¸ Àû¿ë)
+        // ì–´íƒœì¹˜ íƒ€ê²Ÿ ìˆ˜ì§‘ (ë‚˜ì´ì•„ê°€ë¼ íƒ€ê²Ÿ íƒ€ì…ì´ Instigatorë‚˜ AllTargetsì¼ ë•Œë§Œ ì ìš©)
         TArray<AActor*> AttachTargets;
         if (bAttachToActor)
         {
@@ -39,7 +39,7 @@ void UDEBehavior_PlayEffect::Execute(FDESkillContext& Context)
             }
         }
 
-        // ¼öÁıµÈ À§Ä¡¸¶´Ù ³ªÀÌ¾Æ°¡¶ó
+        // ìˆ˜ì§‘ëœ ìœ„ì¹˜ë§ˆë‹¤ ë‚˜ì´ì•„ê°€ë¼
         for (int32 i = 0; i < NiagaraLocs.Num(); i++)
         {
             FVector FinalPos = NiagaraLocs[i] + Offset;
@@ -78,37 +78,37 @@ void UDEBehavior_PlayEffect::Execute(FDESkillContext& Context)
                 );
             }
 
-            // Å©±â ÁÖÀÔ
+            // í¬ê¸° ì£¼ì…
             if (SpawnedComp && !SizeVariableName.IsNone())
             {
                 float FinalSize = FMath::Max(Context.Radius, 100.f) * SizeMultiplier;
                 SpawnedComp->SetVariableFloat(SizeVariableName, FinalSize);
             }
 
-            if (SpawnedComp && TargetForRot) // °³¹ßÀÚ´ÔÀÌ ÀÌ¹Ì ¸¸µé¾îµĞ ¿Ïº®ÇÑ º¯¼ö ÀçÈ°¿ë!
+            if (SpawnedComp && TargetForRot) // ê°œë°œìë‹˜ì´ ì´ë¯¸ ë§Œë“¤ì–´ë‘” ì™„ë²½í•œ ë³€ìˆ˜ ì¬í™œìš©!
             {
-                // ³ªÀÌ¾Æ°¡¶óÀÇ User.TargetPosition ¿¡ ¸ó½ºÅÍÀÇ Àı´ë ÁÂÇ¥¸¦ ²È½À´Ï´Ù!
+                // ë‚˜ì´ì•„ê°€ë¼ì˜ User.TargetPosition ì— ëª¬ìŠ¤í„°ì˜ ì ˆëŒ€ ì¢Œí‘œë¥¼ ê½‚ìŠµë‹ˆë‹¤!
                 SpawnedComp->SetVariableVec3(FName("TargetPosition"), TargetForRot->GetActorLocation());
             }
             if (SpawnedComp)
             {
-                // 1. ¹ß»ç ½ÃÀÛÁ¡
+                // 1. ë°œì‚¬ ì‹œì‘ì 
                 FVector StartLoc = Context.Instigator->GetActorLocation();
 
-                // 2. ¹æÇâ °è»ê (Å¸°ÙÀÌ ÀÖÀ¸¸é Å¸°Ù ¹æÇâ, ¾øÀ¸¸é Àü¹æ)
+                // 2. ë°©í–¥ ê³„ì‚° (íƒ€ê²Ÿì´ ìˆìœ¼ë©´ íƒ€ê²Ÿ ë°©í–¥, ì—†ìœ¼ë©´ ì „ë°©)
                 FVector Direction = Context.Instigator->GetActorForwardVector();
                 if (Context.Targets.Num() > 0 && Context.Targets[0])
                 {
                     Direction = (Context.Targets[0]->GetActorLocation() - StartLoc).GetSafeNormal2D();
                 }
 
-                // 3. °Å¸® °è»ê (Context¿¡ ¼³Á¤µÈ Range »ç¿ë)
-                float FinalRange = Context.GetValue(TEXT("Range"), 1000.0f); // ½ºÅ³ ½ºÆåÀÇ Range °¡Á®¿À±â
+                // 3. ê±°ë¦¬ ê³„ì‚° (Contextì— ì„¤ì •ëœ Range ì‚¬ìš©)
+                float FinalRange = Context.GetValue(TEXT("Range"), 1000.0f); // ìŠ¤í‚¬ ìŠ¤í™ì˜ Range ê°€ì ¸ì˜¤ê¸°
                 UE_LOG(LogTemp, Warning, TEXT("Niagara Beam Range : %f"), FinalRange);
-                // 4. ÃÖÁ¾ ³¡Á¡ ÁÂÇ¥ °è»ê (½ÃÀÛÁ¡ + (¹æÇâ * °Å¸®))
+                // 4. ìµœì¢… ëì  ì¢Œí‘œ ê³„ì‚° (ì‹œì‘ì  + (ë°©í–¥ * ê±°ë¦¬))
                 FVector BeamEndLoc = StartLoc + (Direction * FinalRange);
 
-                // 5. ³ªÀÌ¾Æ°¡¶ó¿¡ "BeamEnd"¶ó´Â ÀÌ¸§À¸·Î ÁÂÇ¥ ½÷ÁÖ±â
+                // 5. ë‚˜ì´ì•„ê°€ë¼ì— "BeamEnd"ë¼ëŠ” ì´ë¦„ìœ¼ë¡œ ì¢Œí‘œ ì´ì£¼ê¸°
                 SpawnedComp->SetVariableVec3(FName("BeamEnd"), BeamEndLoc);
             }
         }
@@ -116,22 +116,22 @@ void UDEBehavior_PlayEffect::Execute(FDESkillContext& Context)
     }
 
     // ---------------------------------------------------------
-    // 2. »ç¿îµå Ã³¸® (Ã»°¢ È¿°ú - °í¸· º¸È£¸¦ À§ÇØ ¹«Á¶°Ç 1¹ø¸¸!)
+    // 2. ì‚¬ìš´ë“œ ì²˜ë¦¬ (ì²­ê° íš¨ê³¼ - ê³ ë§‰ ë³´í˜¸ë¥¼ ìœ„í•´ ë¬´ì¡°ê±´ 1ë²ˆë§Œ!)
     // ---------------------------------------------------------
     if (SoundEffect)
     {
         if (SoundTargetType == EEffectTargetType::Instigator)
         {
-            // ½ÃÀüÀÚ ±âÁØ: 2D »ç¿îµå·Î È­¸é ÀüÃ¼¿¡ Â¼··Â¼··ÇÏ°Ô!
+            // ì‹œì „ì ê¸°ì¤€: 2D ì‚¬ìš´ë“œë¡œ í™”ë©´ ì „ì²´ì— ì©Œë ì©Œë í•˜ê²Œ!
             UGameplayStatics::PlaySound2D(World, SoundEffect);
         }
         else
         {
-            // ±× ¿Ü ±âÁØ: À§Ä¡¸¦ ¼öÁıÇØ¼­ 3D »ç¿îµå·Î 1¹ø¸¸ Àç»ı!
+            // ê·¸ ì™¸ ê¸°ì¤€: ìœ„ì¹˜ë¥¼ ìˆ˜ì§‘í•´ì„œ 3D ì‚¬ìš´ë“œë¡œ 1ë²ˆë§Œ ì¬ìƒ!
             TArray<FVector> SoundLocs = ResolveLocations(SoundTargetType, Context);
             if (SoundLocs.Num() > 0)
             {
-                // ÀûÀÌ 300¸¶¸®¿©µµ Ã¹ ¹øÂ° À§Ä¡¿¡¼­ µü 1¹ø¸¸ ¼Ò¸®°¡ ³³´Ï´Ù.
+                // ì ì´ 300ë§ˆë¦¬ì—¬ë„ ì²« ë²ˆì§¸ ìœ„ì¹˜ì—ì„œ ë”± 1ë²ˆë§Œ ì†Œë¦¬ê°€ ë‚©ë‹ˆë‹¤.
                 UGameplayStatics::PlaySoundAtLocation(World, SoundEffect, SoundLocs[0]);
             }
         }

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -20,12 +20,12 @@ public:
     UDESkillSlotWidget(const FObjectInitializer& ObjectInitializer);
 
 public:
-    // [º¯°æ] ÀÔ·Â¹Ş´Â IDµµ ¼ıÀÚ°¡ ¾Æ´Ï¶ó ÀÌ¸§(FName)ÀÌ¾î¾ß ÇÕ´Ï´Ù.
+    // [ë³€ê²½] ì…ë ¥ë°›ëŠ” IDë„ ìˆ«ìê°€ ì•„ë‹ˆë¼ ì´ë¦„(FName)ì´ì–´ì•¼ í•©ë‹ˆë‹¤.
     UFUNCTION(BlueprintCallable)
     void SetSkill(const FText& InSkillName, int32 InSkillLevel, UTexture2D* InSkillIcon);
 
 protected:
-    // ½ÇÁ¦ UI À§Á¬µé (BP¿¡¼­ BindWidget)
+    // ì‹¤ì œ UI ìœ„ì ¯ë“¤ (BPì—ì„œ BindWidget)
     UPROPERTY(meta = (BindWidget))
     UTextBlock* SkillNameText;
 

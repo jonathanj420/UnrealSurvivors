@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEBehavior_SelectTargetsBySweep.h"
@@ -12,16 +12,16 @@ void UDEBehavior_SelectTargetsBySweep::Execute(FDESkillContext& Context)
 
     FVector StartLoc = Context.Instigator->GetActorLocation();
 
-    // 1. ±âº» ¹æÇâÀº ÇÃ·¹ÀÌ¾îÀÇ Á¤¸é (Å¸°ÙÀÌ ¾øÀ» ¶§¸¦ ´ëºñÇÑ ¾ÈÀüÀåÄ¡)
+    // 1. ê¸°ë³¸ ë°©í–¥ì€ í”Œë ˆì´ì–´ì˜ ì •ë©´ (íƒ€ê²Ÿì´ ì—†ì„ ë•Œë¥¼ ëŒ€ë¹„í•œ ì•ˆì „ì¥ì¹˜)
     FVector Direction = Context.Instigator->GetActorForwardVector();
 
-    // 2. ÀÌÀü Behavior°¡ Context.Targets¿¡ Å¸°ÙÀ» ´ã¾Æµ×´Ù¸é? ±×ÂÊÀ» ÇâÇÑ´Ù!
+    // 2. ì´ì „ Behaviorê°€ Context.Targetsì— íƒ€ê²Ÿì„ ë‹´ì•„ë’€ë‹¤ë©´? ê·¸ìª½ì„ í–¥í•œë‹¤!
     if (Context.Targets.Num() > 0 && Context.Targets[0] != nullptr)
     {
         Direction = (Context.Targets[0]->GetActorLocation() - StartLoc).GetSafeNormal();
     }
 
-    // 3. ½ºÆå ¼¼ÆÃ (Context¿¡ Range°¡ ¾ø´Ù¸é, Radius º¯¼ö µîÀ» ÀûÀıÈ÷ È°¿ëÇØ ÁÖ¼¼¿ä)
+    // 3. ìŠ¤í™ ì„¸íŒ… (Contextì— Rangeê°€ ì—†ë‹¤ë©´, Radius ë³€ìˆ˜ ë“±ì„ ì ì ˆíˆ í™œìš©í•´ ì£¼ì„¸ìš”)
     float FinalRadius = Context.Radius;
     float FinalRange = Context.GetValue(TEXT("Range"), 600.0f);
 
@@ -33,7 +33,7 @@ void UDEBehavior_SelectTargetsBySweep::Execute(FDESkillContext& Context)
 
     TArray<FHitResult> HitResults;
 
-    // 4. ½ºÀ¬ ½î±â
+    // 4. ìŠ¤ìœ• ì˜ê¸°
     bool bHit = World->SweepMultiByProfile(
         HitResults,
         StartLoc,
@@ -44,7 +44,7 @@ void UDEBehavior_SelectTargetsBySweep::Execute(FDESkillContext& Context)
         Params
     );
 
-    // 5. ÀÌÀü Å¸°Ù(1¸¶¸®) Á¤º¸´Â Áö¿ì°í, ½ºÀ¬À¸·Î ±Ü¾î¿Â ¾Öµé·Î ¹è¿­ µ¤¾î¾º¿ì±â
+    // 5. ì´ì „ íƒ€ê²Ÿ(1ë§ˆë¦¬) ì •ë³´ëŠ” ì§€ìš°ê³ , ìŠ¤ìœ•ìœ¼ë¡œ ê¸ì–´ì˜¨ ì• ë“¤ë¡œ ë°°ì—´ ë®ì–´ì”Œìš°ê¸°
     Context.Targets.Empty();
     if (HitResults.Num() > 0)
     {
@@ -62,32 +62,32 @@ void UDEBehavior_SelectTargetsBySweep::Execute(FDESkillContext& Context)
 
     //if (bDrawDebug)
     //{
-    //    // 1. Ä¸½¶ÀÇ Áß½ÉÁ¡ °è»ê (½ÃÀÛÁ¡°ú ³¡Á¡ÀÇ Á¤È®È÷ ÇÑ°¡¿îµ¥)
+    //    // 1. ìº¡ìŠì˜ ì¤‘ì‹¬ì  ê³„ì‚° (ì‹œì‘ì ê³¼ ëì ì˜ ì •í™•íˆ í•œê°€ìš´ë°)
     //    FVector Center = StartLoc + (Direction * (FinalRange * 0.5f));
 
-    //    // 2. Ä¸½¶ÀÇ Àı¹İ ³ôÀÌ °è»ê (ÀÌµ¿ °Å¸®ÀÇ Àı¹İ + ¾ç ³¡¿¡ Æ¢¾î³ª¿Â ±¸Ã¼ÀÇ ¹İÁö¸§)
+    //    // 2. ìº¡ìŠì˜ ì ˆë°˜ ë†’ì´ ê³„ì‚° (ì´ë™ ê±°ë¦¬ì˜ ì ˆë°˜ + ì–‘ ëì— íŠ€ì–´ë‚˜ì˜¨ êµ¬ì²´ì˜ ë°˜ì§€ë¦„)
     //    float HalfHeight = (FinalRange * 0.5f) + FinalRadius;
 
-    //    // 3. Ä¸½¶ È¸Àü°ª °è»ê ¡Ú (¸Å¿ì Áß¿ä)
-    //    // ¾ğ¸®¾óÀÇ Ä¸½¶Àº ±âº»ÀûÀ¸·Î ZÃà(À§ÂÊ)À¸·Î ¼­ ÀÖ½À´Ï´Ù.
-    //    // ¿ì¸®°¡ ½î´Â ·¹ÀÌÀú ¹æÇâ(Direction)ÀÌ Ä¸½¶ÀÇ ±âµÕ(ZÃà)ÀÌ µÇµµ·Ï ´¯ÇôÁİ´Ï´Ù.
+    //    // 3. ìº¡ìŠ íšŒì „ê°’ ê³„ì‚° â˜… (ë§¤ìš° ì¤‘ìš”)
+    //    // ì–¸ë¦¬ì–¼ì˜ ìº¡ìŠì€ ê¸°ë³¸ì ìœ¼ë¡œ Zì¶•(ìœ„ìª½)ìœ¼ë¡œ ì„œ ìˆìŠµë‹ˆë‹¤.
+    //    // ìš°ë¦¬ê°€ ì˜ëŠ” ë ˆì´ì € ë°©í–¥(Direction)ì´ ìº¡ìŠì˜ ê¸°ë‘¥(Zì¶•)ì´ ë˜ë„ë¡ ëˆ•í˜€ì¤ë‹ˆë‹¤.
     //    FQuat CapsuleRot = FRotationMatrix::MakeFromZ(Direction).ToQuat();
 
-    //    // 4. ÁøÂ¥ ±×¸®±â! (ÀûÁßÇßÀ¸¸é ÃÊ·Ï»ö, Çã°øÀ» °¥¶úÀ¸¸é »¡°£»ö)
+    //    // 4. ì§„ì§œ ê·¸ë¦¬ê¸°! (ì ì¤‘í–ˆìœ¼ë©´ ì´ˆë¡ìƒ‰, í—ˆê³µì„ ê°ˆëìœ¼ë©´ ë¹¨ê°„ìƒ‰)
     //    DrawDebugCapsule(
     //        World,
     //        Center,
     //        HalfHeight,
     //        FinalRadius,
     //        CapsuleRot,
-    //        bHit ? FColor::Green : FColor::Red, // »ö»ó
-    //        false, // ¿µ±¸ À¯Áö ¿©ºÎ
-    //        2.0f,  // È­¸é¿¡ ³²¾ÆÀÖÀ» ½Ã°£ (2ÃÊ)
+    //        bHit ? FColor::Green : FColor::Red, // ìƒ‰ìƒ
+    //        false, // ì˜êµ¬ ìœ ì§€ ì—¬ë¶€
+    //        2.0f,  // í™”ë©´ì— ë‚¨ì•„ìˆì„ ì‹œê°„ (2ì´ˆ)
     //        0,     // Depth Priority
-    //        2.0f   // ¼± µÎ²²
+    //        2.0f   // ì„  ë‘ê»˜
     //    );
 
-    //    // (¼±ÅÃ) ½ÃÀÛÁ¡°ú ³¡Á¡¿¡ ÀÛÀº ±¸¸¦ ±×·ÁÁÖ¸é È®½ÇÈ÷ ÆÄ¾ÇÇÏ±â ´õ ÁÁ½À´Ï´Ù.
+    //    // (ì„ íƒ) ì‹œì‘ì ê³¼ ëì ì— ì‘ì€ êµ¬ë¥¼ ê·¸ë ¤ì£¼ë©´ í™•ì‹¤íˆ íŒŒì•…í•˜ê¸° ë” ì¢‹ìŠµë‹ˆë‹¤.
     //    DrawDebugSphere(World, StartLoc, 10.0f, 8, FColor::Blue, false, 2.0f);
     //    DrawDebugSphere(World, EndLoc, 10.0f, 8, FColor::Yellow, false, 2.0f);
     //}

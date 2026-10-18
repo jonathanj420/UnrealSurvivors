@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DECombatEffect_ApplyStatusEffect.h"
@@ -8,13 +8,13 @@ void UDECombatEffect_ApplyStatusEffect::OnExecuteEffect(FCombatEventData& EventD
 {
     if (!EventData.Target || !EventData.Instigator) return;
 
-    // Å¸°ÙÀÇ »óÅÂÀÌ»ó ÄÄÆ÷³ÍÆ® Ã£±â
+    // íƒ€ê²Ÿì˜ ìƒíƒœì´ìƒ ì»´í¬ë„ŒíŠ¸ ì°¾ê¸°
     UDEStatusEffectComponent* StatusComp = EventData.Target->FindComponentByClass<UDEStatusEffectComponent>();
 
     if (StatusComp && StatusEffectClass)
     {
-        // ¡Ú Å¸°Ù¿¡°Ô µð¹öÇÁ¸¦ °Ì´Ï´Ù! (Power¿¡ µ¥¹ÌÁö, Duration¿¡ 1ÃÊ ¼¼ÆÃ)
-        // ºí·¯µð ½ºÄ«¸®ÆÄÀÌ Æø¹ß µôÀÌ ¿øº» ³«·Ú µôÀÇ 1.5¹è¶ó¸é: EventData.DamageAmount * 1.5f
+        // â˜… íƒ€ê²Ÿì—ê²Œ ë””ë²„í”„ë¥¼ ê²ë‹ˆë‹¤! (Powerì— ë°ë¯¸ì§€, Durationì— 1ì´ˆ ì„¸íŒ…)
+        // ë¸”ëŸ¬ë”” ìŠ¤ì¹´ë¦¬íŒŒì´ í­ë°œ ë”œì´ ì›ë³¸ ë‚™ë¢° ë”œì˜ 1.5ë°°ë¼ë©´: EventData.DamageAmount * 1.5f
         StatusComp->AddEffect(StatusEffectClass, EventData.Instigator, Duration, EventData.DamageAmount,Interval,*EventData.SourceContext);
     }
 }

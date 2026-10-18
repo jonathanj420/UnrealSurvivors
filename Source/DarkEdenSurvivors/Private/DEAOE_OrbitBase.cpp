@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEAOE_OrbitBase.h"
@@ -15,48 +15,48 @@ ADEAOE_OrbitBase::ADEAOE_OrbitBase()
 
 void ADEAOE_OrbitBase::Tick(float DeltaTime)
 {
-    // 1. [¸Å¿ì Áß¿ä] ºÎ¸ğÀÇ TickÀ» ½ÇÇàÇØ¾ß µ¥¹ÌÁö¸¦ Áİ´Ï´Ù!
-    // ÀÌ°Ô ¾øÀ¸¸é ºùºù µ¹±â¸¸ ÇÏ°í ¸ó½ºÅÍ¸¦ ¾È ¶§¸³´Ï´Ù.
+    // 1. [ë§¤ìš° ì¤‘ìš”] ë¶€ëª¨ì˜ Tickì„ ì‹¤í–‰í•´ì•¼ ë°ë¯¸ì§€ë¥¼ ì¤ë‹ˆë‹¤!
+    // ì´ê²Œ ì—†ìœ¼ë©´ ë¹™ë¹™ ëŒê¸°ë§Œ í•˜ê³  ëª¬ìŠ¤í„°ë¥¼ ì•ˆ ë•Œë¦½ë‹ˆë‹¤.
     Super::Tick(DeltaTime);
 
-    // 2. ÁÖÀÎ È®ÀÎ (GetOwner°¡ Á¦ÀÏ ¾ÈÀü)
+    // 2. ì£¼ì¸ í™•ì¸ (GetOwnerê°€ ì œì¼ ì•ˆì „)
     if (!GetOwner())
     {
-        // ÁÖÀÎÀÌ ¾øÀ¸¸é Ç®·Î ¹İ³³ (ºÎ¸ğ Å¬·¡½º¿¡ ±¸ÇöµÈ ±â´É »ç¿ë)
+        // ì£¼ì¸ì´ ì—†ìœ¼ë©´ í’€ë¡œ ë°˜ë‚© (ë¶€ëª¨ í´ë˜ìŠ¤ì— êµ¬í˜„ëœ ê¸°ëŠ¥ ì‚¬ìš©)
         ReturnToPool();
         return;
     }
 
-    // 3. °øÀü °è»ê (½Ã°è ¹æÇâ: -=, ¹İ½Ã°è: +=)
-    // µ¥ÀÌÅÍ Å×ÀÌºí Speed°¡ À½¼ö¸é ½Ã°è, ¾ç¼ö¸é ¹İ½Ã°è·Î µ¼
+    // 3. ê³µì „ ê³„ì‚° (ì‹œê³„ ë°©í–¥: -=, ë°˜ì‹œê³„: +=)
+    // ë°ì´í„° í…Œì´ë¸” Speedê°€ ìŒìˆ˜ë©´ ì‹œê³„, ì–‘ìˆ˜ë©´ ë°˜ì‹œê³„ë¡œ ë”
     CurrentAngle += RotationSpeed * DeltaTime;
 
-    // °¢µµ Á¤±ÔÈ­ (0~360 À¯Áö)
+    // ê°ë„ ì •ê·œí™” (0~360 ìœ ì§€)
     if (CurrentAngle >= 360.0f) CurrentAngle -= 360.0f;
     if (CurrentAngle < 0.0f) CurrentAngle += 360.0f;
 
-    // 4. À§Ä¡ ÀÌµ¿ (±ØÁÂÇ¥ -> Á÷±³ÁÂÇ¥)
+    // 4. ìœ„ì¹˜ ì´ë™ (ê·¹ì¢Œí‘œ -> ì§êµì¢Œí‘œ)
     FVector OwnerLoc = GetOwner()->GetActorLocation();
     float Rad = FMath::DegreesToRadians(CurrentAngle);
 
     FVector NewLoc;
     NewLoc.X = OwnerLoc.X + FMath::Cos(Rad) * CurrentOrbitRadius;
     NewLoc.Y = OwnerLoc.Y + FMath::Sin(Rad) * CurrentOrbitRadius;
-    NewLoc.Z = OwnerLoc.Z; // ³ôÀÌ´Â ÁÖÀÎ µû¶ó°¡±â
+    NewLoc.Z = OwnerLoc.Z; // ë†’ì´ëŠ” ì£¼ì¸ ë”°ë¼ê°€ê¸°
 
     //SetActorLocation(NewLoc);
 
-    //// 5. È¸Àü (Ç×»ó ¹Ù±ù º¸±â, È¤Àº ÁøÇà¹æÇâ º¸±â)
+    //// 5. íšŒì „ (í•­ìƒ ë°”ê¹¥ ë³´ê¸°, í˜¹ì€ ì§„í–‰ë°©í–¥ ë³´ê¸°)
     //SetActorRotation(FRotator(0.0f, CurrentAngle, 0.0f)); // +- 90 
 
-    // 3. È¸Àü ¹æÇâ ¼³Á¤
-    // bFaceDirectionÀÌ¶ó´Â bool º¯¼ö¸¦ Çì´õ¿¡ ÇÏ³ª ÆÄµÎ°í ÀÔ¸À´ë·Î °ñ¶ó ¾²½Ã´Â °É ÃßÃµÇÕ´Ï´Ù!
+    // 3. íšŒì „ ë°©í–¥ ì„¤ì •
+    // bFaceDirectionì´ë¼ëŠ” bool ë³€ìˆ˜ë¥¼ í—¤ë”ì— í•˜ë‚˜ íŒŒë‘ê³  ì…ë§›ëŒ€ë¡œ ê³¨ë¼ ì“°ì‹œëŠ” ê±¸ ì¶”ì²œí•©ë‹ˆë‹¤!
     FRotator NewRot;
-    //if (true /* ÁøÇà ¹æÇâÀ» º¸°Ô ÇÒ °æ¿ì */)
+    //if (true /* ì§„í–‰ ë°©í–¥ì„ ë³´ê²Œ í•  ê²½ìš° */)
     //{
-    //    NewRot = FRotator(0.0f, CurrentAngle + 90.0f, 0.0f); // »óÈ²¿¡ µû¶ó -90.0f ÀÏ ¼öµµ ÀÖÀ½
+    //    NewRot = FRotator(0.0f, CurrentAngle + 90.0f, 0.0f); // ìƒí™©ì— ë”°ë¼ -90.0f ì¼ ìˆ˜ë„ ìˆìŒ
     //}
-    //else /* ÇÃ·¹ÀÌ¾î ¹Ù±ùÂÊÀ» º¸°Ô ÇÒ °æ¿ì (±âÁ¸ ¹æ½Ä) */
+    //else /* í”Œë ˆì´ì–´ ë°”ê¹¥ìª½ì„ ë³´ê²Œ í•  ê²½ìš° (ê¸°ì¡´ ë°©ì‹) */
     //{
     //    NewRot = FRotator(0.0f, CurrentAngle, 0.0f);
     //}
@@ -73,7 +73,7 @@ void ADEAOE_OrbitBase::Tick(float DeltaTime)
     //    return;
     //}
 
-    //// °øÀü ·ÎÁ÷
+    //// ê³µì „ ë¡œì§
     //CurrentAngle -= RotationSpeed * DeltaTime;
     //if (CurrentAngle < 0.0f) CurrentAngle += 360.0f;
 
@@ -83,10 +83,10 @@ void ADEAOE_OrbitBase::Tick(float DeltaTime)
     //float NewX = OwnerLoc.X + FMath::Cos(Rad) * CurrentOrbitRadius;
     //float NewY = OwnerLoc.Y + FMath::Sin(Rad) * CurrentOrbitRadius;
 
-    //// AOE´Ï±î ¹Ù´ÚÀÌ³ª Çã¸®Ãã¿¡ À§Ä¡
+    //// AOEë‹ˆê¹Œ ë°”ë‹¥ì´ë‚˜ í—ˆë¦¬ì¶¤ì— ìœ„ì¹˜
     //SetActorLocation(FVector(NewX, NewY, OwnerLoc.Z));
 
-    //// (¼±ÅÃ) Ç×»ó ¹Ù±ù º¸±â
+    //// (ì„ íƒ) í•­ìƒ ë°”ê¹¥ ë³´ê¸°
     //SetActorRotation(FRotator(0.0f, CurrentAngle, 0.0f));
 }
 

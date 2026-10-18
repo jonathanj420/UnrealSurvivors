@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -25,60 +25,60 @@ protected:
 
 public:
 	// =========================================================
-	// 1. ÀåÂø °ü¸®
+	// 1. ì¥ì°© ê´€ë¦¬
 	// =========================================================
 
-	// ¾Ç¼¼¼­¸® Ãß°¡ (ÀÎº¥Åä¸®¿¡¼­ È£Ãâ)
+	// ì•…ì„¸ì„œë¦¬ ì¶”ê°€ (ì¸ë²¤í† ë¦¬ì—ì„œ í˜¸ì¶œ)
 	UFUNCTION(BlueprintCallable, Category = "Accessory")
 	void LevelUpAccessory(const UDEAccessoryData* InData);
 
-	// ¾Ç¼¼¼­¸® Á¦°Å (ÇÊ¿ä ½Ã)
+	// ì•…ì„¸ì„œë¦¬ ì œê±° (í•„ìš” ì‹œ)
 	UFUNCTION(BlueprintCallable, Category = "Accessory")
 	void RemoveAccessory(const UDEAccessoryData* InData);
 
 	// =========================================================
-	// 2. Äõ¸® (CombatComponent°¡ »ç¿ë)
+	// 2. ì¿¼ë¦¬ (CombatComponentê°€ ì‚¬ìš©)
 	// =========================================================
 
-	//// Æ¯Á¤ Æ®¸®°Å(OnKill µî)¿¡ ÇØ´çÇÏ´Â È¿°ú ¸®½ºÆ® ¹İÈ¯ (O(1) Á¶È¸)
+	//// íŠ¹ì • íŠ¸ë¦¬ê±°(OnKill ë“±)ì— í•´ë‹¹í•˜ëŠ” íš¨ê³¼ ë¦¬ìŠ¤íŠ¸ ë°˜í™˜ (O(1) ì¡°íšŒ)
 	//const TArray<FEffectData>& GetEffectsByTrigger(EEffectTrigger InTrigger) const;
 
-	//// Æ¯Á¤ È¿°ú Å¸ÀÔ(StackDamage µî)ÀÇ ÇöÀç ´©Àû °ª ¹İÈ¯ (Snapshot¿ë)
+	//// íŠ¹ì • íš¨ê³¼ íƒ€ì…(StackDamage ë“±)ì˜ í˜„ì¬ ëˆ„ì  ê°’ ë°˜í™˜ (Snapshotìš©)
 	//float GetTotalStackValue(EEffectType InType) const;
 
 	//// =========================================================
-	//// 3. »óÅÂ º¯°æ (CombatComponent°¡ ½ÇÇà)
+	//// 3. ìƒíƒœ ë³€ê²½ (CombatComponentê°€ ì‹¤í–‰)
 	//// =========================================================
 
-	//// ½ºÅÃ ½×±â ¿äÃ»
+	//// ìŠ¤íƒ ìŒ“ê¸° ìš”ì²­
 	//void AddStack(EEffectType InType, float InValue, int32 InMaxStack); no more use for now
 
 protected:
-	// ³»ºÎ Ä³½Ã Àç±¸Ãà (ÀåÂø/ÇØÁ¦ ½Ã È£Ãâ)
+	// ë‚´ë¶€ ìºì‹œ ì¬êµ¬ì¶• (ì¥ì°©/í•´ì œ ì‹œ í˜¸ì¶œ)
 	//void RebuildEffectCache();
 
-	// Á¤Àû ½ºÅÈ Àû¿ë (ÀÌµ¿¼Óµµ µî)
+	// ì •ì  ìŠ¤íƒ¯ ì ìš© (ì´ë™ì†ë„ ë“±)
 	void ApplyStaticStats(const UDEAccessoryData* InData);
 	void RemoveStaticStats(const UDEAccessoryData* InData);
 
 private:
 private:
-	// [º¯°æ] TArray -> TMap (Key: µ¥ÀÌÅÍ ¿¡¼Â, Value: ÇöÀç ·¹º§)
+	// [ë³€ê²½] TArray -> TMap (Key: ë°ì´í„° ì—ì…‹, Value: í˜„ì¬ ë ˆë²¨)
 	UPROPERTY(VisibleAnywhere, Category = "Accessory")
 	TMap<const UDEAccessoryData*, int32> EquippedAccessories;
 
-	// [Ä³½Ã] Æ®¸®°Åº° È¿°ú ¸ñ·Ï (ÀüÅõ Áß ºü¸¥ °Ë»ö¿ë)
-	// Key: OnKill, OnHit... / Value: È¿°ú ¸®½ºÆ®
+	// [ìºì‹œ] íŠ¸ë¦¬ê±°ë³„ íš¨ê³¼ ëª©ë¡ (ì „íˆ¬ ì¤‘ ë¹ ë¥¸ ê²€ìƒ‰ìš©)
+	// Key: OnKill, OnHit... / Value: íš¨ê³¼ ë¦¬ìŠ¤íŠ¸
 	TMap<EEffectTrigger, TArray<FEffectData>> CachedTriggerEffects;
 
-	// [»óÅÂ] ½ºÅÃÇü È¿°úÀÇ ÇöÀç ´©Àû ½ºÅÃ ¼ö (Key: EffectType)
+	// [ìƒíƒœ] ìŠ¤íƒí˜• íš¨ê³¼ì˜ í˜„ì¬ ëˆ„ì  ìŠ¤íƒ ìˆ˜ (Key: EffectType)
 	TMap<EEffectType, int32> CurrentStackCounts;
 
-	// [»óÅÂ] ½ºÅÃÇü È¿°úÀÇ ÇöÀç ´©Àû °ª ÇÕ°è (Key: EffectType)
+	// [ìƒíƒœ] ìŠ¤íƒí˜• íš¨ê³¼ì˜ í˜„ì¬ ëˆ„ì  ê°’ í•©ê³„ (Key: EffectType)
 	TMap<EEffectType, float> CurrentStackValues;
 
 public:
-	// UI°¡ °¡Á®´Ù ¾µ ¼ö ÀÖµµ·Ï TMap ¹İÈ¯
+	// UIê°€ ê°€ì ¸ë‹¤ ì“¸ ìˆ˜ ìˆë„ë¡ TMap ë°˜í™˜
 	const TMap<const UDEAccessoryData*, int32>& GetEquippedAccessories() const { return EquippedAccessories; }
 
 	FOnAccUpdated OnAccUpdated;

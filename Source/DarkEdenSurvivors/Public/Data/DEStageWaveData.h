@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -11,13 +11,13 @@
 UENUM(BlueprintType)
 enum class EWaveType : uint8
 {
-    // StartWave¿¡¼­ MinimumCount¸¸ Áï½Ã ½ºÆùÇÏ°í ³¡. Ãß°¡ ÁÖ±â ½ºÆù ¾øÀ½.
+    // StartWaveì—ì„œ MinimumCountë§Œ ì¦‰ì‹œ ìŠ¤í°í•˜ê³  ë. ì¶”ê°€ ì£¼ê¸° ìŠ¤í° ì—†ìŒ.
     OneShot     UMETA(DisplayName = "One Shot"),
 
-    // Duration µ¿¾È SpawnInterval ÁÖ±â·Î ½ºÆù. ½Ã°£ ³¡³ª¸é ½ºÆù Áß´Ü.
+    // Duration ë™ì•ˆ SpawnInterval ì£¼ê¸°ë¡œ ìŠ¤í°. ì‹œê°„ ëë‚˜ë©´ ìŠ¤í° ì¤‘ë‹¨.
     Timed       UMETA(DisplayName = "Timed"),
 
-    // ´ÙÀ½ ¿şÀÌºê°¡ ½ÃÀÛµÉ ¶§±îÁö °è¼Ó SpawnInterval ÁÖ±â·Î ½ºÆù.
+    // ë‹¤ìŒ ì›¨ì´ë¸Œê°€ ì‹œì‘ë  ë•Œê¹Œì§€ ê³„ì† SpawnInterval ì£¼ê¸°ë¡œ ìŠ¤í°.
     Infinite    UMETA(DisplayName = "Infinite"),
 };
 
@@ -42,11 +42,11 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float Duration = 0.0f;
 
-    // º¸½º ¶Ç´Â Æ¯¼ö ¸ó½ºÅÍ
+    // ë³´ìŠ¤ ë˜ëŠ” íŠ¹ìˆ˜ ëª¬ìŠ¤í„°
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FName BossMonsterID;
 
-    // ¸Ê ÀÌº¥Æ®³ª Æ®¸®°Å¿ë ÅØ½ºÆ®
+    // ë§µ ì´ë²¤íŠ¸ë‚˜ íŠ¸ë¦¬ê±°ìš© í…ìŠ¤íŠ¸
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     FString MapEventNotes;
 };

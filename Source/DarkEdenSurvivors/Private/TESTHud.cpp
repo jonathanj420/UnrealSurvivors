@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "TESTHud.h"
@@ -9,13 +9,13 @@ void ATESTHud::DrawHUD()
 
     if (CrosshairTexture)
     {
-        // Äµ¹ö½º Áß¾ÓÀ» Ã£½À´Ï´Ù.
+        // ìº”ë²„ìŠ¤ ì¤‘ì•™ì„ ì°¾ìŠµë‹ˆë‹¤.
         FVector2D Center(Canvas->ClipX * 0.5f, Canvas->ClipY * 0.5f);
 
-        // ÅØ½ºÃ³ Ä¡¼öÀÇ Àý¹Ý¸¸Å­ ¿ÀÇÁ¼ÂÀ» Àû¿ëÇÏ¿© ÅØ½ºÃ³ Áß¾ÓÀÌ Äµ¹ö½º Áß¾Ó°ú Á¤·ÄµÇµµ·Ï ÇÕ´Ï´Ù.
+        // í…ìŠ¤ì²˜ ì¹˜ìˆ˜ì˜ ì ˆë°˜ë§Œí¼ ì˜¤í”„ì…‹ì„ ì ìš©í•˜ì—¬ í…ìŠ¤ì²˜ ì¤‘ì•™ì´ ìº”ë²„ìŠ¤ ì¤‘ì•™ê³¼ ì •ë ¬ë˜ë„ë¡ í•©ë‹ˆë‹¤.
         FVector2D CrossHairDrawPosition(Center.X - (CrosshairTexture->GetSurfaceWidth() * 0.5f), Center.Y - (CrosshairTexture->GetSurfaceHeight() * 0.5f));
 
-        // Áß½É¿¡ Á¶ÁØ¼±À» ±×¸³´Ï´Ù.
+        // ì¤‘ì‹¬ì— ì¡°ì¤€ì„ ì„ ê·¸ë¦½ë‹ˆë‹¤.
         FCanvasTileItem TileItem(CrossHairDrawPosition, CrosshairTexture->GetResource(), FLinearColor::White);
         TileItem.BlendMode = SE_BLEND_Translucent;
         Canvas->DrawItem(TileItem);

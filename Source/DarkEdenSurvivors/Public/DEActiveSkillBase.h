@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -16,14 +16,14 @@ class DARKEDENSURVIVORS_API UDEActiveSkillBase : public UDESkillBase
 public:
     UDEActiveSkillBase();
 
-    /** ¹ßµ¿ °¡´É ¿©ºÎ (°ÔÀÌÁö, ÄğÅ¸ÀÓ µî) */
+    /** ë°œë™ ê°€ëŠ¥ ì—¬ë¶€ (ê²Œì´ì§€, ì¿¨íƒ€ì„ ë“±) */
     virtual bool CanActivate() const PURE_VIRTUAL(UDEActiveSkillBase::CanActivate, return false;);
 
-    /** ½ÇÁ¦ ½ºÅ³ ¹ßµ¿ */
+    /** ì‹¤ì œ ìŠ¤í‚¬ ë°œë™ */
     virtual void ActivateSkill() PURE_VIRTUAL(UDEActiveSkillBase::ActivateSkill, );
 
 protected:
-    /** °øÅë Äğ´Ù¿î */
+    /** ê³µí†µ ì¿¨ë‹¤ìš´ */
     float Cooldown = 0.f;
     float LastActivateTime = -FLT_MAX;
 

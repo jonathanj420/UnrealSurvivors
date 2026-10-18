@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -25,20 +25,20 @@ public:
         
 protected:
     //Drain Status
-    /** ±¤Èí ¹üÀ§ */
+    /** ê´‘í¡ ë²”ìœ„ */
     UPROPERTY(EditDefaultsOnly, Category = "BloodDrain")
     float DrainRadius = 500.f;
 
-    /** ¸ó½ºÅÍ 1¸¶¸®´ç ÈíÇ÷·® */
+    /** ëª¬ìŠ¤í„° 1ë§ˆë¦¬ë‹¹ í¡í˜ˆëŸ‰ */
     UPROPERTY(EditDefaultsOnly, Category = "BloodDrain")
     float DrainAmountPerMonster = 5.f;
 
-    /** ¸ó½ºÅÍ ½ºÅÏ ½Ã°£ */
+    /** ëª¬ìŠ¤í„° ìŠ¤í„´ ì‹œê°„ */
     UPROPERTY(EditDefaultsOnly, Category = "BloodDrain")
     float StunDuration = 3.0f;
 
     //************* Effect and Sound**************
-    /** ±¤Èí ÀÌÆåÆ® (¸ó½ºÅÍ ¡æ ÇÃ·¹ÀÌ¾î) */
+    /** ê´‘í¡ ì´í™íŠ¸ (ëª¬ìŠ¤í„° â†’ í”Œë ˆì´ì–´) */
     UPROPERTY(EditDefaultsOnly, Category = "BloodDrain")
     UNiagaraSystem* BloodDrainEffect = nullptr;
     UPROPERTY(EditDefaultsOnly, Category = "BloodDrain")
@@ -48,26 +48,26 @@ protected:
     TArray<TWeakObjectPtr<ADEMonsterBase>> CachedTargets;
     FTimerHandle BloodDrainTimerHandle;
 private:
-    /** ±¤Èí ½ÃÀÛ Ã³¸® (½ºÅÏ + ÀÌÆåÆ®) */
+    /** ê´‘í¡ ì‹œì‘ ì²˜ë¦¬ (ìŠ¤í„´ + ì´í™íŠ¸) */
     void StartBloodDrain(ADECharacterBase* Player);
 
-    /** ±¤Èí Á¾·á Ã³¸® (µ¥¹ÌÁö + Èú) */
+    /** ê´‘í¡ ì¢…ë£Œ ì²˜ë¦¬ (ë°ë¯¸ì§€ + í) */
     void FinishBloodDrain();
 
-    /** ÁÖº¯ ¸ó½ºÅÍ ¼öÁı */
+    /** ì£¼ë³€ ëª¬ìŠ¤í„° ìˆ˜ì§‘ */
     void CollectTargets(TArray<ADEMonsterBase*>& OutTargets) const;
 
     void SpawnBloodDrainNiagara(
         ADECharacterBase* Player,
         const TArray<FVector>& MonsterPositions
     ) const;
-    ///** ½ºÅÏ + ÀÌÆåÆ®¸¸ Àû¿ë */
+    ///** ìŠ¤í„´ + ì´í™íŠ¸ë§Œ ì ìš© */
     //void ApplyDrainEffect(
     //    ADEMonsterBase* Monster,
     //    ADECharacterBase* Player
     //) const;
 
-    /** Á¾·á ½Ã µ¥¹ÌÁö Àû¿ë */
+    /** ì¢…ë£Œ ì‹œ ë°ë¯¸ì§€ ì ìš© */
     void ApplyFinishDamage(
         ADEMonsterBase* Monster,
         ADECharacterBase* Player

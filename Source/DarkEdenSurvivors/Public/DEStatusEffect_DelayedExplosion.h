@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -15,14 +15,14 @@ class DARKEDENSURVIVORS_API UDEStatusEffect_DelayedExplosion : public UDEStatusE
     GENERATED_BODY()
 
 protected:
-    // ±âÈ¹ µ¥ÀÌÅÍ ¼¼ÆÃ
+    // ê¸°íš ë°ì´í„° ì„¸íŒ…
     UPROPERTY(EditDefaultsOnly, Category = "Explosion")
     float ExplosionRadius = 300.0f;
 
     UPROPERTY(EditDefaultsOnly, Category = "Explosion")
     class UNiagaraSystem* ExplosionParticle;
 
-    // ºÎ¸ğ°¡ ½ÃÅ² ¼÷Á¦(Æø¹ß ·ÎÁ÷) ±¸Çö
+    // ë¶€ëª¨ê°€ ì‹œí‚¨ ìˆ™ì œ(í­ë°œ ë¡œì§) êµ¬í˜„
     virtual void ExecuteAction(AActor* Target, FActiveStatusEffect& EffectData) const override;
 	
 };

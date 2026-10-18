@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEItemBase.h"
@@ -42,13 +42,13 @@ void ADEItemBase::OnOverlap(UPrimitiveComponent* Overlapped, AActor* OtherActor,
 
     ApplyEffect(Player);
 
-    // ÁİÀ¸¸é Ç®·Î µ¹¾Æ°¨
+    // ì¤ìœ¼ë©´ í’€ë¡œ ëŒì•„ê°
     DeactivateItem();
 }
 
 void ADEItemBase::ApplyEffect(ADEFemaleVampire* Player)
 {
-    // ±âº»Àº ¾Æ¹«°Íµµ ¾ÈÇÔ
+    // ê¸°ë³¸ì€ ì•„ë¬´ê²ƒë„ ì•ˆí•¨
 }
 
 void ADEItemBase::ActivateItem(const FVector& Location)

@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DECombatComponent.h"
@@ -12,7 +12,7 @@
 // Sets default values for this component's properties
 UDECombatComponent::UDECombatComponent()
 {
-	PrimaryComponentTick.bCanEverTick = false; // ½ºÅÈ ÄÄÆ÷³ÍÆ®´Â Æ½ ÇÊ¿ä ¾øÀ½ (ÃÖÀûÈ­)
+	PrimaryComponentTick.bCanEverTick = false; // ìŠ¤íƒ¯ ì»´í¬ë„ŒíŠ¸ëŠ” í‹± í•„ìš” ì—†ìŒ (ìµœì í™”)
 
 }
 
@@ -27,13 +27,13 @@ FCombatSnapshot UDECombatComponent::GetCombatSnapshot() const
 {
     FCombatSnapshot Snapshot;
 
-    // 1. StatComponent°¡ ¾øÀ¸¸é ±øÅë ¸®ÅÏ (¹æ¾î ÄÚµå)
+    // 1. StatComponentê°€ ì—†ìœ¼ë©´ ê¹¡í†µ ë¦¬í„´ (ë°©ì–´ ì½”ë“œ)
     if (!CachedStatComp)
     {
         return Snapshot;
     }
 
-    // 2. StatComponent¿¡¼­ ±âº» ½ºÅÈ ÀĞ¾î¿À±â (ÆĞ½Ãºê, ¾ÆÀÌÅÛ Àû¿ëµÊ)
+    // 2. StatComponentì—ì„œ ê¸°ë³¸ ìŠ¤íƒ¯ ì½ì–´ì˜¤ê¸° (íŒ¨ì‹œë¸Œ, ì•„ì´í…œ ì ìš©ë¨)
     Snapshot.FinalDamageMultiplier = CachedStatComp->DamageMultiplier.GetValue();
     Snapshot.CritChance = CachedStatComp->CritChance.GetValue();
     Snapshot.CritDamageMultiplier = CachedStatComp->CritDamageMultiplier.GetValue();
@@ -43,10 +43,10 @@ FCombatSnapshot UDECombatComponent::GetCombatSnapshot() const
     Snapshot.ProjectileSpeedMultiplier = CachedStatComp->ProjectileSpeed.GetValue();
     Snapshot.BonusAmount = FMath::FloorToInt(CachedStatComp->BonusAmount.GetValue());
 
-    // ÇÇÈíÀÌ³ª ³Ë¹é °°Àº °Íµµ StatComponent¿¡ ÀÖ´Ù¸é ¿©±â¼­ °¡Á®¿È
+    // í”¼í¡ì´ë‚˜ ë„‰ë°± ê°™ì€ ê²ƒë„ StatComponentì— ìˆë‹¤ë©´ ì—¬ê¸°ì„œ ê°€ì ¸ì˜´
     // Snapshot.LifeStealChance = CachedStatComp->LifeStealChance.GetValue(); 
 
-    // 3. AccessoryComponent¿¡¼­ 'Á¶°ÇºÎ ½ºÅÃ' ÇÕ»êÇÏ±â (¿¹: Ã³Ä¡ ½Ã °ø°İ·Â Áõ°¡)
+    // 3. AccessoryComponentì—ì„œ 'ì¡°ê±´ë¶€ ìŠ¤íƒ' í•©ì‚°í•˜ê¸° (ì˜ˆ: ì²˜ì¹˜ ì‹œ ê³µê²©ë ¥ ì¦ê°€)
     if (CachedAccessoryComp)
     {
     }
@@ -65,7 +65,7 @@ void UDECombatComponent::HandleDamageDealt(const FDEDamageResult& Result)
     TotalDamageDealt += Result.FinalDamage;
 
     // --------------------------------------------------------
-    // [ÅÃ¹è »óÀÚ(EventData) Æ÷Àå]
+    // [íƒë°° ìƒì(EventData) í¬ì¥]
     // --------------------------------------------------------
     FCombatEventData EventData;
     EventData.Instigator = OwnerCharacter;
@@ -74,8 +74,8 @@ void UDECombatComponent::HandleDamageDealt(const FDEDamageResult& Result)
     EventData.DamageAmount = Result.FinalDamage;
 
     // --------------------------------------------------------
-    // [·ÎÁ÷ 1] ÀûÁß ½Ã (OnHit) ÀÌº¥Æ® ¹æ¼Û
-    // (¿¹Àü ProcessLifeSteal ·ÎÁ÷Àº ÀÌÁ¦ ¿©±â¼­ ÀÚµ¿À¸·Î Æ¢¾î³ª¿È)
+    // [ë¡œì§ 1] ì ì¤‘ ì‹œ (OnHit) ì´ë²¤íŠ¸ ë°©ì†¡
+    // (ì˜ˆì „ ProcessLifeSteal ë¡œì§ì€ ì´ì œ ì—¬ê¸°ì„œ ìë™ìœ¼ë¡œ íŠ€ì–´ë‚˜ì˜´)
     // --------------------------------------------------------
     if (Result.bCanTriggerOnHit)
     {
@@ -85,8 +85,8 @@ void UDECombatComponent::HandleDamageDealt(const FDEDamageResult& Result)
    
 
     // --------------------------------------------------------
-    // [·ÎÁ÷ 2] Ã³Ä¡ ½Ã (OnKill) ÀÌº¥Æ® ¹æ¼Û
-    // (¿¹Àü ProcessOnKillEffect ·ÎÁ÷µµ ¾Ë¾Æ¼­ Æ¢¾î³ª¿È)
+    // [ë¡œì§ 2] ì²˜ì¹˜ ì‹œ (OnKill) ì´ë²¤íŠ¸ ë°©ì†¡
+    // (ì˜ˆì „ ProcessOnKillEffect ë¡œì§ë„ ì•Œì•„ì„œ íŠ€ì–´ë‚˜ì˜´)
     // --------------------------------------------------------
     if (Result.bIsDead)
     {
@@ -96,7 +96,7 @@ void UDECombatComponent::HandleDamageDealt(const FDEDamageResult& Result)
             BroadcastCombatEvent(ECombatEventTrigger::OnKill, EventData);
             UE_LOG(LogTemp, Log, TEXT("Total Kill Count : %d"), TotalKillCount);
 
-            // ¡Ú [AAA ÇÙ½É] ÃâÃ³°¡ 'Ã³Ä¡ ¾Ë¸²' ÀÎÅÍÆäÀÌ½º¸¦ ´Ş°í ÀÖ´ÂÁö È®ÀÎ ÈÄ Á÷Åë ÀüÈ­!
+            // â˜… [AAA í•µì‹¬] ì¶œì²˜ê°€ 'ì²˜ì¹˜ ì•Œë¦¼' ì¸í„°í˜ì´ìŠ¤ë¥¼ ë‹¬ê³  ìˆëŠ”ì§€ í™•ì¸ í›„ ì§í†µ ì „í™”!
             if (Result.SourceObject->Implements<UDEDamageInstigatorInterface>())
             {
                 IDEDamageInstigatorInterface* Instigator = Cast<IDEDamageInstigatorInterface>(Result.SourceObject);
@@ -126,7 +126,7 @@ void UDECombatComponent::HandleDamageDealt(const FDEDamageResult& Result)
 //    TotalDamageDealt += Result.FinalDamage;
 //
 //    // --------------------------------------------------------
-//    // [ÅÃ¹è »óÀÚ(EventData) Æ÷Àå]
+//    // [íƒë°° ìƒì(EventData) í¬ì¥]
 //    // --------------------------------------------------------
 //    FCombatEventData EventData;
 //    EventData.Instigator = OwnerCharacter;
@@ -134,14 +134,14 @@ void UDECombatComponent::HandleDamageDealt(const FDEDamageResult& Result)
 //    EventData.DamageAmount = Result.FinalDamage;
 //
 //    // --------------------------------------------------------
-//    // [·ÎÁ÷ 1] ÀûÁß ½Ã (OnHit) ÀÌº¥Æ® ¹æ¼Û
-//    // (¿¹Àü ProcessLifeSteal ·ÎÁ÷Àº ÀÌÁ¦ ¿©±â¼­ ÀÚµ¿À¸·Î Æ¢¾î³ª¿È)
+//    // [ë¡œì§ 1] ì ì¤‘ ì‹œ (OnHit) ì´ë²¤íŠ¸ ë°©ì†¡
+//    // (ì˜ˆì „ ProcessLifeSteal ë¡œì§ì€ ì´ì œ ì—¬ê¸°ì„œ ìë™ìœ¼ë¡œ íŠ€ì–´ë‚˜ì˜´)
 //    // --------------------------------------------------------
 //    BroadcastCombatEvent(ECombatEventTrigger::OnHit, EventData);
 //
 //    // --------------------------------------------------------
-//    // [·ÎÁ÷ 2] Ã³Ä¡ ½Ã (OnKill) ÀÌº¥Æ® ¹æ¼Û
-//    // (¿¹Àü ProcessOnKillEffect ·ÎÁ÷µµ ¾Ë¾Æ¼­ Æ¢¾î³ª¿È)
+//    // [ë¡œì§ 2] ì²˜ì¹˜ ì‹œ (OnKill) ì´ë²¤íŠ¸ ë°©ì†¡
+//    // (ì˜ˆì „ ProcessOnKillEffect ë¡œì§ë„ ì•Œì•„ì„œ íŠ€ì–´ë‚˜ì˜´)
 //    // --------------------------------------------------------
 //    if (Result.bIsDead)
 //    {
@@ -151,15 +151,15 @@ void UDECombatComponent::HandleDamageDealt(const FDEDamageResult& Result)
 //    }
 //
 //    // //UE_LOG(LogTemp, Error, TEXT("Try Handle Damage Dealt"));
-//    // // 1. À¯È¿¼º Ã¼Å©
-//    // // µ¥¹ÌÁö°¡ 0ÀÌ°Å³ª, ¶§¸° ´ë»óÀÌ ¾øÀ¸¸é Ã³¸® ¾È ÇÔ
+//    // // 1. ìœ íš¨ì„± ì²´í¬
+//    // // ë°ë¯¸ì§€ê°€ 0ì´ê±°ë‚˜, ë•Œë¦° ëŒ€ìƒì´ ì—†ìœ¼ë©´ ì²˜ë¦¬ ì•ˆ í•¨
 //    // if (Result.FinalDamage <= 0.0f || !Result.Victim)
 //    // {
 //    //     return;
 //    // }
 //    // //UE_LOG(LogTemp, Error, TEXT("HDD Dmg, Victim Passed"));
-//    // // 2. ÁÖÀÎ´Ô(Character) È®ÀÎ
-//    // // ÄÄÆ÷³ÍÆ®ÀÇ ÁÖÀÎÀº Ä³¸¯ÅÍ¿©¾ß ÈúÀ» ÁÖµç ¸»µç ÇÔ
+//    // // 2. ì£¼ì¸ë‹˜(Character) í™•ì¸
+//    // // ì»´í¬ë„ŒíŠ¸ì˜ ì£¼ì¸ì€ ìºë¦­í„°ì—¬ì•¼ íì„ ì£¼ë“  ë§ë“  í•¨
 //    // ADECharacterBase* OwnerCharacter = Cast<ADECharacterBase>(GetOwner());
 //    // if (!OwnerCharacter)
 //    // {
@@ -169,15 +169,15 @@ void UDECombatComponent::HandleDamageDealt(const FDEDamageResult& Result)
 //
 //    //// UE_LOG(LogTemp, Error, TEXT("HDD Owner Passed"));
 //    // // ====================================================
-//    // // [·ÎÁ÷ 1] Å¸°İ ½Ã ¹ßµ¿ È¿°ú (On Hit)
+//    // // [ë¡œì§ 1] íƒ€ê²© ì‹œ ë°œë™ íš¨ê³¼ (On Hit)
 //    // // ====================================================
 //
-//    // // »ı¸í·Â Èí¼ö (Life Steal) Ã³¸®
+//    // // ìƒëª…ë ¥ í¡ìˆ˜ (Life Steal) ì²˜ë¦¬
 //    // ProcessLifeSteal(Snapshot);
 //
 //
 //    // // ====================================================
-//    // // [·ÎÁ÷ 2] Ã³Ä¡ ½Ã ¹ßµ¿ È¿°ú (On Kill)
+//    // // [ë¡œì§ 2] ì²˜ì¹˜ ì‹œ ë°œë™ íš¨ê³¼ (On Kill)
 //    // // ====================================================
 //    // if (Result.bIsDead)
 //    // {
@@ -191,29 +191,29 @@ void UDECombatComponent::HandleDamageDealt(const FDEDamageResult& Result)
 
 //void UDECombatComponent::ProcessLifeSteal(const FCombatSnapshot& Snapshot)
 //{
-//    // 1. ÇÇÈí È®·üÀÌ 0ÀÌ¸é ¹Ù·Î ¸®ÅÏ (ÃÖÀûÈ­)
+//    // 1. í”¼í¡ í™•ë¥ ì´ 0ì´ë©´ ë°”ë¡œ ë¦¬í„´ (ìµœì í™”)
 //    if (Snapshot.LifeStealChance <= 0.0f)
 //    {
 //        return;
 //    }
 //
-//    // 2. È®·ü ±¼¸®±â (0.0 ~ 1.0)
+//    // 2. í™•ë¥  êµ´ë¦¬ê¸° (0.0 ~ 1.0)
 //    const float Roll = FMath::FRand();
 //
 //    if (Roll <= Snapshot.LifeStealChance)
 //    {
 //        if (ADECharacterBase* OwnerCharacter = Cast<ADECharacterBase>(GetOwner()))
 //        {
-//            // [±âÈ¹ °áÁ¤ »çÇ×]
-//            // ¿É¼Ç A: °íÁ¤°ª È¸º¹ (¹ì¼­·ù ±¹·ê, 1¾¿ È¸º¹)
+//            // [ê¸°íš ê²°ì • ì‚¬í•­]
+//            // ì˜µì…˜ A: ê³ ì •ê°’ íšŒë³µ (ë±€ì„œë¥˜ êµ­ë£°, 1ì”© íšŒë³µ)
 //            const float HealAmount = 1.0f;
 //
-//            // ¿É¼Ç B: µ¥¹ÌÁö ºñ·Ê È¸º¹ (º¸Åë ¹ì¼­·ù¿¡¼± ³Ê¹« °­·ÂÇØ¼­ Àß ¾È ¾¸)
+//            // ì˜µì…˜ B: ë°ë¯¸ì§€ ë¹„ë¡€ íšŒë³µ (ë³´í†µ ë±€ì„œë¥˜ì—ì„  ë„ˆë¬´ ê°•ë ¥í•´ì„œ ì˜ ì•ˆ ì”€)
 //            // const float HealAmount = Result.FinalDamageApplied * 0.1f; 
 //
 //            OwnerCharacter->Heal(HealAmount);
 //
-//            // (¼±ÅÃ) ·Î±× ¹× ÀÌÆåÆ®
+//            // (ì„ íƒ) ë¡œê·¸ ë° ì´í™íŠ¸
 //            // UE_LOG(LogTemp, Log, TEXT("Blood Sucked! Healed: %f"), HealAmount);
 //            // OwnerCharacter->PlayFX("VampireEffect"); 
 //        }
@@ -226,16 +226,16 @@ void UDECombatComponent::HandleDamageDealt(const FDEDamageResult& Result)
 //    if (!OwnerCharacter) return;
 //
 //    UE_LOG(LogTemp, Log, TEXT("Total Kill Count : %d"),TotalKillCount);
-//    // 1. Å³ Ä«¿îÆ® Áõ°¡ (°ÔÀÓ ¸ğµå³ª Ä³¸¯ÅÍ¿¡ ÀúÀå)
+//    // 1. í‚¬ ì¹´ìš´íŠ¸ ì¦ê°€ (ê²Œì„ ëª¨ë“œë‚˜ ìºë¦­í„°ì— ì €ì¥)
 //    // OwnerCharacter->AddKillCount(1);
 //
-//    // 2. (È®Àå) Ã³Ä¡ ½Ã ÄğÅ¸ÀÓ °¨¼Ò?
+//    // 2. (í™•ì¥) ì²˜ì¹˜ ì‹œ ì¿¨íƒ€ì„ ê°ì†Œ?
 //    // if (OwnerCharacter->HasPassive("ResetOnKill")) { ... }
 //
-//    // 3. (È®Àå) Ã³Ä¡ ½Ã ½ÃÃ¼ Æø¹ß? (À¯¹° È¿°ú µî)
+//    // 3. (í™•ì¥) ì²˜ì¹˜ ì‹œ ì‹œì²´ í­ë°œ? (ìœ ë¬¼ íš¨ê³¼ ë“±)
 //    // UGameplayStatics::SpawnEmitterAtLocation(..., Victim->GetActorLocation(), ...);
 //
-//    // ·Î±× È®ÀÎ¿ë
+//    // ë¡œê·¸ í™•ì¸ìš©
 //    // UE_LOG(LogTemp, Verbose, TEXT("Enemy Killed by %s"), *GetName());
 //}
 
@@ -243,10 +243,10 @@ void UDECombatComponent::AddCombatEffect(UDECombatEffect* TemplateEffect)
 {
     if (!TemplateEffect) return;
 
-    // 1. ³» ÁÖ¸Ó´Ï¿¡ ÀÌ¹Ì °°Àº Å¬·¡½º°¡ ÀÖ´ÂÁö È®ÀÎ
+    // 1. ë‚´ ì£¼ë¨¸ë‹ˆì— ì´ë¯¸ ê°™ì€ í´ë˜ìŠ¤ê°€ ìˆëŠ”ì§€ í™•ì¸
     for (UDECombatEffect* ExistingEffect : ActiveCombatEffects)
     {
-        // ¿øº»°ú ³» ÁÖ¸Ó´Ï¿¡ ÀÖ´Â °Ô °°Àº Å¬·¡½º(Á¾·ù)¶ó¸é?
+        // ì›ë³¸ê³¼ ë‚´ ì£¼ë¨¸ë‹ˆì— ìˆëŠ” ê²Œ ê°™ì€ í´ë˜ìŠ¤(ì¢…ë¥˜)ë¼ë©´?
         if (ExistingEffect->GetClass() == TemplateEffect->GetClass())
         {
             if (ExistingEffect->bIsStackable && ExistingEffect->CurrentStack < ExistingEffect->MaxStack)
@@ -259,8 +259,8 @@ void UDECombatComponent::AddCombatEffect(UDECombatEffect* TemplateEffect)
         }
     }
 
-    // 2. [ÇÙ½É] ÁÖ¸Ó´Ï¿¡ ¾ø´Ù¸é? µ¥ÀÌÅÍ ¿¡¼ÂÀÇ '¿øº»(Template)'À» ¶È°°ÀÌ º¹Á¦ÇØ¼­ ÀåÂø!
-    // NewObject ´ë½Å DuplicateObject¸¦ ¾²¸é, ¿¡µğÅÍ¿¡¼­ ÀÔ·ÂÇØ µĞ Chance³ª Value °ªÀÌ ±×´ë·Î º¹»çµË´Ï´Ù!
+    // 2. [í•µì‹¬] ì£¼ë¨¸ë‹ˆì— ì—†ë‹¤ë©´? ë°ì´í„° ì—ì…‹ì˜ 'ì›ë³¸(Template)'ì„ ë˜‘ê°™ì´ ë³µì œí•´ì„œ ì¥ì°©!
+    // NewObject ëŒ€ì‹  DuplicateObjectë¥¼ ì“°ë©´, ì—ë””í„°ì—ì„œ ì…ë ¥í•´ ë‘” Chanceë‚˜ Value ê°’ì´ ê·¸ëŒ€ë¡œ ë³µì‚¬ë©ë‹ˆë‹¤!
     UDECombatEffect* NewEffect = DuplicateObject<UDECombatEffect>(TemplateEffect, this);
     if (NewEffect)
     {
@@ -278,10 +278,10 @@ void UDECombatComponent::AddCombatEffect(UDECombatEffect* TemplateEffect)
 void UDECombatComponent::BroadcastCombatEvent(ECombatEventTrigger TriggerType, FCombatEventData& EventData)
 {
     const UEnum* EnumPtr = StaticEnum<ECombatEventTrigger>();
-    // ³»°¡ °¡Áø ¸ğµç ÀÌÆåÆ®¸¦ ÂÓ ÈÈ¾îº»´Ù
+    // ë‚´ê°€ ê°€ì§„ ëª¨ë“  ì´í™íŠ¸ë¥¼ ì«™ í›‘ì–´ë³¸ë‹¤
     for (UDECombatEffect* Effect : ActiveCombatEffects)
     {
-        // À¯È¿ÇÑÁö, ±×¸®°í Áö±İ ÅÍÁø »ç°Ç(TriggerType)ÀÌ ÀÌÆåÆ®ÀÇ ¸íÂû°ú ÀÏÄ¡ÇÏ´ÂÁö È®ÀÎ!
+        // ìœ íš¨í•œì§€, ê·¸ë¦¬ê³  ì§€ê¸ˆ í„°ì§„ ì‚¬ê±´(TriggerType)ì´ ì´í™íŠ¸ì˜ ëª…ì°°ê³¼ ì¼ì¹˜í•˜ëŠ”ì§€ í™•ì¸!
         if (Effect && Effect->TriggerCondition == TriggerType)
         {
             Effect->ExecuteEffect(EventData);
