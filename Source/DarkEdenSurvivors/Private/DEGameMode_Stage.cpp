@@ -88,9 +88,7 @@ void ADEGameMode_Stage::GameOver()
     // 1. 게임 일시 정지 (선택 사항: 몬스터 멈추게 하려면 true)
      UGameplayStatics::SetGamePaused(this, true);
 
-    // ========================================================
-    // ★ [골드 정산 로직] UI와 무관하게 GameMode에서 저장까지 끝낸다
-    // ========================================================
+    // 골드 정산과 저장은 UI와 무관하게 GameMode에서 끝낸다
     if (UDEGameInstance* GI = Cast<UDEGameInstance>(GetGameInstance()))
     {
         GI->AddGold(EarnedGold);
