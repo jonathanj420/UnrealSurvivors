@@ -1,4 +1,5 @@
 ﻿#include "DEPoolSubsystem.h"
+#include "DarkEdenSurvivors.h"
 #include "Engine/World.h"
 #include "GameFramework/Actor.h"
 #include "Components/PrimitiveComponent.h"
@@ -37,6 +38,7 @@ void UDEPoolSubsystem::Deinitialize()
     }
 
     PoolMap.Empty();
+    PooledActorSet.Empty();
     ActorClassMap.Empty();
     Super::Deinitialize();
 }
@@ -208,6 +210,7 @@ void UDEPoolSubsystem::ShrinkPools()
             if (InactivePool.Num() > 0)
             {
                 AActor* Victim = InactivePool.Pop();
+                PooledActorSet.Remove(Victim);
                 if (IsValid(Victim))
                 {
                     Victim->Destroy(); // 진짜 삭제
@@ -272,6 +275,7 @@ AActor* UDEPoolSubsystem::GetPooledActor(
     {
         // 맨 뒤에 있는 놈 하나 꺼냄 (가장 빠름)
         SelectedActor = InactivePool.Pop();
+        PooledActorSet.Remove(SelectedActor);
         //UE_LOG(LogTemp, Warning, TEXT("%s got Popped Out from Pool"), *SelectedActor->GetName());
         // 꺼냈는데 그 사이에 죽었거나(Destroy) 유효하지 않으면 버리고 다시 반복
         if (IsValid(SelectedActor))
@@ -339,12 +343,19 @@ void UDEPoolSubsystem::ReturnActorToPool(AActor* Actor)
 {
     if (!IsValid(Actor)) return;
 
+    // 이미 풀에 있는 액터를 또 넣으면 나중에 두 곳에 동시에 꺼내진다
+    bool bAlreadyInPool = false;
+    PooledActorSet.Add(Actor, &bAlreadyInPool);
+    if (bAlreadyInPool)
+    {
+        UE_LOG(LogDarkEdenSurvivors, Warning, TEXT("[Pool] Duplicate return ignored: %s"), *Actor->GetName());
+        return;
+    }
+
     // 1. 끄기
     DeactivateActor(Actor);
 
     // 2. 풀(창고)에 집어넣기
-    // [주의] 이미 풀에 있는데 또 넣는 실수를 방지하기 위해 AddUnique 대신 로직으로 관리하거나
-    // 성능을 위해 그냥 Add를 하되, 이 함수는 반드시 "사용 중인 놈"한테만 호출해야 함.
     TArray<AActor*>& InactivePool = PoolMap.FindOrAdd(Actor->GetClass());
     InactivePool.Add(Actor); // Stack Push
     /*if (!Actor) return;

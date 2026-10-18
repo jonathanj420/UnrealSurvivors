@@ -24,6 +24,10 @@
 
 - [ ] 오래 플레이해도(누적 픽업 400개 이상) 드롭이 계속 나오는지 확인
 
+## 풀
+
+- [ ] 플레이 중 Output Log에 `[Pool] Duplicate return ignored: <액터 이름>`이 뜨는지 확인. 뜨면 액터 이름을 알려줘 (이중 반환하는 호출처 추적용. AcidBolt, 스킬 진화/취소 시점 위주로)
+
 ## 죽은 코드 삭제 전 확인 (Reference Viewer)
 
 - [ ] Test* 클래스, 템플릿 GameMode/PC, `DEMonsterDataAsset`, `DESimpleMeleeBase`, `DEBloodyNail` 액터가 BP/레벨에서 참조되는지

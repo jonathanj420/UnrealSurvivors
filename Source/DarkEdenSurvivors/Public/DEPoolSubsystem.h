@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/WorldSubsystem.h" // changed from GameInstanceSubsystem.h
+#include "UObject/ObjectKey.h"
 #include "DEPoolSubsystem.generated.h"
 
 /**
@@ -35,6 +36,9 @@ private:
 
     /** 클래스별 풀 저장소 */
     TMap<TSubclassOf<AActor>, TArray<AActor*>> PoolMap;
+
+    /** 현재 풀 안에 있는 액터 (중복 반환 검사용). 주소 재사용에 안전하도록 TObjectKey 사용 */
+    TSet<TObjectKey<AActor>> PooledActorSet;
 
     /** 클래스 역조회용: Actor → Class */
     TMap<AActor*, TSubclassOf<AActor>> ActorClassMap;

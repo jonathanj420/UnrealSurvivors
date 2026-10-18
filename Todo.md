@@ -14,7 +14,9 @@
 - [x] 보스 사망 바인딩: `SpawnBoss`가 `SpawnFromPool`을 거치도록 변경. 바인딩, 높이 보정, 풀 반환이 일반 몬스터와 같아짐
 - [x] 픽업 장부 누적: `DeactivatePickup`에서 `UnregisterPickup`을 호출해 `ActivePickups`/`MagnetizingPickups`에서 제거. 풀 재사용 시 중복 등록되던 문제도 같이 해결
 - [x] ~~픽업 자석 범위 감지가 `bCanBeMagnetized`를 안 본다~~ 의도된 동작. 플래그는 전역 자석 전용 (VS의 Vacuum처럼 보석류만), 범위 자석은 모든 픽업 대상
-- [ ] 풀: `UDEPoolSubsystem::ReturnActorToPool`에 중복 반환 검사가 없다. AcidBolt, `CancelSkill` 등에서 이중 반환
+- [x] 풀 중복 반환: `PooledActorSet`(TObjectKey)으로 이미 풀에 있는 액터의 재반환을 막고 Warning 로그 (`[Pool] Duplicate return ignored`)
+- [ ] 풀 stale 반환 (풀 가드로 못 잡음): `UDEAutoSkillBase::CancelSkill`이 `OwnedSkillActorMap`의 weak 참조로 `ReturnToPool`을 부르는데, 그 액터가 이미 반환된 뒤 다른 스킬이 재사용 중이면 남의 액터를 회수한다. 풀링 액터는 Destroy되지 않아서 weak 포인터가 계속 유효하다. 액터에 세대(generation) 번호를 두거나, 반환 시 소유 스킬 맵에서 빼는 방식이 필요하다. 4단계 `EvolveSkill`/`CancelSkill` 정리 때 같이
+- [ ] AcidBolt 이중 반환 경로 확인: `Explode`가 한 번 반환된 뒤 다시 불리는 경로가 있는지 (같은 프레임 다중 오버랩 등). 가드 로그로 재현 확인 후 원인 수정
 - [ ] `GameOver` 중복 호출 가드 (`bIsGameOver`). 두 번 불리면 골드가 두 번 정산된다. 무적 해제할 때 같이
 - [ ] 메타 업그레이드 Amount: `ApplyMetaUpgrades`가 Amount modifier의 `Multiplier`를 안 넣어서 기본값 1.0이 들어간다. 업그레이드 1레벨 이상이면 Amount ×2 (`FDEStatModifier::Multiplier` 기본값 버그의 실사례)
 
