@@ -103,21 +103,5 @@ void UDESkill_TalonOfCrow::ExecuteWithContext(FDESkillContext& Context)
         Super::ExecuteWithContext(Context);
     }
 
-    /*for (int32 i = 0; i < Context.Amount; i++)
-    {
-        AActor* Target = nullptr;
-
-        if (i == 0)
-            Target = UDEGameplayLibrary::GetNearestTarget(SkillOwner, -1.0f);
-        else
-            Target = UDEGameplayLibrary::GetRandomTargets(SkillOwner, -1.0f, 1)[0];
-
-        if (!Target) continue;
-
-        Context.Targets.Empty();
-        Context.Targets.Add(Target);
-        Super::ExecuteWithContext(Context);
-    }*/
-
    
 }

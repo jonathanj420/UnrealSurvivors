@@ -225,33 +225,6 @@ void UDESkill_BloodDrain::SpawnBloodDrainNiagara(
 
 }
 
-//void UDESkill_BloodDrain::ApplyDrainEffect(
-//    ADEMonsterBase* Monster,
-//    ADECharacterBase* Player
-//) const
-//{
-//    Monster->ApplyStun(StunDuration);
-//
-//    if (BloodDrainEffect)
-//    {
-//        UNiagaraComponent* NiagaraComp =
-//            UNiagaraFunctionLibrary::SpawnSystemAtLocation(
-//                Monster->GetWorld(),
-//                BloodDrainEffect,
-//                Monster->GetActorLocation()
-//            );
-//
-//        if (NiagaraComp)
-//        {
-//            NiagaraComp->SetVectorParameter(
-//                TEXT("PlayerPosition"),
-//                Player->GetActorLocation()
-//            );
-//        }
-//    }
-//
-//}
-
 void UDESkill_BloodDrain::ApplyFinishDamage(
     ADEMonsterBase* Monster,
     ADECharacterBase* Player

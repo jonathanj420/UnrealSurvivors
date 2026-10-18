@@ -99,33 +99,6 @@ void UDEBehavior_FireProjectileRadial::Execute(FDESkillContext& Context)
 			}
 		}
 	}
-	//for (int32 i = 0; i < Count; i++)
-	//{
-	//	// 기준 회전(BaseRot) 복사
-	//	FRotator SpawnRot = BaseRot;
-
-	//	// Yaw(수평 회전) 적용
-	//	float CurrentYawStep = StartYawOffset + (AngleStep * i);
-	//	SpawnRot.Yaw += CurrentYawStep;
-
-	//	// 풀에서 꺼내기
-	//	AActor* PooledActor = Pool->GetPooledActor(
-	//		ProjectileClass,
-	//		Origin,
-	//		SpawnRot,
-	//		true
-	//	);
-
-	//	// 초기화
-	//	if (auto* Proj = Cast<ADESimpleProjectileBase>(PooledActor))
-	//	{
-	//		Context.TargetDirection = SpawnRot.Vector();
-	//		Proj->InitializeFromContext(Context);
-	//	
-	//	}
-	//}
-
-	// 6. 사운드 재생 (한 번만)
 	if (FireSound)
 	{
 		UGameplayStatics::PlaySoundAtLocation(World, FireSound, Origin);

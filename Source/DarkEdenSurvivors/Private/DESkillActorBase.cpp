@@ -69,11 +69,6 @@ void ADESkillActorBase::InitializeFromContext(const FDESkillContext& Context)
     CritChance = Context.CritChance;
     CritDamageMultiplier = Context.CritDamageMultiplier;
     HitInterval = Context.GetValue(TEXT("HitInterval"), 1.0f);
-    /*if (bCanCrit)
-    {
-        CritChance = Context.CritChance;
-        CritDamageMultiplier = Context.CritDamageMultiplier;
-    }*/
     KnockbackForce = Context.KnockbackForce;
     LifeTime = Context.Duration;
 
@@ -82,11 +77,6 @@ void ADESkillActorBase::InitializeFromContext(const FDESkillContext& Context)
     {
         SetSize(Radius);
     }
-    /*float NewSize = Context.GetValue(TEXT("Size"), -1.f);
-    if (NewSize > 0.f)
-    {
-        SetActorScale3D(FVector(NewSize / 30.0f));
-    }*/
 
     ResetState();
 }
@@ -126,14 +116,6 @@ void ADESkillActorBase::ResetState()
             }
         }
     }
-
-    //if (NiagaraComponent)
-    //{
-    //    NiagaraComponent->DeactivateImmediate(); // 트레일 히스토리 즉시 끊기
-    //    NiagaraComponent->ResetSystem();         // 파티클 완전 초기화
-    //    NiagaraComponent->SetVisibility(true);
-    //    NiagaraComponent->Activate(true);
-    //}
 
     if (LifeTime > 0.f)
     {

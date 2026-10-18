@@ -161,26 +161,6 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::CreateRandomSkillChoice()
 
     return Choice;
 
-    /*UDESkillManagerComponent* SkillMgr =
-        GetOwner()->FindComponentByClass<UDESkillManagerComponent>();
-
-    if (!SkillMgr)
-        return nullptr;
-
-    const FDESkillRow* Row = SkillMgr->GetRandomSkillRow();
-    if (!Row)
-        return nullptr;
-
-    UDELevelUpChoice_Skill* Choice =
-        NewObject<UDELevelUpChoice_Skill>(this);
-
-    Choice->Init(
-        Row->SkillID,
-        Row->SkillName,
-        Row->SkillIcon
-    );
-
-    return Choice;*/
 }
 
 UDELevelUpChoiceBase* UDELevelUpManagerComponent::CreateRandomAccessoryChoice()
@@ -348,51 +328,7 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::TryGetEvolutionChoice()
 
     return nullptr; // 진화/합성할 거 없음
 
-    //UE_LOG(LogTemp, Warning, TEXT("[Chest] Try Get Evolution Choice"));
-    //APawn* OwnerPawn = Cast<APawn>(GetOwner());
-    //if (!OwnerPawn) return nullptr;
 
-    //UDESkillManagerComponent* SkillMgr = OwnerPawn->FindComponentByClass<UDESkillManagerComponent>();
-    //if (!SkillMgr) return nullptr;
-
-
-    //UE_LOG(LogTemp, Warning, TEXT("[Chest] Evolution Criteria Passed"));
-
-    //int32 BaseSkillID = -1;
-    //int32 ResultSkillID = -1;
-
-    //// 1. 네가 짠 그 완벽한 진화 판독기 작동!
-    //if (SkillMgr->CheckEvolution(BaseSkillID, ResultSkillID))
-    //{
-    //    // 2. 판독 통과! 진화될 결과 스킬(ResultSkillID)의 데이터 로드
-    //    UE_LOG(LogTemp, Warning, TEXT("[Chest] Passed CheckEvolution"));
-    //    const FDESkillRow* EvolvedRow = SkillMgr->GetSkillRow(ResultSkillID);
-    //    if (EvolvedRow)
-    //    {
-    //        // 3. Choice 객체 포장해서 반환
-    //        UDELevelUpChoice_Skill* EvolutionChoice = NewObject<UDELevelUpChoice_Skill>(this);
-
-    //        EvolutionChoice->Init(
-    //            EvolvedRow->SkillID,
-    //            EvolvedRow->SkillName,
-    //            EvolvedRow->SkillIcon,
-    //            EvolvedRow->BaseDescription
-
-    //        );
-
-    //        // =========================================================
-    //        // ★ 중요 팁: 이 Choice가 '진화용'이라는 걸 나중에 Apply할 때 알 수 있어야 해!
-    //        // =========================================================
-    //         EvolutionChoice->bIsEvolution = true;
-    //         EvolutionChoice->TargetBaseSkillID = BaseSkillID; 
-
-    //        UE_LOG(LogTemp, Warning, TEXT("[Chest] Evolved %d -> %d"), BaseSkillID, ResultSkillID);
-
-    //        return EvolutionChoice;
-    //    }
-    //}
-
-    //return nullptr; // 진화할 거 없음
 }
 
 UDELevelUpChoiceBase* UDELevelUpManagerComponent::GetRandomUpgradableChoice()

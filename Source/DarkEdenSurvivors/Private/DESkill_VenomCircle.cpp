@@ -84,27 +84,4 @@ void UDESkill_VenomCircle::InitBehaviors()
 		Behaviors.Add(Knockback);
 
 	}
-	//// Step 4. [VFX] 타격 이펙트 (맞은 적들)
-	//auto* HitVFX = NewObject<UDEBehavior_PlayNiagara>(this, TEXT("HitVFX"));
-	//if (HitVFX)
-	//{
-	//	HitVFX->SpawnLocation = EEffectSpawnLocation::TargetActors; // 맞은 놈들 위치
-	//	HitVFX->Offset = FVector(0.f, 0.f, 60.f); // 가슴 높이 보정
-	//	HitVFX->NiagaraAsset = HitEffectAsset;
-
-	//	Behaviors.Add(HitVFX);
-	//}
-
-	//// Step 5. [Logic] 독 상태이상 부여
-	//auto* Poison = NewObject<UDEBehavior_ApplyStatusEffect>(this, TEXT("Poison"));
-	//if (Poison)
-	//{
-	//	// EDEStatusType 열거형이 정의되어 있어야 함
-	//	Poison->StatusType = EDEStatusType::Poison;
-
-	//	// 지속시간, 틱 데미지 등은 Context.CustomValues에서 
-	//	// Behavior가 알아서 꺼내 쓰도록 구현 (ApplyStatusEffect 내부 로직)
-
-	//	Behaviors.Add(Poison);
-	//}
 }

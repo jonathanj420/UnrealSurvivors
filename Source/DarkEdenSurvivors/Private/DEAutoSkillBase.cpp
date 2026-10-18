@@ -61,11 +61,6 @@ void UDEAutoSkillBase::ExecuteWithContext(FDESkillContext& Context)
 
 
     // 기본 역할: Behavior들 실행
-  /*  for (UDESkillBehavior* Behavior : Behaviors)
-    {
-        if (Behavior) Behavior->Execute(Context);
-    }
-*/
 
 
     //or maybe here
@@ -92,16 +87,6 @@ void UDEAutoSkillBase::BuildContext(FDESkillContext& OutContext)
     // 데이터가 없으면 중단
     if (!SkillData) return;
 
-    //// 2. 컴포넌트 가져오기 (캐싱)
-    //UDECombatComponent* Combat = nullptr;
-    //if (SkillOwner)
-    //{
-    //    Combat = SkillOwner->FindComponentByClass<UDECombatComponent>();
-    //}
-
-    // =========================================================
-    // [3. 초기값 설정: 데이터테이블(Raw Data)]
-    // =========================================================
     float FinalDamage = SkillData->Damage;
     int32 FinalAmount = SkillData->Amount;
     float FinalSpeed = SkillData->Speed;
@@ -206,13 +191,6 @@ void UDEAutoSkillBase::FinishSkill()
 
 void UDEAutoSkillBase::EndSkill()
 {
-    //// AOE 정리
-    //for (auto& Pair : OwnedSkillActorMap)
-    //{
-    //    if (Pair.Value.IsValid())
-    //        Pair.Value->ReturnToPool();
-    //}
-    //OwnedSkillActorMap.Reset(); no need anymore
 
     for (UDESkillBehavior* Behavior : Behaviors)
     {

@@ -58,39 +58,6 @@ void UDEBehavior_SelectTargetsBySweep::Execute(FDESkillContext& Context)
         }
         Context.Targets = UniqueResults.Array();
     }
-    //bool bDrawDebug = true;
-
-    //if (bDrawDebug)
-    //{
-    //    // 1. 캡슐의 중심점 계산 (시작점과 끝점의 정확히 한가운데)
-    //    FVector Center = StartLoc + (Direction * (FinalRange * 0.5f));
-
-    //    // 2. 캡슐의 절반 높이 계산 (이동 거리의 절반 + 양 끝에 튀어나온 구체의 반지름)
-    //    float HalfHeight = (FinalRange * 0.5f) + FinalRadius;
-
-    //    // 3. 캡슐 회전값 계산 ★ (매우 중요)
-    //    // 언리얼의 캡슐은 기본적으로 Z축(위쪽)으로 서 있습니다.
-    //    // 우리가 쏘는 레이저 방향(Direction)이 캡슐의 기둥(Z축)이 되도록 눕혀줍니다.
-    //    FQuat CapsuleRot = FRotationMatrix::MakeFromZ(Direction).ToQuat();
-
-    //    // 4. 진짜 그리기! (적중했으면 초록색, 허공을 갈랐으면 빨간색)
-    //    DrawDebugCapsule(
-    //        World,
-    //        Center,
-    //        HalfHeight,
-    //        FinalRadius,
-    //        CapsuleRot,
-    //        bHit ? FColor::Green : FColor::Red, // 색상
-    //        false, // 영구 유지 여부
-    //        2.0f,  // 화면에 남아있을 시간 (2초)
-    //        0,     // Depth Priority
-    //        2.0f   // 선 두께
-    //    );
-
-    //    // (선택) 시작점과 끝점에 작은 구를 그려주면 확실히 파악하기 더 좋습니다.
-    //    DrawDebugSphere(World, StartLoc, 10.0f, 8, FColor::Blue, false, 2.0f);
-    //    DrawDebugSphere(World, EndLoc, 10.0f, 8, FColor::Yellow, false, 2.0f);
-    //}
 
    
 

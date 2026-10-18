@@ -20,19 +20,6 @@ ADESimpleSummonBase::ADESimpleSummonBase()
 	CollisionComponent->InitSphereRadius(50.0f);
 	CollisionComponent->SetCollisionProfileName(TEXT("PlayerAttack")); // 기본은 Overlap으로
 
-	//// 2. [메시 생성]
-	//Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	//Mesh->SetupAttachment(RootComponent);
-	//Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	//Mesh->SetCastShadow(false);
-	//Mesh->SetSimulatePhysics(false);
-	//Mesh->SetEnableGravity(false);
-
-	//// 3. [나이아가라 생성]
-	//NiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComponent"));
-	//NiagaraComponent->SetupAttachment(RootComponent);
-	//NiagaraComponent->SetAutoActivate(false); // ResetState에서 켬
-	//NiagaraComponent->SetRelativeLocation(FVector::ZeroVector);
 }
 
 void ADESimpleSummonBase::BeginPlay()

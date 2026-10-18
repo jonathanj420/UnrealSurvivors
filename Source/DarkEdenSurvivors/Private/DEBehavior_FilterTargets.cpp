@@ -99,11 +99,6 @@ void UDEBehavior_FilterTargets::Execute(FDESkillContext& Context)
 
 	// 3. 자르기 (Truncate)
 	// 정렬이 끝났으니 앞에서부터 N개만 남기고 뒤는 다 날림
-	/*Context.Targets.SetNum(FinalCount);
-	for (const AActor* Target : Context.Targets)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Targets filtered : %s"), *Target->GetName());
-	}*/
 
 	if (Context.Targets.Num() > FinalCount)
 	{

@@ -74,20 +74,6 @@ void ADEProjectile_AcidBolt::Tick(float DeltaTime)
 }
 
 
-//void ADEProjectile_AcidBolt::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-//    UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-//    bool bFromSweep, const FHitResult& SweepResult)
-//{
-//
-//    Explode();
-//    //if (ADEMonsterBase* Monster = Cast<ADEMonsterBase>(OtherActor))
-//    //{
-//    //    UGameplayStatics::ApplyDamage(Monster, Damage, GetInstigatorController(), this, UDamageType::StaticClass());
-//    //    //UE_LOG(LogTemp, Warning, TEXT("CALLED ONOVERLAP"));
-//    //    Explode();
-//    //}
-//}
-
 void ADEProjectile_AcidBolt::OnTargetHit(AActor* Target)
 {
     Explode();
@@ -101,24 +87,6 @@ void ADEProjectile_AcidBolt::Explode()
 
     FVector Center = GetActorLocation();
 
-    // 1. [시각화] 폭발 범위 (초록색)
-    //DrawDebugSphere(World, Center, EffectRadius, 16, FColor::Green, false, 1.0f, 0, 1.0f);
-
-    //// 2. [검출] 범위 내 몬스터 찾기
-    //TArray<FOverlapResult> OverlapResults;
-    //FCollisionQueryParams QueryParams;
-    //QueryParams.AddIgnoredActor(this); // 나 자신은 무시
-    //QueryParams.AddIgnoredActor(GetOwner()); // 플레이어 무시
-
-    //// 몬스터 채널(ECC_GameTraceChannel1 등)로만 검사 -> 성능 최적화
-    //bool bHitAny = World->OverlapMultiByChannel(
-    //    OverlapResults,
-    //    Center,
-    //    FQuat::Identity,
-    //    ECC_GameTraceChannel5, // ★ 프로젝트 설정에 맞는 몬스터 채널 사용 필수!
-    //    FCollisionShape::MakeSphere(EffectRadius),
-    //    QueryParams
-    //);
     TArray<FOverlapResult> OverlapResults;
     FCollisionQueryParams QueryParams;
     QueryParams.AddIgnoredActor(this);

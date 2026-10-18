@@ -94,14 +94,6 @@ void ADESummon_GoreGland::PerformBloodPulse()
 
     TArray<FOverlapResult> OverlapResults;
 
-    /*bool bHit = World->OverlapMultiByProfile(
-        OverlapResults,
-        Center,
-        FQuat::Identity,
-        FName(TEXT("PlayerAttack")),
-        SphereShape,
-        QueryParams);*/
-
     bool bHitAny = World->OverlapMultiByObjectType(
         OverlapResults,
         Center,

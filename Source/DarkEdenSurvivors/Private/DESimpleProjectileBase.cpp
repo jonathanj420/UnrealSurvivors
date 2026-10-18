@@ -121,27 +121,6 @@ void ADESimpleProjectileBase::ReturnToPool()
 	Super::ReturnToPool();
 }
 
-//void ADESimpleProjectileBase::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-//	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-//	bool bFromSweep, const FHitResult& SweepResult)
-//{
-//	// 1. [유효성 검사]
-//	if (!OtherActor || OtherActor == this || OtherActor == GetInstigator() || HitActors.Contains(OtherActor)) return;
-//
-//	// 2. 타격 기록
-//	HitActors.Add(OtherActor);
-//	//UE_LOG(LogTemp, Warning, TEXT("Projectile : %s , Hit : %s"), *GetName(), *OtherActor->GetName());
-//	// 3. ★ 갓-벽하게 압축된 데미지 로직 & 관통 처리 ★
-//	if (TryDealDamage(OtherActor))
-//	{
-//		if (Penetration != -1 && --Penetration <= 0)
-//		{
-//			ReturnToPool();
-//		}
-//	}
-//
-//}
-
 void ADESimpleProjectileBase::UpdateMovement(float DeltaTime)
 {
 	// [최적화] 가속도가 있을 때만 연산

@@ -16,29 +16,6 @@ void UDESkillInventoryWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    //APawn* Pawn = GetOwningPlayerPawn();
-    //if (!Pawn) return;
-
-    //Inventory = Pawn->FindComponentByClass<UDEInventoryComponent>();
-    //SkillManager = Pawn->FindComponentByClass<UDESkillManagerComponent>();
-    //check(SkillSlotWidgetClass);
-    //check(Inventory);
-    //check(SkillManager);
-
-    //if (SkillManager)
-    //{
-    //    SkillManager->OnSkillUpdated.AddUObject(
-    //        this,
-    //        &UDESkillInventoryWidget::OnSkillUpdated
-    //    );
-    //}
-    ////Inventory 변경 이벤트 구독
-    //Inventory->OnInventoryChanged.AddUObject(
-    //    this,
-    //    &UDESkillInventoryWidget::Refresh
-    //);
-
-    //Refresh();
 }
 
 void UDESkillInventoryWidget::InitializeSkillWidget(APawn* NewPawn)

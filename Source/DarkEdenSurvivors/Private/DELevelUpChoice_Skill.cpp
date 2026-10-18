@@ -39,15 +39,6 @@ void UDELevelUpChoice_Skill::Apply(AActor* PlayerActor)
 
     if (UDESkillManagerComponent* SkillManager = PlayerActor->FindComponentByClass<UDESkillManagerComponent>())
     {
-        // =========================================================
-        // ★ 여기서 꼬리표를 확인하고 스킬 매니저한테 다른 명령을 내림!
-        // =========================================================
-        //if (bIsEvolution && TargetBaseSkillID != INDEX_NONE)
-        //{
-        //    // 네가 아까 짜둔 그 완벽한 진화 함수 호출! (기존 무기 삭제 + 진화 무기 장착)
-        //    //SkillManager->EvolveSkill(TargetBaseSkillID, SkillID);
-        //    SkillManager->EvolveSkill(ConsumedSkillIDs, SkillID);
-        //}
         if (bIsEvolution && ConsumedSkillIDs.Num() > 0)
         {
             // 네가 아까 짜둔 그 완벽한 진화 함수 호출! (기존 무기 삭제 + 진화 무기 장착)
@@ -61,13 +52,5 @@ void UDELevelUpChoice_Skill::Apply(AActor* PlayerActor)
             SkillManager->ApplySkillChoice(SkillID);
         }
 
-        /*if (!PlayerActor || SkillID == INDEX_NONE)
-            return;
-
-        if (UDESkillManagerComponent* SkillManager =
-            PlayerActor->FindComponentByClass<UDESkillManagerComponent>())
-        {
-            SkillManager->ApplySkillChoice(SkillID);
-        }*/
     }
 }

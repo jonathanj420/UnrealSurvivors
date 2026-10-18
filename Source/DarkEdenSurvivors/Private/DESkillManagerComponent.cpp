@@ -44,22 +44,6 @@ void UDESkillManagerComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
     if (bAutoSkillPaused)
         return;
 
-    // =========================================================
-    // 2. 실시간 쿨타임 감소(CDR) 수치 가져오기 NOW CACHED
-    // =========================================================
-    //float CurrentCDR = 0.0f;
-    //if (CachedStatComp)
-    //{
-    //    // 스탯 컴포넌트에서 실시간 쿨감 수치를 가져옵니다 (예: 0.15 = 15%)
-    //    CurrentCDR = CachedStatComp->GetStatValue(EDEStatType::Cooldown);
-    //}
-
-    //// 쿨감 최대치 90% 캡(Cap) 적용 (무한 발사로 인한 게임 크래시 방지)
-    //CurrentCDR = FMath::Clamp(CurrentCDR, 0.0f, 0.9f);
-    
-    // =========================================================
-    // 3. 스킬 루프 및 발동
-    // =========================================================
     for (auto& Pair : ActiveSkills)
     {
         FActiveSkill& Active = Pair.Value;
@@ -111,58 +95,8 @@ void UDESkillManagerComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
             Active.SkillObject->SetCurrentFinalCooldown(FinalCooldown);
             Active.SkillObject->Activate();
 
-            //// 데미지 합산, 스냅샷 등 복잡한 로직은 스킬 내부(BuildContext)가 알아서 함!
-            //// 매니저는 그냥 "쏴라!" 하고 명령만 내립니다.
-            //Active.SkillObject->Activate();
-
-            //// ---------------------------------------------------------
-            //// 4. 다음 발사를 위한 쿨타임 리셋 (Over-tick 최적화 포함)
-            //// ---------------------------------------------------------
-            //float BaseCooldown = Active.RowData->Cooldown;
-
-            //// 기본 쿨타임에 현재 쿨감(%)을 적용 (최소 0.1초 방어선)
-            //float FinalCooldown = FMath::Max(0.1f, BaseCooldown * (1.0f - CurrentCDR));
-            //// 초과 시간(Over-tick) 보정: 프레임 랙 때문에 쿨타임이 -0.05초가 되었다면,
-            //// 다음 쿨타임에서 0.05초를 빼서 스킬 템포를 칼같이 유지합니다.
-            //Active.CurrentCooldown = FinalCooldown + Active.CurrentCooldown;
-
-            //// 만약 초과 보정 때문에 쿨이 또 0 이하로 내려가면 안전하게 리셋
-            //if (Active.CurrentCooldown <= 0.0f)
-            //{
-            //    Active.CurrentCooldown = FinalCooldown;
-            //}
         }
     }
-
-    ////DeltaCheck += DeltaTime;
-    //Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-    //if (bAutoSkillPaused)
-    //    return;
-
-    //for (auto& Pair : ActiveSkills)
-    //{
-    //    FActiveSkill& Active = Pair.Value;
-
-    //    // 1. 쿨타임 계산
-    //    if (Active.CurrentCooldown > 0.f)
-    //    {
-    //        Active.CurrentCooldown -= DeltaTime;
-    //        continue;
-    //    }
-
-    //    // 2. 스킬 실행
-    //    if (Active.SkillObject && Active.RowData)
-    //    {
-    //        // [변경점] 인자 없이 Activate()만 호출합니다.
-    //        // 데이터는 이미 SkillObject 내부에 저장되어 있습니다.
-    //        Active.SkillObject->Activate();
-
-    //        // 쿨타임 갱신
-    //        Active.CurrentCooldown = Active.RowData->Cooldown;
-    //        //DeltaCheck = 0.0f;
-    //    }
-    //}
 
 
 }
@@ -590,53 +524,6 @@ bool UDESkillManagerComponent::CheckEvolution(TArray<int32>& OutConsumedSkillIDs
 
     return bCanEvolve;
 
-    //UE_LOG(LogTemp, Warning, TEXT("[Evolution] Try Check Evolution . . ."));
-    //if (!EvolutionDataTable) return false;
-    //UE_LOG(LogTemp, Warning, TEXT("[Evolution] Passed DataTable Check . . ."));
-    //// 데이터 테이블의 모든 행 가져오기
-    //TArray<FDESkillEvolutionRow*> AllEvoRows;
-    //EvolutionDataTable->GetAllRows<FDESkillEvolutionRow>(TEXT("CheckEvolutionContext"), AllEvoRows);
-
-    //bool bCanEvolve = false;
-    //int32 HighestPriority = -1; // 우선순위 비교용
-
-    //for (FDESkillEvolutionRow* Row : AllEvoRows)
-    //{
-    //    if (!Row) continue;
-
-    //    // 1. 기본 무기를 장착 중인가?
-    //    if (!ActiveSkills.Contains(Row->BaseSkillID)) continue;
-
-    //    // 2. 그 무기가 요구 레벨을 달성했는가?
-    //    if (SkillLevels[Row->BaseSkillID] < Row->RequiredSkillLevel) continue;
-
-    //    UE_LOG(LogTemp, Warning, TEXT("[Evolution] %d has MAX LEVEL to Evolve . . ."), SkillLevels[Row->BaseSkillID]);
-
-    //    bool bHasAllAccessories = true;
-    //    for (int32 AccID : Row->RequiredAccessoryIDs)
-    //    {
-    //        if (!CachedInventoryComp->HasAccessory(AccID))
-    //        {
-    //            bHasAllAccessories = false;
-    //            UE_LOG(LogTemp, Warning, TEXT("[Evolution] %d has MAX LEVEL but No Acc . . ."), SkillLevels[Row->BaseSkillID]);
-    //            break; // 하나라도 없으면 이 레시피는 탈락!
-    //        }
-    //    }
-    //    // 악세서리가 부족하면 다음 레시피로 패스
-    //    if (!bHasAllAccessories) continue;
-
-    //    // 4. ★ 모든 조건을 만족했다면, 여태 찾은 진화식보다 우선순위가 높은지 체크!
-    //    if (Row->Priority > HighestPriority)
-    //    {
-    //        HighestPriority = Row->Priority;
-    //        OutBaseSkillID = Row->BaseSkillID;
-    //        OutResultSkillID = Row->ResultSkillID;
-    //        bCanEvolve = true;
-    //        UE_LOG(LogTemp, Warning, TEXT("[Evolution] Can Evolve !"));
-    //    }
-    //}
-    //
-    //return bCanEvolve;
 }
 //void UDESkillManagerComponent::EvolveSkill(int32 BaseSkillID, int32 ResultSkillID)
 void UDESkillManagerComponent::EvolveSkill(const TArray<int32>& ConsumedSkillIDs, int32 ResultSkillID)
@@ -680,45 +567,6 @@ void UDESkillManagerComponent::EvolveSkill(const TArray<int32>& ConsumedSkillIDs
         UE_LOG(LogTemp, Error,
             TEXT("[Evolution] Failed to evolve into SkillID: %d"), ResultSkillID);
     }
-
-    //// 1. 기존 스킬 찢어버리기!
-    //if (ActiveSkills.Contains(BaseSkillID))
-    //{
-    //    FActiveSkill& OldSkill = ActiveSkills[BaseSkillID];
-
-    //    // [★핵심] 기존 스킬 객체에게 "너 이제 해고니까, 네가 맵에 깔아둔 장판/투사체 싹 다 지워!" 라고 명령
-    //    if (OldSkill.SkillObject)
-    //    {
-    //        // 이 함수는 UDESkillBase나 AutoSkillBase에 하나 파두셔야 합니다.
-    //        // (내부에서 풀링된 투사체들을 회수하거나 Destroy 하도록 구현)
-    //        // OldSkill.SkillObject->DestroySkill(); 
-
-    //        // 메모리에서 안전하게 내려가도록 유도 (GC에게 맡김)
-    //        OldSkill.SkillObject->EndSkill(); // 한 줄로 끝
-    //        OldSkill.SkillObject = nullptr;
-    //    }
-
-    //    // 매니저의 관리 목록에서 완전히 파냅니다.
-    //    ActiveSkills.Remove(BaseSkillID);
-    //    SkillLevels.Remove(BaseSkillID);
-    //    CachedInventoryComp->RemoveSkill(BaseSkillID);
-    //}
-
-    //// 2. 새 진화 무기 장착! (1렙부터)
-    //// 아까 짜두신 '신규 스킬 획득' 함수(LevelUpSkill 등)를 그대로 재활용!
-    //LevelUpSkill(ResultSkillID);
-
-    //if (FActiveSkill* NewSkill = ActiveSkills.Find(ResultSkillID))
-    //{
-    //    UE_LOG(LogTemp, Warning,
-    //        TEXT("[Evolution] Evolved into : %s successfully"),
-    //        *NewSkill->SkillObject->GetName());
-    //}
-    //else
-    //{
-    //    UE_LOG(LogTemp, Error,
-    //        TEXT("[Evolution] Failed to evolve into SkillID: %d"), ResultSkillID);
-    //}
 
 }
 void UDESkillManagerComponent::PauseAutoSkills()
@@ -783,33 +631,6 @@ void UDESkillManagerComponent::ReduceCooldown(int32 SkillID, float Amount, ECool
         //UE_LOG(LogTemp, Warning, TEXT("Reduced Amount : %f / Remaining : %f"), ReduceValue, FoundSkill->CurrentCooldown);
     }
 
-    //if (FActiveSkill* FoundSkill = ActiveSkills.Find(SkillID))
-    //{
-    //    // 스킬 데이터가 없으면 리턴
-    //    if (!FoundSkill->RowData) return;
-
-    //    float ReduceValue = 0.0f;
-
-    //    // 1. 타입에 따른 감소량(초) 계산
-    //    switch (ReduceType)
-    //    {
-    //    case ECooldownReduceType::Flat:
-    //        // 고정 시간 (예: Amount가 1.5면 1.5초 감소)
-    //        ReduceValue = Amount;
-    //        break;
-
-    //    case ECooldownReduceType::Percentage:
-    //        // 퍼센트 (예: Amount가 0.2면 최대 쿨타임의 20% 감소)
-    //        // BaseCooldown을 기준으로 깎아야 기획 의도에 맞음!
-    //        float BaseCooldown = FoundSkill->RowData->Cooldown;
-    //        ReduceValue = BaseCooldown * Amount;
-    //        break;
-    //    }
-
-    //    // 2. 남은 쿨타임에서 차감 (0 이하로 내려가지 않게 방어)
-    //    FoundSkill->CurrentCooldown = FMath::Max(0.0f, FoundSkill->CurrentCooldown - ReduceValue);
-    //    UE_LOG(LogTemp, Warning, TEXT("Cooldown Reduced ! Reduced Amount : %f"), ReduceValue);
-    //}
 }
 
 // 3. 전체 쿨타임 감소

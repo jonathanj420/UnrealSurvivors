@@ -92,33 +92,6 @@ void UDEBehavior_SpawnOnMove::CheckAndSpawn()
 
 void UDEBehavior_SpawnOnMove::OnContextRefreshed(const FDESkillContext& Context)
 {
-    //if (!Context.SourceSkill) return;
-
-    //TArray<FName> KeysToRemove;
-
-    //// 1. 명부에 적힌 모든 액터 순회 (장판이든 소환수든 가리지 않음)
-    //for (auto& Pair : Context.SourceSkill->OwnedSkillActorMap)
-    //{
-    //    if (Pair.Value.IsValid())
-    //    {
-    //        if (auto* SkillActor = Pair.Value.Get())
-    //        {
-    //            // 실시간 스탯 덮어씌우기
-    //            SkillActor->InitializeFromContext(Context);
-    //        }
-    //    }
-    //    else
-    //    {
-    //        // 수명이 다해 파괴되었거나 Pool로 돌아간 액터 수집
-    //        KeysToRemove.Add(Pair.Key);
-    //    }
-    //}
-
-    //// 2. 찌꺼기 메모리 청소
-    //for (const FName& DeadKey : KeysToRemove)
-    //{
-    //    Context.SourceSkill->OwnedSkillActorMap.Remove(DeadKey);
-    //}
 }
 
 void UDEBehavior_SpawnOnMove::EndBehavior()

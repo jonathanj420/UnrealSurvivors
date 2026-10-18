@@ -130,15 +130,6 @@ void UDEBehavior_FireProjectile::FireOneShot()
 		UGameplayStatics::PlaySoundAtLocation(World, FireSound, SpawnLoc);
 	}
 
-	//// [연사 모드일 때만 종료 체크]
-	//if (BurstInterval > 0.f)
-	//{
-	//	RemainingShots--;
-	//	if (RemainingShots <= 0)
-	//	{
-	//		World->GetTimerManager().ClearTimer(BurstTimerHandle);
-	//	}
-	//}
 	RemainingShots--;
 	if (RemainingShots <= 0)
 	{

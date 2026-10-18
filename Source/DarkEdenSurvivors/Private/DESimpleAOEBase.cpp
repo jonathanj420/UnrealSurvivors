@@ -65,42 +65,6 @@ void ADESimpleAOEBase::InitializeFromContext(const FDESkillContext& Context)
     CollisionComponent->SetSphereRadius(Radius);
 
 
-    //// 1. 상태 리셋 (풀링 재사용 시 필수)
-    //// (InitializeAOE 안에서 HitCooldownMap.Empty()를 하긴 하지만, 명시적으로 초기화 로직이 있다면 여기서 호출)
-    //ResetState(); 
-
-    //// 2. 데이터 추출
-    //// 데미지, 범위, 지속시간은 컨텍스트의 기본 스탯 사용
-    //CachedContext = Context;
-    //float FinalDamage = Context.Damage;
-    //float FinalRadius = Context.Radius; // 혹은 Context.Range 등 스탯 이름에 맞춰 사용
-    //float FinalDuration = Context.Duration;
-
-    //// [중요] 타격 간격(HitCooldown) 결정 로직
-    //// 방법 A: 컨텍스트 Map에 "HitInterval"이라는 값이 있으면 쓰고, 없으면 0.5초 기본값
-    //float FinalHitCooldown = Context.GetValue(TEXT("HitInterval"), 0.5f);
-
-    //// 방법 B: (선택사항) 공격 속도(Speed) 스탯이 높으면 타격 간격이 짧아지게 하려면?
-    //// if (Context.Speed > 0.f) FinalHitCooldown = 1.0f / Context.Speed;
-
-    //// 3. 메인 초기화 함수 호출
-    //InitializeAOE(FinalDamage, FinalRadius, FinalHitCooldown, FinalDuration);
-
-    //// 4. 확장 스탯 적용 (Map에서 꺼내오기)
-    //// 넉백 (Knockback)
-    //float KForce = Context.KnockbackForce; // 혹은 Context.GetValue("Knockback")
-    //if (KForce > 0.f)
-    //{
-    //    // 넉백 힘을 멤버 변수에 저장하거나 설정 (멤버 변수가 있다고 가정)
-    //    // KnockbackForce = KForce; 
-    //}
-
-    //// 크기 보정 (Radius와 별개로 비주얼만 키우고 싶을 때)
-    //float VisualScale = Context.GetValue(TEXT("Scale"), 1.0f);
-    //if (VisualScale != 1.0f)
-    //{
-    //    SetActorScale3D(FVector(VisualScale));
-    //}
 }
 
 void ADESimpleAOEBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

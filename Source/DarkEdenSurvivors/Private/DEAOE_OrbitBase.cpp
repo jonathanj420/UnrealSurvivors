@@ -52,42 +52,10 @@ void ADEAOE_OrbitBase::Tick(float DeltaTime)
     // 3. 회전 방향 설정
     // bFaceDirection이라는 bool 변수를 헤더에 하나 파두고 입맛대로 골라 쓰시는 걸 추천합니다!
     FRotator NewRot;
-    //if (true /* 진행 방향을 보게 할 경우 */)
-    //{
-    //    NewRot = FRotator(0.0f, CurrentAngle + 90.0f, 0.0f); // 상황에 따라 -90.0f 일 수도 있음
-    //}
-    //else /* 플레이어 바깥쪽을 보게 할 경우 (기존 방식) */
-    //{
-    //    NewRot = FRotator(0.0f, CurrentAngle, 0.0f);
-    //}
     NewRot = FRotator(0.0f, CurrentAngle, 0.0f);
 
     SetActorLocationAndRotation(NewLoc, NewRot);
 
-    //Super::Tick(DeltaTime);
-
-    //OwnerActor = GetOwner();
-    //if (!OwnerActor)
-    //{
-    //    Destroy();
-    //    return;
-    //}
-
-    //// 공전 로직
-    //CurrentAngle -= RotationSpeed * DeltaTime;
-    //if (CurrentAngle < 0.0f) CurrentAngle += 360.0f;
-
-    //FVector OwnerLoc = OwnerActor->GetActorLocation();
-    //float Rad = FMath::DegreesToRadians(CurrentAngle);
-
-    //float NewX = OwnerLoc.X + FMath::Cos(Rad) * CurrentOrbitRadius;
-    //float NewY = OwnerLoc.Y + FMath::Sin(Rad) * CurrentOrbitRadius;
-
-    //// AOE니까 바닥이나 허리춤에 위치
-    //SetActorLocation(FVector(NewX, NewY, OwnerLoc.Z));
-
-    //// (선택) 항상 바깥 보기
-    //SetActorRotation(FRotator(0.0f, CurrentAngle, 0.0f));
 }
 
 
