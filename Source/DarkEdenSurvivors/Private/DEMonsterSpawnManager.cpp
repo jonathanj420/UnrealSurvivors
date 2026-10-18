@@ -112,7 +112,10 @@ void ADEMonsterSpawnManager::Tick(float DeltaTime)
     
     Super::Tick(DeltaTime);
     if (!Player) return;
-    ProcessWave(DeltaTime);
+    if (bMonsterAssetsReady)
+    {
+        ProcessWave(DeltaTime);
+    }
 
     MonsterUpdateComponent->UpdateMonsters(DeltaTime, ActiveMonsters);
 
@@ -512,7 +515,13 @@ const TArray<ADEMonsterBase*>& ADEMonsterSpawnManager::GetActiveMonsters() const
 
 void ADEMonsterSpawnManager::PreloadMonsterResources()
 {
-    if (!StageWaveTable || !GameInstanceCache) return;
+    bMonsterAssetsReady = false;
+
+    if (!StageWaveTable || !GameInstanceCache)
+    {
+        bMonsterAssetsReady = true;
+        return;
+    }
 
     TArray<FSoftObjectPath> AssetsToLoad;
     TSet<FName> MonsterIDsToLoad; // 중복 로딩을 막기 위한 Set
@@ -557,12 +566,22 @@ void ADEMonsterSpawnManager::PreloadMonsterResources()
         }
     }
 
-    // 3. 백그라운드(비동기)에서 로딩 시작!
+    // 3. 백그라운드(비동기)에서 로딩 시작. 이미 로드된 에셋뿐이면 콜백이 이 호출 안에서 바로 불릴 수 있다
     if (AssetsToLoad.Num() > 0)
     {
-        PreloadHandle = StreamableManager.RequestAsyncLoad(AssetsToLoad, FStreamableDelegate::CreateLambda([]() {
-            // 로딩이 100% 끝나면 이 로그가 뜹니다!
-            UE_LOG(LogTemp, Warning, TEXT("=== All Monster Assets Preloaded Successfully! ==="));
+        const double PreloadStartTime = FPlatformTime::Seconds();
+        TWeakObjectPtr<ADEMonsterSpawnManager> WeakThis(this);
+        PreloadHandle = StreamableManager.RequestAsyncLoad(AssetsToLoad, FStreamableDelegate::CreateLambda([WeakThis, PreloadStartTime]() {
+            if (WeakThis.IsValid())
+            {
+                WeakThis->bMonsterAssetsReady = true;
+            }
+            UE_LOG(LogDarkEdenSurvivors, Log, TEXT("Monster assets preloaded in %.2fs"), FPlatformTime::Seconds() - PreloadStartTime);
             }));
+    }
+
+    if (!PreloadHandle.IsValid())
+    {
+        bMonsterAssetsReady = true;
     }
 }

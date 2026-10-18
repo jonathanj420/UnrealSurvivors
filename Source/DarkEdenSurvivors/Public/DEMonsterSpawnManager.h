@@ -45,6 +45,9 @@ public:
     // 프리로드 함수 선언
     void PreloadMonsterResources();
 
+    // 프리로드가 끝나기 전에 스폰하면 MonsterMesh.Get()이 null이라 메시 없이 나온다. 끝날 때까지 웨이브를 시작하지 않는다
+    bool bMonsterAssetsReady = false;
+
     // 활성화되어 필드에 있는 몬스터 목록
     UPROPERTY(VisibleInstanceOnly, Category = "Pooling")
     TArray<ADEMonsterBase*> ActiveMonsters;
