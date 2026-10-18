@@ -209,4 +209,6 @@ public:
 		UPROPERTY(EditAnywhere, Category = "Debug|Cheat")
 		class UDEAccessoryData* DebugAccessoryToEquip;
 
+		UPROPERTY(EditDefaultsOnly, Category = "Character Data")
+		class UDECharacterData* CharacterData;
 };

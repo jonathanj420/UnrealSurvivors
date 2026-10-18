@@ -15,73 +15,56 @@ FDEDamageResult UDEGameplayLibrary::ApplyCombatDamage(
 {
 	if (Request.SourceObject == nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ApplyCombatDamage called, but SourceObject is NULL!"));
+		UE_LOG(LogTemp, Warning, TEXT("ApplyCombatDamage called, SourceObject null"));
 	}
 
 	FDEDamageResult Result;
 
-	// 1. 유효성 검사
 	if (!Request.Instigator || !Request.Victim) return Result;
 
 	UDEHealthComponent* TargetHealth = Request.Victim->FindComponentByClass<UDEHealthComponent>();
 	if (!TargetHealth) return Result;
 
-	// =========================================================
-	// ★ 2. [글로벌 OnPreHit] 데미지 조작의 시간!
-	// =========================================================
-	// 원본 Request를 복사해서 우리가 조작할 '진짜 청구서'를 만듦
+	//modifiers and should be decoupled sooner
 	FDEDamageRequest ModifiableReq = Request;
 
 	if (UDECombatComponent* CombatComp = Request.Instigator->FindComponentByClass<UDECombatComponent>())
 	{
-		// 택배 상자 만들기
 		FCombatEventData PreHitData;
 		PreHitData.Instigator = Request.Instigator;
 		PreHitData.Target = Request.Victim;
-		PreHitData.DamageMultiplier = 1.0f; // 기본 1배수
+		PreHitData.DamageMultiplier = 1.0f;
 
-		// 글로벌 패시브들에게 "나 얘 때릴 건데 데미지 뻥튀기할 놈 있어?" 하고 물어봄
+		//player's OnPreHit
 		CombatComp->BroadcastCombatEvent(ECombatEventTrigger::OnPreHit, PreHitData);
 
-		// 패시브들이 조작한 배수를 복사본 청구서에 곱해줌!
+		//ex) Dam Mul Modifier to Low HPs
 		ModifiableReq.BaseDamage *= PreHitData.DamageMultiplier;
 
-		// (만약 아까 말한 크리티컬 보너스도 있다면 여기서 더해줌)
-		// ModifiableReq.CritChance += PreHitData.AddBonusCritChance; 
 	}
 
-	// =========================================================
-	// ★ [NEW] 2. 맞은 놈의 상태이상(디버프)들에게 데미지 조작 기회 주기!
-	// =========================================================
+	////Dam Modifier by Status Effects like Venom or Corrosion... but still should be decoupled
 	if (UDEStatusEffectComponent* VictimStatusComp = Request.Victim->FindComponentByClass<UDEStatusEffectComponent>())
 	{
-		// 부식, 맹독 등의 디버프가 여기서 ModifiableReq.BaseDamage 를 뻥튀기시킵니다!
+		
 		VictimStatusComp->ProcessIncomingDamageModifiers(ModifiableReq);
 	}
 
-	// =========================================================
-	// 3. 피해자에게 '조작이 완료된' 청구서로 데미지 처리 요청
-	// =========================================================
+	//process with final Req
 	Result = TargetHealth->ProcessDamage(ModifiableReq);
 	//UE_LOG(LogTemp, Warning, TEXT("Processed Final Damage of Result : %f"), Result.FinalDamage);
 
-	// =========================================================
-	// ★ 3. 중앙 라이브러리에서 '공통 메타데이터' 무조건 보장 (영수증 완성)
-	// =========================================================
 	Result.Victim = ModifiableReq.Victim;
 	Result.SourceObject = ModifiableReq.SourceObject;
 	Result.DamageTags = ModifiableReq.DamageTags;
 	Result.bCanTriggerOnHit = ModifiableReq.bCanTriggerOnHit;
 
-
-	// 4. 가해자에게 후처리(OnHit, OnKill) 요청
-	// (여기는 네가 원래 짜둔 대로 HandleDamageDealt가 글로벌 이펙트를 잘 터뜨려 줄 거임)
+	//try handle OnHit or other effects of instigator 
 	if (UDECombatComponent* CombatComp = Request.Instigator->FindComponentByClass<UDECombatComponent>())
 	{
 		CombatComp->HandleDamageDealt(Result);
 	}
 
-	//// 5. 넉백 처리
 	//if (Result.FinalDamage > 0.0f && KnockbackForce > 0.0f)
 	//{
 	//	if (ADEMonsterBase* Monster = Cast<ADEMonsterBase>(Request.Victim))
@@ -91,92 +74,51 @@ FDEDamageResult UDEGameplayLibrary::ApplyCombatDamage(
 	//}
 	if (TargetHealth)
 	{
-		// TargetHealth에 bIsDead 변수가 퍼블릭이면 그냥 쓰고, 
-		// 캡슐화되어 있다면 TargetHealth->IsDead() 같은 Getter 함수를 쓰십쇼!
+		//ensure isDead
 		Result.bIsDead = TargetHealth->IsDead();
 	}
 
 	return Result;
 
-	//FDEDamageResult Result;
-
-	//// 1. 유효성 검사 (때린 놈, 맞은 놈 확인)
-	//if (!Request.Instigator || !Request.Victim)
-	//{
-
-	//	if (!Request.Instigator) UE_LOG(LogTemp, Error, TEXT("ApplyCombatDamage Error: Instigator is NULL!"));
-	//	if (!Request.Victim) UE_LOG(LogTemp, Error, TEXT("ApplyCombatDamage Error: Victim is NULL!"));
-	//	return Result;
-	//}
-	//
-	//UDEHealthComponent* TargetHealth = Request.Victim->FindComponentByClass<UDEHealthComponent>();
-	//if (!TargetHealth)
-	//{
-	//	UE_LOG(LogTemp, Error, TEXT("ApplyCombatDamage Error: No Victim HealthComponent"));
-	//	return Result;
-	//}
-
-	//// 2. 피해자에게 데미지 처리 요청 (전달받은 Request 그대로 사용)
-	//Result = TargetHealth->ProcessDamage(Request);
-	//// 3. 가해자에게 후처리(피흡, 킬) 요청
-	//if (UDECombatComponent* CombatComp = Request.Instigator->FindComponentByClass<UDECombatComponent>())
-	//{
-	//	CombatComp->HandleDamageDealt(Result, Snapshot);
-	//}
-
-	//// 4. 넉백 처리
-	//if (Result.FinalDamage > 0.0f && KnockbackForce > 0.0f)
-	//{
-	//	if (ADEMonsterBase* Monster = Cast<ADEMonsterBase>(Request.Victim))
-	//	{
-	//		Monster->ApplyKnockback(KnockbackDir, KnockbackForce);
-	//	}
-	//}
-
-	//return Result;
 }
 
 void UDEGameplayLibrary::ApplyAoEDamage(UWorld* World, const FVector& Origin, float Radius, const FDEDamageRequest& BaseRequest, const TArray<AActor*>& IgnoredActors)
 {
 	if (!World) return;
 
-	// 1. 최적화된 다이렉트 물리 엔진 호출
 	TArray<FOverlapResult> OverlapResults;
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActors(IgnoredActors);
 
-	// ★ 핵심 변경: ObjectType으로 검색하기 위한 설정
 	FCollisionObjectQueryParams ObjectQueryParams;
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_GameTraceChannel5); // 몬스터 채널(5번)만 콕 집어서 검색
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_GameTraceChannel5);
 
-	// 함수 변경: OverlapMultiByChannel -> OverlapMultiByObjectType
+	//OverlapMultiByChannel -> OverlapMultiByObjectType
 	bool bHit = World->OverlapMultiByObjectType(
 		OverlapResults,
 		Origin,
 		FQuat::Identity,
-		ObjectQueryParams, // ★ 채널 대신 오브젝트 쿼리 파라미터가 들어감
+		ObjectQueryParams,
 		FCollisionShape::MakeSphere(Radius),
 		QueryParams
 	);
 	//DrawDebugSphere(World, Origin, Radius, 16, FColor::Green, false, 1.0f, 0, 1.0f);
 	if (!bHit) return;
 
-	// 2. 찾은 대상들에게 데미지 꽂아넣기
 	for (const FOverlapResult& Hit : OverlapResults)
 	{
 		AActor* Victim = Hit.GetActor();
 		if (!Victim) continue;
 
-		// ★ BaseRequest를 복사해서, Victim만 갈아끼운 뒤 기존 라이브러리 함수 재활용!
 		FDEDamageRequest TargetReq = BaseRequest;
 		TargetReq.Victim = Victim;
 
-		// 단일 데미지 로직 호출 (이 안에서 피흡, 치명타, 회피 등이 다 알아서 계산됨)
 		ApplyCombatDamage(TargetReq);
 	}
 
 }
 
+//get the nearest target by radius
 AActor* UDEGameplayLibrary::GetNearestTarget(AActor* Instigator, float Radius)
 {
 	if (!Instigator) return nullptr;
@@ -226,7 +168,6 @@ AActor* UDEGameplayLibrary::GetNearestTarget(AActor* Instigator, float Radius)
 	);
 
 	
-
 	for (const FOverlapResult& Res : Overlaps)
 	{
 		AActor* Actor = Res.GetActor();
@@ -243,6 +184,7 @@ AActor* UDEGameplayLibrary::GetNearestTarget(AActor* Instigator, float Radius)
 	return Nearest;
 }
 
+//get random targets by radius
 TArray<AActor*> UDEGameplayLibrary::GetRandomTargets(AActor* Instigator, float Radius, int32 Count)
 {
 	TArray<AActor*> Result;
@@ -253,10 +195,8 @@ TArray<AActor*> UDEGameplayLibrary::GetRandomTargets(AActor* Instigator, float R
 
 	TArray<AActor*> Candidates;
 
-	// --- 1. 후보군(Candidates) 채우기 ---
 	if (FMath::IsNearlyEqual(Radius, -1.0f))
 	{
-		// [전체 범위 모드] GameMode에서 바로 가져오기
 		auto* GM = Cast<ADEGameMode_Stage>(World->GetAuthGameMode());
 		if (GM)
 		{
@@ -268,7 +208,6 @@ TArray<AActor*> UDEGameplayLibrary::GetRandomTargets(AActor* Instigator, float R
 	}
 	else
 	{
-		// [반경 탐색 모드] OverlapMulti 사용
 		FVector MyLoc = Instigator->GetActorLocation();
 		FCollisionObjectQueryParams ObjectParams;
 		ObjectParams.AddObjectTypesToQuery(ECC_Monster);
@@ -294,17 +233,15 @@ TArray<AActor*> UDEGameplayLibrary::GetRandomTargets(AActor* Instigator, float R
 		}
 	}
 
-	// --- 2. 공통 로직: 셔플 및 추출 ---
 	if (Candidates.Num() == 0) return Result;
 
-	// Fisher-Yates 셔플
+	// Fisher-Yates
 	for (int32 i = Candidates.Num() - 1; i > 0; i--)
 	{
 		int32 j = FMath::RandRange(0, i);
 		Candidates.Swap(i, j);
 	}
 
-	// 앞에서 Count개 뽑기 (셔플 덕분에 랜덤하게 뽑힘)
 	int32 FinalCount = FMath::Min(Count, Candidates.Num());
 	for (int32 i = 0; i < FinalCount; i++)
 	{
