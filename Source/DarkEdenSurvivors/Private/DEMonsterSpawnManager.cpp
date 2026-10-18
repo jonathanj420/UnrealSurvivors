@@ -419,8 +419,7 @@ ADEMonsterBase* ADEMonsterSpawnManager::SpawnFromPool(FVector& Location, const F
     }
 
     // 5. 공통 초기화
-    SpawnedMonster->SetActorLocation(Location);
-    SpawnedMonster->SetActorRotation(FRotator::ZeroRotator);
+    SpawnedMonster->SetActorLocationAndRotation(Location, FRotator::ZeroRotator, false, nullptr, ETeleportType::TeleportPhysics);
     SpawnedMonster->ResetMonster(DataToApply);
 
     ActiveMonsters.Add(SpawnedMonster);

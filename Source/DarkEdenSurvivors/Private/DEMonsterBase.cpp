@@ -222,7 +222,7 @@ void ADEMonsterBase::ResetMonster(const FDEMonsterData* Data)
 	if (!Data->MonsterMesh.IsNull())
 	{
 		USkeletalMesh* NewMesh = Data->MonsterMesh.Get();
-		if (NewMesh)
+		if (NewMesh && Mesh->GetSkeletalMeshAsset() != NewMesh)
 		{
 			Mesh->SetSkeletalMesh(NewMesh);
 		}
@@ -248,7 +248,11 @@ void ADEMonsterBase::ResetMonster(const FDEMonsterData* Data)
 	//}
 
 	// 3. 캡슐 및 트랜스폼 보정
-	Capsule->InitCapsuleSize(Data->CapsuleRadius, Data->CapsuleHalfHeight);
+	// InitCapsuleSize는 등록된 컴포넌트의 물리 shape를 갱신하지 않으므로, 크기가 바뀔 때만 SetCapsuleSize
+	if (Capsule->GetUnscaledCapsuleRadius() != Data->CapsuleRadius || Capsule->GetUnscaledCapsuleHalfHeight() != Data->CapsuleHalfHeight)
+	{
+		Capsule->SetCapsuleSize(Data->CapsuleRadius, Data->CapsuleHalfHeight, false);
+	}
 	CachedRadius = Capsule->GetScaledCapsuleRadius();
 	// 메쉬 위치 보정 (발바닥 높이 맞추기)
 	Mesh->SetRelativeLocation(FVector(0.0f, 0.0f, -Data->MeshZOffset));
