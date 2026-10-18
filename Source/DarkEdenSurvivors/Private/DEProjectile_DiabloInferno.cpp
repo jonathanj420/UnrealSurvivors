@@ -4,6 +4,7 @@
 #include "DEProjectile_DiabloInferno.h"
 #include "NiagaraComponent.h"
 #include "NiagaraSystem.h"
+#include "Components/SphereComponent.h"
 
 ADEProjectile_DiabloInferno::ADEProjectile_DiabloInferno()
 {

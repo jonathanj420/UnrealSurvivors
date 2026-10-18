@@ -8,6 +8,7 @@
 #include "DEGameMode_Stage.h"
 #include "DrawDebugHelpers.h"
 #include "DEMonsterSpawnManager.h"
+#include "Kismet/GameplayStatics.h"
 
 void UDEBehavior_SelectTargetsInRadius::Execute(FDESkillContext& Context)
 {

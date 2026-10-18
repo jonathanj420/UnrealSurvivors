@@ -4,6 +4,7 @@
 #include "DEProjectile_Inferno.h"
 #include "NiagaraComponent.h"
 #include "NiagaraSystem.h"
+#include "Components/SphereComponent.h"
 ADEProjectile_Inferno::ADEProjectile_Inferno()
 {
 	Penetration = -1;

@@ -6,6 +6,8 @@
 #include "Engine/EngineTypes.h" 
 #include "DrawDebugHelpers.h"
 #include "DEMonsterSpawnManager.h"
+#include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 ADEBloodyNail::ADEBloodyNail()
 {
 	PrimaryActorTick.bCanEverTick = true;

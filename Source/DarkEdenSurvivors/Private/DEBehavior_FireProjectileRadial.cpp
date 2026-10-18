@@ -8,6 +8,7 @@
 #include "DESkillContext.h"
 #include "DEPoolSubsystem.h"
 #include "DESimpleProjectileBase.h"
+#include "Kismet/GameplayStatics.h"
 
 
 void UDEBehavior_FireProjectileRadial::Execute(FDESkillContext& Context)
