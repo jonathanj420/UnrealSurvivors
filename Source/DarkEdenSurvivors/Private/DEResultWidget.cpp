@@ -3,7 +3,6 @@
 
 #include "DEResultWidget.h"
 #include "Kismet/GameplayStatics.h"
-#include "DEGameInstance.h" // ★ 저장 기능 사용을 위해 필수
 
 void UDEResultWidget::NativeConstruct()
 {
@@ -34,14 +33,7 @@ void UDEResultWidget::SetResultData(int32 EarnedGold, int32 KillCount, float Dam
 	if (Text_SurviveTime)
 		Text_SurviveTime->SetText(FText::AsTimespan(Time));
 
-	// 2. ★ [핵심] 획득한 골드를 영구 저장소(GameInstance)에 저장
-	if (UDEGameInstance* GI = Cast<UDEGameInstance>(GetGameInstance()))
-	{
-		//UE_LOG(LogTemp, Warning, TEXT("[Result] Saving Gold: +%d"), EarnedGold);
-
-		//GI->AddGold(EarnedGold); // 메모리에 더하기
-		GI->SaveGame();          // 파일로 저장하기 (SaveSlot01.sav)
-	}
+	// 골드 정산/저장은 ADEGameMode_Stage::GameOver에서 처리 (위젯은 표시만)
 }
 
 void UDEResultWidget::OnRetryClicked()

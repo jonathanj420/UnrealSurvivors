@@ -88,6 +88,15 @@ void ADEGameMode_Stage::GameOver()
     // 1. 게임 일시 정지 (선택 사항: 몬스터 멈추게 하려면 true)
      UGameplayStatics::SetGamePaused(this, true);
 
+    // ========================================================
+    // ★ [골드 정산 로직] UI와 무관하게 GameMode에서 저장까지 끝낸다
+    // ========================================================
+    if (UDEGameInstance* GI = Cast<UDEGameInstance>(GetGameInstance()))
+    {
+        GI->AddGold(EarnedGold);
+        GI->SaveGame();
+    }
+
     // 2. 위젯 생성
     if (ResultWidgetClass)
     {
@@ -97,7 +106,7 @@ void ADEGameMode_Stage::GameOver()
             ResultUI->AddToViewport(9999); // 최상단 노출
 
             // 3. 데이터 수집 (예시 값)
-            int32 FinalGold = 0;
+            int32 FinalGold = EarnedGold;
             int32 FinalKills = 0;
             float FinalDamageDealt = 0.0f;
             float FinalTime = GetElapsedTime(); // GameMode에 있는 시간
@@ -116,26 +125,6 @@ void ADEGameMode_Stage::GameOver()
                     }
                 }
             }
-
-            // ========================================================
-            // ★ [골드 정산 로직] 
-            // ========================================================
-            FinalGold = EarnedGold; // 1. 이번 판 장부에서 돈을 확인한다.
-
-            // 2. 은행(GameInstance)에 가서 이번 판에 번 돈을 저금한다!
-            if (UDEGameInstance* GI = Cast<UDEGameInstance>(GetGameInstance()))
-            {
-                // (GI 쪽에 AddTotalGold 같은 누적 함수가 있다고 가정)
-                GI->AddGold(FinalGold);
-
-                // UE_LOG(LogTemp, Warning, TEXT("전 재산: %d"), GI->GetTotalGold());
-            }
-            //// GameInstance에서 실제 골드 가져오기 (혹은 이번 판 번 돈)
-            //if (UDEGameInstance* GI = Cast<UDEGameInstance>(GetGameInstance()))
-            //{
-            //    FinalGold = GI->GetTotalGold();
-            //    // 참고: 이번 판에 번 돈만 보여주고 싶다면 GameMode에 'EarnedGold' 변수를 따로 둬야 함
-            //}
 
             // 4. 위젯에 데이터 전달
             ResultUI->SetResultData(FinalGold, FinalKills, FinalDamageDealt, FinalTime);
