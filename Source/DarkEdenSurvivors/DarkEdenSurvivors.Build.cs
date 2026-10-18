@@ -33,19 +33,6 @@ public class DarkEdenSurvivors : ModuleRules
 
 		PublicIncludePaths.AddRange(new string[] {
 			"DarkEdenSurvivors",
-			"DarkEdenSurvivors/Variant_Platforming",
-			"DarkEdenSurvivors/Variant_Platforming/Animation",
-			"DarkEdenSurvivors/Variant_Combat",
-			"DarkEdenSurvivors/Variant_Combat/AI",
-			"DarkEdenSurvivors/Variant_Combat/Animation",
-			"DarkEdenSurvivors/Variant_Combat/Gameplay",
-			"DarkEdenSurvivors/Variant_Combat/Interfaces",
-			"DarkEdenSurvivors/Variant_Combat/UI",
-			"DarkEdenSurvivors/Variant_SideScrolling",
-			"DarkEdenSurvivors/Variant_SideScrolling/AI",
-			"DarkEdenSurvivors/Variant_SideScrolling/Gameplay",
-			"DarkEdenSurvivors/Variant_SideScrolling/Interfaces",
-			"DarkEdenSurvivors/Variant_SideScrolling/UI"
 		});
 
 		// Uncomment if you are using Slate UI

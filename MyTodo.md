@@ -32,6 +32,11 @@
 
 - [ ] `TestPrototype`/`TestStage001`/`TestBlank` 맵을 열어 SpawnManager 인스턴스가 정상 로드되는지 확인하고 다시 저장. 루트였던 `MonsterHISM`이 빠지고 `RootScene`이 루트가 되면서 액터 위치가 원점으로 갈 수 있다 (코드는 SpawnManager 위치를 안 쓰므로 동작엔 영향 없음)
 
+## 템플릿 삭제 후 확인
+
+- [ ] 에디터를 열어 깨진 참조 경고가 없는지 확인. `L_Lobby`, `Lobby`, `TestMap`에는 GameMode Override가 없는 것으로 보여서, 이제 기본값인 `BP_DEGameMode_Stage`로 뜬다. `L_Lobby`(결과 화면에서 돌아가는 로비)는 World Settings에서 Lobby GameMode를 지정해야 한다
+- [ ] 문제없으면 `../DarkEdenSurvivors_DeletedBackup_20261019/` 백업 폴더 삭제
+
 ## 죽은 코드 삭제 전 확인 (Reference Viewer)
 
 - [ ] `DEMonsterDataAsset`가 BP/레벨에서 참조되는지 (`DEBloodyNail`/`DESimpleMeleeBase`는 삭제 승인됨)
