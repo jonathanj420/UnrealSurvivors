@@ -143,7 +143,6 @@ void UDEStatComponent::ApplyMetaUpgrades()
         if (Stat == EDEStatType::Amount)
         {
             MetaMod.Additive = BonusValue;
-            //MetaMod.Multiplier = 1.0f;
         }
         else
         {

@@ -64,7 +64,7 @@ struct FDEStatModifier
     float Additive = 0.f;
 
     UPROPERTY(EditAnywhere)
-    float Multiplier = 1.f;
+    float Multiplier = 0.f;
 
 
     FDEStatModifier() {}
@@ -89,7 +89,7 @@ public:
 	float Additive; // +10 공격력
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	float Multiplier; // +10% (1.1)
+	float Multiplier; // +10% (0.1)
 
 	FGameplayStat() : BaseValue(0.f), Additive(0.f), Multiplier(0.f) {}
 	FGameplayStat(float InBase) : BaseValue(InBase), Additive(0.f), Multiplier(0.f) {}

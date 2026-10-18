@@ -18,7 +18,7 @@
 - [ ] 풀 stale 반환 (풀 가드로 못 잡음): `UDEAutoSkillBase::CancelSkill`이 `OwnedSkillActorMap`의 weak 참조로 `ReturnToPool`을 부르는데, 그 액터가 이미 반환된 뒤 다른 스킬이 재사용 중이면 남의 액터를 회수한다. 풀링 액터는 Destroy되지 않아서 weak 포인터가 계속 유효하다. 액터에 세대(generation) 번호를 두거나, 반환 시 소유 스킬 맵에서 빼는 방식이 필요하다. 4단계 `EvolveSkill`/`CancelSkill` 정리 때 같이
 - [ ] AcidBolt 이중 반환 경로 확인: `Explode`가 한 번 반환된 뒤 다시 불리는 경로가 있는지 (같은 프레임 다중 오버랩 등). 가드 로그로 재현 확인 후 원인 수정
 - [ ] `GameOver` 중복 호출 가드 (`bIsGameOver`). 두 번 불리면 골드가 두 번 정산된다. 무적 해제할 때 같이
-- [ ] 메타 업그레이드 Amount: `ApplyMetaUpgrades`가 Amount modifier의 `Multiplier`를 안 넣어서 기본값 1.0이 들어간다. 업그레이드 1레벨 이상이면 Amount ×2 (`FDEStatModifier::Multiplier` 기본값 버그의 실사례)
+- [x] 메타 업그레이드 Amount ×2: `FDEStatModifier::Multiplier` 기본값을 0으로 변경. 액세서리 DataAsset은 Multiplier를 전부 명시적으로 저장해 두어서 값이 그대로다 (Buman 0.1, 나머지 0). 다른 에셋 사용처 없음
 
 ## 3. 죽은 코드 삭제 (BP 참조 확인 후)
 
