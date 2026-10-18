@@ -44,5 +44,5 @@
 - [x] `TrySpawnMonster`가 `SpawnFromPool` 실패(nullptr)여도 true 반환
 - [x] 데이터 ID 오타 시 0.2초마다 Error 로그 반복 (BeginPlay에서 한 번만 검사하도록 변경)
 - [x] `GetRandomSpawnLocation`: 대각선 네 모서리에서만 스폰되던 문제. 안쪽 사각형에 걸리면 다시 뽑는 방식으로 수정 (Z=0 고정은 그대로)
-- [ ] 보스가 `ActiveMonsters`에 들어가서 SpawnLimit에 포함됨 (의도인지 결정. 풀 밖 생성 문제는 해결)
+- [x] 보스는 SpawnLimit 대상이 아니다 (원 기획). `ActiveBosses`로 따로 세서 SpawnLimit 계산에서 제외
 - [ ] `Player`를 BeginPlay에서 `GetPlayerController(0)`으로 한 번만 캐시. Pawn이 늦게 빙의되면 `Player`가 null로 남아 Tick이 통째로 스킵된다

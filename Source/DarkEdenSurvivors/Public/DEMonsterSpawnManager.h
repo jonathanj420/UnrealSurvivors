@@ -104,6 +104,9 @@ public:
 
     // 현재 웨이브가 스폰한 생존 몬스터 (MinimumCount 판정용). 웨이브 시작 시 초기화
     TSet<ADEMonsterBase*> CurrentWaveMonsters;
+
+    // 생존 중인 보스. ActiveMonsters에는 있지만 SpawnLimit 계산에서는 제외
+    TSet<ADEMonsterBase*> ActiveBosses;
     int KillCount = 0;
 
     //************* Monster Wave***********

@@ -297,7 +297,7 @@ bool ADEMonsterSpawnManager::TrySpawnMonster(const FDEStageWaveData& WaveData)
 
    // UE_LOG(LogTemp, Error, TEXT("Try to Spawn Monster"));
     // A. 스폰 제한 체크
-    const int32 CurrentActiveCount = ActiveMonsters.Num();
+    const int32 CurrentActiveCount = ActiveMonsters.Num() - ActiveBosses.Num(); // 보스는 SpawnLimit 대상 아님
     const int32 SpawnLimit = GameMode ? GameMode->GetSpawnLimit() : 500;
 
     if (CurrentActiveCount >= SpawnLimit) return false;
@@ -369,7 +369,8 @@ bool ADEMonsterSpawnManager::SpawnBoss(const FDEStageWaveData& WaveData)
 
         UE_LOG(LogDarkEdenSurvivors, Log, TEXT("Boss Spawned: %s"), *BossData->DisplayName.ToString());
 
-        // 보스도 ActiveMonsters에 포함되어 SpawnLimit에 잡힌다 (CurrentWaveMonsters에는 미포함)
+        // 이동/타겟팅을 위해 ActiveMonsters에는 있지만, SpawnLimit과 MinimumCount 계산에서는 제외
+        ActiveBosses.Add(SpawnedBoss);
         return true;
     }
 
@@ -517,6 +518,7 @@ void ADEMonsterSpawnManager::OnMonsterDied(ADEMonsterBase* Monster)
 
     // 즉시 빼야 다음 Tick의 ReplenishToMinimum이 바로 보충한다
     CurrentWaveMonsters.Remove(Monster);
+    ActiveBosses.Remove(Monster);
     PendingRemoveMonsters.Add(Monster);
    // UE_LOG(LogTemp, Warning, TEXT("Monster Added to Pending Remove List"));
 
