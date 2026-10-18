@@ -458,19 +458,6 @@ void ADECharacterBase::Die()
     // 2. 충돌 끄기 (몬스터가 시체 그만 때리게)
     GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-    // 3. 사망 애니메이션 재생
-    //if (DeathMontage)
-    //{
-    //    PlayAnimMontage(DeathMontage);
-    //}
-    //else
-    //{
-    //    // 몽타주 없으면 그냥 래그돌(시체 물리) 처리
-    //    // GetMesh()->SetSimulatePhysics(true);
-    //}
-
-    // 4. 게임모드에 "나 죽었어, 게임 끝내줘"라고 알리기
-    // (직접 GameMode를 부르거나, 델리게이트를 쏨)
     if (OnPlayerDied.IsBound())
     {
         OnPlayerDied.Broadcast();
@@ -509,16 +496,6 @@ void ADECharacterBase::OnCharacterLevelUp(int32 NewLevel)
 
 void ADECharacterBase::OnActiveSkillInput()
 {
-   /* if (GEngine)
-    {
-        GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("Active Skill"));
-    }
-    if (!ActiveSkill) return;
-
-    if (ActiveSkill->CanActivate())
-    {
-        ActiveSkill->ActivateSkill();
-    }*/
     if (ActiveSkill)
     {
         UE_LOG(LogTemp, Warning, TEXT("arimasuyo"));
@@ -552,35 +529,11 @@ void ADECharacterBase::MyDebugCheat()
     SkillManager->LevelUpSkill(BaseSkillID);
 
 
-    //UDEGameInstance* GI = Cast<UDEGameInstance>(GetGameInstance());
-    //if (GI)
-    //{
-    //    GI->AddGold(1000);
-    //    GI->SaveGame();
-    //}
-    //if (StatComponent)
-    //{
-    //    // 1. 수정자(Modifier) 만들기: 데미지(Damage), 깡수치(+2), 배율(변화없음 1.0)
-    //    FDEStatModifier DamageCheatMod(EDEStatType::Damage, 0.5f, 0.0f);
-
-    //    // 2. 스탯 컴포넌트에 던져주기
-    //    StatComponent->ApplyModifier(DamageCheatMod);
-
 
     //    FDEStatModifier MaxHPCheatMode(EDEStatType::MaxHP, 50.0f, 0.0f);
     //    StatComponent->ApplyModifier(MaxHPCheatMode);
 
 
-    //    // (선택) 치트 적용 확인용 로그
-    //    if (GEngine)
-    //    {
-    //        // 현재 적용된 데미지 값을 가져와서 화면에 출력
-    //        float CurrentDamage = StatComponent->DamageMultiplier.GetValue();
-    //        FString Msg = FString::Printf(TEXT("Damage Cheat! Current Damage: %f"), CurrentDamage);
-    //        GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, Msg);
-    //    }
-    //}
-    
 }
 
 void ADECharacterBase::MyAnotherDebugCheat()
@@ -621,36 +574,6 @@ void ADECharacterBase::MyAnotherDebugCheat()
     //    AccessoryComponent->LevelUpAccessory(DebugAccessoryToEquip);
 
 
-    //    if (GEngine)
-    //    {
-    //        FString Msg = FString::Printf(TEXT("Forced Acc: %s"), *DebugAccessoryToEquip->Name.ToString());
-    //        GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green, Msg);
-    //    }
-
-    //    // (선택) UI 갱신 함수가 캐릭터 쪽에 연결되어 있다면 여기서 한 번 불러주면 좋습니다.
-    //    // UpdateAccessoryUI(); 
-    //}
-
-    //if (StatComponent)
-    //{
-    //    // 1. 수정자(Modifier) 만들기: 데미지(Damage), 깡수치(+2), 배율(변화없음 1.0)
-    //    FDEStatModifier DamageCheatMod(EDEStatType::Damage, 0.0f, 1.0f);
-
-    //    // 2. 스탯 컴포넌트에 던져주기
-    //    StatComponent->ApplyModifier(DamageCheatMod);
-
-    //    FDEStatModifier MaxHPCheatMode(EDEStatType::MaxHP, 0.0f, 1.0f);
-    //    StatComponent->ApplyModifier(MaxHPCheatMode);
-
-    //    // (선택) 치트 적용 확인용 로그
-    //    if (GEngine)
-    //    {
-    //        // 현재 적용된 데미지 값을 가져와서 화면에 출력
-    //        float CurrentDamage = StatComponent->DamageMultiplier.GetValue();
-    //        FString Msg = FString::Printf(TEXT("Damage Cheat! Current Damage: %f"), CurrentDamage);
-    //        GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, Msg);
-    //    }
-    //}
 }
 
 void ADECharacterBase::ForceLevelUp()

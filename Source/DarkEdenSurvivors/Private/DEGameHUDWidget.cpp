@@ -29,24 +29,6 @@ void UDEGameHUDWidget::UpdateTimeTick()
         UpdateTime(TimeSeconds);
     }
 }
-//void UDEGameHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
-//{
-//    Super::NativeTick(MyGeometry, InDeltaTime);
-//
-//    // 월드 시간을 가져와서 바로 업데이트
-//    if (GetWorld())
-//    {
-//        float TimeSeconds = GetWorld()->GetTimeSeconds();
-//
-//        // [최적화] 1초에 한 번만 텍스트 갱신 (매 프레임 문자열 연산 방지)
-//        int32 CurrentSeconds = (int32)TimeSeconds;
-//        if (CurrentSeconds != LastSeconds)
-//        {
-//            LastSeconds = CurrentSeconds;
-//            UpdateTime(TimeSeconds);
-//        }
-//    }
-//}
 
 void UDEGameHUDWidget::BindCharacterStat(ADECharacterBase* Character)
 {

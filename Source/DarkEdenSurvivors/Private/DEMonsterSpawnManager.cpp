@@ -135,16 +135,6 @@ void ADEMonsterSpawnManager::Tick(float DeltaTime)
         }
     }
 
-    //Super::Tick(DeltaTime);
-
-    //// 현재 월드 시간 (한 번만 가져와서 1000마리한테 돌려씀 -> 최적화)
-    ////double CurrentWorldTime = GetWorld()->GetTimeSeconds();
-
-    //if (!Player) return;
-    //ProcessWave(DeltaTime);
-
-    //MonsterUpdateComponent->UpdateMonsters(DeltaTime, ActiveMonsters);
-
 
 }
 

@@ -72,19 +72,6 @@ void ADEMonsterBase::Tick(float DeltaTime)
 
 void ADEMonsterBase::MoveToPlayer(float DeltaTime, const FVector& PlayerLocation, const FVector& MyLocation)
 {
-	//// 1.[최적화] VInterpTo를 버리고, 초경량 마찰력(Friction) 연산으로 교체!
-	//	if (!KnockbackVelocity.IsNearlyZero(1.0f)) // SizeSquared < 1.0f를 알아서 가볍게 체크해 줌
-	//	{
-	//		// 프레임에 맞춰 부드럽게 감쇠시키는 단순 곱연산 (CPU가 아주 좋아함)
-	//		float Friction = FMath::Clamp(1.0f - (KnockbackResistance * DeltaTime), 0.0f, 1.0f);
-	//		KnockbackVelocity *= Friction;
-	//	}
-	//	else
-	//	{
-	//		KnockbackVelocity = FVector::ZeroVector;
-	//	}
-
-	// 2. 방향 및 속도 계산 (기존과 동일)
 	FVector Dir = PlayerLocation - MyLocation;
 	Dir.Z = 0.0f; // Fix Z
 
@@ -144,16 +131,6 @@ float ADEMonsterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	return 0.0f;
 
 
-	//old ahhh shiii
-	////StatComp->TakeDamage(DamageAmount, DamageCauser);
-	//HealthComponent->ApplyDamage(DamageAmount, DamageCauser);
-
-	///*if (StatComp->GetCurrentHP() <= 0.f)
-	//{
-	//	Die();
-	//}*/
-
-	//return DamageAmount;
 }
 
 void ADEMonsterBase::ApplyKnockback(const FVector& Direction, float Strength)
@@ -406,12 +383,6 @@ void ADEMonsterBase::NotifyActorBeginOverlap(AActor* OtherActor)
 		bIsTouchingPlayer = true;
 		OverlappingPlayer = PlayerCharacter;
 	}
-
-	/*if (OtherActor->IsA(ADECharacterBase::StaticClass()))
-	{
-		bIsTouchingPlayer = true;
-		OverlappingPlayer = Cast<ADECharacterBase>(OtherActor);
-	}*/
 
 }
 

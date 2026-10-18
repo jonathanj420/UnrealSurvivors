@@ -74,20 +74,6 @@ void UDEDamageTextWidget::Activate(const FDamageVisualInfo& Info)
 	{
 		PlayAnimation(PopAnimMk2);
 	}
-    //TargetWorldLocation = Info.WorldLocation;
-
-    //DamageText->SetText(FText::AsNumber(FMath::RoundToInt(Info.Amount)));
-    //DamageText->SetColorAndOpacity(
-    //    Info.bIsCritical ? FLinearColor::Red : FLinearColor::White
-    //);
-
-    //bActive = true;
-    ////SetAlignmentInViewport(FVector2D(0.5f, 0.5f));
-    //SetVisibility(ESlateVisibility::HitTestInvisible);
-
-    //if (PopAnimMk2)
-    //{
-    //    PlayAnimation(PopAnimMk2);
 
 
     //}

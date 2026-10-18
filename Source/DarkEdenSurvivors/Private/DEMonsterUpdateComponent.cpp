@@ -137,35 +137,6 @@ void UDEMonsterUpdateComponent::ResolveOverlaps(TArray<ADEMonsterBase*>& ActiveM
         }
     }
 
-    //// 3. 충돌 검사
-    //for (int32 i = 0; i < MonsterCount; ++i)
-    //{
-    //    ADEMonsterBase* MobA = ActiveMonsters[i];
-    //    if (!MobA) continue;
-
-    //    const FVector& LocA = MobA->CachedLocation;
-    //    FIntPoint CellA(FMath::FloorToInt(LocA.X / CellSize), FMath::FloorToInt(LocA.Y / CellSize));
-
-    //    for (int32 dx = -1; dx <= 1; ++dx)
-    //    {
-    //        for (int32 dy = -1; dy <= 1; ++dy)
-    //        {
-    //            if (TArray<ADEMonsterBase*>* CellMonsters = SpatialGrid.Find(FIntPoint(CellA.X + dx, CellA.Y + dy)))
-    //            {
-    //                for (ADEMonsterBase* MobB : *CellMonsters)
-    //                {
-    //                    if (MobA < MobB)
-    //                    {
-    //                        // MobB 위치도 함수 호출 없이 변수로 바로 전달!
-    //                        ResolveMonsterOverlap(MobA, MobB, LocA, MobB->CachedLocation);
-    //                    }
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
-
-    // 4. 이동 결재 (엔진의 헛수고 방지)
     for (ADEMonsterBase* Mob : ActiveMonsters)
     {
         if (!Mob) continue;
@@ -278,22 +249,4 @@ void UDEMonsterUpdateComponent::ResolvePlayerPush(ADEMonsterBase* Mob, const FVe
 
     Mob->PendingOverlapPush += (PushDir * Penetration);
 
-    //Mob->AddActorWorldOffset(PushDir * Penetration, false);
-    //if (!Mob || !Player) return;
-
-    //FVector Delta = Mob->GetActorLocation() - Player->GetActorLocation();
-    //Delta.Z = 0.f;
-
-    //const float DistSq = Delta.SizeSquared();
-    //const float MinDist = Player->GetCapsuleHalfRadius() + Mob->GetCollisionRadius();
-    //const float MinDistSq = MinDist * MinDist;
-
-    //if (DistSq >= MinDistSq || DistSq < KINDA_SMALL_NUMBER)
-    //    return;
-
-    //const float Dist = FMath::Sqrt(DistSq);
-    //const FVector PushDir = Delta / Dist;
-    //const float Penetration = (MinDist - Dist) - 2.0f; // 2유닛 버퍼 (Overlap 이벤트 유지용)
-
-    //Mob->AddActorWorldOffset(PushDir * Penetration, true);
 }

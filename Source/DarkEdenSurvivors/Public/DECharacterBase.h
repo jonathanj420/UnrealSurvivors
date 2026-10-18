@@ -66,15 +66,6 @@ protected:
 	UPROPERTY()
 	class ADEPlayerController* DEPlayerController;
 
-	/*UPROPERTY(VisibleAnywhere, Category = Weapon)
-	USkeletalMeshComponent* WeaponL;
-
-	UPROPERTY(VisibleAnywhere, Category = Weapon)
-	USkeletalMeshComponent* WeaponR;
-
-
-	UPROPERTY(VisibleAnywhere, Category = Weapon)
-	class AABWeapon* CurrentWeapon;*/
 	enum class EControlMode
 	{
 		FIXEDTPS,

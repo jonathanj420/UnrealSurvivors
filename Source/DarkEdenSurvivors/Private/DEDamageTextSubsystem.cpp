@@ -10,14 +10,6 @@
 
 void UDEDamageTextSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
-    //// 클래스 로드만 수행 (객체 생성 X)
-    //static ConstructorHelpers::FClassFinder<UDEDamageTextWidget> BPClass(
-    //    TEXT("/Game/DarkEden/UI/WBP_DamageTextWidget.WBP_DamageTextWidget_C"));
-
-    //if (BPClass.Succeeded())
-    //{
-    //    DamageTextWidgetClass = BPClass.Class;
-    //}
     Super::Initialize(Collection);
 
     // [수정] ConstructorHelpers 대신 LoadClass 사용!
@@ -107,19 +99,6 @@ void UDEDamageTextSubsystem::ShowDamage(const FDamageVisualInfo& Info)
     UDEDamageTextWidget* Widget = AcquireWidget();
     if (!Widget) return;
 
-    //// 2. [데미지 누적] 이미 이 몬스터 머리 위에 떠 있는 텍스트가 있다면?
-    //for (UDEDamageTextWidget* ActiveWidget : ActiveWidgets)
-    //{
-    //    // 위젯이 현재 가리키고 있는 타겟이 방금 맞은 타겟과 같다면!
-    //    if (ActiveWidget->GetTargetActor() == Info.TargetActor)
-    //    {
-    //        // 위젯의 데미지 숫자에 방금 맞은 데미지를 더하고, 크기 애니메이션을 다시 재생!
-    //        ActiveWidget->AddDamage(Info.DamageAmount);
-    //        return; // 새 위젯 안 꺼내고 여기서 종료!
-    //    }
-    //}
-
-    // 위치 랜덤 오프셋 (겹침 방지)
     FDamageVisualInfo FinalInfo = Info;
     FinalInfo.WorldLocation += FVector(
         FMath::RandRange(-20.f, 20.f),

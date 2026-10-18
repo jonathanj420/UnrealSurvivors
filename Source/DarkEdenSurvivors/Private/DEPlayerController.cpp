@@ -74,19 +74,6 @@ void ADEPlayerController::BeginPlay()
     }
 
     
-    //if (SkillInventoryWidgetClass)
-    //{
-    //    UE_LOG(LogTemp, Warning, TEXT("There IS Inventory UI"));
-    //    UDESkillInventoryWidget* Widget =
-    //        CreateWidget<UDESkillInventoryWidget>(this, SkillInventoryWidgetClass);
-
-    //    Widget->AddToViewport();
-    //}
-    //else
-    //{
-    //    UE_LOG(LogTemp, Warning, TEXT("NO Inventory UI"));
-    //}
-    
 }
 
 void ADEPlayerController::PostInitializeComponents()
@@ -110,14 +97,6 @@ void ADEPlayerController::OnPossess(APawn* aPawn)
 void ADEPlayerController::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);
-
-    //Super::Tick(DeltaSeconds);
-
-    //if (GameHUDWidget)
-    //{
-    //    float Time = GetWorld()->GetAuthGameMode<ADEGameMode_Stage>()->GetElapsedTime();
-    //    GameHUDWidget->UpdateTime(Time);
-    //}
 
 
 }

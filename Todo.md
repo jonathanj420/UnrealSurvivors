@@ -28,7 +28,7 @@
 - [x] Build.cs에서 안 쓰는 의존성 삭제: `InputCore`, `EnhancedInput`, `AIModule`, `StateTreeModule`, `GameplayStateTreeModule`, `NavigationSystem`, `Slate`, `GameplayTasks`
 - [x] `.uproject`에서 `StateTree`/`GameplayStateTree` 플러그인 비활성화 (템플릿 전용, StateTree 에셋 없음)
 - [x] `DEMonsterDataAsset` 삭제 (몬스터 최적화용으로 만들었다가 지금의 DT + 중앙 업데이트 방식으로 대체됨)
-- [ ] 대량으로 주석 처리된 옛 구현
+- [x] 주석 처리된 옛 구현 삭제 (약 1,900줄). 보류 중인 기능이라 남긴 것: 몬스터 걷기 애니메이션(`DEMonsterBase`), 스턴 색 변경(`DEStatusEffect_Stun`), Darkness 넉백 누적(`DEAOE_Darkness`/`GreyDarkness`), 웨이브 Duration 체크(`DEMonsterSpawnManager`, 웨이브 영역)
 - [x] `ADEMonsterSpawnManager`의 옛 웨이브 시스템 잔재 삭제: `MonsterClasses`, `MonsterPool`, `InitialPoolSize`, `SpawnInterval`, `MonstersPerWave`, `WaveInterval`, `TotalWaves`, `CurrentWave`, `SpawnedThisWave`, `SpawnTimerHandle`, `WaveTimerHandle` (C++ 사용처 0, BP 노출 없음. 레벨 인스턴스에 값만 남아 있을 수 있음)
 - [x] `ADEMonsterSpawnManager` 삭제: `bIsResolvingOverlaps`(쓰기만 하고 안 읽음), `KillCount`(증가만 하고 안 읽음), `MonsterHISM`(인스턴스 추가 없음. 생성자에서 RootScene을 덮어써서 RootScene이 고아가 됨)
 

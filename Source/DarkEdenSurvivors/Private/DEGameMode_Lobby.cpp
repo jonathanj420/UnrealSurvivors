@@ -20,11 +20,4 @@ void ADEGameMode_Lobby::BeginPlay()
 {
     Super::BeginPlay();
 
-    //if (MainMenuWidgetClass)
-    //{
-    //    UUserWidget* Widget = CreateWidget<UUserWidget>(
-    //        GetWorld(), MainMenuWidgetClass);
-    //    if (Widget)
-    //        Widget->AddToViewport();
-    //}
 }

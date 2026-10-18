@@ -49,50 +49,6 @@ void UDEChestWidget::SetupChestRewards(const TArray<UDELevelUpChoiceBase*>& InRe
     // 3. 상태를 '클릭 대기'로 변경하고 등장 애니메이션 실행
     CurrentState = EChestWidgetState::WaitClick;
     PlayChestAppearAnimation();
-    //ChestRewards = InRewards;
-
-    //// 1. 혹시 가로 박스에 이전 쓰레기 데이터가 남아있을 수 있으니 싹 비워줌
-    //if (Box_Rewards)
-    //{
-    //    Box_Rewards->ClearChildren();
-    //}
-
-    //// 2. 블루프린트 클래스(RewardSlotClass)가 에디터에 잘 세팅되어 있는지 확인
-    //if (RewardSlotClass)
-    //{
-    //    // 3. 보상 배열을 돌면서 슬롯을 하나씩 C++로 쾅쾅 찍어냄!
-    //    for (UDELevelUpChoiceBase* Reward : ChestRewards)
-    //    {
-    //        // 위젯 동적 생성!
-    //        UDEChestRewardSlotWidget* NewSlot = CreateWidget<UDEChestRewardSlotWidget>(this, RewardSlotClass);
-    //        if (NewSlot)
-    //        {
-    //            // 아까 네가 짠 그 완벽한 데이터 세팅 함수 호출
-    //            NewSlot->InitSlot(Reward);
-
-    //            // 가로 박스에 집어넣기!
-    //            if (Box_Rewards)
-    //            {
-    //                UHorizontalBoxSlot* HBoxSlot = Box_Rewards->AddChildToHorizontalBox(NewSlot);
-
-    //                // (선택) 슬롯 사이의 간격(Padding)이나 정렬을 C++에서 제어할 수 있음
-    //                if (HBoxSlot)
-    //                {
-    //                    HBoxSlot->SetPadding(FMargin(10.0f, 0.0f, 10.0f, 0.0f));
-    //                    HBoxSlot->SetHorizontalAlignment(HAlign_Center);
-    //                    HBoxSlot->SetVerticalAlignment(VAlign_Center);
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
-    //else
-    //{
-    //    UE_LOG(LogTemp, Error, TEXT("RewardSlotClass is NULL"));
-    //}
-
-    //// 4. 슬롯 렌더링 끝났으니 상자 흔드는 애니메이션 시작!
-    //PlayChestOpenAnimation(ChestRewards.Num());
 }
 
 FReply UDEChestWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)

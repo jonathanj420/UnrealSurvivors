@@ -43,12 +43,6 @@ void UDEPoolSubsystem::Deinitialize()
     Super::Deinitialize();
 }
 
-//UWorld* UDEPoolSubsystem::GetWorldSafe() const
-//{
-//    if (!GetGameInstance()) return nullptr;
-//    return GetGameInstance()->GetWorld();
-//}
-
 bool UDEPoolSubsystem::IsActorInactive(AActor* Actor) const
 {
     if (!IsValid(Actor))
@@ -99,33 +93,7 @@ AActor* UDEPoolSubsystem::CreateNewPooledActor(TSubclassOf<AActor> ActorClass, U
 
     return NewActor;
 
-    /*if (!World || !ActorClass) return nullptr;
 
-    FActorSpawnParameters Params;
-    Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-    AActor* NewActor = World->SpawnActor<AActor>(ActorClass, FVector::ZeroVector, FRotator::ZeroRotator, Params);
-
-    if (NewActor)
-    {
-        ActivateActor(NewActor, false);
-    }
-    return NewActor;*/
-
-
-    //if (!World || !ActorClass)
-    //    return nullptr;
-
-    //FActorSpawnParameters Params;
-    //Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-    //AActor* NewActor = World->SpawnActor<AActor>(ActorClass, FVector::ZeroVector, FRotator::ZeroRotator, Params);
-    //if (NewActor)
-    //{
-    //    DeactivateActor(NewActor);  // 생성 후 기본은 비활성 상태
-    //}
-
-    //return NewActor;
 }
 
 void UDEPoolSubsystem::ActivateActor(
@@ -140,40 +108,6 @@ void UDEPoolSubsystem::ActivateActor(
     Actor->SetActorHiddenInGame(!bAutoActivate);
     Actor->SetActorTickEnabled(bAutoActivate);
 
-    // off this shi would be better i guess
-    //// 2. 충돌 처리 (여전히 QueryOnly 강제인 건 나중에 인터페이스로 빼야 함)
-    //if (UPrimitiveComponent* Root = Cast<UPrimitiveComponent>(Actor->GetRootComponent()))
-    //{
-    //    Root->SetCollisionEnabled(
-    //        bAutoActivate ? ECollisionEnabled::QueryOnly : ECollisionEnabled::NoCollision
-    //    );
-    //    if (bAutoActivate)
-    //    {
-    //       // UE_LOG(LogTemp, Warning, TEXT("%s Activated for True"), *Actor->GetName());
-    //    }
-    //    else
-    //    {
-    //        //UE_LOG(LogTemp, Warning, TEXT("%s Activated for False"), *Actor->GetName());
-    //    }
-    //}
-
-    // 3. 만약 인터페이스를 쓴다면 여기서 호출 (위치 인자 없이)
-    // if (Actor->Implements<UDEPoolableInterface>()) ...
-
-    /*if (!Actor) return;
-
-    Actor->SetActorLocation(Location);
-    Actor->SetActorRotation(Rotation);
-
-    Actor->SetActorHiddenInGame(!bAutoActivate);
-    Actor->SetActorTickEnabled(bAutoActivate);
-
-    if (UPrimitiveComponent* Root = Cast<UPrimitiveComponent>(Actor->GetRootComponent()))
-    {
-        Root->SetCollisionEnabled(
-            bAutoActivate ? ECollisionEnabled::QueryOnly : ECollisionEnabled::NoCollision
-        );
-    }*/
 }
 
 void UDEPoolSubsystem::DeactivateActor(AActor* Actor)
@@ -219,38 +153,6 @@ void UDEPoolSubsystem::ShrinkPools()
         }
         //UE_LOG(LogTemp, Warning, TEXT("Shrinked %d actors"), NumToRemove);
     }
-
-    //UE_LOG(LogTemp, Warning, TEXT("Try Shrink Pool"));
-    //for (auto& Elem : PoolMap)
-    //{
-    //    TArray<AActor*>& Pool = Elem.Value;
-
-    //    // 1) 비활성 액터만 수집
-    //    TArray<AActor*> InactiveActors;
-    //    for (AActor* A : Pool)
-    //    {
-    //        if (IsActorInactive(A))
-    //            InactiveActors.Add(A);
-    //    }
-
-    //    // 최소 유지 개수보다 작으면 안 줄임
-    //    if (InactiveActors.Num() <= MinPoolSize)
-    //        continue;
-
-    //    int32 ToRemove = InactiveActors.Num() - MinPoolSize;
-
-    //    // 2) 초과분 Destroy
-    //    for (int32 i = 0; i < ToRemove; i++)
-    //    {
-    //        AActor* A = InactiveActors[i];
-    //        if (A && !A->IsActorInitialized()) continue;
-
-    //        Pool.Remove(A);
-    //        ActorClassMap.Remove(A);
-    //        A->Destroy();
-    //    }
-    //    UE_LOG(LogTemp, Warning, TEXT("%d Actors Shrinked"),ToRemove);
-    //}
 
 }
 
@@ -307,36 +209,6 @@ AActor* UDEPoolSubsystem::GetPooledActor(
     }
 
     return SelectedActor;
-    //if (!ActorClass)
-    //    return nullptr;
-
-    //UWorld* World = GetWorldSafe();
-    //if (!World)
-    //    return nullptr;
-
-    //TArray<AActor*>& Pool = PoolMap.FindOrAdd(ActorClass);
-
-    //// 1) 비활성 액터 재사용
-    //for (AActor* Actor : Pool)
-    //{
-    //    if (IsActorInactive(Actor))
-    //    {
-    //        ActivateActor(Actor, Location, Rotation, bAutoActivate);
-    //        return Actor;
-    //    }
-    //}
-
-    //// 2) 없으면 새로 생성
-    //AActor* NewActor = CreateNewPooledActor(ActorClass, World);
-    //if (NewActor)
-    //{
-    //    Pool.Add(NewActor);
-    //    ActorClassMap.Add(NewActor, ActorClass);
-    //    ActivateActor(NewActor, Location, Rotation, bAutoActivate);
-    //    return NewActor;
-    //}
-
-    //return nullptr;
 }
 
 void UDEPoolSubsystem::ReturnActorToPool(AActor* Actor)
