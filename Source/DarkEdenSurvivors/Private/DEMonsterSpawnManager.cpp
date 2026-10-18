@@ -2,6 +2,7 @@
 
 
 #include "DEMonsterSpawnManager.h"
+#include "DarkEdenSurvivors.h"
 #include "DEMonsterBase.h"
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
@@ -75,6 +76,15 @@ void ADEMonsterSpawnManager::BeginPlay()
             if (Row)
             {
                 Pairs.Add({ RN, Row->StartTime });
+
+                // 잘못된 몬스터 ID는 여기서 한 번만 알림 (스폰 시도 때마다 찍지 않도록)
+                for (const FName& MobID : Row->SpawnMonsterIDs)
+                {
+                    if (GameInstanceCache && !GameInstanceCache->GetMonsterData(MobID))
+                    {
+                        UE_LOG(LogDarkEdenSurvivors, Error, TEXT("StageWaveTable row '%s': Monster Data Not Found for ID '%s'"), *RN.ToString(), *MobID.ToString());
+                    }
+                }
             }
         }
 
@@ -219,6 +229,8 @@ void ADEMonsterSpawnManager::ProcessWave(float DeltaTime)
 
     // =================================================================
 
+    // 스폰 중인 웨이브는 MinimumCount 유지
+    ReplenishToMinimum(*CurRow);
 
     // SpawnInterval 기준으로 주기 스폰
     // NextSpawnTime은 절대 시간(게임 전체 경과 기준)
@@ -251,6 +263,9 @@ void ADEMonsterSpawnManager::StartWave(int32 WaveIndex)
 
     WaveElapsedTime = 0.0f;
 
+    // 이전 웨이브 몬스터는 새 웨이브의 MinimumCount에 포함하지 않는다
+    CurrentWaveMonsters.Reset();
+
     //UE_LOG(LogTemp, Warning, TEXT("StartWave %d (StartTime %.2f)"), WaveIndex, WaveData->StartTime);
 
     // 보스 즉시 스폰 (보스가 지정되어 있으면 한 번만)
@@ -259,51 +274,8 @@ void ADEMonsterSpawnManager::StartWave(int32 WaveIndex)
         SpawnBoss(*WaveData);
     }
 
-    for (auto MobName : WaveData->SpawnMonsterIDs)
-    {
-       // UE_LOG(LogTemp, Warning, TEXT("Monster Found : %s"), *MobName.ToString());
-    }
-    // 2. MinimumCount 즉시 보충 (SpawnLimit 고려)
-    int32 CurrentActive = ActiveMonsters.Num();
-    int32 SpawnLimit = GameMode ? GameMode->GetSpawnLimit() : INT32_MAX;
-
-    //  [수정 전] 전체 몹 수량에서 빼버리는 멍청한 짓
-    // int32 Need = FMath::Max(0, WaveData->MinimumCount - CurrentActive);
-
-    //  [수정 후] 이 웨이브가 시작할 때 무조건 뿌려야 하는 고유 할당량!
-    int32 Need = WaveData->MinimumCount;
-
-    // 엔진 터지는 건 막아야 하니, '맵 전체의 남은 빈자리(CanSpawn)' 계산
-    int32 CanSpawn = FMath::Max(0, SpawnLimit - CurrentActive);
-
-    // 할당량과 빈자리 중 더 작은 값만큼 최종 소환!
-    int32 ToSpawn = FMath::Min(Need, CanSpawn);
-
-    for (int32 i = 0; i < ToSpawn; ++i)
-    {
-        // [수정] 클래스 배열 대신 ID 배열(SpawnMonsterIDs) 체크
-        if (WaveData->SpawnMonsterIDs.Num() == 0) break;
-
-        // A. 랜덤 ID 뽑기
-        int32 RandIdx = FMath::RandRange(0, WaveData->SpawnMonsterIDs.Num() - 1);
-        FName TargetID = WaveData->SpawnMonsterIDs[RandIdx];
-       // UE_LOG(LogTemp, Warning, TEXT("Target Monster Name : %s"),*TargetID.ToString());
-        // B. GameInstance에서 데이터 포인터 가져오기 (O(1) 속도)
-        const FDEMonsterData* MonsterData = GameInstanceCache->GetMonsterData(TargetID);
-
-        // C. 데이터가 유효하면 스폰 (데이터 주입)
-        if (MonsterData)
-        {
-            FVector SpawnLocation = GetRandomSpawnLocation();
-
-            // SpawnFromPool(위치, 데이터포인터) 호출
-            SpawnFromPool(SpawnLocation, MonsterData, TargetID);
-        }
-        else
-        {
-            UE_LOG(LogTemp, Error, TEXT("StartWave: Monster Data Not Found for ID '%s'"), *TargetID.ToString());
-        }
-    }
+    // 2. 시작 시 MinimumCount까지 즉시 스폰 (OneShot 웨이브는 이것만 하고 끝)
+    ReplenishToMinimum(*WaveData);
 
     // 다음 스폰 시간 초기화
     // [수정 전] 지금 당장 또 뽑아라 (X)
@@ -337,20 +309,27 @@ bool ADEMonsterSpawnManager::TrySpawnMonster(const FDEStageWaveData& WaveData)
 
     // C. GameInstance에서 캐싱된 데이터 가져오기 (초고속 조회)
     const FDEMonsterData* MonsterData = GameInstanceCache->GetMonsterData(TargetID);
-    if (!MonsterData)
-    {
-        // 오타나서 데이터 없으면 로그 띄우고 패스
-        UE_LOG(LogTemp, Error, TEXT("Spawn Failed: Data Not Found for ID '%s'"), *TargetID.ToString());
-        return false;
-    }
+    if (!MonsterData) return false; // 잘못된 ID는 BeginPlay에서 이미 알림
 
     // D. 위치 잡고 스폰 실행 (데이터 전달)
     FVector SpawnLocation = GetRandomSpawnLocation();
 
     // 더 이상 MonsterClass를 넘기지 않음 (MasterClass 사용)
-    SpawnFromPool(SpawnLocation, MonsterData, TargetID);
+    ADEMonsterBase* Spawned = SpawnFromPool(SpawnLocation, MonsterData, TargetID);
+    if (!Spawned) return false;
 
+    CurrentWaveMonsters.Add(Spawned);
     return true;
+}
+
+void ADEMonsterSpawnManager::ReplenishToMinimum(const FDEStageWaveData& WaveData)
+{
+    const int32 Need = WaveData.MinimumCount - CurrentWaveMonsters.Num();
+    for (int32 i = 0; i < Need; ++i)
+    {
+        // SpawnLimit 도달이나 데이터 오류면 이번 프레임은 중단, 다음 Tick에 다시 시도
+        if (!TrySpawnMonster(WaveData)) break;
+    }
 }
 
 bool ADEMonsterSpawnManager::SpawnBoss(const FDEStageWaveData& WaveData)
@@ -559,6 +538,8 @@ void ADEMonsterSpawnManager::OnMonsterDied(ADEMonsterBase* Monster)
     }
     KillCount++;
 
+    // 즉시 빼야 다음 Tick의 ReplenishToMinimum이 바로 보충한다
+    CurrentWaveMonsters.Remove(Monster);
     PendingRemoveMonsters.Add(Monster);
    // UE_LOG(LogTemp, Warning, TEXT("Monster Added to Pending Remove List"));
 

@@ -36,13 +36,13 @@
 ## 웨이브/스폰 (개발자가 직접 정리 예정, Claude는 요청 시에만)
 
 - [ ] 웨이브 타입이 `Duration` 부호로 인코딩됨 (0=OneShot, >0=Timed, <0=Infinite). `EWaveType` enum은 선언만 있고 `FDEStageWaveData`에 필드가 없다
-- [ ] `MinimumCount` 의도: 해당 웨이브 몬스터가 맵에 최소 이만큼은 항상 있어야 한다. 적으면 즉시 그 수까지 보충 (빠른 처치 대응, 웨이브 시작 시 대량 등장 연출). 현재 코드는 웨이브 시작 시 1회 버스트만 하고 보충이 없다. 웨이브별(또는 ID별) 생존 수 추적이 필요하다
+- [x] `MinimumCount`: 해당 웨이브 몬스터가 맵에 최소 이만큼은 항상 있어야 한다. 적으면 즉시 보충. `CurrentWaveMonsters`(웨이브 시작 시 초기화)로 추적, `ReplenishToMinimum`으로 시작 버스트와 보충을 같이 처리. OneShot은 시작 버스트만, Timed는 Duration 동안, Infinite는 다음 웨이브 전까지 유지. SpawnLimit 준수
 - [ ] 주기 스폰은 현재 웨이브만 한다. 다음 웨이브가 시작되면 이전 Timed/Infinite 웨이브는 즉시 끊긴다 (의도인지 확인)
 - [ ] 시계 두 개: `WaveElapsedTime`은 DeltaTime 누적, `NextSpawnTime`은 GameMode 절대시간
 - [ ] 매 Tick `FindRow`. BeginPlay에서 정렬할 때 row 포인터를 캐시하면 된다
-- [ ] `StartWave`의 버스트 루프가 `TrySpawnMonster`와 로직 중복
-- [ ] `TrySpawnMonster`가 `SpawnFromPool` 실패(nullptr)여도 true 반환
-- [ ] 데이터 ID 오타 시 0.2초마다 Error 로그 반복 (Tick 안 로그)
+- [x] `StartWave`의 버스트 루프가 `TrySpawnMonster`와 로직 중복 (`ReplenishToMinimum`으로 통합)
+- [x] `TrySpawnMonster`가 `SpawnFromPool` 실패(nullptr)여도 true 반환
+- [x] 데이터 ID 오타 시 0.2초마다 Error 로그 반복 (BeginPlay에서 한 번만 검사하도록 변경)
 - [x] `GetRandomSpawnLocation`: 대각선 네 모서리에서만 스폰되던 문제. 안쪽 사각형에 걸리면 다시 뽑는 방식으로 수정 (Z=0 고정은 그대로)
 - [ ] 보스가 풀 밖에서 생성되고 `ActiveMonsters`에 들어가서 SpawnLimit에 포함됨
 - [ ] `Player`를 BeginPlay에서 `GetPlayerController(0)`으로 한 번만 캐시. Pawn이 늦게 빙의되면 `Player`가 null로 남아 Tick이 통째로 스킵된다

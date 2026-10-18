@@ -9,6 +9,12 @@
 - [ ] PIE에서 골드를 주웠을 때 GameMode Details의 `EarnedGold`가 오르는지 확인
 - [ ] 콘솔 `ke * GameOver`로 정산 확인 (이 명령이 동작하는지는 미검증). 로비 상점에서 총 골드가 늘었는지 확인
 
+## 스폰/웨이브
+
+- [ ] 몬스터가 플레이어 주변 테두리 전체(상하좌우 포함)에서 나오는지 확인
+- [ ] Timed/Infinite 웨이브에서 빠르게 잡아도 MinimumCount 수가 유지되는지, 웨이브 시작 시 MinimumCount만큼 한 번에 쏟아지는지 확인
+- [ ] `DT_StageWave` 각 행의 `MinimumCount`가 이 의미(최소 유지 수)에 맞는 값인지 재검토. 예전엔 시작 버스트 수량으로만 쓰였다
+
 ## 죽은 코드 삭제 전 확인 (Reference Viewer)
 
 - [ ] Test* 클래스, 템플릿 GameMode/PC, `DEMonsterDataAsset`, `DESimpleMeleeBase`, `DEBloodyNail` 액터가 BP/레벨에서 참조되는지

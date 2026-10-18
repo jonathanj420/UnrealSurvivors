@@ -98,7 +98,12 @@ public:
     void ProcessWave(float DeltaTime);
     void StartWave(int32 WaveIndex);
     bool TrySpawnMonster(const FDEStageWaveData& WaveData);
+    // 현재 웨이브 몬스터가 MinimumCount보다 적으면 그 수까지 즉시 스폰
+    void ReplenishToMinimum(const FDEStageWaveData& WaveData);
     bool SpawnBoss(const FDEStageWaveData& WaveData);
+
+    // 현재 웨이브가 스폰한 생존 몬스터 (MinimumCount 판정용). 웨이브 시작 시 초기화
+    TSet<ADEMonsterBase*> CurrentWaveMonsters;
     int KillCount = 0;
 
     //************* Monster Wave***********
