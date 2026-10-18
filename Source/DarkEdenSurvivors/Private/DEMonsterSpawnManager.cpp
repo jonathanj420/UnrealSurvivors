@@ -506,18 +506,19 @@ void ADEMonsterSpawnManager::ReturnMonsterToPool(ADEMonsterBase* Monster)
 
 FVector ADEMonsterSpawnManager::GetRandomSpawnLocation()
 {
-    FVector PlayerLocation = Player->GetActorLocation();
-    float SpawnX = PlayerLocation.X + FMath::RandRange(-1600.f, 1600.f);
-    float SpawnY = PlayerLocation.Y + FMath::RandRange(-1600.f, 1600.f);
+    const float OuterHalfExtent = 1600.f;
+    const float InnerHalfExtent = 800.f; // 화면 안쪽
 
-    // 화면 안쪽 위치를 제외하고 밖에서만 나오게
-    if (FMath::Abs(SpawnX - PlayerLocation.X) < 800.f)
-        SpawnX += (SpawnX > PlayerLocation.X ? 800.f : -800.f);
-    if (FMath::Abs(SpawnY - PlayerLocation.Y) < 800.f)
-        SpawnY += (SpawnY > PlayerLocation.Y ? 800.f : -800.f);
+    // 바깥 사각형에서 뽑고, 안쪽 사각형에 걸리면 다시 뽑는다 (테두리 영역 전체에 균등 분포)
+    float OffsetX, OffsetY;
+    do
+    {
+        OffsetX = FMath::RandRange(-OuterHalfExtent, OuterHalfExtent);
+        OffsetY = FMath::RandRange(-OuterHalfExtent, OuterHalfExtent);
+    } while (FMath::Abs(OffsetX) < InnerHalfExtent && FMath::Abs(OffsetY) < InnerHalfExtent);
 
-    float SpawnZ = 0.f;
-    return FVector(SpawnX, SpawnY, SpawnZ);
+    const FVector PlayerLocation = Player->GetActorLocation();
+    return FVector(PlayerLocation.X + OffsetX, PlayerLocation.Y + OffsetY, 0.f);
 }
 
 
