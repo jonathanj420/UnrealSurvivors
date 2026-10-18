@@ -67,6 +67,7 @@ public:
 	virtual void ApplyEffect(AActor* TargetActor);
 	// 자석 이동 관련
 	bool bIsMagnetized = false;
+	// 자석 픽업(전역 자석)에 끌려오는지. 플레이어 MagnetRange 안의 픽업은 이 값과 무관하게 모두 끌려온다
 	bool bCanBeMagnetized = false;
 	UPROPERTY()
 	AActor* MagnetTarget = nullptr;

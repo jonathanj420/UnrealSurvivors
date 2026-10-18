@@ -13,7 +13,7 @@
 - [x] 골드 정산/저장을 `UDEResultWidget`에서 `ADEGameMode_Stage::GameOver`로 이동 (`7d265ec`)
 - [x] 보스 사망 바인딩: `SpawnBoss`가 `SpawnFromPool`을 거치도록 변경. 바인딩, 높이 보정, 풀 반환이 일반 몬스터와 같아짐
 - [x] 픽업 장부 누적: `DeactivatePickup`에서 `UnregisterPickup`을 호출해 `ActivePickups`/`MagnetizingPickups`에서 제거. 풀 재사용 시 중복 등록되던 문제도 같이 해결
-- [ ] 픽업 자석 범위 감지(Tick 1단계)가 `bCanBeMagnetized`를 안 본다. 전역 자석만 검사함. 범위 안에 들어오면 상자/힐도 빨려온다 (의도인지 확인)
+- [x] ~~픽업 자석 범위 감지가 `bCanBeMagnetized`를 안 본다~~ 의도된 동작. 플래그는 전역 자석 전용 (VS의 Vacuum처럼 보석류만), 범위 자석은 모든 픽업 대상
 - [ ] 풀: `UDEPoolSubsystem::ReturnActorToPool`에 중복 반환 검사가 없다. AcidBolt, `CancelSkill` 등에서 이중 반환
 - [ ] `GameOver` 중복 호출 가드 (`bIsGameOver`). 두 번 불리면 골드가 두 번 정산된다. 무적 해제할 때 같이
 - [ ] 메타 업그레이드 Amount: `ApplyMetaUpgrades`가 Amount modifier의 `Multiplier`를 안 넣어서 기본값 1.0이 들어간다. 업그레이드 1레벨 이상이면 Amount ×2 (`FDEStatModifier::Multiplier` 기본값 버그의 실사례)
