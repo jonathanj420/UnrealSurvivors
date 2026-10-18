@@ -372,39 +372,9 @@ void ADEMonsterBase::UpdateCrowdControl(float CurrentTime)
 	}
 }
 
-void ADEMonsterBase::NotifyActorBeginOverlap(AActor* OtherActor)
+void ADEMonsterBase::ExecuteAttackLogic(double CurrentTime, ADECharacterBase* Target)
 {
-	
-	Super::NotifyActorBeginOverlap(OtherActor);
-	//UE_LOG(LogTemp, Warning, TEXT("Mob Touching Something"));
-	if (ADECharacterBase* PlayerCharacter = Cast<ADECharacterBase>(OtherActor))
-	{
-		
-		bIsTouchingPlayer = true;
-		OverlappingPlayer = PlayerCharacter;
-	}
-
-}
-
-void ADEMonsterBase::NotifyActorEndOverlap(AActor* OtherActor)
-{
-	Super::NotifyActorEndOverlap(OtherActor);
-
-	if (OtherActor == OverlappingPlayer)
-	{
-		bIsTouchingPlayer = false;
-		OverlappingPlayer = nullptr;
-	}
-
-}
-
-void ADEMonsterBase::ExecuteAttackLogic(double CurrentTime)
-{
-	// 1. [검사] 닿아있지 않거나, 대상이 없으면 리턴
-	if (!bIsTouchingPlayer || !OverlappingPlayer) return;
-
-	// 2. [검사] 대상이 죽었으면 리턴 (중요)
-	if (OverlappingPlayer->IsDead()) return;
+	if (!Target || Target->IsDead()) return;
 
 	// 3. [검사] 쿨타임 체크 (가장 중요)
 	// (현재시간 - 마지막공격시간)이 0.5초보다 작으면 "아직 쿨타임 중"
@@ -412,8 +382,9 @@ void ADEMonsterBase::ExecuteAttackLogic(double CurrentTime)
 		return;
 
 	// --- [실행] 알맹이는 그대로 사용! ---
+	// ApplyCombatDamage는 ProcessDamage를 직접 불러 플레이어 무적(TakeDamage)을 우회하므로, 무적 해제 때 같이 바꾼다
 	UGameplayStatics::ApplyDamage(
-		OverlappingPlayer,
+		Target,
 		AttackDamage,
 		nullptr,
 		this,

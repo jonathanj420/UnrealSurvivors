@@ -49,10 +49,11 @@ void UDEMonsterUpdateComponent::UpdateMovementAndAttack(float DeltaTime, TArray<
         if (!Mob->bCanMove) continue;
 
         Mob->MoveToPlayer(DeltaTime, PlayerLocation, Mob->CachedLocation);
-        Mob->ExecuteAttackLogic(CurrentWorldTime);
 
-        // [수정] 배열에서 꺼내지 말고, 아까 위에서 구워둔 Mob 주머니(CachedLocation)에서 꺼냄!
-        ResolvePlayerPush(Mob, PlayerLocation, Mob->CachedLocation, PlayerRadius);
+        if (ResolvePlayerPush(Mob, PlayerLocation, Mob->CachedLocation, PlayerRadius))
+        {
+            Mob->ExecuteAttackLogic(CurrentWorldTime, Player);
+        }
     }
 
 }
@@ -228,25 +229,29 @@ void UDEMonsterUpdateComponent::ResolveMonsterOverlap(ADEMonsterBase* A, ADEMons
     }
 }
 
-void UDEMonsterUpdateComponent::ResolvePlayerPush(ADEMonsterBase* Mob, const FVector& PlayerLocation, const FVector& MobLocation, float PlayerRadius)
+bool UDEMonsterUpdateComponent::ResolvePlayerPush(ADEMonsterBase* Mob, const FVector& PlayerLocation, const FVector& MobLocation, float PlayerRadius)
 {
-    if (!Mob || !Player) return;
+    if (!Mob || !Player) return false;
 
-    //FVector Delta = MobLocation - Player->GetActorLocation();
     FVector Delta = MobLocation - PlayerLocation;
     Delta.Z = 0.f;
 
     const float DistSq = Delta.SizeSquared();
     const float MinDist = PlayerRadius + Mob->CachedRadius;
-    const float MinDistSq = MinDist * MinDist;
+    const float ContactDist = MinDist + AttackContactTolerance;
 
-    if (DistSq >= MinDistSq || DistSq < KINDA_SMALL_NUMBER)
-        return;
+    if (DistSq >= ContactDist * ContactDist)
+        return false;
 
-    const float Dist = FMath::Sqrt(DistSq);
-    const FVector PushDir = Delta / Dist;
-    const float Penetration = (MinDist - Dist) - 2.0f;
+    // 밀어내기는 MinDist - 2 지점에서 멈추므로, 붙어 있는 몬스터는 계속 접촉 판정 안에 있다
+    if (DistSq < MinDist * MinDist && DistSq >= KINDA_SMALL_NUMBER)
+    {
+        const float Dist = FMath::Sqrt(DistSq);
+        const FVector PushDir = Delta / Dist;
+        const float Penetration = (MinDist - Dist) - 2.0f;
 
-    Mob->PendingOverlapPush += (PushDir * Penetration);
+        Mob->PendingOverlapPush += (PushDir * Penetration);
+    }
 
+    return true;
 }

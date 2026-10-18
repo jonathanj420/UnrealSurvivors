@@ -23,6 +23,7 @@ enum class EMonsterCrowdControl : uint8
 
 class UDEStatComponent;
 class UDEHealthComponent;
+class ADECharacterBase;
 
 UCLASS()
 class DARKEDENSURVIVORS_API ADEMonsterBase : public AActor
@@ -151,26 +152,16 @@ protected:
 
 
 protected:
-	// 겹침 시작/끝 감지 (엔진 기본 함수)
-	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
-	virtual void NotifyActorEndOverlap(AActor* OtherActor) override;
-
-	// 실제 데미지 주는 함수
-	bool bIsTouchingPlayer = false;
 	double LastAttackTime = 0.0;
 
-	
-
 public:
-	// 매니저가 부를 함수
-	void ExecuteAttackLogic(double CurrentTime);
+	// UpdateComponent가 접촉(거리) 판정 후 호출한다
+	void ExecuteAttackLogic(double CurrentTime, ADECharacterBase* Target);
 
 	//***************** AI ****************
 protected:
 	UPROPERTY(EditAnywhere, Category = "AI")
 	class ADECharacterBase* TargetPlayer;
-	UPROPERTY()
-	class ADECharacterBase* OverlappingPlayer = nullptr;
 
 
 };

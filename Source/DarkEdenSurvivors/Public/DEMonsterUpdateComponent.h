@@ -33,13 +33,18 @@ public:
     UPROPERTY(EditAnywhere, Category = "Collision")
     float SoftPushStrength = 1.0f;
 
+    // 캡슐 반지름 합 + 이 값 이내면 접촉으로 보고 공격한다
+    UPROPERTY(EditAnywhere, Category = "Collision")
+    float AttackContactTolerance = 10.0f;
+
 private:
     void UpdateMovementAndAttack(float DeltaTime, TArray<ADEMonsterBase*>& ActiveMonsters);
     void ResolveOverlaps(TArray<ADEMonsterBase*>& ActiveMonsters);
 
     void ResolveMonsterOverlap(ADEMonsterBase* A, ADEMonsterBase* B,
         const FVector& PosA, const FVector& PosB);
-    void ResolvePlayerPush(ADEMonsterBase* Mob, const FVector& PlayerLocation, const FVector& MobLocation, float PlayerRadius);
+    // 플레이어와 겹치면 밀어내고, 접촉 거리 안이면 true
+    bool ResolvePlayerPush(ADEMonsterBase* Mob, const FVector& PlayerLocation, const FVector& MobLocation, float PlayerRadius);
 
     UPROPERTY()
     ADECharacterBase* Player = nullptr;
