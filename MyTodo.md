@@ -36,7 +36,3 @@
 
 - [ ] 에디터를 열어 깨진 참조 경고가 없는지 확인. `L_Lobby`, `Lobby`, `TestMap`에는 GameMode Override가 없는 것으로 보여서, 이제 기본값인 `BP_DEGameMode_Stage`로 뜬다. `L_Lobby`(결과 화면에서 돌아가는 로비)는 World Settings에서 Lobby GameMode를 지정해야 한다
 - [ ] 문제없으면 `../DarkEdenSurvivors_DeletedBackup_20261019/` 백업 폴더 삭제
-
-## 죽은 코드 삭제 전 확인 (Reference Viewer)
-
-- [ ] `DEMonsterDataAsset`가 BP/레벨에서 참조되는지 (`DEBloodyNail`/`DESimpleMeleeBase`는 삭제 승인됨)

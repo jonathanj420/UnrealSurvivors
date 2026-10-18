@@ -27,7 +27,8 @@
 - [x] 템플릿 정리: `ADarkEdenSurvivorsGameMode`/`PlayerController`/`Character`, `TP_ThirdPerson*` 리다이렉트, `Variant_*` C++와 Build.cs include 경로, 빈 `DEGameMode.cpp` 삭제. 기본 GameMode는 `BP_DEGameMode_Stage`로 변경 (개발자). git 미추적 콘텐츠(`Content/ThirdPerson`, `Content/Variant_*`, 옛 기본 GameMode/`BP_TESTHud`/`BP_TestCharacter`)는 `../DarkEdenSurvivors_DeletedBackup_20261019/`로 이동
 - [x] Build.cs에서 안 쓰는 의존성 삭제: `InputCore`, `EnhancedInput`, `AIModule`, `StateTreeModule`, `GameplayStateTreeModule`, `NavigationSystem`, `Slate`, `GameplayTasks`
 - [x] `.uproject`에서 `StateTree`/`GameplayStateTree` 플러그인 비활성화 (템플릿 전용, StateTree 에셋 없음)
-- [ ] `DEMonsterDataAsset`, 대량으로 주석 처리된 옛 구현 (Reference Viewer 확인 대기)
+- [x] `DEMonsterDataAsset` 삭제 (몬스터 최적화용으로 만들었다가 지금의 DT + 중앙 업데이트 방식으로 대체됨)
+- [ ] 대량으로 주석 처리된 옛 구현
 - [x] `ADEMonsterSpawnManager`의 옛 웨이브 시스템 잔재 삭제: `MonsterClasses`, `MonsterPool`, `InitialPoolSize`, `SpawnInterval`, `MonstersPerWave`, `WaveInterval`, `TotalWaves`, `CurrentWave`, `SpawnedThisWave`, `SpawnTimerHandle`, `WaveTimerHandle` (C++ 사용처 0, BP 노출 없음. 레벨 인스턴스에 값만 남아 있을 수 있음)
 - [x] `ADEMonsterSpawnManager` 삭제: `bIsResolvingOverlaps`(쓰기만 하고 안 읽음), `KillCount`(증가만 하고 안 읽음), `MonsterHISM`(인스턴스 추가 없음. 생성자에서 RootScene을 덮어써서 RootScene이 고아가 됨)
 
