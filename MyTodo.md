@@ -20,6 +20,10 @@
 - [ ] 보스를 잡았을 때 드롭, 흡혈 게이지, 사라짐(풀 반환)이 정상인지 확인
 - [ ] 보스가 땅에 박히지 않고 제 높이로 나오는지 확인 (이전엔 높이 보정 없이 Z=0)
 
+## 픽업
+
+- [ ] 오래 플레이해도(누적 픽업 400개 이상) 드롭이 계속 나오는지 확인
+
 ## 죽은 코드 삭제 전 확인 (Reference Viewer)
 
 - [ ] Test* 클래스, 템플릿 GameMode/PC, `DEMonsterDataAsset`, `DESimpleMeleeBase`, `DEBloodyNail` 액터가 BP/레벨에서 참조되는지

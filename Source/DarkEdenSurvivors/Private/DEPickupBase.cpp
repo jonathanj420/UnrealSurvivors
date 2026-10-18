@@ -5,6 +5,8 @@
 #include "Components/SphereComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "DEPoolSubsystem.h"
+#include "DEPickupManager.h"
+#include "Engine/World.h"
 
 // Sets default values
 ADEPickupBase::ADEPickupBase()
@@ -60,7 +62,11 @@ void ADEPickupBase::DeactivatePickup()
 	Trigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	SetActorTickEnabled(false);
 
-	// TODO: 풀 시스템에 반환 요청
+	// 매니저 장부에서 빼고 풀에 반환
+	if (UDEPickupManager* PickupMgr = GetWorld()->GetSubsystem<UDEPickupManager>())
+	{
+		PickupMgr->UnregisterPickup(this);
+	}
 	GetWorld()->GetSubsystem<UDEPoolSubsystem>()->ReturnActorToPool(this);
 
 	// 풀 시스템 없으면 임시 파괴
@@ -104,7 +110,6 @@ void ADEPickupBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* 
 		// 닿았다! 바로 효과 적용!
 		ApplyEffect(OtherActor);
 
-		// ApplyEffect 내부에서 어차피 SetActorHiddenInGame(true)를 하거나 Pool로 돌아가므로,
-		// 매니저의 다음 번 Tick에서 알아서 리스트에서 떨어져 나갑니다.
+		// ApplyEffect → DeactivatePickup에서 매니저 장부 제거와 풀 반환까지 처리된다
 	}
 }

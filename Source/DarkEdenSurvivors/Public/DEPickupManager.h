@@ -40,6 +40,9 @@ public:
 	// 3. 모든 아이템 청소 (스테이지 종료 시)
 	void ClearAllPickups();
 
+	// 4. 장부에서 제거 (픽업이 풀로 돌아갈 때 DeactivatePickup에서 호출)
+	void UnregisterPickup(ADEPickupBase* Pickup);
+
 	void SetStatComponent(UDEStatComponent* InStatComponent);
 protected:
 	// 내부 함수: 특정 아이템을 자석 리스트에 등록

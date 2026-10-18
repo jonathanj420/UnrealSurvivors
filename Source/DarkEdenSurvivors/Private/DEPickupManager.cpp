@@ -178,14 +178,25 @@ void UDEPickupManager::RegisterMagnetRequest(ADEPickupBase* Pickup, AActor* Targ
 
 void UDEPickupManager::ClearAllPickups()
 {
-	// 모든 아이템 강제 반환
-	for (auto& WeakPickup : ActivePickups)
+	// DeactivatePickup이 UnregisterPickup으로 장부를 수정하므로, 복사본을 돌면서 반환
+	TArray<TWeakObjectPtr<ADEPickupBase>> PickupsToClear = MoveTemp(ActivePickups);
+	ActivePickups.Reset();
+	MagnetizingPickups.Reset();
+
+	for (const TWeakObjectPtr<ADEPickupBase>& WeakPickup : PickupsToClear)
 	{
 		if (WeakPickup.IsValid())
 		{
 			WeakPickup.Get()->DeactivatePickup();
 		}
 	}
-	ActivePickups.Empty();
-	MagnetizingPickups.Empty();
+}
+
+void UDEPickupManager::UnregisterPickup(ADEPickupBase* Pickup)
+{
+	if (!Pickup) return;
+
+	// 풀에서 재사용될 때 SpawnPickup이 다시 등록하므로 여기서 반드시 빼야 중복/누적이 없다
+	ActivePickups.RemoveSwap(Pickup);
+	MagnetizingPickups.RemoveSwap(Pickup);
 }
