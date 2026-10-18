@@ -42,7 +42,7 @@ UE 5.7 / C++로 만드는 *Vampire Survivors*류 액션 서바이벌 게임이�
 지금 리플리케이션을 추가하지는 않는다. 다만 새 코드에서 다음은 지킨다.
 
 - `GetPlayerPawn(0)`, `GetPlayerController(0)`, `GetFirstPlayerController()`를 **새로 추가하지 않는다.** Owner, Instigator, 소유 Controller를 거쳐 접근한다.
-- 게임 상태를 바꾸는 로직(데미지, 사망, 드롭, 경험치, 골드, 저장)은 나중에 권한 주체가 될 GameMode나 컴포넌트에 둔다. **UI나 위젯에 두지 않는다.** 예를 들어 지금은 `UDEResultWidget`이 저장을 하는데, 이건 옮길 대상이다.
+- 게임 상태를 바꾸는 로직(데미지, 사망, 드롭, 경험치, 골드, 저장)은 나중에 권한 주체가 될 GameMode나 컴포넌트에 둔다. **UI나 위젯에 두지 않는다.** 예: 골드 정산과 저장은 `UDEResultWidget`이 아니라 `ADEGameMode_Stage::GameOver`가 한다.
 - 레벨업이나 상자에서 쓰는 `SetPause`는 멀티플레이에서 의미가 달라진다. 관련 설계를 손볼 때 이 점을 고려한다.
 
 ## 컨벤션
@@ -71,20 +71,9 @@ PowerShell에서 실행한다. Git Bash로 `Build.bat`을 호출하면 `C:\Progr
 - 이 프로젝트의 에디터가 열려 있으면 Live Coding 때문에 빌드가 막힐 수 있다.
 - **BP 참조는 C++에서 보이지 않는다.** "C++ 참조 0개"를 "안 쓰임"으로 단정하지 않는다. 삭제하기 전에 개발자에게 Reference Viewer로 확인해 달라고 요청한다.
 
-## 정리 로드맵 (2026-10-19 전체 리뷰 기준)
+## 할 일 목록
 
-1. ✅ 인코딩을 UTF-8 BOM으로 변환하고, 그 과정에서 드러난 누락 include를 수정했다.
-2. **복구 (한 판이 끝까지 돌게 만들기)**
-   - [ ] 골드: `ADEGameMode_Stage::AddGold`를 C++에서 호출하는 곳이 없다. BP 호출 여부를 확인해야 한다.
-   - [ ] 보스: `SpawnBoss`가 `OnMonsterDeath`를 바인딩하지 않는다.
-   - [ ] 픽업: `UDEPickupManager::ActivePickups`가 획득 후에도 제거되지 않아, 누적 400개가 되면 드롭이 중단된다.
-   - [ ] 풀: `UDEPoolSubsystem::ReturnActorToPool`에 중복 반환 검사가 없다. AcidBolt, `CancelSkill` 등에서 이중 반환이 일어난다.
-3. **죽은 코드 삭제** (BP 참조 확인 후): Test* 클래스, 템플릿 GameMode/PC, `DEMonsterDataAsset`, `DESimpleMeleeBase`, `DEBloodyNail` 액터, 빈 파일, 대량으로 주석 처리된 옛 구현
-4. **경로 통일**
-   - 데미지 경로
-   - 일시정지와 입력 모드 관리를 한 곳으로
-   - 스턴 2개 → StatusEffect 하나로
-   - 레벨업 큐(다중 레벨업, 선택지 0개 처리)
-   - 킬 처리를 `FDEDamageResult` 기반으로 일원화(킬 카운터 2개 중복 해소)
-   - `EvolveSkill`이 `EndSkill` 대신 `CancelSkill`을 쓰도록
-   - 레거시 스킬을 BP 조립 방식으로 이전
+- `Todo.md`: 코드 작업 (정리 로드맵 포함). 작업을 끝내거나 새 문제를 발견하면 갱신한다.
+- `MyTodo.md`: 개발자가 에디터에서 할 일 (BP, DT, Reference Viewer 확인, 인게임 테스트). 코드 작업 결과로 에디터 작업이 생기면 여기에 적는다.
+- `Todo.md`의 "웨이브/스폰" 섹션은 개발자가 직접 정리할 예정이다. 요청받기 전에는 손대지 않는다.
+- 주석에 ★, !!!, 이모티콘, `// =====` 배너를 넣지 않는다 (기존의 그런 주석은 Gemini 잔재).
