@@ -25,12 +25,6 @@ ADEMonsterSpawnManager::ADEMonsterSpawnManager()
     USceneComponent* RootSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootScene"));
     RootComponent = RootSceneComponent;
     MonsterUpdateComponent = CreateDefaultSubobject<UDEMonsterUpdateComponent>(TEXT("MonsterUpdater"));
-
-    MonsterHISM = CreateDefaultSubobject<UHierarchicalInstancedStaticMeshComponent>(TEXT("MonsterHISM"));
-    RootComponent = MonsterHISM;
-
-    // 이 컴포넌트의 모션은 충돌 연산과 무관하므로 물리 연산은 꺼버립니다.
-    MonsterHISM->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ADEMonsterSpawnManager::BeginPlay()
@@ -120,11 +114,7 @@ void ADEMonsterSpawnManager::Tick(float DeltaTime)
     if (!Player) return;
     ProcessWave(DeltaTime);
 
-    // 플래그 ON
-    bIsResolvingOverlaps = true;
     MonsterUpdateComponent->UpdateMonsters(DeltaTime, ActiveMonsters);
-    // 플래그 OFF
-    bIsResolvingOverlaps = false;
 
     // 예약된 몬스터 처리
     if (PendingRemoveMonsters.Num() > 0)
@@ -514,7 +504,6 @@ void ADEMonsterSpawnManager::OnMonsterDied(ADEMonsterBase* Monster)
     {
         Player->AddBloodDrainGauge(Player->GetBloodDrainGainPerKill());
     }
-    KillCount++;
 
     // 즉시 빼야 다음 Tick의 ReplenishToMinimum이 바로 보충한다
     CurrentWaveMonsters.Remove(Monster);

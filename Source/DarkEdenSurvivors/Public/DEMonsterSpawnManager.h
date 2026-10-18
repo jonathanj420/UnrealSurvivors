@@ -8,7 +8,6 @@
 #include "Data/DEStageWaveData.h"    
 #include "Data/DEMonsterData.h"
 #include "Engine/StreamableManager.h" // 상단 인클루드 추가
-#include "Components/HierarchicalInstancedStaticMeshComponent.h"
 #include "DEMonsterSpawnManager.generated.h"
 
 
@@ -34,10 +33,6 @@ public:
 
 
     //************* Monster Pool**************
-    //Monster classes to spawn
-    UPROPERTY(EditAnywhere, Category = "Pooling")
-    TArray<TSubclassOf<class ADEMonsterBase>> MonsterClasses;
-
     UPROPERTY()
     TMap<FName, TSubclassOf<ADEMonsterBase>> CachedMonsterClasses;
 
@@ -50,20 +45,14 @@ public:
     // 프리로드 함수 선언
     void PreloadMonsterResources();
 
-    //Pooled Monster Instance
-    UPROPERTY(EditAnywhere, Category = "Pooling")
-    TArray<class ADEMonsterBase*> MonsterPool;
-
     // 활성화되어 필드에 있는 몬스터 목록
     UPROPERTY(VisibleInstanceOnly, Category = "Pooling")
     TArray<ADEMonsterBase*> ActiveMonsters;
 
 
-    // 죽어서 대기 중인(꺼져있는) 몬스터 목록 (기존 MonsterPool 대체)
+    // 죽어서 대기 중인(꺼져있는) 몬스터 목록
     UPROPERTY(VisibleInstanceOnly, Category = "Pooling")
     TArray<ADEMonsterBase*> InactiveMonsters;
-
-    bool bIsResolvingOverlaps = false;
 
     TArray<ADEMonsterBase*> PendingRemoveMonsters;
     TArray<ADEMonsterBase*> MonstersToProcess;
@@ -71,11 +60,6 @@ public:
     ADEMonsterBase* SpawnFromPool(FVector& Location, const struct FDEMonsterData* DataToApply, FName MonsterID);
     UFUNCTION()
     void ReturnMonsterToPool(class ADEMonsterBase* Monster);
-
-    UPROPERTY(EditAnywhere, Category = "Pooling")
-    int32 InitialPoolSize = 50;
-
-  
 
     //**************** New Wave System**********
     UPROPERTY(EditAnywhere, Category = "Wave")
@@ -107,26 +91,6 @@ public:
 
     // 생존 중인 보스. ActiveMonsters에는 있지만 SpawnLimit 계산에서는 제외
     TSet<ADEMonsterBase*> ActiveBosses;
-    int KillCount = 0;
-
-    //************* Monster Wave***********
-    // Spawn Rate(Interval)
-    UPROPERTY(EditAnywhere, Category = "Wave")
-    float SpawnInterval = 0.5f;
-
-    UPROPERTY(EditAnywhere, Category = "Wave")
-    int32 MonstersPerWave = 5;
-
-    UPROPERTY(EditAnywhere, Category = "Wave")
-    float WaveInterval = 5.0f; // Wave Interval
-
-    UPROPERTY(EditAnywhere, Category = "Wave")
-    int32 TotalWaves = 3;
-
-    int32 CurrentWave = 0;
-    int32 SpawnedThisWave = 0;
-    FTimerHandle SpawnTimerHandle;
-    FTimerHandle WaveTimerHandle;
 
     FVector GetRandomSpawnLocation();
 
@@ -147,10 +111,4 @@ private:
     // UPROPERTY 추가
     UPROPERTY(VisibleAnywhere, Category = "Components")
     UDEMonsterUpdateComponent* MonsterUpdateComponent;
-
-protected:
-
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Rendering")
-    UHierarchicalInstancedStaticMeshComponent* MonsterHISM;
-
 };

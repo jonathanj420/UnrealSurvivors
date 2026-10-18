@@ -28,6 +28,10 @@
 
 - [ ] 플레이 중 Output Log에 `[Pool] Duplicate return ignored: <액터 이름>`이 뜨는지 확인. 뜨면 액터 이름을 알려줘 (이중 반환하는 호출처 추적용. AcidBolt, 스킬 진화/취소 시점 위주로)
 
+## SpawnManager 정리 후 확인
+
+- [ ] `TestPrototype`/`TestStage001`/`TestBlank` 맵을 열어 SpawnManager 인스턴스가 정상 로드되는지 확인하고 다시 저장. 루트였던 `MonsterHISM`이 빠지고 `RootScene`이 루트가 되면서 액터 위치가 원점으로 갈 수 있다 (코드는 SpawnManager 위치를 안 쓰므로 동작엔 영향 없음)
+
 ## 죽은 코드 삭제 전 확인 (Reference Viewer)
 
 - [ ] Test* 클래스, 템플릿 GameMode/PC, `DEMonsterDataAsset`가 BP/레벨에서 참조되는지 (`DEBloodyNail`/`DESimpleMeleeBase`는 삭제 승인됨)
