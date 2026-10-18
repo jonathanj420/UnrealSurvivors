@@ -1,0 +1,90 @@
+# DarkEdenSurvivors
+
+UE 5.7 / C++로 만드는 *Vampire Survivors*류 액션 서바이벌 게임이고, *DarkEden*을 테마로 한다. 포트폴리오가 목표이고, 가능하면 출시까지 간다.
+
+- **GAS는 쓰지 않는다.** 명시적으로 요청받지 않으면 도입하지 않는다.
+- **현재 싱글플레이, 멀티플레이는 향후 고려 중.** 리플리케이션 코드는 아직 없다. 아래 "멀티플레이 대비"를 따른다.
+- **배경:** 원래 Gemini 웹 채팅으로 프로덕션 수준 구조를 배우면서 작성했다. 그래서 같은 기능이 여러 벌 있거나, 연결이 빠졌거나, 마이그레이션이 반쯤만 된 잔재가 많다. 개발자는 전체 플로우를 설명할 수 있고, **이 이해를 유지하는 것도 목표다.**
+- 배경 문서: `Docs/DarkEdenSurvivors_Project_Context_v2.md`. 코드와 다르면 코드가 기준이다.
+
+## 작업 원칙
+
+- **바꾸기 전에 읽는다.** 관련 클래스와 호출처, 데이터 흐름, 소유권과 수명을 확인한 다음 문제가 실제인지 판단한다.
+- **구조 결정은 개발자가 한다.** 선택지와 트레이드오프를 제시하고, 개발자의 제안도 기술적으로 평가한다. 무조건 동의하지도, 설명 없이 갈아엎지도 않는다.
+- **설명은 중요한 결정에만 한다.** 아키텍처, 수명, 정확성, 확장성, 네트워킹에 영향을 주는 선택만 이유와 흐름을 짧게 설명한다. 사소한 줄까지 설명하지 않는다.
+- **복잡함을 위한 복잡함은 피한다.** "AAA 스타일"이 최대 추상화를 뜻하지 않는다. 실제 문제를 푸는 구조를 고른다.
+- **검증한다.** 빌드하고 로그를 확인한다. 확인한 것과 추정한 것을 구분해서 말한다.
+- **변경은 작게, 커밋 단위로 한다.**
+
+## 시스템 맵
+
+| 영역 | 핵심 클래스 |
+|---|---|
+| 게임 플로우 | `UDEGameInstance`(세이브, 골드, 메타 업그레이드, 몬스터 DT 캐시), `ADEGameMode_Lobby` + `ADEPlayerController_Lobby` + `UDEMainMenuWidget`, `ADEGameMode_Stage`(ElapsedTime, GameOver), `ADEPlayerController`(HUD, 레벨업 UI, 일시정지) |
+| 캐릭터 | `ADECharacterBase`(→ `ADEFemaleVampire`), `UDEStatComponent`, `UDEHealthComponent`, `UDECombatComponent`, `UDEStatusEffectComponent`, `UDEAccessoryComponent`, `UDEProgressionComponent`, `UDELevelUpManagerComponent` |
+| 스탯 | `FGameplayStat` = `(Base + ΣAdditive) × (1 + ΣMultiplier)`. Multiplier는 "추가 %"다. 단, `FDEStatModifier::Multiplier`의 기본값이 1.0이라 버그가 있다. |
+| 데미지 | `FDEDamageRequest` → `UDEGameplayLibrary::ApplyCombatDamage` → `UDEHealthComponent::ProcessDamage` → `FDEDamageResult` → 공격자 `UDECombatComponent::HandleDamageDealt`(OnHit/OnKill) |
+| 스킬 | `UDESkillManagerComponent`(획득, 레벨, 쿨다운, 진화; `DESkillDataTable` 레벨별 수치 + `DESkillRowTable` 메타 + EvolutionDataTable) → `UDEAutoSkillBase::Activate` → `BuildContext`(`FDESkillContext`) → `ExecutePipeline`(`Behaviors[]`, `UDESkillBehavior` 서브클래스 `DEBehavior_*`) → 스폰 액터 `ADESkillActorBase` 계열(풀링) |
+| 몬스터 | `ADEMonsterSpawnManager`(웨이브 DT, 자체 풀, Tick에서 업데이트 구동) → `UDEMonsterUpdateComponent`(이동과 분리를 중앙에서 일괄 처리, 몬스터 개별 Tick 없음), `ADEMonsterRepositionManager`, `FDEMonsterData`(DT) |
+| 몬스터 사망 | `OnDying` → `ADEMonsterBase::StartDying` → `OnMonsterDeath` → `SpawnManager::OnMonsterDied`(드롭) → 다음 Tick에 `ExecuteFinalDeath` → 풀 반환 |
+| 풀링/픽업/맵 | `UDEPoolSubsystem`(픽업, 스킬 액터), `UDEPickupManager`(자석), `ADEInfiniteMapManager`(3x3 타일 랩핑) |
+
+## 스킬 제작 방식 (확정)
+
+- **동작(Behavior)은 C++로, 조립은 BP에서 한다.** 새 스킬은 `UDEAutoSkillBase`의 BP 서브클래스로 만들고 `Behaviors` 배열을 에디터에서 조립한다. 스킬마다 C++ 클래스를 만들지 않는다.
+- C++는 새로운 동작이 필요할 때 `DEBehavior_*`를 추가하는 데만 쓴다.
+- **레거시:** `DESkill_*` C++ 서브클래스는 `InitBehaviors()`에서 Behavior를 하드코딩한다. 이들은 점진적으로 BP로 옮길 대상이다.
+  - 주의: `UDEAutoSkillBase`의 `Behaviors.Empty()`가 주석 처리되어 있다. BP에 Behavior를 넣고 C++ `InitBehaviors()`도 추가하면 **두 번 실행된다.**
+- `UDEActiveSkillBase`(BloodDrain)는 수동 스킬이고 이 프레임워크 밖에 있다.
+
+## 멀티플레이 대비
+
+지금 리플리케이션을 추가하지는 않는다. 다만 새 코드에서 다음은 지킨다.
+
+- `GetPlayerPawn(0)`, `GetPlayerController(0)`, `GetFirstPlayerController()`를 **새로 추가하지 않는다.** Owner, Instigator, 소유 Controller를 거쳐 접근한다.
+- 게임 상태를 바꾸는 로직(데미지, 사망, 드롭, 경험치, 골드, 저장)은 나중에 권한 주체가 될 GameMode나 컴포넌트에 둔다. **UI나 위젯에 두지 않는다.** 예를 들어 지금은 `UDEResultWidget`이 저장을 하는데, 이건 옮길 대상이다.
+- 레벨업이나 상자에서 쓰는 `SetPause`는 멀티플레이에서 의미가 달라진다. 관련 설계를 손볼 때 이 점을 고려한다.
+
+## 컨벤션
+
+- **인코딩:** `.h`/`.cpp`는 **UTF-8 with BOM**으로 저장한다. CP949는 쓰지 않는다. 2026-10-19에 전체 변환했다.
+  - `DEStatComponent.h`의 주석은 그 전부터 이미 손상되어 있었다.
+- **include:** 사용하는 타입의 헤더는 직접 include한다. unity 빌드에서 이웃 파일 덕분에 통과하는 코드는 수정된 파일이 non-unity로 빌드될 때 깨진다.
+- **데미지:** `UDEGameplayLibrary::ApplyCombatDamage`만 쓴다. `UGameplayStatics::ApplyDamage`는 크리티컬, OnHit/OnKill, 킬 집계를 건너뛰므로 쓰지 않는다.
+- **풀링 액터:** `Destroy` 대신 풀로 반환하고, 재사용될 때 상태가 리셋되는지 확인한다.
+- **로그:** 새 코드에서는 `LogTemp` 대신 `LogDarkEdenSurvivors`를 쓰는 것을 권장한다. Tick 안에서 Warning 로그를 찍지 않는다.
+
+## 의도된 상태 (버그 아님)
+
+- **플레이어 무적:** `ADECharacterBase::TakeDamage`의 `HealthComponent->ProcessDamage` 호출을 테스트용으로 주석 처리해 두었다. 개발자가 요청하기 전에는 켜지 않는다.
+  - 다시 켤 때 주의: `UDEHealthComponent::HandleDeath`는 `OnDying`만 broadcast하는데, 캐릭터는 `OnDeath`에 `Die`를 바인딩해 두었다. 그래서 주석만 풀면 게임오버가 되지 않는다.
+
+## 빌드
+
+PowerShell에서 실행한다. Git Bash로 `Build.bat`을 호출하면 `C:\Program Files` 경로의 공백 때문에 실패한다.
+
+```powershell
+& "C:\Program Files\Epic Games\UE_5.7\Engine\Build\BatchFiles\Build.bat" DarkEdenSurvivorsEditor Win64 Development "-Project=C:\Users\user\Documents\Unreal Projects\DarkEdenSurvivors\DarkEdenSurvivors.uproject" -WaitMutex -NoHotReloadFromIDE *> build.log
+```
+
+- `%LOCALAPPDATA%\UnrealBuildTool\Log.txt`는 다른 프로젝트(Kuaqe) 빌드와 공유되므로, 출력은 따로 리다이렉트해서 본다.
+- 이 프로젝트의 에디터가 열려 있으면 Live Coding 때문에 빌드가 막힐 수 있다.
+- **BP 참조는 C++에서 보이지 않는다.** "C++ 참조 0개"를 "안 쓰임"으로 단정하지 않는다. 삭제하기 전에 개발자에게 Reference Viewer로 확인해 달라고 요청한다.
+
+## 정리 로드맵 (2026-10-19 전체 리뷰 기준)
+
+1. ✅ 인코딩을 UTF-8 BOM으로 변환하고, 그 과정에서 드러난 누락 include를 수정했다.
+2. **복구 (한 판이 끝까지 돌게 만들기)**
+   - [ ] 골드: `ADEGameMode_Stage::AddGold`를 C++에서 호출하는 곳이 없다. BP 호출 여부를 확인해야 한다.
+   - [ ] 보스: `SpawnBoss`가 `OnMonsterDeath`를 바인딩하지 않는다.
+   - [ ] 픽업: `UDEPickupManager::ActivePickups`가 획득 후에도 제거되지 않아, 누적 400개가 되면 드롭이 중단된다.
+   - [ ] 풀: `UDEPoolSubsystem::ReturnActorToPool`에 중복 반환 검사가 없다. AcidBolt, `CancelSkill` 등에서 이중 반환이 일어난다.
+3. **죽은 코드 삭제** (BP 참조 확인 후): Test* 클래스, 템플릿 GameMode/PC, `DEMonsterDataAsset`, `DESimpleMeleeBase`, `DEBloodyNail` 액터, 빈 파일, 대량으로 주석 처리된 옛 구현
+4. **경로 통일**
+   - 데미지 경로
+   - 일시정지와 입력 모드 관리를 한 곳으로
+   - 스턴 2개 → StatusEffect 하나로
+   - 레벨업 큐(다중 레벨업, 선택지 0개 처리)
+   - 킬 처리를 `FDEDamageResult` 기반으로 일원화(킬 카운터 2개 중복 해소)
+   - `EvolveSkill`이 `EndSkill` 대신 `CancelSkill`을 쓰도록
+   - 레거시 스킬을 BP 조립 방식으로 이전
