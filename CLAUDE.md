@@ -47,7 +47,7 @@ UE 5.7 / C++로 만드는 *Vampire Survivors*류 액션 서바이벌 게임이�
 
 ## 컨벤션
 
-- **인코딩:** `.h`/`.cpp`는 **UTF-8 with BOM**으로 저장한다. CP949는 쓰지 않는다. 2026-10-19에 전체 변환했다.
+- **인코딩:** `.h`/`.cpp`는 **UTF-8 with BOM**으로 저장한다. CP949는 쓰지 않는다. 2026-10-19에 전체 변환했고, `.editorconfig`로 강제한다.
   - `DEStatComponent.h`의 주석은 그 전부터 이미 손상되어 있었다.
 - **include:** 사용하는 타입의 헤더는 직접 include한다. unity 빌드에서 이웃 파일 덕분에 통과하는 코드는 수정된 파일이 non-unity로 빌드될 때 깨진다.
 - **데미지:** `UDEGameplayLibrary::ApplyCombatDamage`만 쓴다. `UGameplayStatics::ApplyDamage`는 크리티컬, OnHit/OnKill, 킬 집계를 건너뛰므로 쓰지 않는다.
