@@ -11,7 +11,7 @@
 
 - [x] 골드 획득원: `ADEPickup_Gold` 추가, Greed 적용 (`d078cab`). 인게임 확인은 MyTodo 참고
 - [x] 골드 정산/저장을 `UDEResultWidget`에서 `ADEGameMode_Stage::GameOver`로 이동 (`7d265ec`)
-- [ ] 보스: `SpawnBoss`가 `OnMonsterDeath`를 바인딩하지 않는다. 죽어도 `ActiveMonsters`에서 안 빠지고 드롭도 없다
+- [x] 보스 사망 바인딩: `SpawnBoss`가 `SpawnFromPool`을 거치도록 변경. 바인딩, 높이 보정, 풀 반환이 일반 몬스터와 같아짐
 - [ ] 픽업: `UDEPickupManager::ActivePickups`가 획득 후에도 제거되지 않아, 누적 400개가 되면 드롭이 중단된다
 - [ ] 풀: `UDEPoolSubsystem::ReturnActorToPool`에 중복 반환 검사가 없다. AcidBolt, `CancelSkill` 등에서 이중 반환
 - [ ] `GameOver` 중복 호출 가드 (`bIsGameOver`). 두 번 불리면 골드가 두 번 정산된다. 무적 해제할 때 같이
@@ -44,5 +44,5 @@
 - [x] `TrySpawnMonster`가 `SpawnFromPool` 실패(nullptr)여도 true 반환
 - [x] 데이터 ID 오타 시 0.2초마다 Error 로그 반복 (BeginPlay에서 한 번만 검사하도록 변경)
 - [x] `GetRandomSpawnLocation`: 대각선 네 모서리에서만 스폰되던 문제. 안쪽 사각형에 걸리면 다시 뽑는 방식으로 수정 (Z=0 고정은 그대로)
-- [ ] 보스가 풀 밖에서 생성되고 `ActiveMonsters`에 들어가서 SpawnLimit에 포함됨
+- [ ] 보스가 `ActiveMonsters`에 들어가서 SpawnLimit에 포함됨 (의도인지 결정. 풀 밖 생성 문제는 해결)
 - [ ] `Player`를 BeginPlay에서 `GetPlayerController(0)`으로 한 번만 캐시. Pawn이 늦게 빙의되면 `Player`가 null로 남아 Tick이 통째로 스킵된다

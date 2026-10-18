@@ -348,51 +348,28 @@ bool ADEMonsterSpawnManager::SpawnBoss(const FDEStageWaveData& WaveData)
 
     // 3. 보스 전용 클래스 확인 (OverrideClass)
     // 보스는 무조건 데이터 테이블에 전용 BP(OverrideClass)가 지정되어 있어야 함!
-    TSubclassOf<ADEMonsterBase> BossClassToSpawn;
-
-    if (!BossData->OverrideClass.IsNull())
-    {
-        // 보스는 한 마리니까 여기서 즉시 로딩(Synchronous Load)해도 괜찮음
-        BossClassToSpawn = BossData->OverrideClass.LoadSynchronous();
-    }
-
-    if (!BossClassToSpawn)
+    if (BossData->OverrideClass.IsNull())
     {
         UE_LOG(LogTemp, Error, TEXT("SpawnBoss Failed: No OverrideClass in Data (%s). Boss needs a specific BP!"), *WaveData.BossMonsterID.ToString());
         return false;
     }
 
-    // 4. 스폰 실행 (풀링 X, 직접 생성)
+    // 4. 일반 몬스터와 같은 풀 경로로 스폰
+    //    (OnMonsterDeath 바인딩, 높이 보정, ResetMonster, ActiveMonsters 등록까지 SpawnFromPool이 처리)
     FVector SpawnLocation = GetRandomSpawnLocation(); // 나중엔 보스 전용 스폰 위치로 변경 가능
+    ADEMonsterBase* SpawnedBoss = SpawnFromPool(SpawnLocation, BossData, WaveData.BossMonsterID);
 
-    FActorSpawnParameters Params;
-    Params.Owner = this;
-    Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn; // 보스는 껴서라도 나와야 함
-
-    ADEMonsterBase* SpawnedBoss = GetWorld()->SpawnActor<ADEMonsterBase>(
-        BossClassToSpawn,
-        SpawnLocation,
-        FRotator::ZeroRotator,
-        Params
-    );
-
-    // 5. 초기화 및 연출 시작
+    // 5. 연출 시작
     if (SpawnedBoss)
     {
-        // 데이터(체력 등) 적용
-        SpawnedBoss->ResetMonster(BossData);
-
         // [연출 포인트] 여기서 보스 등장 로직 실행!
         // 예: 카메라 쉐이크, 보스 이름 UI 띄우기, 포효 애니메이션 등
         // AADEBossMonster* RealBoss = Cast<AADEBossMonster>(SpawnedBoss);
         // if (RealBoss) RealBoss->PlayIntroSequence();
 
-        UE_LOG(LogTemp, Warning, TEXT("!!! BOSS SPAWNED: %s !!!"), *BossData->DisplayName.ToString());
+        UE_LOG(LogDarkEdenSurvivors, Log, TEXT("Boss Spawned: %s"), *BossData->DisplayName.ToString());
 
-        // 보스는 ActiveMonsters에 넣을지 말지 선택 (일반 몹 카운트에 포함시킬지?)
-        // 보통 보스는 별도 관리하거나 포함시키더라도 Limit 체크에서 예외 처리함
-        ActiveMonsters.Add(SpawnedBoss);
-
+        // 보스도 ActiveMonsters에 포함되어 SpawnLimit에 잡힌다 (CurrentWaveMonsters에는 미포함)
         return true;
     }
 
