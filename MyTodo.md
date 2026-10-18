@@ -34,4 +34,4 @@
 
 ## 죽은 코드 삭제 전 확인 (Reference Viewer)
 
-- [ ] Test* 클래스, 템플릿 GameMode/PC, `DEMonsterDataAsset`가 BP/레벨에서 참조되는지 (`DEBloodyNail`/`DESimpleMeleeBase`는 삭제 승인됨)
+- [ ] `DEMonsterDataAsset`가 BP/레벨에서 참조되는지 (`DEBloodyNail`/`DESimpleMeleeBase`는 삭제 승인됨)

@@ -23,7 +23,9 @@
 ## 3. 죽은 코드 삭제 (BP 참조 확인 후)
 
 - [x] `DEBloodyNail` 액터 + `DESimpleMeleeBase` 삭제. `DESkill_BloodyNail.cpp`의 주석 처리된 옛 `ActivateSkill`도 같이 삭제. 개발자가 삭제 승인 (2026-10-19). 근접 스킬은 이제 스윕 판정이라 sphere 액터 방식은 안 쓴다. 둘은 서로만 참조함(`ADEBloodyNail : ADESimpleMeleeBase`), 다른 C++ 참조는 `DESkill_BloodyNail.cpp`의 주석 한 줄뿐, `.uasset` grep 결과 0. `DESkill_BloodyNail`(스킬 클래스)은 별개라 삭제 대상 아님
-- [ ] Test* 클래스, 템플릿 GameMode/PC, `DEMonsterDataAsset`, 빈 파일, 대량으로 주석 처리된 옛 구현 (Reference Viewer 확인 대기)
+- [x] Test* 클래스 4개 삭제 (`TestAIController`, `TESTHud`, `TestProjectile`, `TestStatComponent`). 개발자가 미사용 확인
+- [ ] 템플릿 클래스 `ADarkEdenSurvivorsGameMode`/`PlayerController`/`Character`: `GlobalDefaultGameMode`인 `BP_DarkEdenSurvivorsGameMode`가 GameMode를 참조하고, `DefaultEngine.ini`의 `TP_ThirdPerson*` 리다이렉트가 이 클래스들을 가리킨다. ThirdPerson/Variant_* 템플릿 콘텐츠와 같이 정리할지 결정 필요
+- [ ] `DEMonsterDataAsset`, 빈 파일(`DEGameMode.cpp`), 대량으로 주석 처리된 옛 구현 (Reference Viewer 확인 대기)
 - [x] `ADEMonsterSpawnManager`의 옛 웨이브 시스템 잔재 삭제: `MonsterClasses`, `MonsterPool`, `InitialPoolSize`, `SpawnInterval`, `MonstersPerWave`, `WaveInterval`, `TotalWaves`, `CurrentWave`, `SpawnedThisWave`, `SpawnTimerHandle`, `WaveTimerHandle` (C++ 사용처 0, BP 노출 없음. 레벨 인스턴스에 값만 남아 있을 수 있음)
 - [x] `ADEMonsterSpawnManager` 삭제: `bIsResolvingOverlaps`(쓰기만 하고 안 읽음), `KillCount`(증가만 하고 안 읽음), `MonsterHISM`(인스턴스 추가 없음. 생성자에서 RootScene을 덮어써서 RootScene이 고아가 됨)
 
