@@ -65,13 +65,6 @@ FDEDamageResult UDEGameplayLibrary::ApplyCombatDamage(
 		CombatComp->HandleDamageDealt(Result);
 	}
 
-	//if (Result.FinalDamage > 0.0f && KnockbackForce > 0.0f)
-	//{
-	//	if (ADEMonsterBase* Monster = Cast<ADEMonsterBase>(Request.Victim))
-	//	{
-	//		Monster->ApplyKnockback(KnockbackDir, KnockbackForce);
-	//	}
-	//}
 	if (TargetHealth)
 	{
 		//ensure isDead

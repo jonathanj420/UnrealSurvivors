@@ -67,17 +67,6 @@ void UDEProgressionComponent::CalculateNextLevelExp()
 	MaxExp = (float)RequiredVal;
 
 
-	//older
-	//// 단순 공식: 이전 통 * 1.2배
-	//// 기획에 따라 엑셀 데이터 테이블을 읽어오는 방식 등으로 변경 가능
-	//if (CurrentLevel == 1)
-	//{
-	//	MaxExp = BaseExpRequirement;
-	//}
-	//else
-	//{
-	//	MaxExp = MaxExp * ExpGrowthFactor;
-	//}
 }
 
 void UDEProgressionComponent::LevelUp()
@@ -103,12 +92,6 @@ void UDEProgressionComponent::AddExp(float Amount)
 	if (CachedStatComp)
 	{
 		FinalExp *= CachedStatComp->GetGrowth();
-		//if (UDEStatComponent* StatComp = Owner->FindComponentByClass<UDEStatComponent>())
-		//{
-		//	// StatComponent에 GetGrowth() 함수가 있다고 가정
-		//	// (없으면 StatComp->GrowthStat.GetValue() 등으로 수정하세요)
-		//	 FinalExp *= CachedStatComp->GetGrowth();
-		//}
 	}
 
 	// 경험치 적용

@@ -44,18 +44,4 @@ bool UDECombatEffect::CanTriggerEffect(UWorld* World)
     LastTriggerTime = CurrentTime;
     return true;
 
-    //// 월드가 없거나, 기획자가 쿨타임을 0으로 해뒀으면 프리패스! y no world?
-    //if (!World || InternalCooldown <= 0.0f) return true;
-
-    //float CurrentTime = World->GetTimeSeconds();
-
-    //// 아직 쿨이 덜 돌았다면 컷!
-    //if (CurrentTime - LastTriggerTime < InternalCooldown)
-    //{
-    //    return false;
-    //}
-
-    //// 통과했으면 마지막 발동 시간 갱신
-    //LastTriggerTime = CurrentTime;
-    //return true;
 }

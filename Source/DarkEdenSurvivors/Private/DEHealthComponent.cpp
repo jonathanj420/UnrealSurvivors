@@ -18,51 +18,6 @@ void UDEHealthComponent::BeginPlay()
     CurrentHP = FMath::Clamp(CurrentHP, 0.f, MaxHP);
 }
 
-//void UDEHealthComponent::ApplyDamage(float DamageAmount, AActor* DamageCauser)
-//{
-//    if (bIsDead) return;
-//    if (DamageAmount <= 0.f) return;
-//
-//    CurrentHP -= DamageAmount;
-//    CurrentHP = FMath::Clamp(CurrentHP, 0.f, MaxHP);
-//
-//
-//    // 체력 변경 이벤트
-//    OnHPChanged.Broadcast(CurrentHP, MaxHP);
-//
-//    // [AAA 스타일 호출] 서브시스템이 있는지 확인하고 호출
-//    if (UWorld* World = GetWorld())
-//    {
-//        // 서브시스템 가져오기 (싱글톤처럼 작동)
-//        if (UDEDamageTextSubsystem* DmgSys = World->GetSubsystem<UDEDamageTextSubsystem>())
-//        {
-//            // 1. 택배 상자(구조체) 만들기
-//            FDamageVisualInfo DmgInfo;
-//            DmgInfo.Amount = DamageAmount; // 실제 입힌 데미지
-//
-//            // 2. 위치 설정 (몬스터 머리 위)
-//            // GetOwner()는 이 컴포넌트를 가진 몬스터 액터
-//            if (GetOwner())
-//            {
-//                DmgInfo.WorldLocation = GetOwner()->GetActorLocation() + FVector(0.0f, 0.0f, 100.0f);
-//                // Z축 +100.0f 해서 머리 쯤에 띄우기
-//            }
-//
-//            // 3. 크리티컬 여부 (만약 로직이 있다면)
-//            // DmgInfo.bIsCritical = bIsCritical; 
-//
-//            // 4. 발사!
-//            DmgSys->ShowDamage(DmgInfo);
-//        }
-//    }
-//
-//    if (CurrentHP <= 0.f)
-//    {
-//        HandleDeath(DamageCauser);
-//    }
-//
-//}
-
 void UDEHealthComponent::Heal(float HealAmount)
 {
     if (bIsDead) return;
@@ -91,13 +46,6 @@ void UDEHealthComponent::ResetHealth(bool bHealToFull)
 {
     // 1. 사망 플래그 초기화 (가장 중요!)
     bIsDead = false;
-    //UE_LOG(LogTemp, Error, TEXT("HP Reset, bisdead NO FUCK"));
-    //// 2. 무적 상태 및 타이머 초기화
-    //bIsInvincible = false;
-    //if (GetWorld())
-    //{
-    //    GetWorld()->GetTimerManager().ClearTimer(InvincibleTimerHandle);
-    //}
 
     // 3. 체력 복구
     if (bHealToFull)
@@ -202,49 +150,6 @@ FDEDamageResult UDEHealthComponent::ProcessDamage(const FDEDamageRequest& Reques
     float CalculatedDamage = 0.0f;
     bool bCriticalSuccess = false;
 
-    //// =========================================================
-    //// ★ 3. Enum으로 완벽하게 분리된 데미지 파이프라인!
-    //// =========================================================
-    //switch (Request.DamageType)
-    //{
-    //case EDEDamageType::Execution:
-    //case EDEDamageType::InstantKill:
-    //{
-    //    //  처형이나 즉사는 묻지도 따지지도 않고 남은 피통만큼 데미지!
-    //    CalculatedDamage = CurrentHP;
-    //    bCriticalSuccess = true; // 처형 연출을 위해 강제 크리티컬 취급
-    //    break;
-    //}
-
-    //case EDEDamageType::Poison:
-    //case EDEDamageType::Bleed:
-    //{
-    //    //  도트 데미지는 크리티컬이나 방어력을 무시하게 짤 수도 있음
-    //    CalculatedDamage = Request.BaseDamage;
-    //    bCriticalSuccess = false;
-    //    break;
-    //}
-
-    //case EDEDamageType::Normal:
-    //default:
-    //{
-    //    //  일반 타격 (치명타 주사위 굴리기)
-    //    if (Request.CritChance > 0.0f)
-    //    {
-    //        bCriticalSuccess = FMath::RandRange(0.0f, 1.0f) < Request.CritChance;
-    //    }
-    //    CalculatedDamage = bCriticalSuccess ? (Request.BaseDamage * Request.CritDamageMultiplier) : Request.BaseDamage;
-
-    //    // Result.FinalDamage -= MyDefense; // (확장) 나중에 방어력 깎는 로직
-    //    break;
-    //}
-    //}
-
-    // =========================================================
-    // ★ 3. 태그 기반 데미지 파이프라인 판정!
-    // =========================================================
-
-    // 자주 쓰는 태그 캐싱 (성능 최적화)
     static const FGameplayTag Tag_Execution = FGameplayTag::RequestGameplayTag(FName("Damage.Mechanic.Execution"));
     static const FGameplayTag Tag_InstantKill = FGameplayTag::RequestGameplayTag(FName("Damage.Mechanic.InstantKill"));
     static const FGameplayTag Tag_DoT = FGameplayTag::RequestGameplayTag(FName("Damage.Mechanic.DoT"));
@@ -372,35 +277,5 @@ void UDEHealthComponent::InstantKill(AActor* Executioner, bool bShowDamage /* = 
     OnHPChanged.Broadcast(CurrentHP, MaxHP);
     HandleDeath(Executioner);
 
-    //// 1. 이미 죽은 놈은 두 번 죽이지 않음
-    //if (bIsDead) return;
-
-    //// 2. 쉴드, 방어력 계산 다 무시하고 체력을 강제로 증발시킴
-    //CurrentHP = 0.0f;
-
-    //// 3. UI 갱신 (체력바 즉시 0으로)
-    //OnHPChanged.Broadcast(CurrentHP, MaxHP);
-
-    //// 4. (연출) 서브시스템을 통한 처형 데미지 텍스트 띄우기
-    //if (UWorld* World = GetWorld())
-    //{
-    //    if (UDEDamageTextSubsystem* DmgSys = World->GetSubsystem<UDEDamageTextSubsystem>())
-    //    {
-    //        FDamageVisualInfo DmgInfo;
-    //        // 텍스트 연출을 위해 남은 체력이나 최대 체력만큼 띄워줌
-    //        DmgInfo.Amount = MaxHP;
-    //        DmgInfo.bIsCritical = true; // 처형이니까 크리티컬 이펙트 빌려 쓰기!
-
-    //        if (GetOwner())
-    //        {
-    //            DmgInfo.WorldLocation = GetOwner()->GetActorLocation() + FVector(0, 0, 100);
-    //        }
-    //        DmgSys->ShowDamage(DmgInfo);
-    //        UE_LOG(LogTemp, Warning, TEXT("EXECUTED ! ! !"));
-    //    }
-    //}
-
-    //// 5. 진짜 사망 처리로 넘김
-    //HandleDeath(Executioner);
 }
 
