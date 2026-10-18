@@ -383,9 +383,12 @@ ADEMonsterBase* ADEMonsterSpawnManager::SpawnFromPool(FVector& Location, const F
 
     if (!ClassToSpawn) return nullptr;
 
-    // 2. 높이 보정 (CDO도 사실 매번 안 불러도 되지만 일단 유지)
-    const ADEMonsterBase* CDO = ClassToSpawn.GetDefaultObject();
-    if (CDO)
+    // 2. 높이 보정: ResetMonster가 캡슐을 데이터 크기로 맞추므로 CDO가 아닌 데이터 값을 쓴다
+    if (DataToApply)
+    {
+        Location.Z += DataToApply->CapsuleHalfHeight;
+    }
+    else if (const ADEMonsterBase* CDO = ClassToSpawn.GetDefaultObject())
     {
         Location.Z += CDO->GetCapsuleHalfHeight();
     }
