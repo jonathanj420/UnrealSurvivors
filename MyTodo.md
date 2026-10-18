@@ -25,6 +25,12 @@
 - [ ] 에디터에서 `DEAccessory_Buman`의 StatModifiers Multiplier가 0.1, 나머지 액세서리는 0으로 보이는지 확인 (`FDEStatModifier::Multiplier` 기본값을 1에서 0으로 바꿈)
 - [ ] 메타 업그레이드 Amount를 1레벨 이상 찍은 상태에서 발사체가 +1개만 늘어나는지 확인 (전에는 ×2)
 
+## 몬스터
+
+- [ ] 접촉 공격: 무적이라 화면엔 안 보인다. `ADECharacterBase::TakeDamage`에 브레이크포인트를 걸고 몬스터가 붙었을 때 걸리는지 확인 (전에는 오버랩 이벤트가 꺼져 있어서 한 번도 안 불렸다)
+- [ ] `DT_MonsterData`에서 CapsuleRadius가 42가 아닌 몬스터가 스킬에 맞는 범위가 체감상 달라졌는지 확인 (전에는 물리 캡슐이 항상 기본 42/96이었다)
+- [ ] MinimumCount 버스트 때 프레임 튐이 줄었는지 확인
+
 ## 픽업
 
 - [ ] 오래 플레이해도(누적 픽업 400개 이상) 드롭이 계속 나오는지 확인
