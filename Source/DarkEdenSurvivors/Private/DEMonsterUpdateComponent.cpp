@@ -67,20 +67,17 @@ void UDEMonsterUpdateComponent::ResolveOverlaps(TArray<ADEMonsterBase*>& ActiveM
 
     const int32 MonsterCount = ActiveMonsters.Num();
 
-    /// ★ 0. 이전 프레임에 사용된 셀만 비우기 (전체 map 순회 제거!!!)
-    for (const FIntPoint& Cell : LastFrameTouchedCells)
+    // 1. 이전 프레임에 사용된 셀만 비운 뒤, 같은 TSet을 이번 프레임 셀 목록으로 재사용한다 (Reset은 메모리 유지)
+    for (const FIntPoint& Cell : TouchedCells)
     {
         if (TArray<ADEMonsterBase*>* Arr = SpatialGrid.Find(Cell))
         {
             Arr->Reset();
         }
     }
-    LastFrameTouchedCells.Reset();
-
-
+    TouchedCells.Reset();
 
     // 2. 몬스터들을 그리드 셀에 배정
-    TSet<FIntPoint> ThisFrameCells;
     for (int32 i = 0; i < MonsterCount; ++i)
     {
         ADEMonsterBase* Mob = ActiveMonsters[i];
@@ -89,7 +86,7 @@ void UDEMonsterUpdateComponent::ResolveOverlaps(TArray<ADEMonsterBase*>& ActiveM
         const FVector& Loc = Mob->CachedLocation; // 함수 호출 없이 변수만 쏙 빼먹음!
         FIntPoint CellIndex(FMath::FloorToInt(Loc.X / CellSize), FMath::FloorToInt(Loc.Y / CellSize));
         SpatialGrid.FindOrAdd(CellIndex).Add(Mob);
-        ThisFrameCells.Add(CellIndex);  // 중복 자동 방지
+        TouchedCells.Add(CellIndex);  // 중복 자동 방지
     }
 
     
@@ -97,7 +94,7 @@ void UDEMonsterUpdateComponent::ResolveOverlaps(TArray<ADEMonsterBase*>& ActiveM
     // =========================================================
     // 3. 충돌 검사 (몬스터 중심 -> 셀 단위 4방향 하프-네이버 최적화!)
     // =========================================================
-    for (const FIntPoint& CellIndex : ThisFrameCells)
+    for (const FIntPoint& CellIndex : TouchedCells)
     {
         TArray<ADEMonsterBase*>* CellMonstersPtr = SpatialGrid.Find(CellIndex);
         if (!CellMonstersPtr || CellMonstersPtr->Num() == 0) continue;
@@ -169,8 +166,6 @@ void UDEMonsterUpdateComponent::ResolveOverlaps(TArray<ADEMonsterBase*>& ActiveM
         // 장바구니 리셋은 무조건!
         Mob->PendingOverlapPush = FVector::ZeroVector;
     }
-
-    LastFrameTouchedCells = MoveTemp(ThisFrameCells);
 }
 
 void UDEMonsterUpdateComponent::ResolveMonsterOverlap(ADEMonsterBase* A, ADEMonsterBase* B,
