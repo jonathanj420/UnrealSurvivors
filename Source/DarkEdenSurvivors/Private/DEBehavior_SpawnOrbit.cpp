@@ -3,7 +3,7 @@
 
 #include "DEBehavior_SpawnOrbit.h"
 #include "DEAOE_OrbitBase.h" 
-#include "DEGameInstance.h"
+#include "DEAutoSkillBase.h"
 #include "DEPoolSubsystem.h"
 #include "DESkillContext.h"
 
@@ -23,9 +23,6 @@ void UDEBehavior_SpawnOrbit::Execute(FDESkillContext& Context)
 
     UWorld* World = Instigator->GetWorld();
     if (!World) return;
-
-    UGameInstance* GI = World->GetGameInstance();
-    if (!GI) return;
 
     UDEPoolSubsystem* Pool = World->GetSubsystem<UDEPoolSubsystem>();
     if (!Pool) return;
@@ -58,13 +55,9 @@ void UDEBehavior_SpawnOrbit::Execute(FDESkillContext& Context)
         //UE_LOG(LogTemp, Warning, TEXT("%s SpawnOrbit for Instigator Location"), *RawActor->GetName());
         if (!RawActor) continue;
 
+        // OrbitAOEClass가 ADEAOE_OrbitBase 계열이라 실패할 일은 없다
         ADEAOE_OrbitBase* OrbitActor = Cast<ADEAOE_OrbitBase>(RawActor);
-        if (!OrbitActor)
-        {
-            // 이론상 올 일 없음 (안전장치)
-            RawActor->Destroy();
-            continue;
-        }
+        if (!OrbitActor) continue;
 
         // --------------------------------------------------
         // 3. 초기화
@@ -82,8 +75,11 @@ void UDEBehavior_SpawnOrbit::Execute(FDESkillContext& Context)
         //OrbitActor->ActivateAOE(true);
         // 
         //UE_LOG(LogTemp, Warning, TEXT("%s Orbit Activated AOE"), *GetName());
-        // 스킬 컨텍스트 관리 목록에 등록
-        Context.SpawnedAOEs.Add(OrbitActor);
+        // 수명이 없는 궤도는 CancelSkill이 거두도록 스킬에 등록
+        if (Context.SourceSkill)
+        {
+            Context.SourceSkill->RegisterSkillActor(OrbitActor);
+        }
     }
 
 }

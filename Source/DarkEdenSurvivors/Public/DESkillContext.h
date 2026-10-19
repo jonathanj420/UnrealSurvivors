@@ -31,9 +31,6 @@ public:
 	TArray<AActor*> Targets;
 
 
-	// Spawn 결과 기록 (선택, SpawnAOE에서 사용)
-	TArray<TWeakObjectPtr<class ADESimpleAOEBase>> SpawnedAOEs;
-
 	// [중요 추가] 이 컨텍스트를 만든 스킬 인스턴스 (상태 접근용)
 	// 예: SourceSkill->SpawnedAura 에 접근하기 위해 필수
 	UPROPERTY(Transient)

@@ -69,7 +69,23 @@ public:
 	TArray<UDECombatEffect*> LocalEffects;
 
 public:
+	// 키당 하나만 유지하는 액터 (오라 등). 다시 발동하면 새로 스폰하지 않고 갱신한다
 	TMap<FName, TWeakObjectPtr<class ADESkillActorBase>> OwnedSkillActorMap;
+
+	// 키로 찾되, 풀에 반환됐거나 다른 스킬이 재사용 중이면 nullptr
+	class ADESkillActorBase* FindKeyedSkillActor(FName Key) const;
+
+	// 키 없이 여러 개 스폰되는 액터 (소환수, 궤도, 이동 장판 등). CancelSkill이 거둔다
+	void RegisterSkillActor(class ADESkillActorBase* Actor);
+
+	// 아직 이 스킬 소유로 살아 있는 등록 액터. 죽은 항목은 이때 정리된다
+	const TArray<TWeakObjectPtr<class ADESkillActorBase>>& GetLiveSkillActors();
+
+private:
+	void PruneSkillActors();
+
+	TArray<TWeakObjectPtr<class ADESkillActorBase>> OwnedSkillActors;
+
 public:
 	virtual void EndSkill();
 public:

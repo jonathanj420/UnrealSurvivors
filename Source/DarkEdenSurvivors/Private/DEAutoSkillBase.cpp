@@ -5,7 +5,6 @@
 #include "DECombatComponent.h"
 #include "DESkillBehavior.h"
 #include "DESkillActorBase.h"
-#include "DESimpleAOEBase.h"
 #include "DarkEdenSurvivors.h"
 
 void UDEAutoSkillBase::Activate()
@@ -303,13 +302,44 @@ void UDEAutoSkillBase::CancelSkill()
     }
     OwnedSkillActorMap.Reset(); // this for player death maybe
 
-    // Orbit처럼 수명이 없는 AOE는 여기서 거두지 않으면 영구히 남는다
-    for (const TWeakObjectPtr<ADESimpleAOEBase>& AOE : CachedContext.SpawnedAOEs)
+    // Orbit처럼 수명이 없는 액터는 여기서 거두지 않으면 영구히 남는다
+    for (const TWeakObjectPtr<ADESkillActorBase>& Actor : OwnedSkillActors)
     {
-        if (AOE.IsValid() && AOE->IsActiveFor(this))
-            AOE->ReturnToPool();
+        if (Actor.IsValid() && Actor->IsActiveFor(this))
+            Actor->ReturnToPool();
     }
-    CachedContext.SpawnedAOEs.Reset();
+    OwnedSkillActors.Reset();
 
     EndSkill(); // 스폰된 이펙트나 장판 치우기
+}
+
+ADESkillActorBase* UDEAutoSkillBase::FindKeyedSkillActor(FName Key) const
+{
+    const TWeakObjectPtr<ADESkillActorBase>* Found = OwnedSkillActorMap.Find(Key);
+    ADESkillActorBase* Actor = Found ? Found->Get() : nullptr;
+    return (Actor && Actor->IsActiveFor(this)) ? Actor : nullptr;
+}
+
+void UDEAutoSkillBase::RegisterSkillActor(ADESkillActorBase* Actor)
+{
+    if (!Actor) return;
+
+    // 등록할 때마다 죽은 항목을 거둬서 배열이 살아 있는 수 이상으로 커지지 않게 한다
+    PruneSkillActors();
+    OwnedSkillActors.Add(Actor);
+}
+
+const TArray<TWeakObjectPtr<ADESkillActorBase>>& UDEAutoSkillBase::GetLiveSkillActors()
+{
+    PruneSkillActors();
+    return OwnedSkillActors;
+}
+
+void UDEAutoSkillBase::PruneSkillActors()
+{
+    // 풀에 반환된 액터도 약포인터는 유효하므로 IsActiveFor로 소유를 확인한다
+    OwnedSkillActors.RemoveAllSwap([this](const TWeakObjectPtr<ADESkillActorBase>& Actor)
+    {
+        return !Actor.IsValid() || !Actor->IsActiveFor(this);
+    });
 }

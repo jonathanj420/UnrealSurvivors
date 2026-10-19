@@ -82,10 +82,8 @@ void UDEBehavior_SpawnOnMove::CheckAndSpawn()
             // 최신 스탯 주입 (오버라이드된 각자의 함수가 실행됨)
             SkillActor->InitializeFromContext(FreshContext);
            // UE_LOG(LogTemp, Error, TEXT("Spawned By Distance"));
-            // 5. 실시간 리프레시를 위해 명부에 등록
-            FString UniqueStr = FGuid::NewGuid().ToString();
-            FName Key = FName(*FString::Printf(TEXT("%s_%s"), *SpawnActorClass->GetName(), *UniqueStr));
-            CachedSourceSkill->OwnedSkillActorMap.Add(Key, SkillActor);
+            // 5. CancelSkill이 거두도록 스킬에 등록
+            CachedSourceSkill->RegisterSkillActor(SkillActor);
         }
     }
 }

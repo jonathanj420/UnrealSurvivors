@@ -4,6 +4,7 @@
 #include "DEBehavior_SpawnSummon.h"
 #include "DEPoolSubsystem.h"
 #include "DESimpleSummonBase.h"
+#include "DESkillActorBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "DEAutoSkillBase.h"
 
@@ -63,12 +64,9 @@ void UDEBehavior_SpawnSummon::Execute(FDESkillContext& Context)
         {
             // 3. [초기화] (여기서 Context.Duration 등의 정보가 넘어감)
             Summon->InitializeFromContext(Context);
-            // ★ OwnedActorMap에 등록
             if (Context.SourceSkill)
             {
-                FString UniqueStr = FGuid::NewGuid().ToString();
-                FName Key = FName(*FString::Printf(TEXT("%s_%s"), *SummonClass->GetName(), *UniqueStr));
-                Context.SourceSkill->OwnedSkillActorMap.Add(Key, Summon);
+                Context.SourceSkill->RegisterSkillActor(Summon);
             }
         }
     }
@@ -92,21 +90,17 @@ void UDEBehavior_SpawnSummon::OnContextRefreshed(const FDESkillContext& Context)
     UDEPoolSubsystem* Pool = World->GetSubsystem<UDEPoolSubsystem>();
     if (!Pool) return;
 
-    // 2. 현재 살아있는 소환수 카운트 및 갱신
+    // 2. 아직 이 스킬 소유로 살아 있는 소환수만 갱신하고 센다.
+    // 풀에 반환된 소환수에 InitializeFromContext를 부르면 풀 안에서 되살아나므로 GetLiveSkillActors로 거른다
     int32 CurrentCount = 0;
-    for (auto& Pair : Context.SourceSkill->OwnedSkillActorMap)
+    for (const TWeakObjectPtr<ADESkillActorBase>& Actor : Context.SourceSkill->GetLiveSkillActors())
     {
-        if (Pair.Value.IsValid())
+        if (Actor.IsValid() && SummonClass && Actor->IsA(SummonClass))
         {
-            // 인터페이스나 캐스팅을 통해 컨텍스트 갱신
-            if (auto* Summon = Cast<ADESimpleSummonBase>(Pair.Value.Get()))
-            {
-                Summon->InitializeFromContext(Context);
-                CurrentCount++;
-            }
+            Actor->InitializeFromContext(Context);
+            CurrentCount++;
         }
     }
-    UE_LOG(LogTemp, Error, TEXT("Context Refreshed for Perma Summons"));
 
     // 3. 목표 수치 계산
     int32 TargetCount = bUseBaseAmountOnly
@@ -140,9 +134,7 @@ void UDEBehavior_SpawnSummon::OnContextRefreshed(const FDESkillContext& Context)
         if (auto* Summon = Cast<ADESimpleSummonBase>(PooledActor))
         {
             Summon->InitializeFromContext(Context);
-            FString UniqueStr = FGuid::NewGuid().ToString();
-            FName Key = FName(*FString::Printf(TEXT("%s_%s"), *SummonClass->GetName(), *UniqueStr));
-            Context.SourceSkill->OwnedSkillActorMap.Add(Key, Summon);
+            Context.SourceSkill->RegisterSkillActor(Summon);
         }
     }
 
@@ -150,5 +142,4 @@ void UDEBehavior_SpawnSummon::OnContextRefreshed(const FDESkillContext& Context)
     {
         UGameplayStatics::PlaySoundAtLocation(World, SpawnSound, BaseSpawnLoc);
     }
-    UE_LOG(LogTemp, Error, TEXT("And Summoned : %d additional Summons . . ."), AdditionalCount);
 }

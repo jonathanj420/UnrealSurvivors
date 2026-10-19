@@ -65,6 +65,14 @@
 - [ ] 연사(BurstInterval) 스킬이나 Delay가 들어간 스킬을 연사/시전 도중에 레벨업: 진행 중인 발사가 끝까지 나가고, 끝나자마자 다음 발동이 나오는지 확인
 - [ ] Reference Viewer로 `FDESkillRow::MaxLevel`(DESkillRowTable의 MaxLevel 컬럼)을 BP 위젯 등에서 쓰는지 확인. 안 쓰면 삭제 가능
 
+## Behavior 스폰 액터
+
+- [ ] 소환 스킬(GoreGland 등): 소환수가 수명이 다해 사라진 뒤 레벨업하면 빈자리만큼 새로 소환되는지, 사라진 소환수가 그 자리에서 다시 나타나지 않는지
+- [ ] 마늘형 오라(SpawnAOE, Key 있음): 레벨업 때 오라가 두 개로 늘지 않고 크기와 데미지만 바뀌는지
+- [ ] 이동 장판(SpawnOnMove)과 궤도 스킬을 재료로 진화: 깔려 있던 장판과 궤도가 진화 순간 사라지는지
+- [ ] `PlayUI`로 띄우는 위젯 BP가 스스로 `RemoveFromParent`하는지 (C++은 띄우기만 한다)
+- [ ] `FireProjectile`이 `FilterTargets`로 여러 타겟을 골라도 첫 타겟 방향으로만 쏘는 게 의도인지
+
 ## AOE
 
 - [ ] Darkness/GreyDarkness: 범위 안 몬스터가 HitInterval마다 한꺼번에 맞는지, 처음 켰을 때 바로 한 번 맞는지 확인

@@ -22,7 +22,7 @@ class DARKEDENSURVIVORS_API UDEBehavior_SpawnOnMove : public UDESkillBehavior
 public:
     virtual void Execute(FDESkillContext& Context) override;
 
-    // 영구 스킬 스탯 갱신 시 호출: 이미 깔린 액터들의 스탯 업데이트 및 죽은 액터 청소
+    // 영구 스킬 스탯 갱신 시 호출. 깔린 액터는 짧게 살다 사라지므로 갱신하지 않는다 (새로 까는 액터는 CheckAndSpawn에서 최신 스탯을 쓴다)
     virtual void OnContextRefreshed(const FDESkillContext& Context) override;
 
     // 스킬 진화/해제 시 타이머를 안전하게 끄기 위한 가상 함수 오버라이드

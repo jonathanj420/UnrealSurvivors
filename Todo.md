@@ -45,7 +45,7 @@
   - [x] 상자 보상도 매니저로: `EnqueueChest` → 보상 생성 → `OnChestRewardsReady` → 컨트롤러가 표시 → 닫기 버튼 → `ClaimChestRewards` → 다음 상자 또는 `OnChestClosed`. 같은 프레임에 주운 상자가 덮어써져 사라지던 문제 해결. `ADEPickup_Chest`의 `GetPlayerController(0)` 제거
   - [x] 레벨업과 상자는 한 번에 하나만 띄운다 (겹치면 레벨업 먼저). 창이 겹쳐 보이던 문제와, 상자 보상이 레벨업 적용 전 상태로 만들어지던 문제 해결
 - [ ] 킬 처리를 `FDEDamageResult` 기반으로 일원화 (킬 카운터 중복 해소)
-- [x] `EvolveSkill`이 `EndSkill` 대신 `CancelSkill`을 쓰도록. `CancelSkill`은 `CachedContext.SpawnedAOEs`(Orbit, SpawnAOE)도 회수한다. 날아가는 투사체는 추적하지 않으므로 수명이 다할 때까지 남는다
+- [x] `EvolveSkill`이 `EndSkill` 대신 `CancelSkill`을 쓰도록. `CancelSkill`은 `RegisterSkillActor`로 등록된 액터(Orbit, SpawnAOE 등)도 회수한다. 날아가는 투사체는 추적하지 않으므로 수명이 다할 때까지 남는다
 - [ ] 레거시 스킬을 BP 조립 방식으로 이전
 
 ## 스킬 습득/레벨업/진화 (2026-10-20 리뷰)
@@ -63,6 +63,18 @@
 - [ ] `FireProjectile` 연사 타이머는 `EndBehavior`에서 정리되지 않는다. 진화로 `CancelSkill`된 스킬의 남은 연사가 끝까지 나간다
 - [ ] 죽은 코드: `GetRandomSkillChoices`, `GetUpgradeableSkills`, `ApplyCharacterDamageMultiplier`, `DeltaCheck`, `TotalReducedCooldownAmount`, `AccessoryWeight`, `bCooldownAfterDuration`(set만 하고 안 읽음)
 - [ ] 스킬 DT를 생성자의 하드코딩 경로로 로드해서 `SkillRowMap`을 만든다. `SkillRowTable`은 EditAnywhere라 BP에서 바꿔도 맵에 반영되지 않는다
+
+## Behavior (2026-10-20 리뷰)
+
+- [x] 스폰 액터 기록을 두 가지로 통일: 키당 하나인 오라는 `OwnedSkillActorMap` + `FindKeyedSkillActor`(`IsActiveFor` 확인), 여러 개 스폰되는 액터(SpawnAOE의 키 없는 장판, SpawnOrbit, SpawnSummon, SpawnOnMove)는 `RegisterSkillActor`로 배열에 등록하고 등록할 때 죽은 항목을 정리. `FDESkillContext::SpawnedAOEs` 삭제. `CancelSkill`은 두 곳만 거둔다
+  - 해결: Permanent 소환 스킬 레벨업 때 풀에 반환된 소환수가 풀 안에서 되살아나 다른 스킬과 같은 액터를 쓰던 문제, 죽은 소환수를 살아 있다고 세서 보충 소환이 안 되던 문제
+  - 해결: SpawnOnMove/SpawnSummon이 스폰마다 GUID FName 키를 만들어 맵과 FName 테이블이 계속 커지던 문제
+  - 동작 변경: `CancelSkill`(진화)이 마지막 발동분뿐 아니라 살아 있는 키 없는 장판 전부를 거둔다
+  - SpawnOrbit의 풀 액터 `Destroy()` 제거
+- [ ] Orbit은 `OnContextRefreshed`가 없다. Orbit 스킬이 Permanent면 레벨업해도 개수와 스탯이 안 바뀐다 (ExecutionType은 DT 확인 필요)
+- [ ] `CullByCone::ConeAngle` 안 읽힘 (각도는 CustomValues `"Angle"`, 기본 60). `InstantDamage::HitCount`/`HitInterval` 안 읽힘. 체력 컴포넌트 없는 대상에 `UGameplayStatics::ApplyDamage` + Instigator null 역참조
+- [ ] 안 쓰는 프로퍼티: `PlayEffect::TargetType`, `FireProjectileRadial::ProjectileClass`, `SelectNearestTarget::EnemyTag`, `SelectTargetsInRadius::VectorKeyName`(EditCondition도 깨짐)/`bIgnoreInstigator`. `ApplyStatusEffect`의 빈 TODO 루프
+- [ ] 값 우선순위 규칙 통일 (개발자 결정 대기): Behavior마다 프로퍼티/Context/CustomValues 중 무엇이 이기는지, -1의 의미가 다르다. `SelectTargetsInRadius`의 맵 전체 검색은 `GetGameMode` 경유
 
 ## 몬스터 최적화 (목표 동시 1000마리)
 
