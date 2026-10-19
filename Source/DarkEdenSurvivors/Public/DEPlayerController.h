@@ -62,7 +62,6 @@ private:
 public:
 	UFUNCTION()
 	void ResumeGame();
-	void ShowChestWidget(const TArray<UDELevelUpChoiceBase*>& Rewards);
 	// ESC 메뉴 껐다 켜기
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void TogglePauseMenu();
@@ -80,5 +79,12 @@ private:
 	// 레벨업 큐는 폰의 LevelUpManager가 관리하고, 컨트롤러는 신호를 받아 표시만 한다
 	void ShowLevelUpChoices(const TArray<UDELevelUpChoiceBase*>& Choices);
 	void HandleLevelUpQueueFinished();
+
+	// 상자도 같은 방식. 레벨업과 상자가 같은 프레임에 겹치면 둘 다 끝난 뒤에 재개한다
+	void ShowChestWidget(const TArray<UDELevelUpChoiceBase*>& Rewards);
+	void HandleChestQueueFinished();
+	void ResumeGameIfNothingPending();
+
+	class UDELevelUpManagerComponent* GetPawnLevelUpManager() const;
 
 };

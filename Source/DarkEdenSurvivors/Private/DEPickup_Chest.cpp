@@ -3,9 +3,6 @@
 
 #include "DEPickup_Chest.h"
 #include "DELevelUpManagerComponent.h"
-#include "DESkillManagerComponent.h"
-#include "DEPlayerController.h"
-#include "Kismet/GameplayStatics.h"
 
 ADEPickup_Chest::ADEPickup_Chest()
 {
@@ -29,15 +26,8 @@ void ADEPickup_Chest::ApplyEffect(AActor* TargetActor)
     // 3. (임시) 행운 스탯. 나중에 TargetActor에서 제대로 가져오기
     float PlayerLuck = 0.0f;
 
-    // 4. 네가 짠 잭팟 룰렛 돌려서 보상 목록(1, 3, 5개) 뽑아오기!
-    TArray<UDELevelUpChoiceBase*> ChestRewards = LevelUpMgr->GenerateChestRewards(PlayerLuck);
+    // 4. 보상 생성과 적용은 매니저가 한다. 일시정지와 UI는 매니저 신호를 받은 컨트롤러가 한다
+    LevelUpMgr->EnqueueChest(PlayerLuck);
 
-    // 5. 게임 시간 즉시 멈춰! (타이머들도 다 같이 멈춤)
-    ADEPlayerController* PC = Cast<ADEPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
-    if (PC)
-    {
-        PC->SetPause(true);
-        PC->ShowChestWidget(ChestRewards);
-    }
     Super::ApplyEffect(TargetActor);
 }

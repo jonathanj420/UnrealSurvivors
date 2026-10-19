@@ -41,8 +41,9 @@
 - [ ] 일시정지와 입력 모드 관리를 한 곳으로
 - [ ] 스턴 2개 → StatusEffect 하나로
 - [x] 레벨업 큐: `UDELevelUpManagerComponent`가 대기 레벨업 수와 현재 선택지를 갖는다. `EnqueueLevelUp` → 선택지 생성 → `OnLevelUpChoicesReady` → 컨트롤러가 위젯 하나를 재사용해 표시 → 슬롯 클릭 → `ApplyChoice`(현재 선택지에 있는 것만 적용) → 다음 선택지 또는 `OnLevelUpQueueFinished` → 컨트롤러가 닫고 재개. 선택지가 0개인 레벨업은 건너뛴다. 위젯은 더 이상 선택지를 만들거나 적용하지 않는다
-  - 상자 보상은 아직 `UDEChestWidget::ApplyAllRewardsAndClose`가 직접 `Apply`한다. 같은 방식으로 매니저에 옮길 대상
-  - 레벨업 선택 중 ESC를 누르면 `TogglePauseMenu`가 `IsPaused()`만 보고 일시정지를 푼다. 레벨업과 상자가 같은 프레임에 겹쳐도 먼저 닫힌 쪽이 재개한다. "일시정지와 입력 모드 관리를 한 곳으로"에서 처리
+  - [x] 상자 보상도 매니저로: `EnqueueChest` → 보상 생성 → `OnChestRewardsReady` → 컨트롤러가 표시하고 일시정지 → 닫기 버튼 → `ClaimChestRewards` → 다음 상자 또는 `OnChestQueueFinished`. 같은 프레임에 주운 상자가 덮어써져 사라지던 문제 해결. `ADEPickup_Chest`의 `GetPlayerController(0)` 제거. 레벨업과 상자가 겹치면 둘 다 끝난 뒤에 재개 (`ResumeGameIfNothingPending`)
+  - 레벨업과 상자 창이 동시에 뜨면 화면에 겹쳐 보인다. 상자 보상은 열 때 만들어서, 그 사이에 레벨업으로 같은 스킬이 오르면 상자 업그레이드가 적용 실패할 수 있다
+  - 레벨업/상자 선택 중 ESC를 누르면 `TogglePauseMenu`가 `IsPaused()`만 보고 일시정지를 푼다. "일시정지와 입력 모드 관리를 한 곳으로"에서 처리
 - [ ] 킬 처리를 `FDEDamageResult` 기반으로 일원화 (킬 카운터 중복 해소)
 - [x] `EvolveSkill`이 `EndSkill` 대신 `CancelSkill`을 쓰도록. `CancelSkill`은 `CachedContext.SpawnedAOEs`(Orbit, SpawnAOE)도 회수한다. 날아가는 투사체는 추적하지 않으므로 수명이 다할 때까지 남는다
 - [ ] 레거시 스킬을 BP 조립 방식으로 이전

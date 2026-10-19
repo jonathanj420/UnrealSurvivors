@@ -7,7 +7,7 @@
 #include "Components/HorizontalBox.h"
 #include "Components/HorizontalBoxSlot.h"
 #include "Components/Button.h"
-#include "DEPlayerController.h"
+#include "DELevelUpManagerComponent.h"
 
 void UDEChestWidget::NativeConstruct(){
 
@@ -20,14 +20,7 @@ void UDEChestWidget::NativeOnInitialized()
     // 부모 함수 호출 (void 반환이므로 체크할 필요 없이 그냥 실행)
     Super::NativeOnInitialized();
 
-    // 1. 플레이어 컨트롤러 캐싱
-    CachedPC = Cast<ADEPlayerController>(GetOwningPlayer());
-    if (!CachedPC)
-    {
-        UE_LOG(LogTemp, Error, TEXT("[ChestWidget] no PlayerController"));
-    }
-
-    // 2. 버튼 델리게이트 바인딩
+    // 버튼 델리게이트 바인딩
     if (Btn_Close)
     {
         Btn_Close->OnClicked.AddDynamic(this, &UDEChestWidget::ApplyAllRewardsAndClose);
@@ -44,6 +37,12 @@ void UDEChestWidget::SetupChestRewards(const TArray<UDELevelUpChoiceBase*>& InRe
     if (Box_Rewards)
     {
         Box_Rewards->ClearChildren();
+    }
+
+    // 상자가 연달아 열리면 위젯을 재사용하므로, 이전 상자에서 켜진 닫기 버튼을 다시 숨긴다
+    if (Btn_Close)
+    {
+        Btn_Close->SetVisibility(ESlateVisibility::Collapsed);
     }
 
     // 3. 상태를 '클릭 대기'로 변경하고 등장 애니메이션 실행
@@ -100,25 +99,11 @@ void UDEChestWidget::RevealRewards()
 
 void UDEChestWidget::ApplyAllRewardsAndClose()
 {
-    // 내 캐릭터(Player) 찾기
-    APawn* OwnerPawn = GetOwningPlayerPawn();
-    if (!OwnerPawn) return;
-
-    // 상자에서 나온 모든 보상(캡슐)들을 뜯어서 플레이어에게 일괄 적용!
-    for (UDELevelUpChoiceBase* Reward : ChestRewards)
+    if (!LevelUpManager)
     {
-        if (Reward)
-        {
-            Reward->Apply(OwnerPawn);
-        }
+        UE_LOG(LogTemp, Error, TEXT("[ChestWidget] LevelUpManager is not set"));
+        return;
     }
 
-    // 적용 끝났으니 위젯 닫고, 일시정지(Pause) 풀기
-    RemoveFromParent();
-
-    if (CachedPC)
-    {
-        CachedPC->ResumeGame();
-        // 마우스 커서 숨기기 등 추가 처리
-    }
+    LevelUpManager->ClaimChestRewards();
 }

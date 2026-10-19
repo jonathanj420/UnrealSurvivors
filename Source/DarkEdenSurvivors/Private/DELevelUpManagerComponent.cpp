@@ -129,6 +129,57 @@ bool UDELevelUpManagerComponent::ApplyChoice(UDELevelUpChoiceBase* Choice)
     return true;
 }
 
+void UDELevelUpManagerComponent::EnqueueChest(float PlayerLuck)
+{
+    QueuedChestLuck.Add(PlayerLuck);
+
+    if (!bChestOpen)
+    {
+        OpenNextChest();
+    }
+}
+
+bool UDELevelUpManagerComponent::ClaimChestRewards()
+{
+    if (!bChestOpen)
+        return false;
+
+    AActor* OwnerActor = GetOwner();
+    if (!OwnerActor)
+        return false;
+
+    for (UDELevelUpChoiceBase* Reward : CurrentChestRewards)
+    {
+        if (Reward)
+        {
+            Reward->Apply(OwnerActor);
+        }
+    }
+
+    CurrentChestRewards.Reset();
+    bChestOpen = false;
+
+    if (!OpenNextChest())
+    {
+        OnChestQueueFinished.Broadcast();
+    }
+    return true;
+}
+
+bool UDELevelUpManagerComponent::OpenNextChest()
+{
+    if (QueuedChestLuck.IsEmpty())
+        return false;
+
+    const float PlayerLuck = QueuedChestLuck[0];
+    QueuedChestLuck.RemoveAt(0);
+
+    CurrentChestRewards = GenerateChestRewards(PlayerLuck);
+    bChestOpen = true;
+    OnChestRewardsReady.Broadcast(CurrentChestRewards);
+    return true;
+}
+
 bool UDELevelUpManagerComponent::PresentNextLevelUp()
 {
     while (PendingLevelUpCount > 0)

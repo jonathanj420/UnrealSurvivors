@@ -10,7 +10,7 @@ class UDELevelUpChoiceBase;
 class UDEChestRewardSlotWidget;
 class UHorizontalBox;
 class UButton;
-class ADEPlayerController;
+class UDELevelUpManagerComponent;
 
 UENUM(BlueprintType)
 enum class EChestWidgetState : uint8
@@ -31,6 +31,8 @@ class DARKEDENSURVIVORS_API UDEChestWidget : public UUserWidget
     GENERATED_BODY()
 
 public:
+    void InitWidget(UDELevelUpManagerComponent* InManager) { LevelUpManager = InManager; }
+
     // 컨트롤러나 매니저가 이 위젯을 화면에 띄우면서 보상 배열을 꽂아줄 핵심 함수!
     UFUNCTION(BlueprintCallable, Category = "Chest UI")
     void SetupChestRewards(const TArray<UDELevelUpChoiceBase*>& InRewards);
@@ -56,7 +58,7 @@ protected:
     UPROPERTY(BlueprintReadOnly, Category = "Chest UI")
     TArray<UDELevelUpChoiceBase*> ChestRewards;
 
-    // UI에서 유저가 '확인(혹은 닫기)' 버튼을 눌렀을 때 C++에서 실제 보상을 적용할 함수
+    // 확인(닫기) 버튼. 적용은 LevelUpManager가 하고, 창 닫기와 재개는 매니저 신호를 받은 컨트롤러가 한다
     UFUNCTION(BlueprintCallable, Category = "Chest UI")
     void ApplyAllRewardsAndClose();
 
@@ -78,5 +80,5 @@ protected:
     UButton* Btn_Close;
 
     UPROPERTY()
-    ADEPlayerController* CachedPC;
+    UDELevelUpManagerComponent* LevelUpManager;
 };

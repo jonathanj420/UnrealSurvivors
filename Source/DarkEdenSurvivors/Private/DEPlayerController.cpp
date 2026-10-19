@@ -93,25 +93,32 @@ void ADEPlayerController::OnPossess(APawn* aPawn)
         GameHUDWidget->BindCharacterStat(MyChar);
     }
 
-    if (UDELevelUpManagerComponent* LevelUpManager = MyChar ? MyChar->GetLevelUpManagerComponent() : nullptr)
+    if (UDELevelUpManagerComponent* LevelUpManager = GetPawnLevelUpManager())
     {
         LevelUpManager->OnLevelUpChoicesReady.AddUObject(this, &ADEPlayerController::ShowLevelUpChoices);
         LevelUpManager->OnLevelUpQueueFinished.AddUObject(this, &ADEPlayerController::HandleLevelUpQueueFinished);
+        LevelUpManager->OnChestRewardsReady.AddUObject(this, &ADEPlayerController::ShowChestWidget);
+        LevelUpManager->OnChestQueueFinished.AddUObject(this, &ADEPlayerController::HandleChestQueueFinished);
     }
 }
 
 void ADEPlayerController::OnUnPossess()
 {
-    if (ADECharacterBase* MyChar = Cast<ADECharacterBase>(GetPawn()))
+    if (UDELevelUpManagerComponent* LevelUpManager = GetPawnLevelUpManager())
     {
-        if (UDELevelUpManagerComponent* LevelUpManager = MyChar->GetLevelUpManagerComponent())
-        {
-            LevelUpManager->OnLevelUpChoicesReady.RemoveAll(this);
-            LevelUpManager->OnLevelUpQueueFinished.RemoveAll(this);
-        }
+        LevelUpManager->OnLevelUpChoicesReady.RemoveAll(this);
+        LevelUpManager->OnLevelUpQueueFinished.RemoveAll(this);
+        LevelUpManager->OnChestRewardsReady.RemoveAll(this);
+        LevelUpManager->OnChestQueueFinished.RemoveAll(this);
     }
 
     Super::OnUnPossess();
+}
+
+UDELevelUpManagerComponent* ADEPlayerController::GetPawnLevelUpManager() const
+{
+    const ADECharacterBase* MyChar = Cast<ADECharacterBase>(GetPawn());
+    return MyChar ? MyChar->GetLevelUpManagerComponent() : nullptr;
 }
 
 void ADEPlayerController::Tick(float DeltaSeconds)
@@ -146,8 +153,7 @@ void ADEPlayerController::SetupInputComponent()
 
 void ADEPlayerController::ShowLevelUpChoices(const TArray<UDELevelUpChoiceBase*>& Choices)
 {
-    ADECharacterBase* MyChar = Cast<ADECharacterBase>(GetPawn());
-    UDELevelUpManagerComponent* LevelUpManager = MyChar ? MyChar->GetLevelUpManagerComponent() : nullptr;
+    UDELevelUpManagerComponent* LevelUpManager = GetPawnLevelUpManager();
     if (!LevelUpManager) return;
 
     if (!LevelUpWidget)
@@ -181,6 +187,25 @@ void ADEPlayerController::HandleLevelUpQueueFinished()
     {
         LevelUpWidget->RemoveFromParent();
     }
+    ResumeGameIfNothingPending();
+}
+
+void ADEPlayerController::HandleChestQueueFinished()
+{
+    if (ChestWidget)
+    {
+        ChestWidget->RemoveFromParent();
+    }
+    ResumeGameIfNothingPending();
+}
+
+void ADEPlayerController::ResumeGameIfNothingPending()
+{
+    const UDELevelUpManagerComponent* LevelUpManager = GetPawnLevelUpManager();
+    if (LevelUpManager && (LevelUpManager->IsSelectingLevelUp() || LevelUpManager->IsChestOpen()))
+    {
+        return;
+    }
     ResumeGame();
 }
 
@@ -194,6 +219,9 @@ void ADEPlayerController::ResumeGame()
 
 void ADEPlayerController::ShowChestWidget(const TArray<UDELevelUpChoiceBase*>& Rewards)
 {
+    UDELevelUpManagerComponent* LevelUpManager = GetPawnLevelUpManager();
+    if (!LevelUpManager) return;
+
     // 1. 위젯 클래스 할당 여부 체크 (방어 코드)
     if (!ChestWidgetClass)
     {
@@ -215,15 +243,16 @@ void ADEPlayerController::ShowChestWidget(const TArray<UDELevelUpChoiceBase*>& R
             ChestWidget->AddToViewport();
         }
 
+        ChestWidget->InitWidget(LevelUpManager);
         ChestWidget->SetupChestRewards(Rewards);
+
+        SetPause(true);
 
         // 5. 마우스 커서 켜고, 입력 모드를 'UI 전용'으로 변경
         bShowMouseCursor = true;
         FInputModeUIOnly InputMode;
         InputMode.SetWidgetToFocus(ChestWidget->TakeWidget());
         SetInputMode(InputMode);
-
-        // (참고: SetPause(true)는 이미 상자 픽업의 ApplyEffect에서 하셨으므로 여기선 패스!)
     }
 }
 

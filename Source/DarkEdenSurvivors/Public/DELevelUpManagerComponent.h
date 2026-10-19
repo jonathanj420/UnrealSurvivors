@@ -19,6 +19,8 @@ struct FAccessoryPoolItem
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnLevelUpChoicesReady, const TArray<UDELevelUpChoiceBase*>& /*Choices*/);
 DECLARE_MULTICAST_DELEGATE(FOnLevelUpQueueFinished);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnChestRewardsReady, const TArray<UDELevelUpChoiceBase*>& /*Rewards*/);
+DECLARE_MULTICAST_DELEGATE(FOnChestQueueFinished);
 
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -42,6 +44,18 @@ public:
     // 쌓인 레벨업 선택이 모두 끝났을 때. 선택지를 한 번도 띄우지 않았으면 오지 않는다
     FOnLevelUpQueueFinished OnLevelUpQueueFinished;
 
+    // 상자를 주웠을 때 부른다. 이미 열린 상자가 있으면 그 보상을 받은 뒤에 다음 상자를 연다
+    void EnqueueChest(float PlayerLuck);
+
+    // 열려 있는 상자의 보상을 모두 적용한다. 열린 상자가 없으면 false
+    bool ClaimChestRewards();
+
+    bool IsChestOpen() const { return bChestOpen; }
+
+    FOnChestRewardsReady OnChestRewardsReady;
+    // 쌓인 상자를 모두 받았을 때
+    FOnChestQueueFinished OnChestQueueFinished;
+
 protected:
     virtual void BeginPlay() override;
 
@@ -59,6 +73,17 @@ private:
     // 선택지 객체는 여기서만 강하게 참조된다
     UPROPERTY()
     TArray<UDELevelUpChoiceBase*> CurrentChoices;
+
+    // 상자를 열었으면 true. 보상 생성은 이전 상자 보상이 적용된 뒤의 상태로 한다
+    bool OpenNextChest();
+
+    TArray<float> QueuedChestLuck;
+
+    // 보상이 0개인 상자도 열린 상태가 있으므로 배열과 따로 둔다
+    bool bChestOpen = false;
+
+    UPROPERTY()
+    TArray<UDELevelUpChoiceBase*> CurrentChestRewards;
 
 private:
     // ===== 설정값 =====
