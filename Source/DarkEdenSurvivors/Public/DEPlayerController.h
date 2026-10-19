@@ -10,6 +10,15 @@
 class UDEChestWidget;
 class UDELevelUpChoiceBase;
 
+// 게임을 멈추는 이유. 하나라도 남아 있으면 멈춘 상태를 유지한다
+UENUM()
+enum class EDEPauseReason : uint8
+{
+	LevelUp,
+	Chest,
+	PauseMenu,
+	GameOver
+};
 
 /**
  * 
@@ -60,11 +69,15 @@ private:
 	
 
 public:
-	UFUNCTION()
-	void ResumeGame();
-	// ESC 메뉴 껐다 켜기
+	// SetPause, 입력 모드, 커서는 이 두 함수만 바꾼다
+	void AddPauseReason(EDEPauseReason Reason);
+	void RemovePauseReason(EDEPauseReason Reason);
+
+	// ESC 메뉴 껐다 켜기. 레벨업, 상자, 게임오버로 멈춰 있을 때는 열지 않는다
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void TogglePauseMenu();
+
+	void ClosePauseMenu();
 
 protected:
 	// 에디터에서 우리가 만든 WBP_PauseMenu를 끼워넣을 슬롯
@@ -76,14 +89,15 @@ private:
 	UPROPERTY()
 	class UUserWidget* PauseMenuInstance;
 
-	// 레벨업 큐는 폰의 LevelUpManager가 관리하고, 컨트롤러는 신호를 받아 표시만 한다
-	void ShowLevelUpChoices(const TArray<UDELevelUpChoiceBase*>& Choices);
-	void HandleLevelUpQueueFinished();
+	TSet<EDEPauseReason> PauseReasons;
+	void ApplyPauseState();
 
-	// 상자도 같은 방식. 레벨업과 상자가 같은 프레임에 겹치면 둘 다 끝난 뒤에 재개한다
+	// 레벨업과 상자 큐는 폰의 LevelUpManager가 관리하고, 컨트롤러는 신호를 받아 표시만 한다
+	void ShowLevelUpChoices(const TArray<UDELevelUpChoiceBase*>& Choices);
+	void HandleLevelUpClosed();
+
 	void ShowChestWidget(const TArray<UDELevelUpChoiceBase*>& Rewards);
-	void HandleChestQueueFinished();
-	void ResumeGameIfNothingPending();
+	void HandleChestClosed();
 
 	class UDELevelUpManagerComponent* GetPawnLevelUpManager() const;
 

@@ -18,9 +18,9 @@ struct FAccessoryPoolItem
 };
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnLevelUpChoicesReady, const TArray<UDELevelUpChoiceBase*>& /*Choices*/);
-DECLARE_MULTICAST_DELEGATE(FOnLevelUpQueueFinished);
+DECLARE_MULTICAST_DELEGATE(FOnLevelUpClosed);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnChestRewardsReady, const TArray<UDELevelUpChoiceBase*>& /*Rewards*/);
-DECLARE_MULTICAST_DELEGATE(FOnChestQueueFinished);
+DECLARE_MULTICAST_DELEGATE(FOnChestClosed);
 
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -31,8 +31,10 @@ class DARKEDENSURVIVORS_API UDELevelUpManagerComponent : public UActorComponent
 public:
     UDELevelUpManagerComponent();
 
-    // 레벨이 하나 오를 때마다 부른다. 여러 번 쌓여도 선택은 하나씩 진행되고,
-    // 선택지는 직전 선택이 적용된 뒤의 상태로 만든다
+    // 레벨업과 상자는 한 번에 하나만 띄운다. 같은 프레임에 겹치면 레벨업을 먼저 처리하고,
+    // 다음 선택지나 보상은 직전 것이 적용된 뒤의 상태로 만든다
+
+    // 레벨이 하나 오를 때마다 부른다
     void EnqueueLevelUp();
 
     // 현재 선택지에 없는 Choice(이전 선택지, 중복 클릭)는 무시하고 false
@@ -41,10 +43,10 @@ public:
     bool IsSelectingLevelUp() const { return !CurrentChoices.IsEmpty(); }
 
     FOnLevelUpChoicesReady OnLevelUpChoicesReady;
-    // 쌓인 레벨업 선택이 모두 끝났을 때. 선택지를 한 번도 띄우지 않았으면 오지 않는다
-    FOnLevelUpQueueFinished OnLevelUpQueueFinished;
+    // 레벨업 창을 닫을 때 (쌓인 레벨업을 다 골랐을 때). 선택지를 한 번도 띄우지 않았으면 오지 않는다
+    FOnLevelUpClosed OnLevelUpClosed;
 
-    // 상자를 주웠을 때 부른다. 이미 열린 상자가 있으면 그 보상을 받은 뒤에 다음 상자를 연다
+    // 상자를 주웠을 때 부른다
     void EnqueueChest(float PlayerLuck);
 
     // 열려 있는 상자의 보상을 모두 적용한다. 열린 상자가 없으면 false
@@ -53,8 +55,8 @@ public:
     bool IsChestOpen() const { return bChestOpen; }
 
     FOnChestRewardsReady OnChestRewardsReady;
-    // 쌓인 상자를 모두 받았을 때
-    FOnChestQueueFinished OnChestQueueFinished;
+    // 상자 창을 닫을 때 (다음 상자가 없거나, 기다리던 레벨업을 먼저 띄울 때)
+    FOnChestClosed OnChestClosed;
 
 protected:
     virtual void BeginPlay() override;

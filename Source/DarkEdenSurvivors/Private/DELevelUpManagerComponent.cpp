@@ -101,7 +101,7 @@ void UDELevelUpManagerComponent::EnqueueLevelUp()
 {
     ++PendingLevelUpCount;
 
-    if (!IsSelectingLevelUp())
+    if (!IsSelectingLevelUp() && !bChestOpen)
     {
         PresentNextLevelUp();
     }
@@ -124,7 +124,9 @@ bool UDELevelUpManagerComponent::ApplyChoice(UDELevelUpChoiceBase* Choice)
 
     if (!PresentNextLevelUp())
     {
-        OnLevelUpQueueFinished.Broadcast();
+        OnLevelUpClosed.Broadcast();
+        // 레벨업을 기다리던 상자가 있으면 이제 연다
+        OpenNextChest();
     }
     return true;
 }
@@ -133,7 +135,7 @@ void UDELevelUpManagerComponent::EnqueueChest(float PlayerLuck)
 {
     QueuedChestLuck.Add(PlayerLuck);
 
-    if (!bChestOpen)
+    if (!bChestOpen && !IsSelectingLevelUp())
     {
         OpenNextChest();
     }
@@ -159,9 +161,11 @@ bool UDELevelUpManagerComponent::ClaimChestRewards()
     CurrentChestRewards.Reset();
     bChestOpen = false;
 
-    if (!OpenNextChest())
+    // 같은 프레임에 쌓인 레벨업이 있으면 다음 상자보다 먼저 띄운다
+    const bool bLevelUpShown = PresentNextLevelUp();
+    if (bLevelUpShown || !OpenNextChest())
     {
-        OnChestQueueFinished.Broadcast();
+        OnChestClosed.Broadcast();
     }
     return true;
 }

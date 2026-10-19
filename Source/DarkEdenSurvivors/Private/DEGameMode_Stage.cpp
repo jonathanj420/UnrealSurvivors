@@ -85,8 +85,14 @@ void ADEGameMode_Stage::GameOver()
 {
     UE_LOG(LogTemp, Warning, TEXT("=== GAME OVER ==="));
 
-    // 1. 게임 일시 정지 (선택 사항: 몬스터 멈추게 하려면 true)
-     UGameplayStatics::SetGamePaused(this, true);
+    // 1. 게임 일시 정지. 일시정지와 입력 모드는 각 플레이어 컨트롤러가 관리한다
+    for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+    {
+        if (ADEPlayerController* PC = Cast<ADEPlayerController>(It->Get()))
+        {
+            PC->AddPauseReason(EDEPauseReason::GameOver);
+        }
+    }
 
     // 골드 정산과 저장은 UI와 무관하게 GameMode에서 끝낸다
     if (UDEGameInstance* GI = Cast<UDEGameInstance>(GetGameInstance()))
@@ -126,13 +132,6 @@ void ADEGameMode_Stage::GameOver()
 
             // 4. 위젯에 데이터 전달
             ResultUI->SetResultData(FinalGold, FinalKills, FinalDamageDealt, FinalTime);
-
-            // 5. 마우스 커서 보이게 설정 (중요! 안 하면 버튼 못 누름)
-            if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
-            {
-                PC->bShowMouseCursor = true;
-                PC->SetInputMode(FInputModeUIOnly()); // 게임 조작 막고 UI만
-            }
         }
     }
 

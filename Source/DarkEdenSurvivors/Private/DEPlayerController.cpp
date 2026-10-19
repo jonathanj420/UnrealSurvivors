@@ -96,9 +96,9 @@ void ADEPlayerController::OnPossess(APawn* aPawn)
     if (UDELevelUpManagerComponent* LevelUpManager = GetPawnLevelUpManager())
     {
         LevelUpManager->OnLevelUpChoicesReady.AddUObject(this, &ADEPlayerController::ShowLevelUpChoices);
-        LevelUpManager->OnLevelUpQueueFinished.AddUObject(this, &ADEPlayerController::HandleLevelUpQueueFinished);
+        LevelUpManager->OnLevelUpClosed.AddUObject(this, &ADEPlayerController::HandleLevelUpClosed);
         LevelUpManager->OnChestRewardsReady.AddUObject(this, &ADEPlayerController::ShowChestWidget);
-        LevelUpManager->OnChestQueueFinished.AddUObject(this, &ADEPlayerController::HandleChestQueueFinished);
+        LevelUpManager->OnChestClosed.AddUObject(this, &ADEPlayerController::HandleChestClosed);
     }
 }
 
@@ -107,9 +107,9 @@ void ADEPlayerController::OnUnPossess()
     if (UDELevelUpManagerComponent* LevelUpManager = GetPawnLevelUpManager())
     {
         LevelUpManager->OnLevelUpChoicesReady.RemoveAll(this);
-        LevelUpManager->OnLevelUpQueueFinished.RemoveAll(this);
+        LevelUpManager->OnLevelUpClosed.RemoveAll(this);
         LevelUpManager->OnChestRewardsReady.RemoveAll(this);
-        LevelUpManager->OnChestQueueFinished.RemoveAll(this);
+        LevelUpManager->OnChestClosed.RemoveAll(this);
     }
 
     Super::OnUnPossess();
@@ -174,47 +174,57 @@ void ADEPlayerController::ShowLevelUpChoices(const TArray<UDELevelUpChoiceBase*>
     }
     LevelUpWidget->SetChoices(Choices);
 
-    SetPause(true);
-
-    FInputModeUIOnly InputMode;
-    SetInputMode(InputMode);
-    bShowMouseCursor = true;
+    AddPauseReason(EDEPauseReason::LevelUp);
 }
 
-void ADEPlayerController::HandleLevelUpQueueFinished()
+void ADEPlayerController::HandleLevelUpClosed()
 {
     if (LevelUpWidget)
     {
         LevelUpWidget->RemoveFromParent();
     }
-    ResumeGameIfNothingPending();
+    RemovePauseReason(EDEPauseReason::LevelUp);
 }
 
-void ADEPlayerController::HandleChestQueueFinished()
+void ADEPlayerController::HandleChestClosed()
 {
     if (ChestWidget)
     {
         ChestWidget->RemoveFromParent();
     }
-    ResumeGameIfNothingPending();
+    RemovePauseReason(EDEPauseReason::Chest);
 }
 
-void ADEPlayerController::ResumeGameIfNothingPending()
+void ADEPlayerController::AddPauseReason(EDEPauseReason Reason)
 {
-    const UDELevelUpManagerComponent* LevelUpManager = GetPawnLevelUpManager();
-    if (LevelUpManager && (LevelUpManager->IsSelectingLevelUp() || LevelUpManager->IsChestOpen()))
+    PauseReasons.Add(Reason);
+    ApplyPauseState();
+}
+
+void ADEPlayerController::RemovePauseReason(EDEPauseReason Reason)
+{
+    PauseReasons.Remove(Reason);
+    ApplyPauseState();
+}
+
+void ADEPlayerController::ApplyPauseState()
+{
+    // 멀티플레이에서는 SetPause가 모든 플레이어를 멈추므로 이유별로 월드를 멈출지 다시 정해야 한다. 그 판단은 여기 한 곳에서 한다
+    const bool bShouldPause = !PauseReasons.IsEmpty();
+    SetPause(bShouldPause);
+    bShowMouseCursor = bShouldPause;
+
+    if (bShouldPause)
     {
-        return;
+        // UIOnly로 하면 ESC 바인딩(bExecuteWhenPaused)까지 막히므로 GameAndUI를 쓴다. 월드가 멈춰 있어 이동 입력은 먹지 않는다
+        FInputModeGameAndUI InputMode;
+        InputMode.SetHideCursorDuringCapture(false);
+        SetInputMode(InputMode);
     }
-    ResumeGame();
-}
-
-void ADEPlayerController::ResumeGame()
-{
-    SetPause(false);
-    FInputModeGameOnly Mode;
-    SetInputMode(Mode);
-    bShowMouseCursor = false;
+    else
+    {
+        SetInputMode(FInputModeGameOnly());
+    }
 }
 
 void ADEPlayerController::ShowChestWidget(const TArray<UDELevelUpChoiceBase*>& Rewards)
@@ -246,55 +256,41 @@ void ADEPlayerController::ShowChestWidget(const TArray<UDELevelUpChoiceBase*>& R
         ChestWidget->InitWidget(LevelUpManager);
         ChestWidget->SetupChestRewards(Rewards);
 
-        SetPause(true);
-
-        // 5. 마우스 커서 켜고, 입력 모드를 'UI 전용'으로 변경
-        bShowMouseCursor = true;
-        FInputModeUIOnly InputMode;
-        InputMode.SetWidgetToFocus(ChestWidget->TakeWidget());
-        SetInputMode(InputMode);
+        AddPauseReason(EDEPauseReason::Chest);
     }
 }
 
 void ADEPlayerController::TogglePauseMenu()
 {
-    // 이미 일시정지 상태라면? -> 게임 재개
-    if (IsPaused())
+    if (PauseReasons.Contains(EDEPauseReason::PauseMenu))
     {
-        SetPause(false); // 시간 다시 흐르게
-
-        if (PauseMenuInstance)
-        {
-            PauseMenuInstance->RemoveFromParent(); // 화면에서 UI 제거
-        }
-
-        bShowMouseCursor = false; // 마우스 숨기기
-        SetInputMode(FInputModeGameOnly()); // 키보드/마우스 입력을 다시 게임으로
-    }
-    // 게임 중이었다면? -> 일시정지
-    else
-    {
-        if (PauseMenuClass)
-        {
-            // 위젯 생성 및 화면에 띄우기
-            if (!PauseMenuInstance)
-            {
-                PauseMenuInstance = CreateWidget<UUserWidget>(this, PauseMenuClass);
-            }
-
-            if (PauseMenuInstance)
-            {
-                PauseMenuInstance->AddToViewport(100); // ZOrder 높게 줘서 맨 위에 뜨게
-
-                SetPause(true); // 시간 멈춰!
-
-                bShowMouseCursor = true; // 마우스 커서 짠
-
-                FInputModeGameAndUI InputMode;
-                InputMode.SetWidgetToFocus(PauseMenuInstance->TakeWidget()); // 포커스를 메뉴로
-                SetInputMode(InputMode);
-            }
-        }
+        ClosePauseMenu();
+        return;
     }
 
+    // 멈춘 동안 입력 모드가 GameAndUI라 레벨업/상자/게임오버 창이 떠 있어도 ESC가 들어온다. 그때는 열지 않는다
+    if (!PauseReasons.IsEmpty() || !PauseMenuClass)
+    {
+        return;
+    }
+
+    if (!PauseMenuInstance)
+    {
+        PauseMenuInstance = CreateWidget<UUserWidget>(this, PauseMenuClass);
+    }
+
+    if (PauseMenuInstance)
+    {
+        PauseMenuInstance->AddToViewport(100); // ZOrder 높게 줘서 맨 위에 뜨게
+        AddPauseReason(EDEPauseReason::PauseMenu);
+    }
+}
+
+void ADEPlayerController::ClosePauseMenu()
+{
+    if (PauseMenuInstance)
+    {
+        PauseMenuInstance->RemoveFromParent();
+    }
+    RemovePauseReason(EDEPauseReason::PauseMenu);
 }
