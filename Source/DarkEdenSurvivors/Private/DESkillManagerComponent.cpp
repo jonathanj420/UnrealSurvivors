@@ -539,7 +539,8 @@ void UDESkillManagerComponent::EvolveSkill(const TArray<int32>& ConsumedSkillIDs
             if (OldSkill.SkillObject)
             {
                 // 메모리에서 안전하게 내려가도록 유도 (GC에게 맡김)
-                OldSkill.SkillObject->EndSkill();
+                // EndSkill만 부르면 대기 중인 파이프라인 타이머와 소유 액터가 남는다
+                OldSkill.SkillObject->CancelSkill();
                 OldSkill.SkillObject = nullptr;
             }
 

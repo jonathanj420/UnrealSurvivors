@@ -15,7 +15,7 @@
 - [x] 픽업 장부 누적: `DeactivatePickup`에서 `UnregisterPickup`을 호출해 `ActivePickups`/`MagnetizingPickups`에서 제거. 풀 재사용 시 중복 등록되던 문제도 같이 해결
 - [x] ~~픽업 자석 범위 감지가 `bCanBeMagnetized`를 안 본다~~ 의도된 동작. 플래그는 전역 자석 전용 (VS의 Vacuum처럼 보석류만), 범위 자석은 모든 픽업 대상
 - [x] 풀 중복 반환: `PooledActorSet`(TObjectKey)으로 이미 풀에 있는 액터의 재반환을 막고 Warning 로그 (`[Pool] Duplicate return ignored`)
-- [ ] 풀 stale 반환 (풀 가드로 못 잡음): `UDEAutoSkillBase::CancelSkill`이 `OwnedSkillActorMap`의 weak 참조로 `ReturnToPool`을 부르는데, 그 액터가 이미 반환된 뒤 다른 스킬이 재사용 중이면 남의 액터를 회수한다. 풀링 액터는 Destroy되지 않아서 weak 포인터가 계속 유효하다. 액터에 세대(generation) 번호를 두거나, 반환 시 소유 스킬 맵에서 빼는 방식이 필요하다. 4단계 `EvolveSkill`/`CancelSkill` 정리 때 같이
+- [x] 풀 stale 반환: `CancelSkill`이 반환하기 전에 `ADESkillActorBase::IsActiveFor(this)`(숨김 상태가 아니고 `CachedContext.SourceSkill`이 자기 자신)를 확인한다. 재사용될 때 `InitializeFromContext`가 SourceSkill을 덮어쓰므로 남의 액터는 건너뛴다
 - [ ] AcidBolt 이중 반환 경로 확인: `Explode`가 한 번 반환된 뒤 다시 불리는 경로가 있는지 (같은 프레임 다중 오버랩 등). 가드 로그로 재현 확인 후 원인 수정
 - [x] AOE(Darkness/GreyDarkness/DanseMacabre)가 몬스터를 못 맞히던 문제: 오버랩은 양쪽 모두 `GenerateOverlapEvents`가 켜져 있어야 하는데 몬스터 캡슐과 `ADESkillActorBase` 구체 둘 다 꺼져 있었다. `ADESimpleAOEBase`가 오버랩 이벤트 대신 `OverlapMultiByObjectType`(Monster)으로 직접 쿼리하도록 변경. 장판은 HitInterval마다 한 번 범위 전체 타격, Orbit은 `bHitOnContact`로 매 Tick 쿼리 + 타겟별 쿨다운. SpatialGrid로 갈 때 `QueryTargets` 한 곳만 바꾸면 된다
 - [x] `DarkEdenSurvivors.h`의 채널 매크로 수정: `ECC_Monster`가 `GameTraceChannel2`(DECharacter), `ECC_PlayerAttack`가 `GameTraceChannel3`(Attack 트레이스)로 잘못 정의되어 있었다. ini 기준 5/6으로 고치고, 숫자를 직접 쓰던 6곳도 매크로로 통일. `UDEGameplayLibrary::GetNearestTarget`/`GetRandomTargets`의 반경 쿼리 경로가 몬스터를 못 찾던 문제 해결 (C++ 호출처는 전부 반경 -1이라 드러나지 않았음)
@@ -40,10 +40,22 @@
 - [ ] 데미지 경로
 - [ ] 일시정지와 입력 모드 관리를 한 곳으로
 - [ ] 스턴 2개 → StatusEffect 하나로
-- [ ] 레벨업 큐 (다중 레벨업, 선택지 0개 처리)
+- [ ] 레벨업 큐: `AddExp`가 한 번에 여러 번 `OnLevelUp`을 쏘면 위젯이 여러 개 동시에 생기고, 전부 같은 상태로 선택지를 만든다. 첫 위젯을 닫으면 `ResumeGame`으로 나머지가 열린 채 게임이 재개된다. 선택지 생성은 위젯 `NativeConstruct`가 아니라 매니저가, 적용은 `LevelUpManager::ApplyChoice`를 거치게 (멀티 대비)
+  - 선택지 0개일 때 멈춤은 임시로 `ShowLevelUpUI`에서 위젯을 닫고 일시정지를 건너뛰게 막아둠
 - [ ] 킬 처리를 `FDEDamageResult` 기반으로 일원화 (킬 카운터 중복 해소)
-- [ ] `EvolveSkill`이 `EndSkill` 대신 `CancelSkill`을 쓰도록
+- [x] `EvolveSkill`이 `EndSkill` 대신 `CancelSkill`을 쓰도록. `CancelSkill`은 `CachedContext.SpawnedAOEs`(Orbit, SpawnAOE)도 회수한다. 날아가는 투사체는 추적하지 않으므로 수명이 다할 때까지 남는다
 - [ ] 레거시 스킬을 BP 조립 방식으로 이전
+
+## 스킬 습득/레벨업/진화 (2026-10-20 리뷰)
+
+- [x] 발동/Behavior마다 찍히던 로그 삭제 (`Activate`, `ExecutePipeline`, `SpawnAOE`, `PlayEffect` 빔). `SetSkillData`의 null 역참조 수정
+- [x] 상자 `GetFallbackChoice()`의 nullptr이 보상 배열에 들어가던 문제
+- [ ] "올릴 수 있나" 판정 일원화: `SkillManager`에 판정 함수를 하나 두고 레벨업 카드, 상자, `LevelUpSkill`(bool 반환)이 같이 쓰게. 지금은 슬롯이 꽉 차도 새 스킬 카드가 나오고 고르면 `LevelUpSkill`이 조용히 return해서 레벨업 하나가 사라진다. 최대 레벨 기준도 레벨업은 DT 행 존재, 상자는 `FDESkillRow::MaxLevel`로 다르다 (결정 필요: 어느 쪽을 기준으로)
+- [ ] 상자 보상을 미리 다 뽑고 나중에 적용해서, 진화로 소모된 재료의 업그레이드가 뒤에 적용되면 재료가 Lv1로 다시 생긴다 (재료 `RequiredLevel` < MaxLevel일 때)
+- [ ] 상태 일원화: 레벨이 `SkillLevels`/`FActiveSkill::CurrentLevel`/`UDESkillBase::CurrentLevel` 세 군데, 보유 여부가 `ActiveSkills`/`Inventory::OwnedSkillIDs` 두 군데. `ActiveSkills` 하나로 (결정 필요: Inventory 스킬 목록을 슬롯 순서용으로 남길지)
+- [ ] 레벨업 시 쿨다운 0 리셋이 Delay 파이프라인 진행 중에 `Activate`를 다시 불러 이전 시전을 끊는다 (기획 판단 필요)
+- [ ] 죽은 코드: `GetRandomSkillChoices`, `GetUpgradeableSkills`, `ApplyCharacterDamageMultiplier`, `DeltaCheck`, `TotalReducedCooldownAmount`, `AccessoryWeight`, `bCooldownAfterDuration`(set만 하고 안 읽음)
+- [ ] 스킬 DT를 생성자의 하드코딩 경로로 로드해서 `SkillRowMap`을 만든다. `SkillRowTable`은 EditAnywhere라 BP에서 바꿔도 맵에 반영되지 않는다
 
 ## 몬스터 최적화 (목표 동시 1000마리)
 

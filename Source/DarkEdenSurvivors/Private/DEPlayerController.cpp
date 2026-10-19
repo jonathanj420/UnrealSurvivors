@@ -11,6 +11,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "DEChestWidget.h"
 #include "DELevelUpChoiceBase.h"
+#include "Components/VerticalBox.h"
+#include "DarkEdenSurvivors.h"
 
 ADEPlayerController::ADEPlayerController()
 {
@@ -141,6 +143,14 @@ void ADEPlayerController::ShowLevelUpUI()
     UE_LOG(LogTemp, Warning, TEXT("Created Widget"));
     Widget->InitWidget(LevelUpManager);
     Widget->AddToViewport();
+
+    // 선택지는 NativeConstruct에서 만들어진다. 하나도 없으면 멈춘 채로 누를 게 없으므로 닫는다
+    if (!Widget->ChoiceContainer || Widget->ChoiceContainer->GetChildrenCount() == 0)
+    {
+        UE_LOG(LogDarkEdenSurvivors, Warning, TEXT("[LevelUp] No choices available, skipping level-up UI"));
+        Widget->RemoveFromParent();
+        return;
+    }
 
     SetPause(true);
 

@@ -259,10 +259,10 @@ TArray<UDELevelUpChoiceBase*> UDELevelUpManagerComponent::GenerateChestRewards(f
         {
             ChestRewards.Add(UpgradeChoice);
         }
-        else
+        else if (UDELevelUpChoiceBase* FallbackChoice = GetFallbackChoice())
         {
             // 4. 더 이상 올릴 스킬/악세가 없다면 꽝(돈/힐) 보상으로 대체!
-            ChestRewards.Add(GetFallbackChoice());
+            ChestRewards.Add(FallbackChoice);
         }
     }
 

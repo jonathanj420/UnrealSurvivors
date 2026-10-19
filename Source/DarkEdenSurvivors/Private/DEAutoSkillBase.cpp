@@ -5,11 +5,12 @@
 #include "DECombatComponent.h"
 #include "DESkillBehavior.h"
 #include "DESkillActorBase.h"
+#include "DESimpleAOEBase.h"
+#include "DarkEdenSurvivors.h"
 
 void UDEAutoSkillBase::Activate()
 {
 	if (!SkillOwner) return;
-    UE_LOG(LogTemp, Warning, TEXT("%s Activated"), *GetNameSafe(this));
 	//FDESkillContext Context;
 
     //zis no = game boom
@@ -70,8 +71,9 @@ void UDEAutoSkillBase::ExecuteWithContext(FDESkillContext& Context)
 void UDEAutoSkillBase::SetSkillData(const FDESkillData* NewData)
 {
 	SkillData = NewData;
-	if (SkillData) CurrentLevel = SkillData->Level;
-	UE_LOG(LogTemp, Warning, TEXT("[Skill] %s : level : %d, "), *NewData->SkillName,NewData->Level);
+	if (!SkillData) return;
+	CurrentLevel = SkillData->Level;
+	UE_LOG(LogDarkEdenSurvivors, Log, TEXT("[Skill] %s : level : %d"), *SkillData->SkillName, SkillData->Level);
 }
 
 void UDEAutoSkillBase::InitBehaviors()
@@ -242,7 +244,6 @@ void UDEAutoSkillBase::ExecutePipeline()
         if (!CurrentBehavior) continue;
 
         CurrentBehavior->Execute(CachedContext);
-        UE_LOG(LogTemp, Error, TEXT("Behavior : %s Executed, Current Behavior Index : %d"),*CurrentBehavior->GetName(),CurrentBehaviorIndex);
         //check delay
         float PipelineDelay = CurrentBehavior->GetPipelineDelay();
         if (PipelineDelay > 0.0f)
@@ -280,10 +281,19 @@ void UDEAutoSkillBase::CancelSkill()
 
     for (auto& Pair : OwnedSkillActorMap)
     {
-        if (Pair.Value.IsValid())
-            Pair.Value->ReturnToPool();
+        ADESkillActorBase* Actor = Pair.Value.Get();
+        if (Actor && Actor->IsActiveFor(this))
+            Actor->ReturnToPool();
     }
     OwnedSkillActorMap.Reset(); // this for player death maybe
+
+    // Orbit처럼 수명이 없는 AOE는 여기서 거두지 않으면 영구히 남는다
+    for (const TWeakObjectPtr<ADESimpleAOEBase>& AOE : CachedContext.SpawnedAOEs)
+    {
+        if (AOE.IsValid() && AOE->IsActiveFor(this))
+            AOE->ReturnToPool();
+    }
+    CachedContext.SpawnedAOEs.Reset();
 
     EndSkill(); // 스폰된 이펙트나 장판 치우기
 }

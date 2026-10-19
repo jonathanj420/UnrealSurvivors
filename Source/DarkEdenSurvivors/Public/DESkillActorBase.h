@@ -34,6 +34,9 @@ protected:
 public:
 
     virtual void ReturnToPool();
+
+    // 풀링된 액터는 weak ptr이 유효해도 이미 다른 스킬이 재사용 중일 수 있다
+    bool IsActiveFor(const UDEAutoSkillBase* Skill) const { return !IsHidden() && CachedContext.SourceSkill == Skill; }
 protected:
 
     UFUNCTION()

@@ -104,7 +104,6 @@ void UDEBehavior_PlayEffect::Execute(FDESkillContext& Context)
 
                 // 3. 거리 계산 (Context에 설정된 Range 사용)
                 float FinalRange = Context.GetValue(TEXT("Range"), 1000.0f); // 스킬 스펙의 Range 가져오기
-                UE_LOG(LogTemp, Warning, TEXT("Niagara Beam Range : %f"), FinalRange);
                 // 4. 최종 끝점 좌표 계산 (시작점 + (방향 * 거리))
                 FVector BeamEndLoc = StartLoc + (Direction * FinalRange);
 

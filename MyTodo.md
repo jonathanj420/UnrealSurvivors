@@ -33,6 +33,11 @@
 - [ ] 멀리 떨어진 몬스터가 플레이어 근처로 재배치될 때 뜨거나 박히지 않는지 확인 (특히 CapsuleHalfHeight가 96이 아닌 몬스터)
 - [ ] Standalone(`-log`)에서 몬스터 메시가 보이는지, 로그에 `Monster assets preloaded in N.NNs`가 뜨고 그 뒤에 첫 웨이브가 나오는지 확인
 
+## 스킬 진화
+
+- [ ] Orbit 스킬(DanseMacabre 등)이나 장판, 소환수 스킬을 재료로 진화시킨 뒤, 옛 스킬의 액터가 사라지는지 확인 (`CancelSkill`로 바꿈. 치트 키 `MyAnotherDebugCheat`로 진화 가능)
+- [ ] 진화 직후 다른 스킬의 장판이나 오브가 같이 사라지지 않는지 확인 (풀 재사용 소유권 체크)
+
 ## AOE
 
 - [ ] Darkness/GreyDarkness: 범위 안 몬스터가 HitInterval마다 한꺼번에 맞는지, 처음 켰을 때 바로 한 번 맞는지 확인
