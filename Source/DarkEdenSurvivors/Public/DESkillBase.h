@@ -30,7 +30,6 @@ protected:
 	class UDECombatComponent* CachedCombatComp;
 
 	int32 SkillID = -1;
-	int32 CurrentLevel = 0;
    
 
 };

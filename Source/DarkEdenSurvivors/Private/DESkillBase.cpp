@@ -5,7 +5,6 @@
 UDESkillBase::UDESkillBase()
 {
 	// 기본값 초기화
-	CurrentLevel = 1;
 	SkillOwner = nullptr;
 }
 

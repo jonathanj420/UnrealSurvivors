@@ -22,19 +22,9 @@ void UDEInventoryComponent::BeginPlay()
 
 /* ================= 조회 ================= */
 
-bool UDEInventoryComponent::HasSkill(int32 SkillID) const
-{
-    return OwnedSkillIDs.Contains(SkillID);
-}
-
 bool UDEInventoryComponent::HasAccessory(int32 AccessoryID) const
 {
     return OwnedAccessoryIDs.Contains(AccessoryID);
-}
-
-bool UDEInventoryComponent::IsSkillFull() const
-{
-    return OwnedSkillIDs.Num() >= MaxSkillSlots;
 }
 
 bool UDEInventoryComponent::IsAccessoryFull() const
@@ -42,22 +32,7 @@ bool UDEInventoryComponent::IsAccessoryFull() const
     return OwnedAccessoryIDs.Num() >= MaxAccessorySlots;
 }
 
-const TArray<int32>& UDEInventoryComponent::GetOwnedSkillIDs() const
-{
-    return OwnedSkillIDs;
-}
-
 /* ================= 추가 ================= */
-
-bool UDEInventoryComponent::TryAddSkill(int32 SkillID)
-{
-    if (HasSkill(SkillID)) return false;
-    if (IsSkillFull()) return false;
-
-    OwnedSkillIDs.Add(SkillID);
-    OnInventoryChanged.Broadcast();
-    return true;
-}
 
 bool UDEInventoryComponent::TryAddAccessory(int32 AccessoryID)
 {
@@ -70,16 +45,6 @@ bool UDEInventoryComponent::TryAddAccessory(int32 AccessoryID)
 }
 
 /* ================= 제거 ================= */
-
-bool UDEInventoryComponent::RemoveSkill(int32 SkillID)
-{
-    if (OwnedSkillIDs.Remove(SkillID) > 0)
-    {
-        OnInventoryChanged.Broadcast();
-        return true;
-    }
-    return false;
-}
 
 bool UDEInventoryComponent::RemoveAccessory(int32 AccessoryID)
 {

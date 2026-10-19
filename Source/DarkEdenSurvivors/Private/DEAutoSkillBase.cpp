@@ -72,7 +72,6 @@ void UDEAutoSkillBase::SetSkillData(const FDESkillData* NewData)
 {
 	SkillData = NewData;
 	if (!SkillData) return;
-	CurrentLevel = SkillData->Level;
 	UE_LOG(LogDarkEdenSurvivors, Log, TEXT("[Skill] %s : level : %d"), *SkillData->SkillName, SkillData->Level);
 }
 

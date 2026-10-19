@@ -56,7 +56,8 @@
   - `FDESkillRow::MaxLevel` 컬럼 삭제 여부는 BP에서 쓰는지 Reference Viewer로 확인 후 결정
 - [x] 상자에서 진화 재료가 업그레이드로 같이 뽑혀 Lv1로 다시 생기던 문제: 진화 카드의 `ConsumedSkillIDs`를 업그레이드 후보에서 뺀다
 - [ ] 상자에서 같은 스킬이 업그레이드로 두 번 뽑히면, 남은 레벨이 1개일 때 두 번째는 적용 실패한다 (뽑을 때 예정된 레벨업을 반영하지 않음)
-- [ ] 상태 일원화: 레벨이 `SkillLevels`/`FActiveSkill::CurrentLevel`/`UDESkillBase::CurrentLevel` 세 군데, 보유 여부가 `ActiveSkills`/`Inventory::OwnedSkillIDs` 두 군데. `ActiveSkills` 하나로 (결정 필요: Inventory 스킬 목록을 슬롯 순서용으로 남길지)
+- [x] 상태 일원화: `SkillLevels`, `UDESkillBase::CurrentLevel`(쓰기만 함) 삭제. 레벨은 `FActiveSkill::CurrentLevel` 하나. Inventory의 스킬 목록과 `MaxSkillSlots`를 `UDESkillManagerComponent::SkillSlotOrder`/`MaxSkillSlots`로 이동 (개발자 결정, 2026-10-20). HUD 스킬 위젯은 SkillManager의 `OnSkillUpdated`만 본다. 진화 결과는 재료 중 가장 앞 슬롯에 들어간다. 결과 스킬 데이터가 없으면 재료를 지우기 전에 진화를 취소한다
+- [ ] `UDEInventoryComponent`에는 장신구 ID 목록만 남았는데, `UDEAccessoryComponent`의 장착 맵과 겹친다. 쓰는 곳은 `CheckEvolution`의 `HasAccessory` 하나. AccessoryComponent로 합치고 Inventory 삭제 검토
 - [ ] 레벨업 시 쿨다운 0 리셋이 Delay 파이프라인 진행 중에 `Activate`를 다시 불러 이전 시전을 끊는다 (기획 판단 필요)
 - [ ] 죽은 코드: `GetRandomSkillChoices`, `GetUpgradeableSkills`, `ApplyCharacterDamageMultiplier`, `DeltaCheck`, `TotalReducedCooldownAmount`, `AccessoryWeight`, `bCooldownAfterDuration`(set만 하고 안 읽음)
 - [ ] 스킬 DT를 생성자의 하드코딩 경로로 로드해서 `SkillRowMap`을 만든다. `SkillRowTable`은 EditAnywhere라 BP에서 바꿔도 맵에 반영되지 않는다

@@ -193,12 +193,17 @@ bool UDESkillManagerComponent::CanLevelUp(int32 SkillID) const
     if (!HasSkillData(SkillID, GetSkillLevel(SkillID) + 1)) return false;
 
     // 새로 얻는 스킬이면 슬롯 여유가 있어야 한다
-    if (!HasSkill(SkillID) && (!CachedInventoryComp || CachedInventoryComp->IsSkillFull())) return false;
+    if (!HasSkill(SkillID) && IsSkillSlotFull()) return false;
 
     return true;
 }
 
 bool UDESkillManagerComponent::LevelUpSkill(int32 SkillID)
+{
+    return LevelUpSkillAt(SkillID, INDEX_NONE);
+}
+
+bool UDESkillManagerComponent::LevelUpSkillAt(int32 SkillID, int32 SlotIndex)
 {
     if (!CanLevelUp(SkillID))
     {
@@ -208,7 +213,6 @@ bool UDESkillManagerComponent::LevelUpSkill(int32 SkillID)
     }
 
     const FDESkillRow& RowInfo = SkillRowMap[SkillID];
-    const bool bHasSkill = CachedInventoryComp && CachedInventoryComp->HasSkill(SkillID);
     const int32 NewLevel = GetSkillLevel(SkillID) + 1;
     const FDESkillData* NewData = &InitializedSkills[SkillID][NewLevel];
 
@@ -245,17 +249,18 @@ bool UDESkillManagerComponent::LevelUpSkill(int32 SkillID)
         }
 
         ActiveSkills.Add(SkillID, NewSkill);
-        SkillLevels.Add(SkillID, 1);
+        if (SlotIndex >= 0 && SlotIndex <= SkillSlotOrder.Num())
+        {
+            SkillSlotOrder.Insert(SkillID, SlotIndex);
+        }
+        else
+        {
+            SkillSlotOrder.Add(SkillID);
+        }
 
         UE_LOG(LogTemp, Warning, TEXT("[Skill] NEW SKILL ACQUIRED: %d -> Lv1"), SkillID);
 
-        // 신규 스킬이면 Inventory에 먼저 등록
-        if (!bHasSkill)
-        {
-            CachedInventoryComp->TryAddSkill(SkillID);
-            //OnSkillUpdated.Broadcast(SkillID);
-        }
-
+        OnSkillUpdated.Broadcast(SkillID);
         return true;
     }
 
@@ -264,7 +269,6 @@ bool UDESkillManagerComponent::LevelUpSkill(int32 SkillID)
 
     // 매니저 데이터 갱신
     Active.RowData = NewData;
-    SkillLevels[SkillID] = NewLevel;
     Active.CurrentLevel = NewLevel;
 
     // [중요] 스킬 객체 내부 데이터도 갱신해줘야 함
@@ -299,29 +303,6 @@ bool UDESkillManagerComponent::HasSkillData(int32 SkillID, int32 Level) const
     if (!Levels) return false;
 
     return Levels->Contains(Level);
-}
-
-TArray<int32> UDESkillManagerComponent::GetOwnedSkillIDs() const
-{
-    TArray<int32> Keys;
-    SkillLevels.GetKeys(Keys);
-    return Keys;
-}
-
-TArray<int32> UDESkillManagerComponent::GetUpgradeableSkills() const
-{
-    TArray<int32> Result;
-
-    for (auto& Pair : SkillLevels)
-    {
-        int32 SkillID = Pair.Key;
-        int32 CurLv = Pair.Value;
-
-        if (HasSkillData(SkillID, CurLv + 1))
-            Result.Add(SkillID);
-    }
-
-    return Result;
 }
 
 const FDESkillRow* UDESkillManagerComponent::GetRandomSkillRow()
@@ -457,7 +438,7 @@ bool UDESkillManagerComponent::CheckEvolution(TArray<int32>& OutConsumedSkillIDs
         for (const FDESkillRequirement& ReqSkill : Row->RequiredSkills)
         {
             // 장착 안 했거나, 레벨이 딸리면 바로 이 레시피는 탈락!
-            if (!ActiveSkills.Contains(ReqSkill.SkillID) || SkillLevels[ReqSkill.SkillID] < ReqSkill.RequiredLevel)
+            if (GetSkillLevel(ReqSkill.SkillID) < FMath::Max(1, ReqSkill.RequiredLevel))
             {
                 bHasAllSkills = false;
                 break;
@@ -473,7 +454,7 @@ bool UDESkillManagerComponent::CheckEvolution(TArray<int32>& OutConsumedSkillIDs
         bool bHasAllAccessories = true;
         for (int32 AccID : Row->RequiredAccessoryIDs)
         {
-            if (!CachedInventoryComp->HasAccessory(AccID))
+            if (!CachedInventoryComp || !CachedInventoryComp->HasAccessory(AccID))
             {
                 bHasAllAccessories = false;
                 break;
@@ -504,6 +485,24 @@ bool UDESkillManagerComponent::CheckEvolution(TArray<int32>& OutConsumedSkillIDs
 //void UDESkillManagerComponent::EvolveSkill(int32 BaseSkillID, int32 ResultSkillID)
 void UDESkillManagerComponent::EvolveSkill(const TArray<int32>& ConsumedSkillIDs, int32 ResultSkillID)
 {
+    // 재료를 지운 뒤에 결과 스킬 획득이 실패하면 재료만 사라지므로 데이터부터 확인한다
+    if (!SkillRowMap.Contains(ResultSkillID) || !HasSkillData(ResultSkillID, GetSkillLevel(ResultSkillID) + 1))
+    {
+        UE_LOG(LogDarkEdenSurvivors, Error, TEXT("[Evolution] Result skill %d has no row or no next level data, evolution cancelled"), ResultSkillID);
+        return;
+    }
+
+    // 결과 스킬은 재료 중 가장 앞 슬롯에 들어간다
+    int32 ResultSlotIndex = INDEX_NONE;
+    for (int32 TargetSkillID : ConsumedSkillIDs)
+    {
+        const int32 Index = SkillSlotOrder.Find(TargetSkillID);
+        if (Index != INDEX_NONE && (ResultSlotIndex == INDEX_NONE || Index < ResultSlotIndex))
+        {
+            ResultSlotIndex = Index;
+        }
+    }
+
     // 1. 재료로 소모되는 '모든' 스킬을 순회하며 찢어버리기!
     for (int32 TargetSkillID : ConsumedSkillIDs)
     {
@@ -520,18 +519,16 @@ void UDESkillManagerComponent::EvolveSkill(const TArray<int32>& ConsumedSkillIDs
                 OldSkill.SkillObject = nullptr;
             }
 
-            // 매니저의 관리 목록 및 인벤토리에서 완전히 파냅니다.
             ActiveSkills.Remove(TargetSkillID);
-            SkillLevels.Remove(TargetSkillID);
-            CachedInventoryComp->RemoveSkill(TargetSkillID);
+            SkillSlotOrder.Remove(TargetSkillID);
 
             UE_LOG(LogTemp, Warning, TEXT("[Evolution] Consumed SkillID: %d"), TargetSkillID);
         }
     }
 
     // 2. 새 진화(혹은 합성) 무기 장착! (1렙부터)
-    // 아까 짜두신 '신규 스킬 획득' 함수(LevelUpSkill 등)를 그대로 재활용!
-    LevelUpSkill(ResultSkillID);
+    // 가장 앞 재료보다 앞쪽 슬롯은 지워지지 않았으므로 ResultSlotIndex는 그대로 그 재료 자리다
+    LevelUpSkillAt(ResultSkillID, ResultSlotIndex);
 
     if (FActiveSkill* NewSkill = ActiveSkills.Find(ResultSkillID))
     {

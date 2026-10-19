@@ -6,7 +6,6 @@
 #include "Blueprint/UserWidget.h"
 #include "DESkillInventoryWidget.generated.h"
 
-class UDEInventoryComponent;
 class UDESkillManagerComponent;
 class UPanelWidget;
 class UDESkillSlotWidget;
@@ -40,9 +39,6 @@ protected:
     TSubclassOf<UDESkillSlotWidget> SkillSlotWidgetClass;
 
 private:
-    UPROPERTY()
-    UDEInventoryComponent* Inventory;
-
     UPROPERTY()
     UDESkillManagerComponent* SkillManager;
 

@@ -60,11 +60,21 @@ protected:
 
 	void LoadSkillRowTable();
 	void LoadSkillDataTable();
-	//current skills
-	TMap<int32, int32> SkillLevels;          // SkillID -> Level
 
+	// 보유 스킬과 레벨의 유일한 기준. 레벨은 FActiveSkill::CurrentLevel
 	UPROPERTY(VisibleAnywhere, Category = "Skills")
 	TMap<int32, FActiveSkill> ActiveSkills; // SkillID -> ActiveSkill
+
+	// HUD 슬롯 순서. TMap은 Remove 후 Add하면 빈자리에 들어가 순서가 바뀌므로 따로 둔다.
+	// ActiveSkills와 같은 ID 집합이고, 둘 다 LevelUpSkillAt/EvolveSkill에서만 바뀐다
+	UPROPERTY(VisibleAnywhere, Category = "Skills")
+	TArray<int32> SkillSlotOrder;
+
+	UPROPERTY(EditAnywhere, Category = "Skills")
+	int32 MaxSkillSlots = 6;
+
+	// SlotIndex가 유효하면 새로 얻는 스킬을 그 슬롯에 넣는다 (진화 결과를 재료 자리에)
+	bool LevelUpSkillAt(int32 SkillID, int32 SlotIndex);
 	TMap<int32, TMap<int32, FDESkillData>> InitializedSkills;
 	TMap<int32, FDESkillRow> SkillRowMap;
 
@@ -95,23 +105,18 @@ public:
 	bool HasSkill(int32 SkillID) const
 	{
 		return ActiveSkills.Contains(SkillID);
-
-		//return SkillLevels.Contains(SkillID);
 	}
+	bool IsSkillSlotFull() const { return SkillSlotOrder.Num() >= MaxSkillSlots; }
 	// DataTable에 특정 레벨의 row 존재하는지
 	bool HasSkillData(int32 SkillID, int32 Level) const;
-	// 보유 스킬 리스트
-	TArray<int32> GetOwnedSkillIDs() const;
-
-	// 후보 스킬 목록 (현재 스킬의 다음 레벨만)
-	TArray<int32> GetUpgradeableSkills() const;
+	// 보유 스킬 ID, 슬롯 순서
+	const TArray<int32>& GetOwnedSkillIDs() const { return SkillSlotOrder; }
 
 	FDESkillRow* GetSkillRow(int32 SkillID);
 
 public:
 	// 스킬 목록을 외부에서 '읽기 전용'으로 볼 수 있게 해주는 Getter
 	const TMap<int32, FActiveSkill>& GetActiveSkills() const { return ActiveSkills; }
-	const TMap<int32, int32>& GetSkillLevels() const { return SkillLevels; }
 public:
 
 	TArray<FDESkillData*> GetRandomSkillChoices(int32 Count = 3);

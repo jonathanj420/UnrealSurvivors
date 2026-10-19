@@ -29,19 +29,14 @@ protected:
     virtual void BeginPlay() override;
 
 public:
-    /* ================= 슬롯 제한 ================= */
+    // 스킬 보유와 슬롯은 UDESkillManagerComponent가 관리한다
 
-    UPROPERTY(EditAnywhere, Category = "Inventory|Slots")
-    int32 MaxSkillSlots = 6;
+    /* ================= 슬롯 제한 ================= */
 
     UPROPERTY(EditAnywhere, Category = "Inventory|Slots")
     int32 MaxAccessorySlots = 6;
 
     /* ================= 소유 목록 ================= */
-
-    // SkillID 목록
-    UPROPERTY(VisibleAnywhere, Category = "Inventory|Skills")
-    TArray<int32> OwnedSkillIDs;
 
     // AccessoryID 목록
     UPROPERTY(VisibleAnywhere, Category = "Inventory|Accessories")
@@ -50,20 +45,14 @@ public:
 public:
     /* ================= 조회 ================= */
 
-    bool HasSkill(int32 SkillID) const;
     bool HasAccessory(int32 AccessoryID) const;
 
-    bool IsSkillFull() const;
     bool IsAccessoryFull() const;
-
-    const TArray<int32>& GetOwnedSkillIDs() const;
 
     /* ================= 추가 / 제거 ================= */
 
-    bool TryAddSkill(int32 SkillID);
     bool TryAddAccessory(int32 AccessoryID);
 
-    bool RemoveSkill(int32 SkillID);
     bool RemoveAccessory(int32 AccessoryID);
 
 public:

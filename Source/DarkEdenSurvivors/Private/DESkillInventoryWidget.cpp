@@ -2,7 +2,6 @@
 
 
 #include "DESkillInventoryWidget.h"
-#include "DEInventoryComponent.h"
 #include "DESkillManagerComponent.h"
 #include "DESkillSlotWidget.h"
 #include "Components/PanelWidget.h"
@@ -24,21 +23,14 @@ void UDESkillInventoryWidget::InitializeSkillWidget(APawn* NewPawn)
 
     // 기존 연결 끊기 (혹시 재연결일 수 있으니)
     if (SkillManager) SkillManager->OnSkillUpdated.RemoveAll(this);
-    if (Inventory) Inventory->OnInventoryChanged.RemoveAll(this);
 
     // 컴포넌트 찾기
-    Inventory = NewPawn->FindComponentByClass<UDEInventoryComponent>();
     SkillManager = NewPawn->FindComponentByClass<UDESkillManagerComponent>();
 
-    // check는 게임을 터뜨리니 if로 방어
+    // 획득, 레벨업, 진화 모두 OnSkillUpdated로 온다
     if (SkillManager)
     {
         SkillManager->OnSkillUpdated.AddUObject(this, &UDESkillInventoryWidget::OnSkillUpdated);
-    }
-
-    if (Inventory)
-    {
-        Inventory->OnInventoryChanged.AddUObject(this, &UDESkillInventoryWidget::Refresh);
     }
 
     // 바로 갱신
@@ -47,11 +39,11 @@ void UDESkillInventoryWidget::InitializeSkillWidget(APawn* NewPawn)
 
 void UDESkillInventoryWidget::Refresh()
 {
-    if (!SkillSlotPanel) return;
+    if (!SkillSlotPanel || !SkillManager) return;
 
     SkillSlotPanel->ClearChildren();
 
-    const TArray<int32>& SkillIDs = Inventory->GetOwnedSkillIDs();
+    const TArray<int32>& SkillIDs = SkillManager->GetOwnedSkillIDs();
 
     for (int32 SkillID : SkillIDs)
     {
