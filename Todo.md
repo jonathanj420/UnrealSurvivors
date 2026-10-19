@@ -53,6 +53,10 @@
 - [x] 몬스터 캡슐을 내비게이션에서 제외 (`SetCanEverAffectNavigation(false)`). 테스트 맵에 NavMesh + `RuntimeGeneration=Dynamic`이 있어서 몬스터가 움직일 때마다 내비 옥트리 갱신이 일어났을 가능성. 측정으로 효과 확인 필요
 - [ ] 렌더 설정: `r.RayTracing=True` 끄기 (사용처 없음, 스키닝 메시 RT 갱신 비용 가능성). `r.Substrate`, `r.GenerateMeshDistanceFields`도 사용처 확인 후 정리
 - [ ] 측정: Standalone, `t.MaxFPS 0`, `r.VSync 0`, `stat unit`으로 300/600/1000마리. 300마리 60fps는 이전 측정(상한 여부 불명). 2026-10-19 300마리: Frame/Game 12.9ms, Draw 5.6, RHIT 7.0, GPU 5.5, Draws 1078 (게임 스레드 병목)
+- [x] 측정 ① 내비 제외 (2026-10-20, 300마리): Game 12.80, Draw 6.11, RHIT 7.57, GPU 5.32. 효과 없음 (`Docs/aoe.png`)
+- [x] 측정 ② 캡슐 `NoCollision` 임시 실험 (2026-10-20, 300마리, 원복함): Game 9.64 (-3.2ms), Draw 10.94, RHIT 7.18, GPU 5.41 (`Docs/nocolunit.png`). 콜리전(Chaos 바디 갱신) 비용은 300마리에 약 3ms. Draw가 6.1에서 10.9로 오른 이유는 불명 (에디터를 띄워둔 상태였음)
+  - `stat game` (`Docs/nocolgame.png`): World Tick 6.48, Tick Time 6.15 (Ticks Queued 345, 몬스터 액터 Tick은 꺼져 있으니 대부분 SkeletalMesh 컴포넌트 Tick으로 추정, `stat anim`으로 확인 필요), Post Tick Component Update 3.13, Transform or RenderData 2.57 (616회 = 몬스터당 2개 컴포넌트), MoveComponent 1.19 (303회)
+  - 결론: 남은 비용은 몬스터별 SkeletalMesh(애니메이션 Tick, 트랜스폼/렌더 데이터 갱신, 드로우)에 몰려 있다. SpatialGrid는 약 3ms, ISM + VAT가 더 큰 덩어리
 - [ ] 측정 순서 (한 번에 하나씩 바꿔서 효과를 분리한다): ① 내비 제외 빌드(`f9ff2fc`)로 재측정 → ② 임시 실험: `DEMonsterBase.cpp`의 캡슐을 `NoCollision`으로 바꿔 Game ms가 얼마나 주는지 확인 (스킬 판정은 깨짐, 측정 후 원복) → ③ `r.RayTracing=False`. 숫자가 애매하면 Unreal Insights(`-trace=default`)로 GameThread 프로파일. ②에서 많이 줄면 SpatialGrid 쿼리를 먼저, 거의 안 줄면 ISM + VAT를 먼저
 - [ ] 스킬 타겟 쿼리를 물리 씬 대신 SpatialGrid로, 몬스터 콜리전 끄기 (Chaos 바디 갱신 제거)
   - 몬스터→플레이어는 이미 거리 판정이라 그대로. 몬스터 오버랩 이벤트도 이미 꺼져 있다 (비용은 오버랩 이벤트가 아니라 `TeleportPhysics` 이동에 따른 Chaos 바디 갱신)
