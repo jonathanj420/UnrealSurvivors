@@ -90,7 +90,9 @@ void ADEMonsterRepositionManager::RepositionMonster(ADEMonsterBase* Monster)
 {
     if (!Monster) return;
 
-    const FVector NewPos = GetRandomPositionAroundPlayer();
+    // 몬스터 이동은 Z를 바꾸지 않으므로 현재 Z가 곧 캡슐 높이를 반영한 지면 높이다
+    FVector NewPos = GetRandomPositionAroundPlayer();
+    NewPos.Z = Monster->GetActorLocation().Z;
 
     // 순간이동
     Monster->SetActorLocation(NewPos, false, nullptr, ETeleportType::TeleportPhysics);

@@ -51,8 +51,8 @@
 - [ ] 측정: Standalone, `t.MaxFPS 0`, `r.VSync 0`, `stat unit`으로 300/600/1000마리. 300마리 60fps는 이전 측정(상한 여부 불명)
 - [ ] 스킬 타겟 쿼리를 물리 씬 대신 SpatialGrid로, 몬스터 콜리전 끄기 (Chaos 바디 갱신 제거)
 - [ ] 렌더링을 몬스터별 SkeletalMesh에서 ISM + VAT로 (개발자가 ISM 진행 승인, 공부 목적 포함)
-- [ ] `ResolveOverlaps`의 프레임마다 생성되는 로컬 `TSet` 재사용
-- [ ] `ADEMonsterRepositionManager` 재배치 Z가 플레이어 Z 그대로 (캡슐 높이 미반영)
+- [x] `ResolveOverlaps`의 프레임마다 생성되는 로컬 `TSet` 재사용 (`TouchedCells` 멤버 하나로 통합)
+- [x] `ADEMonsterRepositionManager` 재배치 Z가 플레이어 Z 그대로였음. 몬스터 이동은 Z를 안 바꾸므로 몬스터 자신의 현재 Z를 유지
 
 ## 웨이브/스폰 (개발자가 직접 정리 예정, Claude는 요청 시에만)
 
