@@ -38,6 +38,12 @@
 - [ ] Orbit 스킬(DanseMacabre 등)이나 장판, 소환수 스킬을 재료로 진화시킨 뒤, 옛 스킬의 액터가 사라지는지 확인 (`CancelSkill`로 바꿈. 치트 키 `MyAnotherDebugCheat`로 진화 가능)
 - [ ] 진화 직후 다른 스킬의 장판이나 오브가 같이 사라지지 않는지 확인 (풀 재사용 소유권 체크)
 
+## 스킬 레벨업
+
+- [ ] 스킬 슬롯 6칸을 다 채운 뒤 레벨업 카드에 새 스킬이 안 나오는지 확인
+- [ ] DT 행이 9개보다 적은 스킬을 최대 레벨까지 올린 뒤, 상자에서 그 스킬 업그레이드가 안 나오는지 확인
+- [ ] Reference Viewer로 `FDESkillRow::MaxLevel`(DESkillRowTable의 MaxLevel 컬럼)을 BP 위젯 등에서 쓰는지 확인. 안 쓰면 삭제 가능
+
 ## AOE
 
 - [ ] Darkness/GreyDarkness: 범위 안 몬스터가 HitInterval마다 한꺼번에 맞는지, 처음 켰을 때 바로 한 번 맞는지 확인

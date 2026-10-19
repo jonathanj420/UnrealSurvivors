@@ -7,6 +7,7 @@
 #include "DEStatComponent.h"
 #include "DEInventoryComponent.h"
 #include "Engine/World.h"
+#include "DarkEdenSurvivors.h"
 
 // Sets default values for this component's properties
 UDESkillManagerComponent::UDESkillManagerComponent()
@@ -186,50 +187,29 @@ void UDESkillManagerComponent::InitSkills()
 
 
 
-void UDESkillManagerComponent::LevelUpSkill(int32 SkillID)
+bool UDESkillManagerComponent::CanLevelUp(int32 SkillID) const
 {
-    UE_LOG(LogTemp, Warning, TEXT("Try Level Up Skill for : %d"),SkillID);
-    // 1. 데이터 테이블 유효성 검사 (기존 유지)
-    if (!CachedInventoryComp) return;
+    if (!SkillRowMap.Contains(SkillID)) return false;
+    if (!HasSkillData(SkillID, GetSkillLevel(SkillID) + 1)) return false;
 
-    // 신규 스킬인데 슬롯이 꽉 찼으면 컷
-    const bool bHasSkill = CachedInventoryComp->HasSkill(SkillID);
-    if (!bHasSkill && CachedInventoryComp->IsSkillFull())
+    // 새로 얻는 스킬이면 슬롯 여유가 있어야 한다
+    if (!HasSkill(SkillID) && (!CachedInventoryComp || CachedInventoryComp->IsSkillFull())) return false;
+
+    return true;
+}
+
+bool UDESkillManagerComponent::LevelUpSkill(int32 SkillID)
+{
+    if (!CanLevelUp(SkillID))
     {
-        UE_LOG(LogTemp, Warning,
-            TEXT("[Skill] Cannot acquire Skill %d: Skill slots full"),
-            SkillID);
-        return;
-    }
-
-  
-
-    if (!SkillRowMap.Contains(SkillID))
-    {
-        UE_LOG(LogTemp, Error, TEXT("[Skill] LevelUpSkill: SkillRowMap missing SkillID %d"), SkillID);
-        return;
+        UE_LOG(LogDarkEdenSurvivors, Warning, TEXT("[Skill] Cannot level up Skill %d (Lv%d): missing row, max level, or slots full"),
+            SkillID, GetSkillLevel(SkillID));
+        return false;
     }
 
     const FDESkillRow& RowInfo = SkillRowMap[SkillID];
-
-    if (!InitializedSkills.Contains(SkillID))
-    {
-        UE_LOG(LogTemp, Error, TEXT("[Skill] LevelUpSkill: InitializedSkills missing SkillID %d"), SkillID);
-        return;
-    }
-
-    // 2. 레벨 계산
-    int32 CurrentLevel = SkillLevels.Contains(SkillID) ? SkillLevels[SkillID] : 0;
-    int32 NewLevel = CurrentLevel + 1;
-
-    // 만렙 체크
-    if (!InitializedSkills[SkillID].Contains(NewLevel))
-    {
-        UE_LOG(LogTemp, Warning, TEXT("[Skill] NO MORE LEVEL -> Skill %d L%d"), SkillID, CurrentLevel);
-        return;
-    }
-    UE_LOG(LogTemp, Warning, TEXT("Skill Level Up Passed All Criteria"));
-    // 새 데이터 가져오기
+    const bool bHasSkill = CachedInventoryComp && CachedInventoryComp->HasSkill(SkillID);
+    const int32 NewLevel = GetSkillLevel(SkillID) + 1;
     const FDESkillData* NewData = &InitializedSkills[SkillID][NewLevel];
 
     // --- [CASE 1: 신규 스킬 획득] ---
@@ -276,7 +256,7 @@ void UDESkillManagerComponent::LevelUpSkill(int32 SkillID)
             //OnSkillUpdated.Broadcast(SkillID);
         }
 
-        return;
+        return true;
     }
 
     // --- [CASE 2: 기존 스킬 레벨업] ---
@@ -310,7 +290,7 @@ void UDESkillManagerComponent::LevelUpSkill(int32 SkillID)
 
     OnSkillUpdated.Broadcast(SkillID);
     UE_LOG(LogTemp, Warning, TEXT("[Skill] LEVEL UP -> %d -> Lv%d"), SkillID, NewLevel);
-
+    return true;
 }
 
 bool UDESkillManagerComponent::HasSkillData(int32 SkillID, int32 Level) const
@@ -352,15 +332,11 @@ const FDESkillRow* UDESkillManagerComponent::GetRandomSkillRow()
     for (auto& Pair : InitializedSkills)
     {
         int32 SkillID = Pair.Key;
-        //check if evol
+        // 진화 결과 스킬은 진화로만 얻는다. 얻은 뒤의 레벨업은 일반 스킬과 같다
         const FDESkillRow* Row = GetSkillRow(SkillID);
-        if (!Row || Row->bIsEvolutionResult) continue;
+        if (!Row || (Row->bIsEvolutionResult && !HasSkill(SkillID))) continue;
 
-        //check if max lvl
-        int32 CurrentLevel = GetSkillLevel(SkillID);
-        int32 NextLevel = CurrentLevel + 1;
-
-        if (HasSkillData(SkillID, NextLevel))
+        if (CanLevelUp(SkillID))
         {
             Candidates.Add(SkillID);
         }

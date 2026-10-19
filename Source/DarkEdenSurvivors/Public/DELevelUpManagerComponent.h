@@ -7,6 +7,7 @@
 #include "DELevelUpManagerComponent.generated.h"
 
 class UDELevelUpChoiceBase;
+class UDELevelUpChoice_Skill;
 class UDEAccessoryData;
 class UDataTable;
 
@@ -63,10 +64,10 @@ private:
     int32 CalculateChestJackpot(float Luck);
 
     // 2단계: 현재 가진 스킬 중 진화 가능한 녀석이 있는지 탐색
-    UDELevelUpChoiceBase* TryGetEvolutionChoice();
+    UDELevelUpChoice_Skill* TryGetEvolutionChoice();
 
     // 3단계: 현재 가진 스킬/악세 중 '만렙이 아닌 녀석' 하나를 랜덤으로 뽑기
-    UDELevelUpChoiceBase* GetRandomUpgradableChoice();
+    UDELevelUpChoiceBase* GetRandomUpgradableChoice(const TArray<int32>& ExcludedSkillIDs);
 
     // 4단계: 다 만렙일 때 줄 꽝 보상 (돈 주머니, 체력 회복 등)
     UDELevelUpChoiceBase* GetFallbackChoice();

@@ -245,9 +245,12 @@ TArray<UDELevelUpChoiceBase*> UDELevelUpManagerComponent::GenerateChestRewards(f
     UE_LOG(LogTemp, Warning, TEXT("[Chest] Chest Reward Count: %d"), RewardCount);
 
     // 2. [최우선 순위] 진화 가능한 스킬이 있는지 확인!
-    if (UDELevelUpChoiceBase* EvolutionChoice = TryGetEvolutionChoice())
+    // 보상은 한꺼번에 적용되므로, 진화로 사라질 재료를 업그레이드로 뽑으면 재료가 Lv1로 다시 생긴다
+    TArray<int32> ConsumedSkillIDs;
+    if (UDELevelUpChoice_Skill* EvolutionChoice = TryGetEvolutionChoice())
     {
         ChestRewards.Add(EvolutionChoice);
+        ConsumedSkillIDs = EvolutionChoice->ConsumedSkillIDs;
         RewardCount--; // 진화 스킬이 한 자리를 차지함!
         UE_LOG(LogTemp, Warning, TEXT("[Chest] Evolution complete"));
     }
@@ -255,7 +258,7 @@ TArray<UDELevelUpChoiceBase*> UDELevelUpManagerComponent::GenerateChestRewards(f
     // 3. 남은 자리 채우기 (기존에 가진 스킬/악세 중에서만 레벨업)
     for (int32 i = 0; i < RewardCount; ++i)
     {
-        if (UDELevelUpChoiceBase* UpgradeChoice = GetRandomUpgradableChoice())
+        if (UDELevelUpChoiceBase* UpgradeChoice = GetRandomUpgradableChoice(ConsumedSkillIDs))
         {
             ChestRewards.Add(UpgradeChoice);
         }
@@ -283,7 +286,7 @@ int32 UDELevelUpManagerComponent::CalculateChestJackpot(float Luck)
 }
 
 
-UDELevelUpChoiceBase* UDELevelUpManagerComponent::TryGetEvolutionChoice()
+UDELevelUpChoice_Skill* UDELevelUpManagerComponent::TryGetEvolutionChoice()
 {
     UE_LOG(LogTemp, Warning, TEXT("[Chest] Try Get Evolution/Synthesis Choice"));
     APawn* OwnerPawn = Cast<APawn>(GetOwner());
@@ -331,7 +334,7 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::TryGetEvolutionChoice()
 
 }
 
-UDELevelUpChoiceBase* UDELevelUpManagerComponent::GetRandomUpgradableChoice()
+UDELevelUpChoiceBase* UDELevelUpManagerComponent::GetRandomUpgradableChoice(const TArray<int32>& ExcludedSkillIDs)
 {
     APawn* OwnerPawn = Cast<APawn>(GetOwner());
     if (!OwnerPawn) return nullptr;
@@ -353,11 +356,7 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::GetRandomUpgradableChoice()
     {
         // Pair.Key는 SkillID, Pair.Value는 FActiveSkill 구조체라고 가정
         int32 SkillID = Pair.Key;
-        int32 CurrentLevel = SkillMgr->GetSkillLevels().Contains(SkillID) ? SkillMgr->GetSkillLevels()[SkillID] : 1;
-
-        // 데이터 테이블에서 MaxLevel 가져오기
-        const FDESkillRow* Row = SkillMgr->GetSkillRow(SkillID);
-        if (Row && CurrentLevel < Row->MaxLevel)
+        if (SkillMgr->CanLevelUp(SkillID) && !ExcludedSkillIDs.Contains(SkillID))
         {
             UpgradableSkillIDs.Add(SkillID);
         }

@@ -90,6 +90,7 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadOnly)
     FText BaseDescription;
 
+    // 판정에는 쓰지 않는다. 최대 레벨은 DESkillDataTable의 레벨 행으로 정해진다 (UDESkillManagerComponent::CanLevelUp)
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int32 MaxLevel=9;
 

@@ -50,8 +50,11 @@
 
 - [x] 발동/Behavior마다 찍히던 로그 삭제 (`Activate`, `ExecutePipeline`, `SpawnAOE`, `PlayEffect` 빔). `SetSkillData`의 null 역참조 수정
 - [x] 상자 `GetFallbackChoice()`의 nullptr이 보상 배열에 들어가던 문제
-- [ ] "올릴 수 있나" 판정 일원화: `SkillManager`에 판정 함수를 하나 두고 레벨업 카드, 상자, `LevelUpSkill`(bool 반환)이 같이 쓰게. 지금은 슬롯이 꽉 차도 새 스킬 카드가 나오고 고르면 `LevelUpSkill`이 조용히 return해서 레벨업 하나가 사라진다. 최대 레벨 기준도 레벨업은 DT 행 존재, 상자는 `FDESkillRow::MaxLevel`로 다르다 (결정 필요: 어느 쪽을 기준으로)
-- [ ] 상자 보상을 미리 다 뽑고 나중에 적용해서, 진화로 소모된 재료의 업그레이드가 뒤에 적용되면 재료가 Lv1로 다시 생긴다 (재료 `RequiredLevel` < MaxLevel일 때)
+- [x] "올릴 수 있나" 판정 일원화: `UDESkillManagerComponent::CanLevelUp`을 레벨업 카드(`GetRandomSkillRow`), 상자(`GetRandomUpgradableChoice`), `LevelUpSkill`(이제 bool 반환)이 같이 쓴다. 슬롯이 꽉 차면 새 스킬 카드가 안 나온다. 최대 레벨은 DT 행 기준으로 결정 (개발자, 2026-10-20). `FDESkillRow::MaxLevel`은 판정에 안 쓴다
+  - 동작 변경: 이미 얻은 진화 결과 스킬도 DT에 다음 레벨 행이 있으면 레벨업 카드에 나온다 (전에는 상자에서만 올라갔다)
+  - `FDESkillRow::MaxLevel` 컬럼 삭제 여부는 BP에서 쓰는지 Reference Viewer로 확인 후 결정
+- [x] 상자에서 진화 재료가 업그레이드로 같이 뽑혀 Lv1로 다시 생기던 문제: 진화 카드의 `ConsumedSkillIDs`를 업그레이드 후보에서 뺀다
+- [ ] 상자에서 같은 스킬이 업그레이드로 두 번 뽑히면, 남은 레벨이 1개일 때 두 번째는 적용 실패한다 (뽑을 때 예정된 레벨업을 반영하지 않음)
 - [ ] 상태 일원화: 레벨이 `SkillLevels`/`FActiveSkill::CurrentLevel`/`UDESkillBase::CurrentLevel` 세 군데, 보유 여부가 `ActiveSkills`/`Inventory::OwnedSkillIDs` 두 군데. `ActiveSkills` 하나로 (결정 필요: Inventory 스킬 목록을 슬롯 순서용으로 남길지)
 - [ ] 레벨업 시 쿨다운 0 리셋이 Delay 파이프라인 진행 중에 `Activate`를 다시 불러 이전 시전을 끊는다 (기획 판단 필요)
 - [ ] 죽은 코드: `GetRandomSkillChoices`, `GetUpgradeableSkills`, `ApplyCharacterDamageMultiplier`, `DeltaCheck`, `TotalReducedCooldownAmount`, `AccessoryWeight`, `bCooldownAfterDuration`(set만 하고 안 읽음)

@@ -73,8 +73,13 @@ protected:
 	float DeltaCheck = 0.0f;
 
 public:
+	// 실패하면 false. 조건은 CanLevelUp과 같다
 	UFUNCTION()
-	void LevelUpSkill(int32 SkillID);
+	bool LevelUpSkill(int32 SkillID);
+
+	// 레벨업 카드, 상자, LevelUpSkill이 같이 쓰는 판정.
+	// 최대 레벨은 DESkillDataTable에 다음 레벨 행이 있는지로 정한다 (FDESkillRow::MaxLevel은 보지 않는다)
+	bool CanLevelUp(int32 SkillID) const;
 
 	// 스킬 레벨 가져오기
 	int32 GetSkillLevel(int32 SkillID) const
