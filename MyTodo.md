@@ -38,6 +38,11 @@
 - [ ] Darkness/GreyDarkness: 범위 안 몬스터가 HitInterval마다 한꺼번에 맞는지, 처음 켰을 때 바로 한 번 맞는지 확인
 - [ ] DanseMacabre(Orbit): 해골이 지나갈 때 몬스터가 맞는지, 같은 몬스터가 HitInterval보다 자주 맞지 않는지 확인
 
+## SpatialGrid 쿼리 (몬스터 콜리전은 아직 켜져 있음)
+
+- [ ] 스킬 전부가 예전처럼 맞는지 확인: 투사체(관통 횟수대로 가까운 적부터), AcidBolt 폭발, GoreGland, Darkness/DanseMacabre, 범위/부채꼴/스윕 스킬, 가장 가까운 적 타겟팅
+- [ ] BP에서 몬스터 콜리전이나 오버랩에 의존하는 곳이 있는지 확인 (BP 스킬, 레벨 BP 등). 없으면 몬스터 캡슐 콜리전을 끈다
+
 ## 성능 측정
 
 - [ ] `TestStage001`/`TestBlank`에서 `NavMeshBoundsVolume`, `RecastNavMesh` 삭제 (내비 사용처 없음. `TestPrototype`은 완료, 미커밋)

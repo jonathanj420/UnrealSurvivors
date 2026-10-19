@@ -2,7 +2,8 @@
 
 
 #include "DESimpleProjectileBase.h"
-#include "DarkEdenSurvivors.h"
+#include "DEMonsterQuerySubsystem.h"
+#include "Engine/World.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/RotatingMovementComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -152,55 +153,36 @@ void ADESimpleProjectileBase::PerformCollisionDetection(float DeltaTime)
 	FVector StartLoc = LastFrameLocation;
 	FVector EndLoc = GetActorLocation();
 
-	TArray<FHitResult> HitResults;
-	FCollisionShape SphereShape = FCollisionShape::MakeSphere(Radius);
+	const UDEMonsterQuerySubsystem* Query = World->GetSubsystem<UDEMonsterQuerySubsystem>();
+	if (!Query) return;
 
-	// 1. 엔진에 스캐너 발사
-	bool bHit = World->SweepMultiByChannel(
-		HitResults,
-		StartLoc,
-		EndLoc,
-		FQuat::Identity,
-		ECC_PlayerAttack,
-		SphereShape
-	);
+	// 1. 이전 위치에서 현재 위치까지 쓸고 지나간 영역의 몬스터 (가까운 순)
+	TArray<ADEMonsterBase*> HitMonsters;
+	Query->QuerySegment(StartLoc, EndLoc, Radius, HitMonsters);
 
-	/*if (HitResults.Num() > 0)
+	for (ADEMonsterBase* Target : HitMonsters)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Target Hit : %s"),*HitResults[0].GetActor()->GetName());
-	}*/
-	if (bHit)
-	{
-		for (const FHitResult& Hit : HitResults)
+		// 2. 이미 맞힌 대상은 건너뛴다 (관통 중 같은 적을 다시 때리지 않도록)
+		if (HitCooldownMap.Contains(Target)) continue;
+
+		// 3. 타격 처리
+		if (TryDealDamage(Target))
 		{
-			AActor* Target = Hit.GetActor();
+			// 타격 성공 시 명부에 이름 올리기 (투사체는 시간값을 안 쓰므로 0.0f 저장)
+			HitCooldownMap.Add(Target, 0.0f);
 
-			// 2. 유효성 검사 (나 자신, 주인 무시)
-			if (!Target || Target == this || Target == GetInstigator()) continue;
+			OnTargetHit(Target);
 
-			// 3. ★ [투사체 핵심 룰] 명부에 이름이 있다면 시간 무시하고 무조건 통과 (관통 버그 방지)
-			if (HitCooldownMap.Contains(Target)) continue;
-
-			// 4. 타격 처리
-			if (TryDealDamage(Target))
+			// 관통력 감소 및 소멸 처리
+			if (Penetration != -1 && --Penetration <= 0)
 			{
-				// 타격 성공 시 명부에 이름 올리기 (투사체는 시간값을 안 쓰므로 0.0f 저장)
-				HitCooldownMap.Add(Target, 0.0f);
-
-				OnTargetHit(Target);
-
-
-				// 관통력 감소 및 소멸 처리
-				if (Penetration != -1 && --Penetration <= 0)
-				{
-					ReturnToPool();
-					return;
-				}
+				ReturnToPool();
+				return;
 			}
 		}
 	}
 
-	// 5. 다음 프레임 스캔을 위해 현재 위치를 캐싱
+	// 4. 다음 프레임 스캔을 위해 현재 위치를 캐싱
 	LastFrameLocation = EndLoc;
 }
 

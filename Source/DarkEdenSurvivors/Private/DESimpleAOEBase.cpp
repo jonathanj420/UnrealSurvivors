@@ -2,7 +2,6 @@
 
 
 #include "DESimpleAOEBase.h"
-#include "DarkEdenSurvivors.h"
 #include "Components/SphereComponent.h"
 #include "NiagaraComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -14,7 +13,8 @@
 #include "DEAutoSkillBase.h"
 #include "DEHealthComponent.h"
 #include "Engine/World.h"
-#include "Engine/OverlapResult.h"
+#include "DEMonsterQuerySubsystem.h"
+#include "DEMonsterBase.h"
 
 ADESimpleAOEBase::ADESimpleAOEBase()
 {
@@ -78,45 +78,16 @@ void ADESimpleAOEBase::Tick(float DeltaTime)
         PulseTimer = HitCooldown;
     }
 
-    TArray<AActor*> Targets;
-    QueryTargets(Targets);
+    const UDEMonsterQuerySubsystem* Query = GetWorld()->GetSubsystem<UDEMonsterQuerySubsystem>();
+    if (!Query) return;
 
-    for (AActor* Target : Targets)
+    TArray<ADEMonsterBase*> Targets;
+    Query->QueryCircle(GetActorLocation(), Radius, Targets);
+
+    for (ADEMonsterBase* Target : Targets)
     {
         if (bHitOnContact && !CanHitTarget(Target)) continue;
         OnHitTarget(Target);
-    }
-}
-
-void ADESimpleAOEBase::QueryTargets(TArray<AActor*>& OutTargets) const
-{
-    UWorld* World = GetWorld();
-    if (!World) return;
-
-    FCollisionQueryParams QueryParams;
-    QueryParams.AddIgnoredActor(this);
-    QueryParams.AddIgnoredActor(GetOwner());
-
-    // 몬스터 오브젝트 타입만 검색
-    FCollisionObjectQueryParams ObjectQueryParams;
-    ObjectQueryParams.AddObjectTypesToQuery(ECC_Monster);
-
-    TArray<FOverlapResult> OverlapResults;
-    World->OverlapMultiByObjectType(
-        OverlapResults,
-        GetActorLocation(),
-        FQuat::Identity,
-        ObjectQueryParams,
-        FCollisionShape::MakeSphere(Radius),
-        QueryParams);
-
-    // 몬스터는 캡슐만 콜리전이 있어서 액터당 결과가 하나다
-    for (const FOverlapResult& Result : OverlapResults)
-    {
-        if (AActor* Target = Result.GetActor())
-        {
-            OutTargets.Add(Target);
-        }
     }
 }
 

@@ -2,6 +2,9 @@
 
 
 #include "DEBehavior_SelectTargetsBySweep.h"
+#include "DEMonsterBase.h"
+#include "DEMonsterQuerySubsystem.h"
+#include "Engine/World.h"
 #include "DrawDebugHelpers.h"
 #include "DESkillContext.h"
 
@@ -27,38 +30,13 @@ void UDEBehavior_SelectTargetsBySweep::Execute(FDESkillContext& Context)
 
     FVector EndLoc = StartLoc + (Direction * FinalRange);
 
-    TSet<AActor*> UniqueResults;
-    FCollisionQueryParams Params;
-    //if (bIgnoreInstigator) Params.AddIgnoredActor(Context.Instigator);
-
-    TArray<FHitResult> HitResults;
-
-    // 4. 스윕 쏘기
-    bool bHit = World->SweepMultiByProfile(
-        HitResults,
-        StartLoc,
-        EndLoc,
-        FQuat::Identity,
-        FName(TEXT("PlayerAttack")),
-        FCollisionShape::MakeSphere(FinalRadius),
-        Params
-    );
-
-    // 5. 이전 타겟(1마리) 정보는 지우고, 스윕으로 긁어온 애들로 배열 덮어씌우기
+    // 4. 이전 타겟(1마리) 정보는 지우고, 스윕 영역의 몬스터로 덮어씌우기
     Context.Targets.Empty();
-    if (HitResults.Num() > 0)
-    {
-        for (const FHitResult& Res : HitResults)
-        {
-            AActor* HitActor = Res.GetActor();
-            if (HitActor)
-            {
-                UniqueResults.Add(HitActor);
-            }
-        }
-        Context.Targets = UniqueResults.Array();
-    }
 
-   
+    const UDEMonsterQuerySubsystem* Query = World ? World->GetSubsystem<UDEMonsterQuerySubsystem>() : nullptr;
+    if (!Query) return;
 
+    TArray<ADEMonsterBase*> HitMonsters;
+    Query->QuerySegment(StartLoc, EndLoc, FinalRadius, HitMonsters);
+    Context.Targets.Append(HitMonsters);
 }

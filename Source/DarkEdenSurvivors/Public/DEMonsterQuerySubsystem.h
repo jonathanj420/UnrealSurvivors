@@ -34,7 +34,7 @@ public:
     // 가장 가까운 몬스터. MaxRadius < 0이면 거리 제한 없음
     ADEMonsterBase* QueryNearest(const FVector& Center, float MaxRadius) const;
 
-    // Start에서 End까지 반지름 Radius인 구를 쓸고 지나간 영역(캡슐)에 걸치는 몬스터. 발사체의 이전-현재 위치 판정용
+    // Start에서 End까지 반지름 Radius인 구를 쓸고 지나간 영역(캡슐)에 걸치는 몬스터, Start에서 가까운 순. 발사체의 이전-현재 위치 판정용
     void QuerySegment(const FVector& Start, const FVector& End, float Radius, TArray<ADEMonsterBase*>& OutMonsters) const;
 
     // 몬스터 겹침 해소용 셀 접근

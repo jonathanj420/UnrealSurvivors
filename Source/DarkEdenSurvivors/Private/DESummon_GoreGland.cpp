@@ -2,13 +2,13 @@
 
 
 #include "DESummon_GoreGland.h"
-#include "DarkEdenSurvivors.h"
+#include "DEMonsterQuerySubsystem.h"
+#include "DEMonsterBase.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/SphereComponent.h"
 #include "NiagaraComponent.h"
-#include "Engine/OverlapResult.h"
 #include "DEGameplayLibrary.h"
 #include "NiagaraFunctionLibrary.h"
 
@@ -83,46 +83,15 @@ void ADESummon_GoreGland::PerformBloodPulse()
     
 
 
-    FCollisionShape SphereShape = FCollisionShape::MakeSphere(Radius);
-    //DrawDebugSphere(World, Center, EffectRadius, 12, FColor::Green, false, 1.0f, 0, 1.0f);
-
-    FCollisionQueryParams QueryParams;
-    QueryParams.AddIgnoredActor(CachedContext.Instigator);
-    QueryParams.bTraceComplex = false;
-
-    FCollisionObjectQueryParams ObjectQueryParams;
-    ObjectQueryParams.AddObjectTypesToQuery(ECC_Monster);
-
-    TArray<FOverlapResult> OverlapResults;
-
-    bool bHitAny = World->OverlapMultiByObjectType(
-        OverlapResults,
-        Center,
-        FQuat::Identity,
-        ObjectQueryParams, // ★ 채널 대신 오브젝트 쿼리 파라미터가 들어감
-        SphereShape,
-        QueryParams
-    );
-
-    //Context.Targets.Reset(); // 찌꺼기 비우기
-
-    //THIS MOFOKIN OverlapMultiByProfile NEVER RETURNS FUCKIN TRUE FOR OVERLAPS ONLY TRUE FOR FUCKING BLOCKS
-    if (bHitAny)
+    if (const UDEMonsterQuerySubsystem* Query = World->GetSubsystem<UDEMonsterQuerySubsystem>())
     {
-        // 중복 타격 방지용 (한 몬스터에 콜라이더가 여러 개일 수 있음)
-        //TSet<AActor*> HitActors;
-        //UE_LOG(LogTemp, Warning, TEXT("Target Hit"));
-        for (const FOverlapResult& Result : OverlapResults)
+        TArray<ADEMonsterBase*> Targets;
+        Query->QueryCircle(Center, Radius, Targets);
+
+        for (ADEMonsterBase* Target : Targets)
         {
-            AActor* TargetActor = Result.GetActor();
-            if (TargetActor)
-            {
-                TryDealDamage(TargetActor);
-
-            }
+            TryDealDamage(Target);
         }
-
-
     }
 
 

@@ -2,11 +2,11 @@
 
 
 #include "DEBehavior_SelectNearestTarget.h"
-#include "DarkEdenSurvivors.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Actor.h"
 #include "DEMonsterBase.h"
-#include "Engine/OverlapResult.h"
+#include "DEMonsterQuerySubsystem.h"
+#include "Engine/World.h"
 #include "DESkillContext.h"
 
 void UDEBehavior_SelectNearestTarget::Execute(FDESkillContext& Context)
@@ -23,51 +23,13 @@ void UDEBehavior_SelectNearestTarget::Execute(FDESkillContext& Context)
 	float Radius = Context.GetValue(TEXT("Radius"), DefaultSearchRadius);
 	if (Radius <= 0.f) Radius = DefaultSearchRadius;
 
-	FVector MyLoc = Context.Instigator->GetActorLocation();
+	const UDEMonsterQuerySubsystem* Query = World->GetSubsystem<UDEMonsterQuerySubsystem>();
+	if (!Query) return;
 
-	// 3. 범위 내 오버랩 검사 (구체)
-	TArray<FOverlapResult> Overlaps;
-	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActor(Context.Instigator); // 나 자신 제외
-	FCollisionObjectQueryParams ObjectParams;
-	ObjectParams.AddObjectTypesToQuery(ECC_Monster);
-
-	// Enemy 채널이나 Pawn 채널로 검사 (프로젝트 설정에 따라 수정 필요)
-	// 여기서는 ECC_Pawn으로 검사하고 태그를 확인하는 범용 방식을 씀
-	bool bHit = World->OverlapMultiByObjectType(
-		Overlaps,
-		MyLoc,
-		FQuat::Identity,
-		ObjectParams,
-		FCollisionShape::MakeSphere(Radius),
-		QueryParams
-	);
-
-	AActor* NearestActor = nullptr;
-	float MinDistSq = FLT_MAX;
-
-	// 4. 가장 가까운 놈 찾기
-	if (Overlaps.Num()>0)
+	// 3. 범위 내 가장 가까운 몬스터를 Context에 저장
+	if (ADEMonsterBase* Nearest = Query->QueryNearest(Context.Instigator->GetActorLocation(), Radius))
 	{
-		for (const FOverlapResult& Res : Overlaps)
-		{
-			AActor* Actor = Res.GetActor();
-			if (!Actor || !Actor->IsA(ADEMonsterBase::StaticClass())) continue;
-
-			float DistSq = FVector::DistSquared(MyLoc, Actor->GetActorLocation());
-			if (DistSq < MinDistSq)
-			{
-				MinDistSq = DistSq;
-				NearestActor = Actor;
-			}
-		}
-	}
-
-	// 5. 찾았으면 Context에 저장
-	if (NearestActor)
-	{
-		Context.Targets.Add(NearestActor);
-		// UE_LOG(LogTemp, Log, TEXT("Target Found: %s"), *NearestActor->GetName());
+		Context.Targets.Add(Nearest);
 	}
 
 }

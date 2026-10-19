@@ -28,9 +28,6 @@ public:
     virtual void ReturnToPool() override;
 
 protected:
-    // 몬스터 캡슐은 GenerateOverlapEvents가 꺼져 있어서 오버랩 이벤트 대신 씬 쿼리로 찾는다
-    void QueryTargets(TArray<AActor*>& OutTargets) const;
-
     // 타격 가능 여부 확인 (개별 쿨타임 체크, bHitOnContact일 때만 사용)
     virtual bool CanHitTarget(AActor* Target) const override;
 

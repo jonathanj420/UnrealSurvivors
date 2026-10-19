@@ -2,12 +2,12 @@
 
 
 #include "DEProjectile_AcidBolt.h"
-#include "DarkEdenSurvivors.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "DEMonsterBase.h"
-#include "Engine/OverlapResult.h"
+#include "DEMonsterQuerySubsystem.h"
+#include "Engine/World.h"
 #include "DEGameplayLibrary.h"
 #include "NiagaraComponent.h"
 #include "DEAutoSkillBase.h"
@@ -88,46 +88,17 @@ void ADEProjectile_AcidBolt::Explode()
 
     FVector Center = GetActorLocation();
 
-    TArray<FOverlapResult> OverlapResults;
-    FCollisionQueryParams QueryParams;
-    QueryParams.AddIgnoredActor(this);
-    QueryParams.AddIgnoredActor(GetOwner());
-
-    // ★ 핵심 변경: ObjectType으로 검색하기 위한 설정
-    FCollisionObjectQueryParams ObjectQueryParams;
-    ObjectQueryParams.AddObjectTypesToQuery(ECC_Monster);
-
-    // 함수 변경: OverlapMultiByChannel -> OverlapMultiByObjectType
-    bool bHitAny = World->OverlapMultiByObjectType(
-        OverlapResults,
-        Center,
-        FQuat::Identity,
-        ObjectQueryParams, // ★ 채널 대신 오브젝트 쿼리 파라미터가 들어감
-        FCollisionShape::MakeSphere(Radius),
-        QueryParams
-    );
-
-    if (bHitAny)
+    if (const UDEMonsterQuerySubsystem* Query = World->GetSubsystem<UDEMonsterQuerySubsystem>())
     {
-        // 중복 타격 방지용 (한 몬스터에 콜라이더가 여러 개일 수 있음)
-        //TSet<AActor*> HitActors;
-        //UE_LOG(LogTemp, Warning, TEXT("Target Hit"));
-        for (const FOverlapResult& Result : OverlapResults)
+        TArray<ADEMonsterBase*> Targets;
+        Query->QueryCircle(Center, Radius, Targets);
+
+        for (ADEMonsterBase* Target : Targets)
         {
-            AActor* TargetActor = Result.GetActor();
-            if (TargetActor && !HitActors.Contains(TargetActor))
-            {
-                HitActors.Add(TargetActor);
-                
-                TryDealDamage(TargetActor);
-
-            }
+            if (HitActors.Contains(Target)) continue;
+            HitActors.Add(Target);
+            TryDealDamage(Target);
         }
-        
-    }
-    else
-    {
-        //UE_LOG(LogTemp, Warning, TEXT("Exploded but no targets"));
     }
     if (ExplosionEffect)
     {

@@ -3,9 +3,8 @@
 
 #include "DEBehavior_CullByCone.h"
 #include "Engine/World.h"
-#include "Engine/OverlapResult.h"
-#include "CollisionShape.h"
-#include "CollisionQueryParams.h"
+#include "DEMonsterBase.h"
+#include "DEMonsterQuerySubsystem.h"
 
 // --- 디버그 드로잉 ---
 #include "DrawDebugHelpers.h"
@@ -66,37 +65,19 @@ void UDEBehavior_CullByCone::Execute(FDESkillContext& Context)
         }
     }
 
-    // ==========================================
-    //  3. UWorld 다이렉트 충돌 검사 (최적화)
-    // ==========================================
-    FCollisionShape SphereShape = FCollisionShape::MakeSphere(FinalRadius);
-    //DrawDebugSphere(World, MyLoc, FinalRadius, 12, FColor::Green, false, 1.0f, 0, 1.0f);
+    // 3. 반경 안의 몬스터를 구한 뒤 각도로 거른다
+    const UDEMonsterQuerySubsystem* Query = World->GetSubsystem<UDEMonsterQuerySubsystem>();
+    if (!Query) return;
 
-    FCollisionQueryParams QueryParams;
-    QueryParams.AddIgnoredActor(Context.Instigator);
-    QueryParams.bTraceComplex = false;
+    TArray<ADEMonsterBase*> InRadius;
+    Query->QueryCircle(MyLoc, FinalRadius, InRadius);
 
-    TArray<FOverlapResult> OverlapResults;
-
-    bool bHit = World->OverlapMultiByProfile(
-        OverlapResults,
-        MyLoc,
-        FQuat::Identity,
-        FName(TEXT("PlayerAttack")),
-        SphereShape,
-        QueryParams);
-
-    //Context.Targets.Reset(); // 찌꺼기 비우기
-
-    //THIS MOFOKIN OverlapMultiByProfile NEVER RETURNS FUCKIN TRUE FOR OVERLAPS ONLY TRUE FOR FUCKING BLOCKS
-    if (OverlapResults.Num() > 0)
+    if (InRadius.Num() > 0)
     {
         float CosHalfAngle = FMath::Cos(FMath::DegreesToRadians(FinalAngle / 2.0f));
 
-        for (const FOverlapResult& Result : OverlapResults)
+        for (ADEMonsterBase* TargetActor : InRadius)
         {
-            AActor* TargetActor = Result.GetActor();
-            if (!TargetActor) continue;
             // 타겟을 향하는 방향 벡터
             FVector DirToTarget = (TargetActor->GetActorLocation() - MyLoc).GetSafeNormal();
 

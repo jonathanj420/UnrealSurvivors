@@ -2,13 +2,13 @@
 
 
 #include "DEGameplayLibrary.h"
-#include "DarkEdenSurvivors.h"
+#include "DEMonsterQuerySubsystem.h"
+#include "Engine/World.h"
 #include "DEHealthComponent.h"
 #include "DECombatComponent.h"
 #include "DEGameMode_Stage.h"
 #include "DEStatusEffectComponent.h"
 #include "DEMonsterBase.h"
-#include "Engine/OverlapResult.h"
 #include "DECombatTypes.h"
 
 FDEDamageResult UDEGameplayLibrary::ApplyCombatDamage(
@@ -80,29 +80,15 @@ void UDEGameplayLibrary::ApplyAoEDamage(UWorld* World, const FVector& Origin, fl
 {
 	if (!World) return;
 
-	TArray<FOverlapResult> OverlapResults;
-	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActors(IgnoredActors);
+	const UDEMonsterQuerySubsystem* Query = World->GetSubsystem<UDEMonsterQuerySubsystem>();
+	if (!Query) return;
 
-	FCollisionObjectQueryParams ObjectQueryParams;
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_Monster);
+	TArray<ADEMonsterBase*> Victims;
+	Query->QueryCircle(Origin, Radius, Victims);
 
-	//OverlapMultiByChannel -> OverlapMultiByObjectType
-	bool bHit = World->OverlapMultiByObjectType(
-		OverlapResults,
-		Origin,
-		FQuat::Identity,
-		ObjectQueryParams,
-		FCollisionShape::MakeSphere(Radius),
-		QueryParams
-	);
-	//DrawDebugSphere(World, Origin, Radius, 16, FColor::Green, false, 1.0f, 0, 1.0f);
-	if (!bHit) return;
-
-	for (const FOverlapResult& Hit : OverlapResults)
+	for (ADEMonsterBase* Victim : Victims)
 	{
-		AActor* Victim = Hit.GetActor();
-		if (!Victim) continue;
+		if (IgnoredActors.Contains(Victim)) continue;
 
 		FDEDamageRequest TargetReq = BaseRequest;
 		TargetReq.Victim = Victim;
@@ -120,62 +106,11 @@ AActor* UDEGameplayLibrary::GetNearestTarget(AActor* Instigator, float Radius)
 	UWorld* World = Instigator->GetWorld();
 	if (!World) return nullptr;
 
-	FVector MyLoc = Instigator->GetActorLocation();
-	AActor* Nearest = nullptr;
-	float MinDistSq = FLT_MAX;
+	const UDEMonsterQuerySubsystem* Query = World->GetSubsystem<UDEMonsterQuerySubsystem>();
+	if (!Query) return nullptr;
 
-	if (FMath::IsNearlyEqual(Radius, -1.0f))
-	{
-		auto* GM = Cast<ADEGameMode_Stage>(World->GetAuthGameMode());
-		if (GM)
-		{
-			const TArray<ADEMonsterBase*>& ActiveMonsters = GM->GetActiveMonsters();
-			for (ADEMonsterBase* Monster : ActiveMonsters)
-			{
-				if (!Monster->IsAlive()) continue;
-				float DistSq = FVector::DistSquared(MyLoc, Monster->GetActorLocation());
-				if (DistSq < MinDistSq)
-				{
-					MinDistSq = DistSq;
-					Nearest = Monster;
-				}
-			}
-
-		}
-
-		return Nearest;
-	}
-	
-
-	FCollisionObjectQueryParams ObjectParams;
-	ObjectParams.AddObjectTypesToQuery(ECC_Monster);
-
-	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActor(Instigator);
-
-	TArray<FOverlapResult> Overlaps;
-	World->OverlapMultiByObjectType(
-		Overlaps, MyLoc, FQuat::Identity,
-		ObjectParams,
-		FCollisionShape::MakeSphere(Radius),
-		QueryParams
-	);
-
-	
-	for (const FOverlapResult& Res : Overlaps)
-	{
-		AActor* Actor = Res.GetActor();
-		if (!Actor || !Actor->IsA(ADEMonsterBase::StaticClass())) continue;
-
-		float DistSq = FVector::DistSquared(MyLoc, Actor->GetActorLocation());
-		if (DistSq < MinDistSq)
-		{
-			MinDistSq = DistSq;
-			Nearest = Actor;
-		}
-	}
-
-	return Nearest;
+	// Radius가 음수(-1)면 거리 제한 없이 맵 전체에서 찾는다
+	return Query->QueryNearest(Instigator->GetActorLocation(), Radius);
 }
 
 //get random targets by radius
@@ -200,31 +135,11 @@ TArray<AActor*> UDEGameplayLibrary::GetRandomTargets(AActor* Instigator, float R
 			}
 		}
 	}
-	else
+	else if (const UDEMonsterQuerySubsystem* Query = World->GetSubsystem<UDEMonsterQuerySubsystem>())
 	{
-		FVector MyLoc = Instigator->GetActorLocation();
-		FCollisionObjectQueryParams ObjectParams;
-		ObjectParams.AddObjectTypesToQuery(ECC_Monster);
-
-		FCollisionQueryParams QueryParams;
-		QueryParams.AddIgnoredActor(Instigator);
-
-		TArray<FOverlapResult> Overlaps;
-		World->OverlapMultiByObjectType(
-			Overlaps, MyLoc, FQuat::Identity,
-			ObjectParams,
-			FCollisionShape::MakeSphere(Radius),
-			QueryParams
-		);
-
-		for (const FOverlapResult& Res : Overlaps)
-		{
-			AActor* Actor = Res.GetActor();
-			if (Actor && Actor->IsA(ADEMonsterBase::StaticClass()))
-			{
-				Candidates.Add(Actor);
-			}
-		}
+		TArray<ADEMonsterBase*> InRange;
+		Query->QueryCircle(Instigator->GetActorLocation(), Radius, InRange);
+		Candidates.Append(InRange);
 	}
 
 	if (Candidates.Num() == 0) return Result;

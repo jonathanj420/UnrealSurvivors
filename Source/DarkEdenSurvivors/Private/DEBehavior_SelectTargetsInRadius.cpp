@@ -2,8 +2,9 @@
 
 
 #include "DEBehavior_SelectTargetsInRadius.h"
-#include "Engine/OverlapResult.h"
 #include "DEMonsterBase.h"
+#include "DEMonsterQuerySubsystem.h"
+#include "Engine/World.h"
 #include "DESkillContext.h"
 #include "DEGameMode_Stage.h"
 #include "DrawDebugHelpers.h"
@@ -47,8 +48,6 @@ void UDEBehavior_SelectTargetsInRadius::Execute(FDESkillContext& Context)
     TArray<AActor*> RawResults; // 중복 허용 그릇
     TSet<AActor*> UniqueResults; // 중복 방지 그릇
 
-    FCollisionQueryParams Params;
-    if (bIgnoreInstigator) Params.AddIgnoredActor(Context.Instigator);
     //float FinalRadius = Context.GetValue(TEXT("Radius"), Radius);
     float FinalRadius = (this->Radius==-1.0f) ? this->Radius : Context.Radius;
     //float FinalRadius = (Context.Radius != 0.f) ? Context.Radius : this->Radius;
@@ -72,47 +71,27 @@ void UDEBehavior_SelectTargetsInRadius::Execute(FDESkillContext& Context)
         return; // 광역 검색 끝났으니 리턴
     }
 
-    // 2. 루프 돌면서 검색
+    const UDEMonsterQuerySubsystem* Query = World->GetSubsystem<UDEMonsterQuerySubsystem>();
+    if (!Query) return;
+
+    // 2. 중심점마다 검색 (몬스터만 반환하므로 Instigator는 자연히 제외된다)
+    TArray<ADEMonsterBase*> Found;
     for (const FVector& Center : CenterPoints)
     {
-        TArray<FOverlapResult> Overlaps;
-        bool bHit = World->OverlapMultiByProfile(
-            Overlaps,
-            Center,
-            FQuat::Identity,
-            FName(TEXT("PlayerAttack")),
-            FCollisionShape::MakeSphere(FinalRadius), Params
-        );
-        /*DrawDebugSphere(
-            GetWorld(),
-            Center,
-            FinalRadius,
-            16,
-            FColor::Green,
-            false,
-            1.0f
-        );*/
-        if (Overlaps.Num()>0)
+        Found.Reset();
+        Query->QueryCircle(Center, FinalRadius, Found);
+
+        for (ADEMonsterBase* Monster : Found)
         {
-            for (const FOverlapResult& Res : Overlaps)
+            if (bAllowOverlap)
             {
-                AActor* HitActor = Res.GetActor();
-               
-                
-                if (HitActor && HitActor->IsA(ADEMonsterBase::StaticClass()))
-                {
-                    //UE_LOG(LogTemp, Error, TEXT("Found : %s In Radius"), *HitActor->GetName());
-                    if (bAllowOverlap)
-                    {
-                        // ★ 옵션 켜짐: 그냥 무식하게 계속 담음 (A, A, A...)
-                        RawResults.Add(HitActor);
-                    }
-                    else
-                    {
-                        // ★ 옵션 꺼짐: Set에 담아서 중복 거름 (A)
-                        UniqueResults.Add(HitActor);
-                    }
-                }
+                // 옵션 켜짐: 여러 중심점에 걸린 몬스터는 그만큼 중복으로 담는다 (A, A, A...)
+                RawResults.Add(Monster);
+            }
+            else
+            {
+                // 옵션 꺼짐: Set으로 중복 제거 (A)
+                UniqueResults.Add(Monster);
             }
         }
     }

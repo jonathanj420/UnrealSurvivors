@@ -58,12 +58,11 @@
   - `stat game` (`Docs/nocolgame.png`): World Tick 6.48, Tick Time 6.15 (Ticks Queued 345, 몬스터 액터 Tick은 꺼져 있으니 대부분 SkeletalMesh 컴포넌트 Tick으로 추정, `stat anim`으로 확인 필요), Post Tick Component Update 3.13, Transform or RenderData 2.57 (616회 = 몬스터당 2개 컴포넌트), MoveComponent 1.19 (303회)
   - 결론: 남은 비용은 몬스터별 SkeletalMesh(애니메이션 Tick, 트랜스폼/렌더 데이터 갱신, 드로우)에 몰려 있다. SpatialGrid는 약 3ms, ISM + VAT가 더 큰 덩어리
 - [ ] 측정 순서 (한 번에 하나씩 바꿔서 효과를 분리한다): ① 내비 제외 빌드(`f9ff2fc`)로 재측정 → ② 임시 실험: `DEMonsterBase.cpp`의 캡슐을 `NoCollision`으로 바꿔 Game ms가 얼마나 주는지 확인 (스킬 판정은 깨짐, 측정 후 원복) → ③ `r.RayTracing=False`. 숫자가 애매하면 Unreal Insights(`-trace=default`)로 GameThread 프로파일. ②에서 많이 줄면 SpatialGrid 쿼리를 먼저, 거의 안 줄면 ISM + VAT를 먼저
-- [ ] 스킬 타겟 쿼리를 물리 씬 대신 SpatialGrid로, 몬스터 콜리전 끄기 (Chaos 바디 갱신 제거)
-  - 몬스터→플레이어는 이미 거리 판정이라 그대로. 몬스터 오버랩 이벤트도 이미 꺼져 있다 (비용은 오버랩 이벤트가 아니라 `TeleportPhysics` 이동에 따른 Chaos 바디 갱신)
-  - `ResolveOverlaps`가 매 프레임 만드는 그리드를 재사용해 2D 쿼리 제공: `QueryCircle`, `QueryNearest`, `QuerySegment`(발사체는 이전→현재 위치 선분), `QueryCone`(원 + 각도 필터). 바운딩 박스를 최대 몬스터 반지름만큼 넓혀 셀 경계 누락 방지. 타겟별 쿨다운/중복 타격 관리는 각 스킬 액터에 그대로
-  - 대상 호출처 약 10곳: `SelectTargetsInRadius`, `SelectNearestTarget`, `SelectTargetsBySweep`, `CullByCone`, `DEGameplayLibrary` 3곳, AcidBolt, GoreGland, `DESimpleProjectileBase` 스윕
-  - 그리드 소유권 결정 필요 (개발자): `UDEMonsterQuerySubsystem`(WorldSubsystem, 추천. `UDEPoolSubsystem`과 같은 패턴) vs `UDEMonsterUpdateComponent`에 그대로 두고 GameMode→SpawnManager 경유
-  - 확인 필요: `DESimpleAOEBase`는 `OnComponentBeginOverlap`/`GetOverlappingActors`에 의존하는데 몬스터가 `GenerateOverlapEvents=false`라 이미 몬스터를 못 잡고 있을 수 있다 (서브클래스 Darkness/Orbit/Summon이 자체 쿼리를 하는지 확인)
+- [ ] 스킬 타겟 쿼리를 물리 씬 대신 SpatialGrid로, 몬스터 콜리전 끄기 (Chaos 바디 갱신 제거. 측정 ②에서 300마리 약 3ms)
+  - [x] `UDEMonsterQuerySubsystem`(WorldSubsystem)에 그리드 이동. `UDEMonsterUpdateComponent::ResolveOverlaps`가 `RebuildGrid`로 채우고 겹침 해소에도 그대로 쓴다. 2D 쿼리 `QueryCircle`/`QueryNearest`/`QuerySegment`(Start에서 가까운 순). 쿼리 범위는 최대 몬스터 반지름 + 프레임당 최대 이동량(`MaxPushPerFrame`)만큼 넓힌다. 살아 있는 몬스터만 반환. 콘은 `QueryCircle` + 호출처 각도 필터
+  - [x] 호출처 전부 이전: `SelectTargetsInRadius`, `SelectNearestTarget`, `SelectTargetsBySweep`, `CullByCone`, `DEGameplayLibrary`(`ApplyAoEDamage`/`GetNearestTarget`/`GetRandomTargets`), AcidBolt, GoreGland, `DESimpleAOEBase`, `DESimpleProjectileBase`. C++에 남은 물리 쿼리 없음
+  - [ ] 인게임 확인 후 몬스터 캡슐 `NoCollision`. 끄기 전에 BP에서 몬스터 콜리전/오버랩에 의존하는 곳이 없는지 확인 필요 (C++에서는 없음)
+  - 판정 차이: 예전엔 3D 구 vs 캡슐, 지금은 XY 평면에서 원 vs 원(몬스터 반지름 `CachedRadius`). 그리드는 SpawnManager Tick에서 갱신되므로 이번 프레임에 스폰/재배치된 몬스터는 다음 프레임부터 잡힌다
 - [ ] 렌더링을 몬스터별 SkeletalMesh에서 ISM + VAT로 (개발자가 ISM 진행 승인, 공부 목적 포함)
 - [x] `ResolveOverlaps`의 프레임마다 생성되는 로컬 `TSet` 재사용 (`TouchedCells` 멤버 하나로 통합)
 - [x] `ADEMonsterRepositionManager` 재배치 Z가 플레이어 Z 그대로였음. 몬스터 이동은 Z를 안 바꾸므로 몬스터 자신의 현재 Z를 유지

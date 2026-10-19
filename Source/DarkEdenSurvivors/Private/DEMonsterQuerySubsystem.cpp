@@ -3,6 +3,7 @@
 
 #include "DEMonsterQuerySubsystem.h"
 #include "DEMonsterBase.h"
+#include "Algo/Sort.h"
 
 void UDEMonsterQuerySubsystem::Deinitialize()
 {
@@ -142,6 +143,7 @@ void UDEMonsterQuerySubsystem::QuerySegment(const FVector& Start, const FVector&
     const FVector End2D(End.X, End.Y, 0.0f);
     const FVector2D Min(FMath::Min(Start.X, End.X) - Radius, FMath::Min(Start.Y, End.Y) - Radius);
     const FVector2D Max(FMath::Max(Start.X, End.X) + Radius, FMath::Max(Start.Y, End.Y) + Radius);
+    const int32 FirstNew = OutMonsters.Num();
 
     ForEachMonsterInBounds(Min, Max, [&](ADEMonsterBase* Mob)
     {
@@ -151,5 +153,13 @@ void UDEMonsterQuerySubsystem::QuerySegment(const FVector& Start, const FVector&
         {
             OutMonsters.Add(Mob);
         }
+    });
+
+    // 관통 횟수가 정해진 발사체는 먼저 닿는 적부터 맞아야 하므로 Start에서 가까운 순으로 정렬한다
+    const FVector2D StartXY(Start);
+    TArrayView<ADEMonsterBase*> NewResults(OutMonsters.GetData() + FirstNew, OutMonsters.Num() - FirstNew);
+    Algo::Sort(NewResults, [&StartXY](const ADEMonsterBase* A, const ADEMonsterBase* B)
+    {
+        return FVector2D::DistSquared(StartXY, FVector2D(A->CachedLocation)) < FVector2D::DistSquared(StartXY, FVector2D(B->CachedLocation));
     });
 }
