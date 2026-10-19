@@ -35,8 +35,8 @@
 
 ## 성능 측정
 
-- [ ] `TestPrototype`/`TestStage001`/`TestBlank`에서 `NavMeshBoundsVolume`, `RecastNavMesh` 삭제 (내비 사용처 없음)
-- [ ] 위 삭제 + 캡슐 내비 제외 빌드로 300마리 `stat unit` 재측정 (이전: Game 12.9ms)
+- [ ] `TestStage001`/`TestBlank`에서 `NavMeshBoundsVolume`, `RecastNavMesh` 삭제 (내비 사용처 없음. `TestPrototype`은 완료, 미커밋)
+- [ ] 캡슐 내비 제외 빌드(빌드 완료)로 `TestPrototype` 300마리 `stat unit` 재측정 (이전: Game 12.9ms, `Docs/unit.PNG`). 캡처는 새 이름으로 (예: `unit_nav.PNG`)
 
 ## 픽업
 

@@ -51,7 +51,13 @@
 - [x] 몬스터 캡슐을 내비게이션에서 제외 (`SetCanEverAffectNavigation(false)`). 테스트 맵에 NavMesh + `RuntimeGeneration=Dynamic`이 있어서 몬스터가 움직일 때마다 내비 옥트리 갱신이 일어났을 가능성. 측정으로 효과 확인 필요
 - [ ] 렌더 설정: `r.RayTracing=True` 끄기 (사용처 없음, 스키닝 메시 RT 갱신 비용 가능성). `r.Substrate`, `r.GenerateMeshDistanceFields`도 사용처 확인 후 정리
 - [ ] 측정: Standalone, `t.MaxFPS 0`, `r.VSync 0`, `stat unit`으로 300/600/1000마리. 300마리 60fps는 이전 측정(상한 여부 불명). 2026-10-19 300마리: Frame/Game 12.9ms, Draw 5.6, RHIT 7.0, GPU 5.5, Draws 1078 (게임 스레드 병목)
+- [ ] 측정 순서 (한 번에 하나씩 바꿔서 효과를 분리한다): ① 내비 제외 빌드(`f9ff2fc`)로 재측정 → ② 임시 실험: `DEMonsterBase.cpp`의 캡슐을 `NoCollision`으로 바꿔 Game ms가 얼마나 주는지 확인 (스킬 판정은 깨짐, 측정 후 원복) → ③ `r.RayTracing=False`. 숫자가 애매하면 Unreal Insights(`-trace=default`)로 GameThread 프로파일. ②에서 많이 줄면 SpatialGrid 쿼리를 먼저, 거의 안 줄면 ISM + VAT를 먼저
 - [ ] 스킬 타겟 쿼리를 물리 씬 대신 SpatialGrid로, 몬스터 콜리전 끄기 (Chaos 바디 갱신 제거)
+  - 몬스터→플레이어는 이미 거리 판정이라 그대로. 몬스터 오버랩 이벤트도 이미 꺼져 있다 (비용은 오버랩 이벤트가 아니라 `TeleportPhysics` 이동에 따른 Chaos 바디 갱신)
+  - `ResolveOverlaps`가 매 프레임 만드는 그리드를 재사용해 2D 쿼리 제공: `QueryCircle`, `QueryNearest`, `QuerySegment`(발사체는 이전→현재 위치 선분), `QueryCone`(원 + 각도 필터). 바운딩 박스를 최대 몬스터 반지름만큼 넓혀 셀 경계 누락 방지. 타겟별 쿨다운/중복 타격 관리는 각 스킬 액터에 그대로
+  - 대상 호출처 약 10곳: `SelectTargetsInRadius`, `SelectNearestTarget`, `SelectTargetsBySweep`, `CullByCone`, `DEGameplayLibrary` 3곳, AcidBolt, GoreGland, `DESimpleProjectileBase` 스윕
+  - 그리드 소유권 결정 필요 (개발자): `UDEMonsterQuerySubsystem`(WorldSubsystem, 추천. `UDEPoolSubsystem`과 같은 패턴) vs `UDEMonsterUpdateComponent`에 그대로 두고 GameMode→SpawnManager 경유
+  - 확인 필요: `DESimpleAOEBase`는 `OnComponentBeginOverlap`/`GetOverlappingActors`에 의존하는데 몬스터가 `GenerateOverlapEvents=false`라 이미 몬스터를 못 잡고 있을 수 있다 (서브클래스 Darkness/Orbit/Summon이 자체 쿼리를 하는지 확인)
 - [ ] 렌더링을 몬스터별 SkeletalMesh에서 ISM + VAT로 (개발자가 ISM 진행 승인, 공부 목적 포함)
 - [x] `ResolveOverlaps`의 프레임마다 생성되는 로컬 `TSet` 재사용 (`TouchedCells` 멤버 하나로 통합)
 - [x] `ADEMonsterRepositionManager` 재배치 Z가 플레이어 Z 그대로였음. 몬스터 이동은 Z를 안 바꾸므로 몬스터 자신의 현재 Z를 유지
