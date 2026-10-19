@@ -2,6 +2,7 @@
 
 
 #include "DEProjectile_AcidBolt.h"
+#include "DarkEdenSurvivors.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -94,7 +95,7 @@ void ADEProjectile_AcidBolt::Explode()
 
     // ★ 핵심 변경: ObjectType으로 검색하기 위한 설정
     FCollisionObjectQueryParams ObjectQueryParams;
-    ObjectQueryParams.AddObjectTypesToQuery(ECC_GameTraceChannel5); // 몬스터 채널(5번)만 콕 집어서 검색
+    ObjectQueryParams.AddObjectTypesToQuery(ECC_Monster);
 
     // 함수 변경: OverlapMultiByChannel -> OverlapMultiByObjectType
     bool bHitAny = World->OverlapMultiByObjectType(

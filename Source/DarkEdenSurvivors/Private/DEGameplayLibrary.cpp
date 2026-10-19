@@ -1,7 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "DEGameplayLibrary.h"
+#include "DarkEdenSurvivors.h"
 #include "DEHealthComponent.h"
 #include "DECombatComponent.h"
 #include "DEGameMode_Stage.h"
@@ -84,7 +85,7 @@ void UDEGameplayLibrary::ApplyAoEDamage(UWorld* World, const FVector& Origin, fl
 	QueryParams.AddIgnoredActors(IgnoredActors);
 
 	FCollisionObjectQueryParams ObjectQueryParams;
-	ObjectQueryParams.AddObjectTypesToQuery(ECC_GameTraceChannel5);
+	ObjectQueryParams.AddObjectTypesToQuery(ECC_Monster);
 
 	//OverlapMultiByChannel -> OverlapMultiByObjectType
 	bool bHit = World->OverlapMultiByObjectType(

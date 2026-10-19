@@ -2,6 +2,7 @@
 
 
 #include "DESimpleAOEBase.h"
+#include "DarkEdenSurvivors.h"
 #include "Components/SphereComponent.h"
 #include "NiagaraComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -96,9 +97,9 @@ void ADESimpleAOEBase::QueryTargets(TArray<AActor*>& OutTargets) const
     QueryParams.AddIgnoredActor(this);
     QueryParams.AddIgnoredActor(GetOwner());
 
-    // 몬스터 오브젝트 타입 (DefaultEngine.ini의 GameTraceChannel5)
+    // 몬스터 오브젝트 타입만 검색
     FCollisionObjectQueryParams ObjectQueryParams;
-    ObjectQueryParams.AddObjectTypesToQuery(ECC_GameTraceChannel5);
+    ObjectQueryParams.AddObjectTypesToQuery(ECC_Monster);
 
     TArray<FOverlapResult> OverlapResults;
     World->OverlapMultiByObjectType(

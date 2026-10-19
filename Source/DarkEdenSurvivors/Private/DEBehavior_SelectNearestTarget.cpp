@@ -2,6 +2,7 @@
 
 
 #include "DEBehavior_SelectNearestTarget.h"
+#include "DarkEdenSurvivors.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Actor.h"
 #include "DEMonsterBase.h"
@@ -29,7 +30,7 @@ void UDEBehavior_SelectNearestTarget::Execute(FDESkillContext& Context)
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(Context.Instigator); // 나 자신 제외
 	FCollisionObjectQueryParams ObjectParams;
-	ObjectParams.AddObjectTypesToQuery(ECC_GameTraceChannel5);
+	ObjectParams.AddObjectTypesToQuery(ECC_Monster);
 
 	// Enemy 채널이나 Pawn 채널로 검사 (프로젝트 설정에 따라 수정 필요)
 	// 여기서는 ECC_Pawn으로 검사하고 태그를 확인하는 범용 방식을 씀

@@ -2,6 +2,7 @@
 
 
 #include "DESummon_GoreGland.h"
+#include "DarkEdenSurvivors.h"
 #include "Engine/World.h"
 #include "TimerManager.h"
 #include "Kismet/GameplayStatics.h"
@@ -90,7 +91,7 @@ void ADESummon_GoreGland::PerformBloodPulse()
     QueryParams.bTraceComplex = false;
 
     FCollisionObjectQueryParams ObjectQueryParams;
-    ObjectQueryParams.AddObjectTypesToQuery(ECC_GameTraceChannel5);
+    ObjectQueryParams.AddObjectTypesToQuery(ECC_Monster);
 
     TArray<FOverlapResult> OverlapResults;
 

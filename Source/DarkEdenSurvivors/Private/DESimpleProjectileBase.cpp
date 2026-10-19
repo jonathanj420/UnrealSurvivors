@@ -2,6 +2,7 @@
 
 
 #include "DESimpleProjectileBase.h"
+#include "DarkEdenSurvivors.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/RotatingMovementComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -154,13 +155,13 @@ void ADESimpleProjectileBase::PerformCollisionDetection(float DeltaTime)
 	TArray<FHitResult> HitResults;
 	FCollisionShape SphereShape = FCollisionShape::MakeSphere(Radius);
 
-	// 1. 엔진에 스캐너 발사 (ECC_GameTraceChannel1은 본인의 몬스터 채널 매크로로 변경)
+	// 1. 엔진에 스캐너 발사
 	bool bHit = World->SweepMultiByChannel(
 		HitResults,
 		StartLoc,
 		EndLoc,
 		FQuat::Identity,
-		ECC_GameTraceChannel6,
+		ECC_PlayerAttack,
 		SphereShape
 	);
 

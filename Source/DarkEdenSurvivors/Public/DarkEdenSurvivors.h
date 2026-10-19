@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
@@ -21,5 +21,6 @@ DECLARE_LOG_CATEGORY_EXTERN(LogDarkEdenSurvivors, Log, All);
 #define LOG_CALL() UE_LOG(LogTemp, Warning, TEXT("[CALL] %s | %s:%d | %s"), \
     ANSI_TO_TCHAR(__FUNCTION__), ANSI_TO_TCHAR(__FILE__), __LINE__, *GetNameSafe(this))
 
-#define ECC_Monster     ECC_GameTraceChannel2
-#define ECC_PlayerAttack		ECC_GameTraceChannel3
+// DefaultEngine.ini의 DefaultChannelResponses 순서와 맞춰야 한다
+#define ECC_Monster         ECC_GameTraceChannel5
+#define ECC_PlayerAttack    ECC_GameTraceChannel6
