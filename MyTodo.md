@@ -30,6 +30,7 @@
 - [ ] 접촉 공격: 무적이라 화면엔 안 보인다. `ADECharacterBase::TakeDamage`에 브레이크포인트를 걸고 몬스터가 붙었을 때 걸리는지 확인 (전에는 오버랩 이벤트가 꺼져 있어서 한 번도 안 불렸다)
 - [ ] `DT_MonsterData`에서 CapsuleRadius가 42가 아닌 몬스터가 스킬에 맞는 범위가 체감상 달라졌는지 확인 (전에는 물리 캡슐이 항상 기본 42/96이었다)
 - [ ] MinimumCount 버스트 때 프레임 튐이 줄었는지 확인
+- [ ] 멀리 떨어진 몬스터가 플레이어 근처로 재배치될 때 뜨거나 박히지 않는지 확인 (특히 CapsuleHalfHeight가 96이 아닌 몬스터)
 - [ ] Standalone(`-log`)에서 몬스터 메시가 보이는지, 로그에 `Monster assets preloaded in N.NNs`가 뜨고 그 뒤에 첫 웨이브가 나오는지 확인
 
 ## 픽업
