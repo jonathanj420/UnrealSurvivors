@@ -17,6 +17,8 @@
 - [x] 풀 중복 반환: `PooledActorSet`(TObjectKey)으로 이미 풀에 있는 액터의 재반환을 막고 Warning 로그 (`[Pool] Duplicate return ignored`)
 - [ ] 풀 stale 반환 (풀 가드로 못 잡음): `UDEAutoSkillBase::CancelSkill`이 `OwnedSkillActorMap`의 weak 참조로 `ReturnToPool`을 부르는데, 그 액터가 이미 반환된 뒤 다른 스킬이 재사용 중이면 남의 액터를 회수한다. 풀링 액터는 Destroy되지 않아서 weak 포인터가 계속 유효하다. 액터에 세대(generation) 번호를 두거나, 반환 시 소유 스킬 맵에서 빼는 방식이 필요하다. 4단계 `EvolveSkill`/`CancelSkill` 정리 때 같이
 - [ ] AcidBolt 이중 반환 경로 확인: `Explode`가 한 번 반환된 뒤 다시 불리는 경로가 있는지 (같은 프레임 다중 오버랩 등). 가드 로그로 재현 확인 후 원인 수정
+- [x] AOE(Darkness/GreyDarkness/DanseMacabre)가 몬스터를 못 맞히던 문제: 오버랩은 양쪽 모두 `GenerateOverlapEvents`가 켜져 있어야 하는데 몬스터 캡슐과 `ADESkillActorBase` 구체 둘 다 꺼져 있었다. `ADESimpleAOEBase`가 오버랩 이벤트 대신 `OverlapMultiByObjectType`(Monster)으로 직접 쿼리하도록 변경. 장판은 HitInterval마다 한 번 범위 전체 타격, Orbit은 `bHitOnContact`로 매 Tick 쿼리 + 타겟별 쿨다운. SpatialGrid로 갈 때 `QueryTargets` 한 곳만 바꾸면 된다
+- [ ] `DarkEdenSurvivors.h`의 채널 매크로가 틀렸다: `ECC_Monster`=`GameTraceChannel2`(실제로는 DECharacter), `ECC_PlayerAttack`=`GameTraceChannel3`(실제로는 Attack 트레이스). ini 기준 Monster=5, PlayerAttack=6. `UDEGameplayLibrary::GetNearestTarget`/`GetRandomTargets`의 반경 쿼리 경로가 `ECC_Monster`를 써서 몬스터를 하나도 못 찾는다. 지금 C++ 호출처는 전부 반경 -1(GameMode 목록 경로)이라 드러나지 않음. BP 호출처는 확인 필요
 - [ ] `GameOver` 중복 호출 가드 (`bIsGameOver`). 두 번 불리면 골드가 두 번 정산된다. 무적 해제할 때 같이
 - [ ] 몬스터 접촉 공격을 `UGameplayStatics::ApplyDamage`에서 `ApplyCombatDamage`로 (`ADEMonsterBase::ExecuteAttackLogic`). `ApplyCombatDamage`는 `ProcessDamage`를 직접 불러 무적(`TakeDamage`)을 우회하므로 무적 해제할 때 같이
 - [x] 메타 업그레이드 Amount ×2: `FDEStatModifier::Multiplier` 기본값을 0으로 변경. 액세서리 DataAsset은 Multiplier를 전부 명시적으로 저장해 두어서 값이 그대로다 (Buman 0.1, 나머지 0). 다른 에셋 사용처 없음

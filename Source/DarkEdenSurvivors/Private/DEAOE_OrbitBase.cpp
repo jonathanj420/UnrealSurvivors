@@ -11,6 +11,8 @@ ADEAOE_OrbitBase::ADEAOE_OrbitBase()
 {
     PrimaryActorTick.bCanEverTick = true;
 
+    // 계속 움직이므로 펄스 대신 닿는 순간 타격하고 타겟별 쿨다운을 둔다
+    bHitOnContact = true;
 }
 
 void ADEAOE_OrbitBase::Tick(float DeltaTime)

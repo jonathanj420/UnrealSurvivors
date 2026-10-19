@@ -12,16 +12,15 @@
 #include "DEGameplayLibrary.h"
 #include "DEAutoSkillBase.h"
 #include "DEHealthComponent.h"
+#include "Engine/World.h"
+#include "Engine/OverlapResult.h"
 
 ADESimpleAOEBase::ADESimpleAOEBase()
 {
     // [중요] 지속 데미지(Tick)를 줘야 하므로 Tick을 켜야 합니다.
     PrimaryActorTick.bCanEverTick = true;
 
-
-    // [중요] 충돌을 켜야 감지가 됩니다. 'OverlapAllDynamic' 추천 (Pawn, Enemy 등 감지)
     CollisionComponent->SetCollisionProfileName(TEXT("PlayerAttack"));
-    CollisionComponent->OnComponentBeginOverlap.AddDynamic(this, &ADESimpleAOEBase::OnOverlapBegin);
 }
 
 void ADESimpleAOEBase::BeginPlay()
@@ -67,92 +66,72 @@ void ADESimpleAOEBase::InitializeFromContext(const FDESkillContext& Context)
 
 }
 
-void ADESimpleAOEBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-    
-    // 나 자신이나 주인은 무시
-    if (!OtherActor || OtherActor == this || OtherActor == GetOwner()) return;
-    // 3. [핵심] 몬스터의 "핵심 부위(Root)"가 아니면 무시! (팔, 다리, 메쉬 충돌 방지)
-    if (OtherComp != OtherActor->GetRootComponent())
-    {
-        return;
-    }
-    UE_LOG(LogTemp, Warning, TEXT("%s OnOverlapBegin"), *GetName());
-    // 들어오자마자 쿨타임 체크 후 즉시 타격 (반응성 UP)
-    if (CanHitTarget(OtherActor))
-    {
-        OnHitTarget(OtherActor);
-        // 다음 타격 시간 기록 but y here? ?
-        /*double CurrentTime = GetWorld()->GetTimeSeconds();
-        HitCooldownMap.Add(OtherActor, CurrentTime + HitCooldown);*/
-    }
-}
-
 void ADESimpleAOEBase::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
-    // 현재 겹쳐있는 모든 액터 가져오기
-    TArray<AActor*> OverlappingActors;
-    CollisionComponent->GetOverlappingActors(OverlappingActors);
-
-    const double CurrentTime = GetWorld()->GetTimeSeconds();
-
-    for (AActor* Target : OverlappingActors)
+    if (!bHitOnContact)
     {
-        if (!Target || Target == GetOwner()) continue;
-
-        // 쿨타임 지났는지 확인
-        if (CanHitTarget(Target))
-        {
-            OnHitTarget(Target);
-            UE_LOG(LogTemp, Warning, TEXT("OnHitTarget to : %s Called in Tick"), *Target->GetName());
-            HitCooldownMap.Add(Target, CurrentTime + HitCooldown);
-        }
+        PulseTimer -= DeltaTime;
+        if (PulseTimer > 0.0f) return;
+        PulseTimer = HitCooldown;
     }
 
-    // [최적화 팁] 
-    // HitCooldownMap에 있지만 현재 OverlappingActors에 없는(범위 밖으로 나간) 
-    // 적들은 Map에서 제거해주면 메모리를 아낄 수 있습니다. 
-    // 하지만 뱀서류는 적이 금방 죽으므로 굳이 안 해도 무방합니다.
+    TArray<AActor*> Targets;
+    QueryTargets(Targets);
+
+    for (AActor* Target : Targets)
+    {
+        if (bHitOnContact && !CanHitTarget(Target)) continue;
+        OnHitTarget(Target);
+    }
+}
+
+void ADESimpleAOEBase::QueryTargets(TArray<AActor*>& OutTargets) const
+{
+    UWorld* World = GetWorld();
+    if (!World) return;
+
+    FCollisionQueryParams QueryParams;
+    QueryParams.AddIgnoredActor(this);
+    QueryParams.AddIgnoredActor(GetOwner());
+
+    // 몬스터 오브젝트 타입 (DefaultEngine.ini의 GameTraceChannel5)
+    FCollisionObjectQueryParams ObjectQueryParams;
+    ObjectQueryParams.AddObjectTypesToQuery(ECC_GameTraceChannel5);
+
+    TArray<FOverlapResult> OverlapResults;
+    World->OverlapMultiByObjectType(
+        OverlapResults,
+        GetActorLocation(),
+        FQuat::Identity,
+        ObjectQueryParams,
+        FCollisionShape::MakeSphere(Radius),
+        QueryParams);
+
+    // 몬스터는 캡슐만 콜리전이 있어서 액터당 결과가 하나다
+    for (const FOverlapResult& Result : OverlapResults)
+    {
+        if (AActor* Target = Result.GetActor())
+        {
+            OutTargets.Add(Target);
+        }
+    }
 }
 
 bool ADESimpleAOEBase::CanHitTarget(AActor* Target) const
 {
     if (!Target) return false;
 
-    const double CurrentTime = GetWorld()->GetTimeSeconds();
-
-    // 맵에 기록이 있다면, 시간 체크
-    if (const double* NextHitTime = HitCooldownMap.Find(Target))
-    {
-        //UE_LOG(LogTemp, Warning, TEXT("%s CHECKED CanHitTarget, Target already exist"),*GetName());
-        return CurrentTime >= *NextHitTime;
-    }
-
     // 기록이 없으면(처음 만남) 즉시 타격 가능
-    //UE_LOG(LogTemp, Warning, TEXT("%s CHECKED CanHitTarget, New Target Hit immediately"), *GetName());
-    return true;
+    const float* NextHitTime = HitCooldownMap.Find(Target);
+    return !NextHitTime || GetWorld()->GetTimeSeconds() >= *NextHitTime;
 }
 
 void ADESimpleAOEBase::OnHitTarget(AActor* Target)
 {
-    double CurrentTime = GetWorld()->GetTimeSeconds();
-    HitCooldownMap.Add(Target, CurrentTime + HitCooldown);
+    HitCooldownMap.Add(Target, GetWorld()->GetTimeSeconds() + HitCooldown);
     TryDealDamage(Target);
-    UE_LOG(LogTemp, Warning, TEXT("AOE %s Hit : %s"), *GetName(), *Target->GetName());
-    //UE_LOG(LogTemp, Warning, TEXT("%s got hit by : %s"), *Target->GetName(), *GetName());
-    // [확장 포인트]
-    // 여기서 넉백(Knockback)이나 상태이상(ApplyStatus) 로직을 추가하면 됩니다.
-    // 예: ApplyKnockback(Target);
-}
-
-
-void ADESimpleAOEBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-    // 혹시라도 Destroy로 삭제될 때 타이머나 바인딩 정리
-    CollisionComponent->OnComponentBeginOverlap.RemoveDynamic(this, &ADESimpleAOEBase::OnOverlapBegin);
-    Super::EndPlay(EndPlayReason);
 }
 
 void ADESimpleAOEBase::ResetState()
@@ -167,6 +146,5 @@ void ADESimpleAOEBase::ResetState()
 void ADESimpleAOEBase::ReturnToPool()
 {
     Super::ReturnToPool();
-    HitCooldownMap.Empty();
-    HitCountMap.Empty();
+    PulseTimer = 0.0f;
 }
