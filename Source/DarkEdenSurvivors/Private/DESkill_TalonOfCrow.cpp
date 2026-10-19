@@ -35,7 +35,7 @@ void UDESkill_TalonOfCrow::InitBehaviors()
     
 
     UDEBehavior_PlayEffect* PlayFX = NewObject<UDEBehavior_PlayEffect>(this);
-    PlayFX->TargetType = EEffectTargetType::Instigator;
+    PlayFX->NiagaraTargetType = EEffectTargetType::Instigator;
     PlayFX->NiagaraEffect = NailHitEffect; // ★ 여기에 쏙!
     PlayFX->SoundEffect = NailHitSound;    // ★ 여기에 쏙!
     PlayFX->RotationType = EEffectRotation::TowardTarget;

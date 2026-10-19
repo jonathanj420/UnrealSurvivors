@@ -37,15 +37,7 @@ public:
     UPROPERTY(EditAnywhere, Category = "Search")
     ESearchOrigin OriginType = ESearchOrigin::Instigator;
 
-    // 3. (Custom일 때) Context에서 읽어올 좌표 이름
-    UPROPERTY(EditAnywhere, Category = "Search", meta = (EditCondition = "OriginType == ESearchOrigin::CustomLocation"))
-    FName VectorKeyName = TEXT("TargetLocation");
-
-    // 4. 시전자는 결과에서 뺄까?
-    UPROPERTY(EditAnywhere, Category = "Search")
-    bool bIgnoreInstigator = true;
-
-    // ★ 추가: 중복 타격 허용 여부
+    // 중복 타격 허용 여부
     // true: 장판 3개 겹치면 3번 리스트에 넣음 (3배 데미지)
     // false: 장판 100개 겹쳐도 1번만 넣음 (1배 데미지)
     UPROPERTY(EditAnywhere, Category = "Search")

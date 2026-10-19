@@ -72,8 +72,11 @@
   - 동작 변경: `CancelSkill`(진화)이 마지막 발동분뿐 아니라 살아 있는 키 없는 장판 전부를 거둔다
   - SpawnOrbit의 풀 액터 `Destroy()` 제거
 - [ ] Orbit은 `OnContextRefreshed`가 없다. Orbit 스킬이 Permanent면 레벨업해도 개수와 스탯이 안 바뀐다 (ExecutionType은 DT 확인 필요)
-- [ ] `CullByCone::ConeAngle` 안 읽힘 (각도는 CustomValues `"Angle"`, 기본 60). `InstantDamage::HitCount`/`HitInterval` 안 읽힘. 체력 컴포넌트 없는 대상에 `UGameplayStatics::ApplyDamage` + Instigator null 역참조
-- [ ] 안 쓰는 프로퍼티: `PlayEffect::TargetType`, `FireProjectileRadial::ProjectileClass`, `SelectNearestTarget::EnemyTag`, `SelectTargetsInRadius::VectorKeyName`(EditCondition도 깨짐)/`bIgnoreInstigator`. `ApplyStatusEffect`의 빈 TODO 루프
+- [x] `CullByCone::ConeAngle`이 이제 읽힌다 (DT `"Angle"`이 우선, 없으면 ConeAngle). 기본값을 120에서 60으로 바꿔서 손대지 않은 BP는 전과 같은 60도
+- [x] `InstantDamage::HitCount`/`HitInterval` 구현 (개발자 결정, 2026-10-20). 간격 0이면 한 번에, 0보다 크면 첫 타격 후 남은 타격을 타이머로. 파이프라인은 기다리지 않는다. `IsInProgress`로 다음 발동을 미루고 `EndBehavior`에서 정리. 타격으로 죽은 타겟은 바로 빼서 풀에서 재사용된 몬스터를 때리지 않는다 (다른 스킬이 죽인 뒤 간격 안에 재사용되면 막지 못함). 뒤 Behavior가 보는 `Context.Targets`는 바꾸지 않는다
+  - 체력 컴포넌트 없는 대상의 `UGameplayStatics::ApplyDamage` 폴백 삭제 (타겟은 몬스터 쿼리로만 들어온다)
+- [x] 안 쓰는 프로퍼티 삭제: `PlayEffect::TargetType`(레거시 4개 스킬은 같은 의미의 `NiagaraTargetType`으로), `FireProjectileRadial::ProjectileClass`, `SelectNearestTarget::EnemyTag`, `SelectTargetsInRadius::VectorKeyName`/`bIgnoreInstigator`. `ApplyStatusEffect`의 빈 TODO 루프. `NiagaraTargetType`/`SoundTargetType` 기본값을 명시 (기존과 같은 Instigator)
+- [ ] 레거시 `DESkill_AcidBolt::InitBehaviors`의 `FireProjectileRadial`은 `ProjectileClasses`를 채우지 않아서 한 발도 안 쏜다 (전에도 `ProjectileClass`만 넣어서 같았다). AcidBolt가 BP에서 Behavior를 따로 조립해 동작 중이면 C++ 쪽은 BP 이전 때 삭제
 - [ ] 값 우선순위 규칙 통일 (개발자 결정 대기): Behavior마다 프로퍼티/Context/CustomValues 중 무엇이 이기는지, -1의 의미가 다르다. `SelectTargetsInRadius`의 맵 전체 검색은 `GetGameMode` 경유
 
 ## 몬스터 최적화 (목표 동시 1000마리)

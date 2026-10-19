@@ -22,9 +22,5 @@ public:
 	UPROPERTY(EditAnywhere)
 	float DefaultSearchRadius = 2000.0f;
 
-	// 적 태그 (예: "Enemy", "Monster")
-	UPROPERTY(EditAnywhere)
-	FName EnemyTag = TEXT("Enemy");
-
 	
 };

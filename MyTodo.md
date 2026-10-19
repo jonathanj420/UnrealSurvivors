@@ -72,6 +72,11 @@
 - [ ] 이동 장판(SpawnOnMove)과 궤도 스킬을 재료로 진화: 깔려 있던 장판과 궤도가 진화 순간 사라지는지
 - [ ] `PlayUI`로 띄우는 위젯 BP가 스스로 `RemoveFromParent`하는지 (C++은 띄우기만 한다)
 - [ ] `FireProjectile`이 `FilterTargets`로 여러 타겟을 골라도 첫 타겟 방향으로만 쏘는 게 의도인지
+- [ ] `CullByCone`을 쓰는 BP 스킬(TalonOfCrow 등)에서 `ConeAngle`을 60 말고 다른 값으로 넣어둔 게 있는지. 이제 그 값이 실제로 적용된다 (DT에 Angle이 없을 때)
+- [ ] `InstantDamage`에서 `HitCount`/`HitInterval`을 BP에 넣어둔 스킬이 있는지. 전엔 무시됐는데 이제 그만큼 때린다
+- [ ] HitCount 3, HitInterval 0.2 정도로 하나 만들어서: 3번 맞는지, 첫 타격에 죽은 몬스터 자리에 새로 나온 몬스터가 맞지 않는지
+- [ ] BP 컴파일: `PlayEffect::TargetType`, `FireProjectileRadial::ProjectileClass`, `SelectNearestTarget::EnemyTag`, `SelectTargetsInRadius::VectorKeyName`/`bIgnoreInstigator`를 삭제했다 (BP 그래프에서 읽을 수 없는 EditAnywhere 전용이라 에러는 안 날 것)
+- [ ] AcidBolt가 지금 어떻게 동작하는지: 스킬 클래스가 C++ `DESkill_AcidBolt`인지 BP인지, BP라면 `FireProjectileRadial`의 `ProjectileClasses`를 채웠는지
 
 ## AOE
 

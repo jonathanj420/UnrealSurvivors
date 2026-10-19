@@ -14,20 +14,7 @@ void UDEBehavior_ApplyStatusEffect::Execute(FDESkillContext& Context)
 	float FinalPower = (this->Power == -1.0f) ? Context.Damage : this->Power;
 	float FinalInterval = Context.GetValue(FName("Interval"), this->Interval);
 
-	// ----------------------------------------------------
-	// TODO: FinalDuration, FinalPower를 사용해서 타겟들에게 상태이상 부여
-	// ----------------------------------------------------
-	for (AActor* Target : Context.Targets)
-	{
-		if (Target)
-		{
-			// 예: Target->ApplyStatus(StatusClass, FinalDuration, FinalPower);
-		}
-	}
-
-	if (!StatusClass) return;
-
-	// ★ 핵심: Context에 담겨있는 타겟들에게 상태이상을 겁니다.
+	// Context에 담겨있는 타겟들에게 상태이상을 겁니다.
 	// 즉, 이 Behavior 앞에는 반드시 "타겟을 찾는 Behavior"가 실행되어야 합니다.
 	for (AActor* TargetActor : Context.Targets)
 	{

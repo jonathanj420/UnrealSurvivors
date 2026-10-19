@@ -37,7 +37,7 @@ void UDESkill_LethalClaw::InitBehaviors()
 	auto* CastVFX = NewObject<UDEBehavior_PlayEffect>(this, TEXT("CastVFX"));
 	if (CastVFX)
 	{
-		CastVFX->TargetType = EEffectTargetType::Instigator; // 시전자 위치
+		CastVFX->NiagaraTargetType = EEffectTargetType::Instigator; // 시전자 위치
 		CastVFX->bAttachToActor = false; // 바닥에 퍼지고 끝남 (따라오지 않음)
 		CastVFX->NiagaraEffect = CastEffectAsset; // 위에서 로드한 에셋 연결
 		CastVFX->SoundEffect = CastSound;

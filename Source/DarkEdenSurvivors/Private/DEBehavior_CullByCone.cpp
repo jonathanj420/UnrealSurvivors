@@ -30,7 +30,7 @@ void UDEBehavior_CullByCone::Execute(FDESkillContext& Context)
 
     // 1. Context에 동적 스탯이 있으면 쓰고, 없으면 기본값(this) 사용
     float FinalRadius = (Context.Radius > 0.f) ? Context.Radius : this->Radius;
-    float FinalAngle = Context.GetValue(TEXT("Angle"), 60.0f);
+    float FinalAngle = Context.GetValue(TEXT("Angle"), ConeAngle);
 
 
     // ==========================================

@@ -47,9 +47,6 @@ public:
     USoundBase* SoundEffect = nullptr;
 
     UPROPERTY(EditAnywhere, Category = "Effect")
-    EEffectTargetType TargetType = EEffectTargetType::AllTargets;
-
-    UPROPERTY(EditAnywhere, Category = "Effect")
     EEffectRotation RotationType = EEffectRotation::ZeroRotator;
 
     UPROPERTY(EditAnywhere, Category = "Effect")
@@ -70,11 +67,11 @@ public:
 public:
     // 나이아가라 이펙트가 터질 위치
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
-    EEffectTargetType NiagaraTargetType;
+    EEffectTargetType NiagaraTargetType = EEffectTargetType::Instigator;
 
-    // 사운드가 재생될 위치 (분리!)
+    // 사운드가 재생될 위치
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Audio")
-    EEffectTargetType SoundTargetType;
+    EEffectTargetType SoundTargetType = EEffectTargetType::Instigator;
 
 private:
     FRotator GetSpawnRotation(const FDESkillContext& Context, const FVector& SpawnLoc, AActor* Target) const;

@@ -28,9 +28,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	USoundBase* FireSound;
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AActor> ProjectileClass;
-
+	// 비어 있으면 아무것도 쏘지 않는다
 	UPROPERTY(EditAnywhere, Category = "Projectile")
 	TArray<TSubclassOf<class ADESimpleProjectileBase>> ProjectileClasses;
 
