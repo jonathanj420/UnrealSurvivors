@@ -31,3 +31,5 @@
 !/Content/Textures/**
 
 # ─────────────────────────────────────
+# Local build output (see CLAUDE.md build command)
+/build.log
