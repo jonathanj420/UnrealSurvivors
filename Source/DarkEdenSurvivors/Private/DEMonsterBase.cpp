@@ -26,6 +26,8 @@ ADEMonsterBase::ADEMonsterBase()
 	Capsule->SetCollisionProfileName(TEXT("Monster"));
 	Capsule->SetCastShadow(false);
 	Capsule->SetGenerateOverlapEvents(false);
+	// 몬스터는 내비게이션을 쓰지 않는다. 움직일 때마다 내비 옥트리 갱신이 일어나지 않도록 제외
+	Capsule->SetCanEverAffectNavigation(false);
 	RootComponent = Capsule;
 
 	//SetCastShad
