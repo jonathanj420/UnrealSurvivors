@@ -129,7 +129,6 @@ void ADECharacterBase::BeginPlay()
     {
         SkillManager->LevelUpSkill(BaseSkillID);  // 추가할 함수 구현해줄 것
     }
-    //StatComponent->OnLevelUp.AddDynamic(this, &ADEPlayerController::ShowLevelUpUI);
     SetControlMode(EControlMode::FIXEDTPS);
     ActiveSkill = NewObject<UDESkill_BloodDrain>(this);
     ActiveSkill->InitSkill(this);
@@ -487,10 +486,10 @@ void ADECharacterBase::SetMaxHP(float NewMaxHP)
 
 void ADECharacterBase::OnCharacterLevelUp(int32 NewLevel)
 {
-
-    if (DEPlayerController)
+    // 표시는 LevelUpManager 신호를 받은 컨트롤러가 한다
+    if (LevelUpManagerComponent)
     {
-        DEPlayerController->ShowLevelUpUI(); // 인자 없는 버전이면 바로 호출
+        LevelUpManagerComponent->EnqueueLevelUp();
     }
 }
 

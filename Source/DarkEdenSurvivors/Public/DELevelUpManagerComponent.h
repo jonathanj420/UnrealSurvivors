@@ -17,6 +17,9 @@ struct FAccessoryPoolItem
     float Weight;
 };
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnLevelUpChoicesReady, const TArray<UDELevelUpChoiceBase*>& /*Choices*/);
+DECLARE_MULTICAST_DELEGATE(FOnLevelUpQueueFinished);
+
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class DARKEDENSURVIVORS_API UDELevelUpManagerComponent : public UActorComponent
@@ -26,11 +29,36 @@ class DARKEDENSURVIVORS_API UDELevelUpManagerComponent : public UActorComponent
 public:
     UDELevelUpManagerComponent();
 
-    TArray<UDELevelUpChoiceBase*> GenerateChoices(int32 Count);
-    void ApplyChoice(UDELevelUpChoiceBase* Choice);
+    // 레벨이 하나 오를 때마다 부른다. 여러 번 쌓여도 선택은 하나씩 진행되고,
+    // 선택지는 직전 선택이 적용된 뒤의 상태로 만든다
+    void EnqueueLevelUp();
+
+    // 현재 선택지에 없는 Choice(이전 선택지, 중복 클릭)는 무시하고 false
+    bool ApplyChoice(UDELevelUpChoiceBase* Choice);
+
+    bool IsSelectingLevelUp() const { return !CurrentChoices.IsEmpty(); }
+
+    FOnLevelUpChoicesReady OnLevelUpChoicesReady;
+    // 쌓인 레벨업 선택이 모두 끝났을 때. 선택지를 한 번도 띄우지 않았으면 오지 않는다
+    FOnLevelUpQueueFinished OnLevelUpQueueFinished;
 
 protected:
     virtual void BeginPlay() override;
+
+private:
+    TArray<UDELevelUpChoiceBase*> GenerateChoices(int32 Count);
+
+    // 선택지를 띄웠으면 true. 올릴 게 없는 레벨업은 건너뛴다
+    bool PresentNextLevelUp();
+
+    UPROPERTY(EditAnywhere, Category = "LevelUp")
+    int32 ChoiceCount = 3;
+
+    int32 PendingLevelUpCount = 0;
+
+    // 선택지 객체는 여기서만 강하게 참조된다
+    UPROPERTY()
+    TArray<UDELevelUpChoiceBase*> CurrentChoices;
 
 private:
     // ===== 설정값 =====

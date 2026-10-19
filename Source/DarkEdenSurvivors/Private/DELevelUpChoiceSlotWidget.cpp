@@ -46,16 +46,9 @@ void UDELevelUpChoiceSlotWidget::InitSlot(UDELevelUpChoiceBase* InChoice)
 
 void UDELevelUpChoiceSlotWidget::OnSlotClicked()
 {
+	// 적용은 하지 않는다. 부모 위젯이 LevelUpManager에 넘긴다
 	if (ChoiceData)
 	{
-		// ★ 핵심: 데이터 객체에게 "니 능력 적용해!" 라고 명령 (커맨드 패턴)
-		// UI는 이게 스킬인지 악세서리인지 몰라도 됨
-		ChoiceData->Apply(GetOwningPlayerPawn());
-
-		// ★ 부모(메인 위젯)에게 알림 -> 부모가 창 닫고 게임 재개
-		if (OnSlotSelected.IsBound())
-		{
-			OnSlotSelected.Broadcast();
-		}
+		OnSlotSelected.Broadcast(ChoiceData);
 	}
 }

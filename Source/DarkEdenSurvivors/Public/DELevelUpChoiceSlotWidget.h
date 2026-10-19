@@ -7,7 +7,7 @@
 #include "DELevelUpChoiceBase.h"
 #include "DELevelUpChoiceSlotWidget.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSlotSelected);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSlotSelected, UDELevelUpChoiceBase*, Choice);
 
 class UButton;
 class UImage;

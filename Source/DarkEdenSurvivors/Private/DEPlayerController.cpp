@@ -11,7 +11,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "DEChestWidget.h"
 #include "DELevelUpChoiceBase.h"
-#include "Components/VerticalBox.h"
 #include "DarkEdenSurvivors.h"
 
 ADEPlayerController::ADEPlayerController()
@@ -94,6 +93,25 @@ void ADEPlayerController::OnPossess(APawn* aPawn)
         GameHUDWidget->BindCharacterStat(MyChar);
     }
 
+    if (UDELevelUpManagerComponent* LevelUpManager = MyChar ? MyChar->GetLevelUpManagerComponent() : nullptr)
+    {
+        LevelUpManager->OnLevelUpChoicesReady.AddUObject(this, &ADEPlayerController::ShowLevelUpChoices);
+        LevelUpManager->OnLevelUpQueueFinished.AddUObject(this, &ADEPlayerController::HandleLevelUpQueueFinished);
+    }
+}
+
+void ADEPlayerController::OnUnPossess()
+{
+    if (ADECharacterBase* MyChar = Cast<ADECharacterBase>(GetPawn()))
+    {
+        if (UDELevelUpManagerComponent* LevelUpManager = MyChar->GetLevelUpManagerComponent())
+        {
+            LevelUpManager->OnLevelUpChoicesReady.RemoveAll(this);
+            LevelUpManager->OnLevelUpQueueFinished.RemoveAll(this);
+        }
+    }
+
+    Super::OnUnPossess();
 }
 
 void ADEPlayerController::Tick(float DeltaSeconds)
@@ -126,31 +144,29 @@ void ADEPlayerController::SetupInputComponent()
 
 }
 
-void ADEPlayerController::ShowLevelUpUI()
+void ADEPlayerController::ShowLevelUpChoices(const TArray<UDELevelUpChoiceBase*>& Choices)
 {
-    UE_LOG(LogTemp, Warning, TEXT("Try Show Level Up UI"));
-    APawn* MyPawn = GetPawn();
-    if (!MyPawn) return;
-    UE_LOG(LogTemp, Warning, TEXT("GetPawn Passed"));
-    ADECharacterBase* MyChar = Cast<ADECharacterBase>(MyPawn);
-    UDELevelUpManagerComponent* LevelUpManager = MyChar->GetLevelUpManagerComponent();
-    if (!MyChar || !LevelUpManager) return;
-    UE_LOG(LogTemp, Warning, TEXT("MyChar, SkillManager Passed"));
-    if (!LevelUpWidgetClass || !LevelUpManager) return;
-    UE_LOG(LogTemp, Warning, TEXT("WidgetClass Passed"));
-    UDELevelUpWidget* Widget = CreateWidget<UDELevelUpWidget>(this, LevelUpWidgetClass);
-    if (!Widget) return;
-    UE_LOG(LogTemp, Warning, TEXT("Created Widget"));
-    Widget->InitWidget(LevelUpManager);
-    Widget->AddToViewport();
+    ADECharacterBase* MyChar = Cast<ADECharacterBase>(GetPawn());
+    UDELevelUpManagerComponent* LevelUpManager = MyChar ? MyChar->GetLevelUpManagerComponent() : nullptr;
+    if (!LevelUpManager) return;
 
-    // 선택지는 NativeConstruct에서 만들어진다. 하나도 없으면 멈춘 채로 누를 게 없으므로 닫는다
-    if (!Widget->ChoiceContainer || Widget->ChoiceContainer->GetChildrenCount() == 0)
+    if (!LevelUpWidget)
     {
-        UE_LOG(LogDarkEdenSurvivors, Warning, TEXT("[LevelUp] No choices available, skipping level-up UI"));
-        Widget->RemoveFromParent();
-        return;
+        if (!LevelUpWidgetClass)
+        {
+            UE_LOG(LogDarkEdenSurvivors, Error, TEXT("[LevelUp] LevelUpWidgetClass is not set"));
+            return;
+        }
+        LevelUpWidget = CreateWidget<UDELevelUpWidget>(this, LevelUpWidgetClass);
+        if (!LevelUpWidget) return;
     }
+
+    LevelUpWidget->InitWidget(LevelUpManager);
+    if (!LevelUpWidget->IsInViewport())
+    {
+        LevelUpWidget->AddToViewport();
+    }
+    LevelUpWidget->SetChoices(Choices);
 
     SetPause(true);
 
@@ -158,6 +174,16 @@ void ADEPlayerController::ShowLevelUpUI()
     SetInputMode(InputMode);
     bShowMouseCursor = true;
 }
+
+void ADEPlayerController::HandleLevelUpQueueFinished()
+{
+    if (LevelUpWidget)
+    {
+        LevelUpWidget->RemoveFromParent();
+    }
+    ResumeGame();
+}
+
 void ADEPlayerController::ResumeGame()
 {
     SetPause(false);

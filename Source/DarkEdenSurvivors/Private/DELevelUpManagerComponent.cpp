@@ -8,6 +8,7 @@
 #include "DEAccessoryComponent.h"
 #include "DEAccessoryData.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "DarkEdenSurvivors.h"
 
 UDELevelUpManagerComponent::UDELevelUpManagerComponent()
 {
@@ -96,17 +97,53 @@ TArray<UDELevelUpChoiceBase*> UDELevelUpManagerComponent::GenerateChoices(int32 
     return Result;
 }
 
-void UDELevelUpManagerComponent::ApplyChoice(UDELevelUpChoiceBase* Choice)
+void UDELevelUpManagerComponent::EnqueueLevelUp()
 {
-    if (!Choice)
-        return;
+    ++PendingLevelUpCount;
+
+    if (!IsSelectingLevelUp())
+    {
+        PresentNextLevelUp();
+    }
+}
+
+bool UDELevelUpManagerComponent::ApplyChoice(UDELevelUpChoiceBase* Choice)
+{
+    if (!Choice || !CurrentChoices.Contains(Choice))
+        return false;
 
     AActor* OwnerActor = GetOwner();
     if (!OwnerActor)
-        return;
+        return false;
 
-    // ★ 핵심: 실제 적용은 Choice가 한다
+    // 실제 적용은 Choice가 한다
     Choice->Apply(OwnerActor);
+
+    CurrentChoices.Reset();
+    --PendingLevelUpCount;
+
+    if (!PresentNextLevelUp())
+    {
+        OnLevelUpQueueFinished.Broadcast();
+    }
+    return true;
+}
+
+bool UDELevelUpManagerComponent::PresentNextLevelUp()
+{
+    while (PendingLevelUpCount > 0)
+    {
+        CurrentChoices = GenerateChoices(ChoiceCount);
+        if (!CurrentChoices.IsEmpty())
+        {
+            OnLevelUpChoicesReady.Broadcast(CurrentChoices);
+            return true;
+        }
+
+        UE_LOG(LogDarkEdenSurvivors, Log, TEXT("[LevelUp] No choices available, skipping a level-up"));
+        --PendingLevelUpCount;
+    }
+    return false;
 }
 
 UDELevelUpChoiceBase* UDELevelUpManagerComponent::CreateRandomSkillChoice()

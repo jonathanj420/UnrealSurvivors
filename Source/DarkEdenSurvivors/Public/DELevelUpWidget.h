@@ -10,6 +10,7 @@
 class UVerticalBox;
 class UDELevelUpChoiceSlotWidget;
 class UDELevelUpManagerComponent;
+class UDELevelUpChoiceBase;
 
 /**
  * 
@@ -24,12 +25,13 @@ public:
     // 매니저 등록 함수
     void InitWidget(UDELevelUpManagerComponent* InManager);
 
-protected:
-    virtual void NativeConstruct() override;
+    // 선택지는 LevelUpManager가 만들어서 넘겨준다. 위젯 하나를 다음 레벨업에도 재사용한다
+    void SetChoices(const TArray<UDELevelUpChoiceBase*>& Choices);
 
-    // 슬롯에서 "나 선택됐어!" 신호를 보내면 실행될 함수
+protected:
+    // 선택만 매니저에 넘긴다. 창을 닫고 게임을 재개하는 건 매니저 신호를 받은 컨트롤러가 한다
     UFUNCTION()
-    void OnOptionSelected();
+    void OnOptionSelected(UDELevelUpChoiceBase* Choice);
 
 public:
     // =========================================================

@@ -40,8 +40,9 @@
 - [ ] 데미지 경로
 - [ ] 일시정지와 입력 모드 관리를 한 곳으로
 - [ ] 스턴 2개 → StatusEffect 하나로
-- [ ] 레벨업 큐: `AddExp`가 한 번에 여러 번 `OnLevelUp`을 쏘면 위젯이 여러 개 동시에 생기고, 전부 같은 상태로 선택지를 만든다. 첫 위젯을 닫으면 `ResumeGame`으로 나머지가 열린 채 게임이 재개된다. 선택지 생성은 위젯 `NativeConstruct`가 아니라 매니저가, 적용은 `LevelUpManager::ApplyChoice`를 거치게 (멀티 대비)
-  - 선택지 0개일 때 멈춤은 임시로 `ShowLevelUpUI`에서 위젯을 닫고 일시정지를 건너뛰게 막아둠
+- [x] 레벨업 큐: `UDELevelUpManagerComponent`가 대기 레벨업 수와 현재 선택지를 갖는다. `EnqueueLevelUp` → 선택지 생성 → `OnLevelUpChoicesReady` → 컨트롤러가 위젯 하나를 재사용해 표시 → 슬롯 클릭 → `ApplyChoice`(현재 선택지에 있는 것만 적용) → 다음 선택지 또는 `OnLevelUpQueueFinished` → 컨트롤러가 닫고 재개. 선택지가 0개인 레벨업은 건너뛴다. 위젯은 더 이상 선택지를 만들거나 적용하지 않는다
+  - 상자 보상은 아직 `UDEChestWidget::ApplyAllRewardsAndClose`가 직접 `Apply`한다. 같은 방식으로 매니저에 옮길 대상
+  - 레벨업 선택 중 ESC를 누르면 `TogglePauseMenu`가 `IsPaused()`만 보고 일시정지를 푼다. 레벨업과 상자가 같은 프레임에 겹쳐도 먼저 닫힌 쪽이 재개한다. "일시정지와 입력 모드 관리를 한 곳으로"에서 처리
 - [ ] 킬 처리를 `FDEDamageResult` 기반으로 일원화 (킬 카운터 중복 해소)
 - [x] `EvolveSkill`이 `EndSkill` 대신 `CancelSkill`을 쓰도록. `CancelSkill`은 `CachedContext.SpawnedAOEs`(Orbit, SpawnAOE)도 회수한다. 날아가는 투사체는 추적하지 않으므로 수명이 다할 때까지 남는다
 - [ ] 레거시 스킬을 BP 조립 방식으로 이전

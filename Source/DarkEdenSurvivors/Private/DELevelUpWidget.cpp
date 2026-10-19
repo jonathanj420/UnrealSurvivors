@@ -6,17 +6,13 @@
 #include "DELevelUpChoiceSlotWidget.h" // 슬롯 헤더 포함
 #include "DELevelUpChoiceBase.h"
 #include "Components/VerticalBox.h"
-#include "DEPlayerController.h"
 
 void UDELevelUpWidget::InitWidget(UDELevelUpManagerComponent* InLevelUpManager)
 {
     LevelUpManager = InLevelUpManager;
 }
-void UDELevelUpWidget::NativeConstruct()
+void UDELevelUpWidget::SetChoices(const TArray<UDELevelUpChoiceBase*>& Choices)
 {
-	Super::NativeConstruct();
-
-	if (!LevelUpManager) return;
 	if (!ChoiceContainer) return;
 	if (!SlotWidgetClass)
 	{
@@ -24,14 +20,10 @@ void UDELevelUpWidget::NativeConstruct()
 		return;
 	}
 
-	// 1. 기존에 남아있던 슬롯이 있다면 제거 (리롤 기능 대비)
+	// 1. 이전 레벨업의 슬롯 제거
 	ChoiceContainer->ClearChildren();
 
-	// 2. 매니저에게 선택지 3개(혹은 4개) 받아오기
-	// (함수 이름은 님이 만든 Manager에 맞춰서 GetRandomChoices or GenerateChoices 사용)
-	TArray<UDELevelUpChoiceBase*> Choices = LevelUpManager->GenerateChoices(3);
-
-	// 3. 슬롯 생성 및 배치
+	// 2. 슬롯 생성 및 배치
 	for (UDELevelUpChoiceBase* Choice : Choices)
 	{
 		// 위젯 생성 (CreateWidget)
@@ -51,16 +43,11 @@ void UDELevelUpWidget::NativeConstruct()
 	}
 }
 
-void UDELevelUpWidget::OnOptionSelected()
+void UDELevelUpWidget::OnOptionSelected(UDELevelUpChoiceBase* Choice)
 {
-	// ★ 중요: Apply()는 이미 SlotWidget 안에서 실행되었습니다.
-	// 여기서는 창을 닫고 게임을 재개하는 역할만 합니다.
-
-	if (auto PC = Cast<ADEPlayerController>(GetOwningPlayer()))
+	if (LevelUpManager)
 	{
-		PC->ResumeGame();
+		LevelUpManager->ApplyChoice(Choice);
 	}
-
-	RemoveFromParent();
 }
 

@@ -23,6 +23,7 @@ public:
 
 	virtual void PostInitializeComponents() override;
 	virtual void OnPossess(APawn* aPawn) override;
+	virtual void OnUnPossess() override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -61,7 +62,6 @@ private:
 public:
 	UFUNCTION()
 	void ResumeGame();
-	void ShowLevelUpUI();
 	void ShowChestWidget(const TArray<UDELevelUpChoiceBase*>& Rewards);
 	// ESC 메뉴 껐다 켜기
 	UFUNCTION(BlueprintCallable, Category = "UI")
@@ -76,5 +76,9 @@ private:
 	// 현재 화면에 떠있는 일시정지 메뉴 인스턴스
 	UPROPERTY()
 	class UUserWidget* PauseMenuInstance;
+
+	// 레벨업 큐는 폰의 LevelUpManager가 관리하고, 컨트롤러는 신호를 받아 표시만 한다
+	void ShowLevelUpChoices(const TArray<UDELevelUpChoiceBase*>& Choices);
+	void HandleLevelUpQueueFinished();
 
 };
