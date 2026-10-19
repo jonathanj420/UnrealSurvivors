@@ -122,7 +122,7 @@ public:
 	// 매니저가 고속으로 읽어갈 상태 플래그
 	bool bCanMove = true;
 
-	bool IsAlive();
+	bool IsAlive() const;
 protected:
 	UPROPERTY(EditAnywhere, Category = "Monster Stats")
 	bool bIsAlive = false;

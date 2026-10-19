@@ -4,6 +4,8 @@
 #include "DEMonsterUpdateComponent.h"
 #include "DEMonsterBase.h"
 #include "DECharacterBase.h"
+#include "DEMonsterQuerySubsystem.h"
+#include "Engine/World.h"
 
 UDEMonsterUpdateComponent::UDEMonsterUpdateComponent()
 {
@@ -65,41 +67,19 @@ void UDEMonsterUpdateComponent::ResolveOverlaps(TArray<ADEMonsterBase*>& ActiveM
 {
     TRACE_CPUPROFILER_EVENT_SCOPE(UDEMonsterUpdateComponent::ResolveOverlaps);
 
-    const int32 MonsterCount = ActiveMonsters.Num();
+    UDEMonsterQuerySubsystem* Query = GetWorld()->GetSubsystem<UDEMonsterQuerySubsystem>();
+    if (!Query) return;
 
-    // 1. 이전 프레임에 사용된 셀만 비운 뒤, 같은 TSet을 이번 프레임 셀 목록으로 재사용한다 (Reset은 메모리 유지)
-    for (const FIntPoint& Cell : TouchedCells)
+    // 1. 그리드 재구성. 스킬 타겟 쿼리도 이 그리드를 쓴다
+    Query->RebuildGrid(ActiveMonsters, MaxPushPerFrame);
+
+    // 2. 충돌 검사 (셀 단위 4방향 하프-네이버)
+    for (const FIntPoint& CellIndex : Query->GetOccupiedCells())
     {
-        if (TArray<ADEMonsterBase*>* Arr = SpatialGrid.Find(Cell))
-        {
-            Arr->Reset();
-        }
-    }
-    TouchedCells.Reset();
-
-    // 2. 몬스터들을 그리드 셀에 배정
-    for (int32 i = 0; i < MonsterCount; ++i)
-    {
-        ADEMonsterBase* Mob = ActiveMonsters[i];
-        if (!Mob) continue;
-
-        const FVector& Loc = Mob->CachedLocation; // 함수 호출 없이 변수만 쏙 빼먹음!
-        FIntPoint CellIndex(FMath::FloorToInt(Loc.X / CellSize), FMath::FloorToInt(Loc.Y / CellSize));
-        SpatialGrid.FindOrAdd(CellIndex).Add(Mob);
-        TouchedCells.Add(CellIndex);  // 중복 자동 방지
-    }
-
-    
-
-    // =========================================================
-    // 3. 충돌 검사 (몬스터 중심 -> 셀 단위 4방향 하프-네이버 최적화!)
-    // =========================================================
-    for (const FIntPoint& CellIndex : TouchedCells)
-    {
-        TArray<ADEMonsterBase*>* CellMonstersPtr = SpatialGrid.Find(CellIndex);
+        const TArray<ADEMonsterBase*>* CellMonstersPtr = Query->FindCell(CellIndex);
         if (!CellMonstersPtr || CellMonstersPtr->Num() == 0) continue;
 
-        TArray<ADEMonsterBase*>& CellMonsters = *CellMonstersPtr;
+        const TArray<ADEMonsterBase*>& CellMonsters = *CellMonstersPtr;
         const int32 CellMobCount = CellMonsters.Num();
 
         // 3-1. [같은 셀 내부 검사] 
@@ -118,7 +98,7 @@ void UDEMonsterUpdateComponent::ResolveOverlaps(TArray<ADEMonsterBase*>& ActiveM
 
         for (int32 dir = 0; dir < 4; ++dir)
         {
-            if (TArray<ADEMonsterBase*>* NeighborMonsters = SpatialGrid.Find(CellIndex + NeighborOffsets[dir]))
+            if (const TArray<ADEMonsterBase*>* NeighborMonsters = Query->FindCell(CellIndex + NeighborOffsets[dir]))
             {
                 if (NeighborMonsters->Num() == 0) continue;
 
@@ -143,7 +123,7 @@ void UDEMonsterUpdateComponent::ResolveOverlaps(TArray<ADEMonsterBase*>& ActiveM
         if (!Mob->PendingOverlapPush.IsNearlyZero())
         {
             // 밀어내기 벡터 (주의: 여기에 MoveToPlayer 이동량까지 합쳐져 있다면 Clamp(10.f) 수치는 프레임당 최대 이동 거리로 넉넉히 잡아야 합니다. 예를 들어 20.f)
-            FVector FinalPush = Mob->PendingOverlapPush.GetClampedToMaxSize(20.0f);
+            FVector FinalPush = Mob->PendingOverlapPush.GetClampedToMaxSize(MaxPushPerFrame);
 
             // 1. 최종 위치 계산 (현재 캐시된 위치 + 최종 이동/밀림량)
             FVector FinalLocation = Mob->CachedLocation + FinalPush;

@@ -49,21 +49,6 @@ private:
     UPROPERTY()
     ADECharacterBase* Player = nullptr;
 
-//Grid Spatial Partitioning
-private:
-    // 1. 셀 사이즈는 기획자가 에디터에서 튜닝할 수 있게 UPROPERTY로 빼주는 게 국룰!
-    UPROPERTY(EditAnywhere, Category = "Optimization")
-    float CellSize = 200.0f;
-
-    // 2. 매 프레임 재활용할 공간 분할 바구니 (절대 Tick 안에서 생성하지 않음!)
-    TMap<FIntPoint, TArray<ADEMonsterBase*>> SpatialGrid;
-
-    // 이번 프레임에 몬스터가 배정된 셀. 다음 프레임 시작 시 이 셀들만 비운다
-    TSet<FIntPoint> TouchedCells;
-
-    // [최적화 #1] 프레임당 GetActorLocation() 중복 호출 제거용 캐시
-    // SetNumUninitialized()로 크기만 맞추고 재사용 → 매 프레임 힙 할당 없음
-    TArray<FVector> CachedPositions;
-
-		
+    // 한 프레임에 적용하는 이동/밀림량 상한. 그리드를 만든 뒤 이만큼 움직이므로 쿼리 패딩에도 쓴다
+    static constexpr float MaxPushPerFrame = 20.0f;
 };

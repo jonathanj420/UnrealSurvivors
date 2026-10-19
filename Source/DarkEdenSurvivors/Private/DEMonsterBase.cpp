@@ -344,7 +344,7 @@ void ADEMonsterBase::ExecuteFinalDeath()
 }
 
 
-bool ADEMonsterBase::IsAlive()
+bool ADEMonsterBase::IsAlive() const
 {
 	
 	return HealthComponent->IsAlive();
