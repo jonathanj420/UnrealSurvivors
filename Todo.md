@@ -58,7 +58,8 @@
 - [ ] 상자에서 같은 스킬이 업그레이드로 두 번 뽑히면, 남은 레벨이 1개일 때 두 번째는 적용 실패한다 (뽑을 때 예정된 레벨업을 반영하지 않음)
 - [x] 상태 일원화: `SkillLevels`, `UDESkillBase::CurrentLevel`(쓰기만 함) 삭제. 레벨은 `FActiveSkill::CurrentLevel` 하나. Inventory의 스킬 목록과 `MaxSkillSlots`를 `UDESkillManagerComponent::SkillSlotOrder`/`MaxSkillSlots`로 이동 (개발자 결정, 2026-10-20). HUD 스킬 위젯은 SkillManager의 `OnSkillUpdated`만 본다. 진화 결과는 재료 중 가장 앞 슬롯에 들어간다. 결과 스킬 데이터가 없으면 재료를 지우기 전에 진화를 취소한다
 - [ ] `UDEInventoryComponent`에는 장신구 ID 목록만 남았는데, `UDEAccessoryComponent`의 장착 맵과 겹친다. 쓰는 곳은 `CheckEvolution`의 `HasAccessory` 하나. AccessoryComponent로 합치고 Inventory 삭제 검토
-- [ ] 레벨업 시 쿨다운 0 리셋이 Delay 파이프라인 진행 중에 `Activate`를 다시 불러 이전 시전을 끊는다 (기획 판단 필요)
+- [x] 레벨업 시 쿨다운 0 리셋이 진행 중인 시전을 끊던 문제: 레벨업하면 바로 재발동하되, 이전 시전(Delay로 멈춘 파이프라인, `FireProjectile` 연사)이 끝난 뒤에 발동한다 (개발자 결정 (b), 2026-10-20). `UDEAutoSkillBase::IsCastInProgress` + `UDESkillBehavior::IsInProgress`. 쿨다운이 시전 시간보다 짧을 때도 같은 이유로 끊기던 것이 같이 해결된다. 자체 타이머를 쓰는 Behavior를 새로 만들면 `IsInProgress`를 오버라이드할 것
+- [ ] `FireProjectile` 연사 타이머는 `EndBehavior`에서 정리되지 않는다. 진화로 `CancelSkill`된 스킬의 남은 연사가 끝까지 나간다
 - [ ] 죽은 코드: `GetRandomSkillChoices`, `GetUpgradeableSkills`, `ApplyCharacterDamageMultiplier`, `DeltaCheck`, `TotalReducedCooldownAmount`, `AccessoryWeight`, `bCooldownAfterDuration`(set만 하고 안 읽음)
 - [ ] 스킬 DT를 생성자의 하드코딩 경로로 로드해서 `SkillRowMap`을 만든다. `SkillRowTable`은 EditAnywhere라 BP에서 바꿔도 맵에 반영되지 않는다
 

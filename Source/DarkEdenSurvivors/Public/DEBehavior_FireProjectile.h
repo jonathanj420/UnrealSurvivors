@@ -17,6 +17,7 @@ class DARKEDENSURVIVORS_API UDEBehavior_FireProjectile : public UDESkillBehavior
 
 public:
 	virtual void Execute(FDESkillContext& Context) override;
+	virtual bool IsInProgress() const override;
 
 protected:
 	// 타이머가 호출할 함수

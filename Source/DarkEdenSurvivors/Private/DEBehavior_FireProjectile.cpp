@@ -7,7 +7,14 @@
 #include "DESkillActorBase.h" // 투사체 헤더
 #include "DEAutoSkillBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/Actor.h"
+#include "TimerManager.h"
 
+
+bool UDEBehavior_FireProjectile::IsInProgress() const
+{
+	return CachedContext.Instigator && CachedContext.Instigator->GetWorldTimerManager().IsTimerActive(BurstTimerHandle);
+}
 
 void UDEBehavior_FireProjectile::Execute(FDESkillContext& Context)
 {

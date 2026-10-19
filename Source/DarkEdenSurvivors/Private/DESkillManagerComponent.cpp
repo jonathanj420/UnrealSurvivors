@@ -65,6 +65,13 @@ void UDESkillManagerComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
             continue;
         }
 
+        // 쿨다운이 끝났어도 이전 시전이 진행 중이면 끝난 뒤에 발동한다.
+        // 레벨업 직후(쿨다운 0)나 쿨다운이 시전 시간보다 짧을 때 진행 중인 시전이 끊기지 않게 한다
+        if (Active.SkillObject && Active.SkillObject->IsCastInProgress())
+        {
+            continue;
+        }
+
         // 쿨타임이 다 돌았고, 스킬 데이터가 유효하다면 발사!
         if (Active.SkillObject && Active.RowData)
         {

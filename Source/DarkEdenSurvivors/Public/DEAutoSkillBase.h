@@ -26,6 +26,10 @@ public:
 	// 매니저가 이 스킬이 '시전(유지) 중'인지 확인하는 용도
 	bool IsRunning() const { return bIsRunning; }
 
+	// 이전 발동이 아직 진행 중인지 (Delay로 멈춘 파이프라인, Behavior의 자체 타이머).
+	// 진행 중에 Activate하면 CachedContext와 파이프라인 위치를 덮어써서 이전 시전이 끊긴다
+	bool IsCastInProgress() const;
+
 protected:
 	// cooldown after duration?
 	UPROPERTY(EditDefaultsOnly, Category = "Skill Option")

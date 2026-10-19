@@ -49,6 +49,23 @@ void UDEAutoSkillBase::Activate()
 
 }
 
+bool UDEAutoSkillBase::IsCastInProgress() const
+{
+    if (SkillOwner && SkillOwner->GetWorldTimerManager().IsTimerActive(PipelineTimerHandle))
+    {
+        return true;
+    }
+
+    for (const UDESkillBehavior* Behavior : Behaviors)
+    {
+        if (Behavior && Behavior->IsInProgress())
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 void UDEAutoSkillBase::ExecuteWithContext(FDESkillContext& Context)
 {
 

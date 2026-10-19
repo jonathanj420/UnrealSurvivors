@@ -30,4 +30,8 @@ public:
     // 기본값은 0.0f 이며, 딜레이가 없는 일반 비헤이비어들은 오버라이드 할 필요가 없습니다.
     virtual float GetPipelineDelay() const { return 0.0f; }
 
+    // Execute가 끝난 뒤에도 자체 타이머로 동작이 남아 있으면 true (연사 등).
+    // 진행 중에 Activate가 다시 불리면 상태를 덮어써서 이전 시전이 끊기므로, 매니저는 끝날 때까지 발동을 미룬다
+    virtual bool IsInProgress() const { return false; }
+
 };

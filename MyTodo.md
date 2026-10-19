@@ -47,6 +47,7 @@
 - [ ] `WBP_LevelUpWidget`과 그 `SlotWidgetClass`에 지정된 슬롯 BP가 경고 없이 컴파일되는지 확인. 슬롯의 `OnSlotSelected`에 선택한 Choice 파라미터가 추가됐다. BP에서 이 이벤트를 바인딩했다면 다시 연결해야 한다
 - [ ] 레벨업 한 번: 카드 3장 → 선택 → 창이 닫히고 게임 재개
 - [ ] 한 번에 여러 레벨 오르기 (경험치를 크게 주거나 `ForceLevelUp`을 일시정지 전에 여러 번): 창이 하나만 뜨고, 고를 때마다 카드가 새로 바뀌고, 마지막 선택 후에만 재개되는지. 두 번째 카드가 첫 선택을 반영하는지 (예: 방금 Lv2로 올린 스킬이 Lv3 카드로 나옴)
+- [ ] 연사(BurstInterval) 스킬이나 Delay가 들어간 스킬을 연사/시전 도중에 레벨업: 진행 중인 발사가 끝까지 나가고, 끝나자마자 다음 발동이 나오는지 확인
 - [ ] Reference Viewer로 `FDESkillRow::MaxLevel`(DESkillRowTable의 MaxLevel 컬럼)을 BP 위젯 등에서 쓰는지 확인. 안 쓰면 삭제 가능
 
 ## AOE
