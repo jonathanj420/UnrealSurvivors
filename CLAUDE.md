@@ -20,8 +20,8 @@ UE 5.7 / C++로 만드는 *Vampire Survivors*류 액션 서바이벌 게임이�
 
 | 영역 | 핵심 클래스 |
 |---|---|
-| 게임 플로우 | `UDEGameInstance`(세이브, 골드, 메타 업그레이드, 몬스터 DT 캐시), `ADEGameMode_Lobby` + `ADEPlayerController_Lobby` + `UDEMainMenuWidget`, `ADEGameMode_Stage`(ElapsedTime, GameOver), `ADEPlayerController`(HUD, 레벨업 UI, 일시정지) |
-| 캐릭터 | `ADECharacterBase`(→ `ADEFemaleVampire`), `UDEStatComponent`, `UDEHealthComponent`, `UDECombatComponent`, `UDEStatusEffectComponent`, `UDEAccessoryComponent`, `UDEProgressionComponent`, `UDELevelUpManagerComponent` |
+| 게임 플로우 | `UDEGameInstance`(세이브, 골드, 메타 업그레이드, 몬스터 DT 캐시), `ADEGameMode_Lobby` + `ADEPlayerController_Lobby` + `UDEMainMenuWidget`, `ADEGameMode_Stage`(ElapsedTime, GameOver), `ADEPlayerController`(HUD, 레벨업/상자 창 표시, 일시정지는 `EDEPauseReason` 집합으로 `ApplyPauseState` 한 곳에서) |
+| 캐릭터 | `ADECharacterBase`(→ `ADEFemaleVampire`), `UDEStatComponent`, `UDEHealthComponent`, `UDECombatComponent`, `UDEStatusEffectComponent`, `UDEAccessoryComponent`, `UDEProgressionComponent`, `UDELevelUpManagerComponent`(레벨업과 상자 큐, 선택지 생성과 적용. 한 번에 하나씩, 레벨업 먼저) |
 | 스탯 | `FGameplayStat` = `(Base + ΣAdditive) × (1 + ΣMultiplier)`. Multiplier는 "추가 %"다. 단, `FDEStatModifier::Multiplier`의 기본값이 1.0이라 버그가 있다. |
 | 데미지 | `FDEDamageRequest` → `UDEGameplayLibrary::ApplyCombatDamage` → `UDEHealthComponent::ProcessDamage` → `FDEDamageResult` → 공격자 `UDECombatComponent::HandleDamageDealt`(OnHit/OnKill) |
 | 스킬 | `UDESkillManagerComponent`(획득, 레벨, 쿨다운, 진화; `DESkillDataTable` 레벨별 수치 + `DESkillRowTable` 메타 + EvolutionDataTable) → `UDEAutoSkillBase::Activate` → `BuildContext`(`FDESkillContext`) → `ExecutePipeline`(`Behaviors[]`, `UDESkillBehavior` 서브클래스 `DEBehavior_*`) → 스폰 액터 `ADESkillActorBase` 계열(풀링) |
@@ -43,7 +43,9 @@ UE 5.7 / C++로 만드는 *Vampire Survivors*류 액션 서바이벌 게임이�
 
 - `GetPlayerPawn(0)`, `GetPlayerController(0)`, `GetFirstPlayerController()`를 **새로 추가하지 않는다.** Owner, Instigator, 소유 Controller를 거쳐 접근한다.
 - 게임 상태를 바꾸는 로직(데미지, 사망, 드롭, 경험치, 골드, 저장)은 나중에 권한 주체가 될 GameMode나 컴포넌트에 둔다. **UI나 위젯에 두지 않는다.** 예: 골드 정산과 저장은 `UDEResultWidget`이 아니라 `ADEGameMode_Stage::GameOver`가 한다.
-- 레벨업이나 상자에서 쓰는 `SetPause`는 멀티플레이에서 의미가 달라진다. 관련 설계를 손볼 때 이 점을 고려한다.
+- **레벨업 방식은 공유 레벨 + 모아서 동시 선택으로 정했다 (2026-10-20).** 경험치와 레벨은 파티가 공유한다. 레벨업하면 전원이 멈추고 모두 동시에 고르며, 전원이 고르면 재개한다. 느린 사람에 대비해 선택 타이머를 둔다. 친구끼리 하는 게임이라 잠깐 기다리는 건 괜찮다고 판단했다 (VS 온라인 co-op, Bounty of One과 같은 방향).
+  - 지금은 레벨업 큐와 선택지를 `UDELevelUpManagerComponent`가, 월드를 멈출지는 `ADEPlayerController::ApplyPauseState`(멈춘 이유 집합 `EDEPauseReason`)가 정한다. 멀티로 갈 때 경험치, 레벨, 멈춤 판단은 GameMode(또는 GameState)로 올리고, 각 플레이어의 LevelUpManager는 자기 선택지 생성과 적용(`ApplyChoice` → Server RPC)만 맡는다.
+  - 상자를 멀티에서 어떻게 할지는 아직 정하지 않았다.
 
 ## 컨벤션
 
