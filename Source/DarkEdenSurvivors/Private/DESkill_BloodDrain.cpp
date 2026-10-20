@@ -117,7 +117,7 @@ void UDESkill_BloodDrain::StartBloodDrain(ADECharacterBase* Player)
         MonsterPositions.Add(Monster->GetActorLocation());
         if (Monster->StatusEffectComponent)
         {
-            Monster->StatusEffectComponent->AddEffect(StunEffectClass, Player, StunDuration, 0.f, 0.f, FDESkillContext());
+            Monster->StatusEffectComponent->AddEffect(StunEffectClass, Player, StunDuration, 0.f, 0.f);
         }
 
         

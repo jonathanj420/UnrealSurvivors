@@ -19,16 +19,6 @@ void UDEStatusEffect_Stun::OnApply(AActor* Target, FActiveStatusEffect& EffectDa
     {
         // 1. 매니저가 관리하는 이동/추적 로직 정지
         Monster->AddMoveBlock();
-
-        //// 2. 베이스에 만들어둔 변수를 활용해 '돌덩이 컬러' 씌우기
-        //if (bApplyMaterialTint)
-        //{
-        //    if (USkeletalMeshComponent* MeshComp = Monster->GetMesh())
-        //    {
-        //        // Vector(LinearColor) 값을 머티리얼 전체에 쫙 뿌려줍니다.
-        //        MeshComp->SetVectorParameterValueOnMaterials(TintParameterName, TintColor.ToFVector());
-        //    }
-        //}
     }
 }
 
@@ -40,14 +30,5 @@ void UDEStatusEffect_Stun::OnRemove(AActor* Target, FActiveStatusEffect& EffectD
     {
         // 1. 스턴 해제. 다른 이동불가 효과가 남아 있으면 계속 멈춰 있다
         Monster->RemoveMoveBlock();
-
-        //// 2. 원래 색상(보통 흰색/1.0)으로 원상 복구
-        //if (bApplyMaterialTint)
-        //{
-        //    if (USkeletalMeshComponent* MeshComp = Monster->GetMesh())
-        //    {
-        //        MeshComp->SetVectorParameterValueOnMaterials(TintParameterName, OriginalColor.ToFVector());
-        //    }
-        //}
     }
 }

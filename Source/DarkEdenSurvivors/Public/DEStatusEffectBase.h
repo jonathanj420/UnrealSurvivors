@@ -32,27 +32,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect|Core")
 	int32 MaxStacks;
 
+	// Stack 정책에서 재적용 시 지속시간을 갱신할지. 갱신은 남은 시간과 새 지속시간 중 긴 쪽 (Refresh와 같은 규칙)
 	UPROPERTY(EditDefaultsOnly, Category = "Status Effect|Core")
 	bool bRefreshDurationOnStack = true;
-
-	// (선택) 시각 효과: 다크에덴 특유의 세피아 톤, 테두리 없는(Borderless) 고딕 이펙트 등
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect|Visual")
-	class UNiagaraSystem* EffectParticle;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect|Visual")
-	bool bApplyMaterialTint = false;
-
-	// 머티리얼에서 색상을 조작할 파라미터 이름 (예: "BaseColor", "Tint" 등)
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect|Visual", meta = (EditCondition = "bApplyMaterialTint"))
-	FName TintParameterName = TEXT("ColorTint");
-
-	// 상태이상이 걸렸을 때 칠할 색상 (맹독 = 초록색)
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect|Visual", meta = (EditCondition = "bApplyMaterialTint"))
-	FLinearColor TintColor = FLinearColor(0.0f, 1.0f, 0.0f, 1.0f); // 기본값 초록색
-
-	// 상태이상이 끝났을 때 돌아갈 원래 색상 (보통 흰색)
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect|Visual", meta = (EditCondition = "bApplyMaterialTint"))
-	FLinearColor OriginalColor = FLinearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// --- 핵심 로직 (모든 함수는 const로 선언되어 객체 자체의 변형을 막습니다) ---
 

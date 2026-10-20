@@ -29,9 +29,9 @@ void UDEStatusEffect_DelayedExplosion::ExecuteAction(AActor* Target, FActiveStat
     Req.DamageCauser = EffectData.Instigator.Get();
     Req.SourceObject = const_cast<UDEStatusEffect_DelayedExplosion*>(this);
     Req.BaseDamage = EffectData.Power;
-    Req.DamageTags = StatusTags;
+    Req.DamageTags = ExplosionDamageTags;
 
-    float FinalRadius = (EffectData.SourceContext.Radius > 0.0f) ? EffectData.SourceContext.Radius : ExplosionRadius;
+    float FinalRadius = (EffectData.Radius > 0.0f) ? EffectData.Radius : ExplosionRadius;
 
     if (SpawnedComp)
     {

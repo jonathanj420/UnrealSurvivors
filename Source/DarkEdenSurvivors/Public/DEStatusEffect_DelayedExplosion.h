@@ -22,6 +22,10 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Explosion")
     class UNiagaraSystem* ExplosionParticle;
 
+    // 폭발 데미지에 찍을 태그 (DoT의 DoTDamageTags와 같은 역할)
+    UPROPERTY(EditDefaultsOnly, Category = "Explosion", meta = (Categories = "Damage"))
+    FGameplayTagContainer ExplosionDamageTags;
+
     // 부모가 시킨 숙제(폭발 로직) 구현
     virtual void ExecuteAction(AActor* Target, FActiveStatusEffect& EffectData) const override;
 	

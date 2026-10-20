@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "DESkillContext.h"
 #include "DEStatusEffectTypes.generated.h"
 class UDEStatusEffectBase;
 
@@ -38,8 +37,9 @@ struct FActiveStatusEffect
 	UPROPERTY()
 	int32 CurrentStacks = 1;
 
-	// 상태이상은 지속시간 동안 들고 있어야 하니까 복사가 맞음
-	FDESkillContext SourceContext;
+	// 건 스킬의 범위 (Context.Radius). 0이면 효과 자체 기본값을 쓴다. 지금은 DelayedExplosion만 읽는다
+	UPROPERTY()
+	float Radius = 0.f;
 
 
 	// 구조체 초기화를 위한 편의 생성자

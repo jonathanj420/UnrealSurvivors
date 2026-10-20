@@ -27,7 +27,7 @@ void UDEBehavior_ApplyStatusEffect::Execute(FDESkillContext& Context)
 				FinalDuration,
 				FinalPower,
 				FinalInterval,
-				Context
+				Context.Radius
 			);
 		}
 	}

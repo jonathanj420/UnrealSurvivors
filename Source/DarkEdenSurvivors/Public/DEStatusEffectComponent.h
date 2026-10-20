@@ -7,7 +7,6 @@
 #include "Data/DEStatusEffectTypes.h"
 #include "DEStatusEffectBase.h"
 #include "GameplayTagContainer.h"
-#include "DESkillContext.h"
 #include "DEStatusEffectComponent.generated.h"
 
 
@@ -25,8 +24,11 @@ protected:
 public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	//UFUNCTION(BlueprintCallable, Category = "Status Effect")
-	void AddEffect(TSubclassOf<UDEStatusEffectBase> EffectClass, AActor* Instigator, float Duration, float Power, float Interval, const FDESkillContext& InContext);
+	// Radius: 건 스킬의 범위 (Context.Radius). 0이면 효과 자체 기본값
+	void AddEffect(TSubclassOf<UDEStatusEffectBase> EffectClass, AActor* Instigator, float Duration, float Power, float Interval, float Radius = 0.f);
+
+	// 몬스터는 ResetMonster에서 DT 행의 ImmuneStatusTags로 덮어쓴다
+	void SetImmuneTags(const FGameplayTagContainer& InImmuneTags) { ImmuneTags = InImmuneTags; }
 
 	// =========================================================
 	// ★ [수정됨] EEffectTag -> FGameplayTag 로 모두 교체!
@@ -42,11 +44,7 @@ public:
 protected:
 	TWeakObjectPtr<AActor> OwnerActor;
 
-	// =========================================================
-	// ★ [수정됨] TSet<EEffectTag> -> FGameplayTagContainer 가방으로 교체!
-	// 이제 보스 몬스터 블루프린트에서 "Status.Debuff.Stun" (기절) 태그를 추가해두면 
-	// 알아서 기절 면역이 됩니다.
-	// =========================================================
+	// 들어오는 효과의 StatusTags와 하나라도 겹치면 걸리지 않는다
 	UPROPERTY(EditDefaultsOnly, Category = "Status Effect", meta = (Categories = "Status"))
 	FGameplayTagContainer ImmuneTags;
 

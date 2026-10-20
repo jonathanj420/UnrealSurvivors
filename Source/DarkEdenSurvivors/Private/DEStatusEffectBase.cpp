@@ -2,9 +2,7 @@
 
 
 #include "DEStatusEffectBase.h"
-#include "DEMonsterBase.h"
-#include "Components/SkeletalMeshComponent.h"    // ★ 몬스터 메쉬를 찾기 위해 필수!
-#include "Materials/MaterialInstanceDynamic.h"
+#include "DarkEdenSurvivors.h"
 
 UDEStatusEffectBase::UDEStatusEffectBase()
 {
@@ -26,8 +24,7 @@ void UDEStatusEffectBase::Tick(AActor* Target, FActiveStatusEffect& EffectData, 
 		{
 			EffectData.TickTimer -= EffectData.Interval;
 
-			// 도트 딜이나 주기적 효과 발동! 
-			// (블루프린트나 자식 C++ 클래스에서 오버라이드한 로직이 실행됨)
+			// 마지막에 부른다. 그 안의 데미지가 같은 대상에 AddEffect하면 배열이 재할당돼 EffectData 참조가 깨진다
 			OnIntervalTick(Target, EffectData);
 		}
 	}
@@ -35,14 +32,13 @@ void UDEStatusEffectBase::Tick(AActor* Target, FActiveStatusEffect& EffectData, 
 
 void UDEStatusEffectBase::OnApply(AActor* Target, FActiveStatusEffect& EffectData) const
 {
-	UE_LOG(LogTemp, Warning, TEXT("Status Effect : %s On Apply !"), *GetName());
+	UE_LOG(LogDarkEdenSurvivors, Verbose, TEXT("Status Effect : %s On Apply"), *GetName());
 	// 자식 클래스(UDEStatusEffect_CC 등)에서 Super::OnApply_Implementation() 호출 후 로직 작성
-	// (예: 여기서 EffectParticle을 Target에 Attach 시키는 공통 로직을 넣기 좋습니다.)
 }
 
 void UDEStatusEffectBase::OnRemove(AActor* Target, FActiveStatusEffect& EffectData) const
 {
-	UE_LOG(LogTemp, Warning, TEXT("Status Effect : %s On Remove !"), *GetName());
+	UE_LOG(LogDarkEdenSurvivors, Verbose, TEXT("Status Effect : %s On Remove"), *GetName());
 	// 자식 클래스에서 스탯 원복 등의 로직 작성
 }
 
