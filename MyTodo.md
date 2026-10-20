@@ -184,6 +184,8 @@
 
 ## 성능 측정
 
+- [ ] `r.RayTracing=False` 후 (에디터 재시작 필요, 셰이더 재컴파일): 측정 ③과 같은 조건(Standalone, 300마리, `stat unit`)으로 Draw/RHIT/GPU가 줄었는지. 화면이 달라진 곳이 없는지
+
 - [ ] `TestStage001`/`TestBlank`에서 `NavMeshBoundsVolume`, `RecastNavMesh` 삭제 (내비 사용처 없음. `TestPrototype`은 완료, 미커밋)
 - [ ] 캡슐 내비 제외 빌드(빌드 완료)로 `TestPrototype` 300마리 `stat unit` 재측정 (이전: Game 12.9ms, `Docs/unit.PNG`). 캡처는 새 이름으로 (예: `unit_nav.PNG`)
 

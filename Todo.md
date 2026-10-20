@@ -181,7 +181,7 @@
 - [x] 풀 재사용 시 같은 메시면 `SetSkeletalMesh` 생략, 캡슐은 크기가 바뀔 때만 갱신 (`577097c`)
 - [x] 스폰 높이를 CDO 대신 데이터 `CapsuleHalfHeight`로 (`883ffac`)
 - [x] 몬스터 캡슐을 내비게이션에서 제외 (`SetCanEverAffectNavigation(false)`). 테스트 맵에 NavMesh + `RuntimeGeneration=Dynamic`이 있어서 몬스터가 움직일 때마다 내비 옥트리 갱신이 일어났을 가능성. 측정으로 효과 확인 필요
-- [ ] 렌더 설정: `r.RayTracing=True` 끄기 (사용처 없음, 스키닝 메시 RT 갱신 비용 가능성). `r.Substrate`, `r.GenerateMeshDistanceFields`도 사용처 확인 후 정리
+- [x] 렌더 설정 (2026-10-21): `r.RayTracing=False` (Lumen 꺼짐, RT 그림자/반사 없음. 스키닝 메시 RT 갱신 비용 제거 목적). `r.GenerateMeshDistanceFields`는 유지: 테스트 맵 Directional Light가 Distance Field 그림자(`bUseRayTracedDistanceFieldShadows`)를 쓴다. `r.Substrate`는 유지: 끄면 전체 머티리얼 재컴파일에 외형이 바뀔 수 있는데 측정된 이득이 없음. 효과 측정은 MyTodo
 - [ ] 측정: Standalone, `t.MaxFPS 0`, `r.VSync 0`, `stat unit`으로 300/600/1000마리. 300마리 60fps는 이전 측정(상한 여부 불명). 2026-10-19 300마리: Frame/Game 12.9ms, Draw 5.6, RHIT 7.0, GPU 5.5, Draws 1078 (게임 스레드 병목)
 - [x] 측정 ① 내비 제외 (2026-10-20, 300마리): Game 12.80, Draw 6.11, RHIT 7.57, GPU 5.32. 효과 없음 (`Docs/aoe.png`)
 - [x] 측정 ② 캡슐 `NoCollision` 임시 실험 (2026-10-20, 300마리, 원복함): Game 9.64 (-3.2ms), Draw 10.94, RHIT 7.18, GPU 5.41 (`Docs/nocolunit.png`). 콜리전(Chaos 바디 갱신) 비용은 300마리에 약 3ms. Draw가 6.1에서 10.9로 오른 이유는 불명 (에디터를 띄워둔 상태였음)
@@ -192,7 +192,7 @@
   - ②(Game 9.64)보다 2ms 더 줄었는데, ②는 에디터를 띄운 채 쟀으니 그 차이가 섞여 있다. 깨끗한 비교는 ① 대비 -5.3ms
   - 이제 Draw(렌더 스레드 8.35)가 Game(7.51)보다 커서 프레임을 정한다. 둘 다 몬스터별 SkeletalMesh 비용이라 다음은 ISM + VAT
 - [ ] 측정 순서 (한 번에 하나씩 바꿔서 효과를 분리한다): ① 내비 제외 빌드(`f9ff2fc`)로 재측정 → ② 임시 실험: `DEMonsterBase.cpp`의 캡슐을 `NoCollision`으로 바꿔 Game ms가 얼마나 주는지 확인 (스킬 판정은 깨짐, 측정 후 원복) → ③ `r.RayTracing=False`. 숫자가 애매하면 Unreal Insights(`-trace=default`)로 GameThread 프로파일. ②에서 많이 줄면 SpatialGrid 쿼리를 먼저, 거의 안 줄면 ISM + VAT를 먼저
-- [ ] 스킬 타겟 쿼리를 물리 씬 대신 SpatialGrid로, 몬스터 콜리전 끄기 (Chaos 바디 갱신 제거. 측정 ②에서 300마리 약 3ms)
+- [x] 스킬 타겟 쿼리를 물리 씬 대신 SpatialGrid로, 몬스터 콜리전 끄기 (Chaos 바디 갱신 제거. 측정 ②에서 300마리 약 3ms)
   - [x] `UDEMonsterQuerySubsystem`(WorldSubsystem)에 그리드 이동. `UDEMonsterUpdateComponent::ResolveOverlaps`가 `RebuildGrid`로 채우고 겹침 해소에도 그대로 쓴다. 2D 쿼리 `QueryCircle`/`QueryNearest`/`QuerySegment`(Start에서 가까운 순). 쿼리 범위는 최대 몬스터 반지름 + 프레임당 최대 이동량(`MaxPushPerFrame`)만큼 넓힌다. 살아 있는 몬스터만 반환. 콘은 `QueryCircle` + 호출처 각도 필터
   - [x] 호출처 전부 이전: `SelectTargetsInRadius`, `SelectNearestTarget`, `SelectTargetsBySweep`, `CullByCone`, `DEGameplayLibrary`(`ApplyAoEDamage`/`GetNearestTarget`/`GetRandomTargets`), AcidBolt, GoreGland, `DESimpleAOEBase`, `DESimpleProjectileBase`. C++에 남은 물리 쿼리 없음
   - [x] 몬스터 캡슐 `NoCollision` (인게임 확인, BP/C++ 의존 없음 확인 후 2026-10-20). 캡슐은 `CapsuleRadius`/`HalfHeight` 데이터 보관용으로만 남았고, 의미 없어진 `SetActorEnableCollision` 토글도 제거. 재측정은 MyTodo
