@@ -137,6 +137,27 @@
 - [x] `ResetMonster`의 중복 `ResetHealth` 호출 정리
 - [x] `HandleDamageDealt`가 `Implements<>` 대신 `Cast` 결과로 판단 (BP에서 붙인 인터페이스면 null 역참조로 크래시). 인터페이스에 `CannotImplementInterfaceInBlueprint`
 
+## 상태이상 (2026-10-21 리뷰)
+
+지금 실제로 쓰이는 것: BloodyScarify 폭발(`BP_StatusEffect_BloodyScarifyExplosion`, DelayedExplosion, Independent), 스턴(BloodDrain, GlareOfBasilisk). Venom BP 두 개(`BP_StatusEffect_Venom_DoT`/`_Damage`)는 에셋 문자열 검색상 참조 없음 (Reference Viewer 확인은 MyTodo).
+
+바로 고칠 것 (설계 결정 불필요):
+- [ ] `UDECombatEffect_ApplyStatusEffect`가 `*EventData.SourceContext`를 null 체크 없이 역참조. 전역 OnHit/OnKill(`HandleDamageDealt`)에서는 null이라 장신구/퍽에 붙이면 크래시. 지금은 BloodyScarify 로컬 이펙트만 써서 안 터짐
+- [ ] `TickComponent`/`RemoveAllEffects`가 `ActiveEffects[i]` 참조를 잡은 채 `Tick`/`OnRemove`를 부른다. 그 안의 데미지 → OnHit/OnKill → 같은 대상 `AddEffect`로 배열이 재할당되면 참조가 깨진다. 만료 처리를 참조 재조회나 분리된 목록으로
+- [ ] 베이스 `OnApply`/`OnRemove`가 매번 `LogTemp` Warning (BloodDrain 한 번에 수십 줄). Verbose로
+- [ ] `FActiveStatusEffect::SourceContext`가 `FDESkillContext` 전체를 복사한다 (Targets 배열, CustomValues 맵, CustomLocations). 300마리 범위 적용이면 300개짜리 배열 300번 복사. 읽는 곳은 DelayedExplosion의 `Radius` 하나. UPROPERTY가 아니라 안의 액터 포인터도 GC가 모른다. 필요한 값만 담도록
+- [ ] 베이스의 안 쓰는 연출 필드 삭제: `EffectParticle`, `bApplyMaterialTint`, `TintParameterName`, `TintColor`, `OriginalColor` (Stun의 주석 블록 포함). 색 연출은 ISM CustomData로 갈 예정
+- [ ] DelayedExplosion이 `Req.DamageTags = StatusTags`로 상태 태그를 데미지 태그 자리에 넣는다
+
+결정 필요 (Claude 추천안):
+- [ ] `Stack` 정책이 스택 수만 올리고 `Power`/`Duration`은 처음 값 그대로. 독을 계속 맞히면 스킬 레벨이 올라도 이미 걸린 독의 틱 데미지가 안 오른다. 추천: 재적용 시 Power는 max(기존, 새 값), 지속시간은 남은 시간과 새 값 중 긴 쪽 (Refresh와 같은 규칙)
+- [ ] 면역 `ImmuneTags`가 컴포넌트 EditDefaultsOnly인데 몬스터 BP가 없어 설정할 곳이 없다. 추천: 몬스터 DT에 `ImmuneStatusTags` 컬럼, `ResetMonster`에서 복사 (`bImmuneToBloodDrain`과 같은 방식)
+
+나중에:
+- [ ] `UDEBehavior_ApplyStatusEffect`는 `ADEMonsterBase` 캐스트로만 건다 (CombatEffect 쪽은 `FindComponentByClass`). 마스터(적 캐릭터)도 맞으려면 컴포넌트 기준으로
+- [ ] 걸린 몬스터마다 `UDEStatusEffectComponent` Tick이 켜진다 (1000마리 독 = Tick 1000개). `UDEMonsterUpdateComponent`처럼 중앙 처리로. ISM + VAT 설계 때 같이
+- [ ] 호출처 없는 API: `GetEffectByTag`, `HasEffectWithTag`, `RemoveEffectsByTag` (정화 등 기능용으로 유지 가능)
+
 ## 마스터(보스) (2026-10-20 결정)
 
 컨셉: 다크에덴의 뱀파이어 마스터. 플레이어와 같은 인간 크기, 같은 뱀파이어 스킬(+강화/전용 스킬)을 쓰는 "또 하나의 플레이어". `ADECharacterBase` 서브클래스 + AI 컨트롤러. 나중에 플레이어블(히든/DLC)로도 연다. 조우: 필드(잡몹과 함께), 레어 맵(1:1), 필드 → 보스룸. 보스룸은 같은 레벨 안 아레나로 텔레포트하는 방향 (런 상태가 Pawn에 있어서 맵 이동 시 사라짐)

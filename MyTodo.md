@@ -167,6 +167,10 @@
 - [x] PIE에서 `show Collision`: 몬스터 캡슐이 안 보이고 스킬은 그대로 맞는지
 - [x] 재측정 (Game 7.51ms, Todo 측정 ③): 에디터를 닫고 Standalone, `t.MaxFPS 0`, `r.VSync 0`, `TestPrototype` 300마리 `stat unit` + `stat game`. 비교 기준은 측정 ①(Game 12.80)과 ②(Game 9.64). 캡처는 새 이름으로 (예: `Docs/nocol_final_unit.png`)
 
+## 상태이상
+
+- [ ] Reference Viewer: `BP_StatusEffect_Venom_DoT`, `BP_StatusEffect_Venom_Damage`를 쓰는 스킬이 있는지 (에셋 문자열 검색으로는 없음)
+
 ## 성능 측정
 
 - [ ] `TestStage001`/`TestBlank`에서 `NavMeshBoundsVolume`, `RecastNavMesh` 삭제 (내비 사용처 없음. `TestPrototype`은 완료, 미커밋)
