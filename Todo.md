@@ -198,6 +198,10 @@
   - [x] 몬스터 캡슐 `NoCollision` (인게임 확인, BP/C++ 의존 없음 확인 후 2026-10-20). 캡슐은 `CapsuleRadius`/`HalfHeight` 데이터 보관용으로만 남았고, 의미 없어진 `SetActorEnableCollision` 토글도 제거. 재측정은 MyTodo
   - 판정 차이: 예전엔 3D 구 vs 캡슐, 지금은 XY 평면에서 원 vs 원(몬스터 반지름 `CachedRadius`). 그리드는 SpawnManager Tick에서 갱신되므로 이번 프레임에 스폰/재배치된 몬스터는 다음 프레임부터 잡힌다
 - [ ] 렌더링을 몬스터별 SkeletalMesh에서 ISM + VAT로 (개발자가 ISM 진행 승인, 공부 목적 포함)
+  - 결정 (2026-10-21): 몬스터 액터는 논리용으로 유지(데미지/쿼리/상태이상 코드 그대로), VAT는 Bone 방식(AnimToTexture)
+  - [x] C++: `UDEMonsterRenderComponent`(SpawnManager 소유). DT 행의 `VATData`(`UAnimToTextureDataAsset`)가 있는 일반/엘리트 몬스터는 메시마다 ISM 하나에 인스턴스로 그리고 자기 SkeletalMesh는 숨기고 Tick을 끈다. 보스와 `VATData` 없는 행은 SkeletalMesh 그대로. 인스턴스는 `FPrimitiveInstanceId`로 들고(다른 인스턴스 삭제에 안 흔들림), 스폰 때 추가, 풀 반환 때 삭제, SpawnManager Tick 끝에서 트랜스폼 일괄 갱신(`UpdateInstanceTransformById`, 증분 갱신이라 `MarkRenderStateDirty` 안 씀). per-instance 데이터 4개는 AnimToTexture 자동 재생 형식(TimeOffset 무작위, PlayRate 1, `VATAnimationIndex`의 프레임 범위). 프리로드에 DataAsset과 그 StaticMesh 포함
+  - [ ] 에디터: 몬스터 하나로 VAT 굽기 (MyTodo). 그다음 300마리 측정으로 SkeletalMesh 대비 효과 확인
+  - [ ] 남은 것: 피격 깜빡임/사망 페이드(per-instance 데이터 4번 이후에 추가, 사망은 지금 즉시 사라짐), 이동 속도에 맞춘 PlayRate, 숨긴 SkeletalMesh 컴포넌트도 액터 이동 때 트랜스폼 전파 비용은 남음(측정 후 필요하면 VAT 몬스터는 Mesh를 떼거나 SetSkeletalMesh(nullptr))
 - [x] `ResolveOverlaps`의 프레임마다 생성되는 로컬 `TSet` 재사용 (`TouchedCells` 멤버 하나로 통합)
 - [x] `ADEMonsterRepositionManager` 재배치 Z가 플레이어 Z 그대로였음. 몬스터 이동은 Z를 안 바꾸므로 몬스터 자신의 현재 Z를 유지
 

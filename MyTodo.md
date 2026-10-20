@@ -25,6 +25,13 @@
 - [ ] 에디터에서 `DEAccessory_Buman`의 StatModifiers Multiplier가 0.1, 나머지 액세서리는 0으로 보이는지 확인 (`FDEStatModifier::Multiplier` 기본값을 1에서 0으로 바꿈)
 - [ ] 메타 업그레이드 Amount를 1레벨 이상 찍은 상태에서 발사체가 +1개만 늘어나는지 확인 (전에는 ×2)
 
+## 몬스터 VAT (ISM)
+
+- [ ] 몬스터 하나로 VAT 굽기 (Bone 방식, 걷기 루프). 참고 예제는 엔진 플러그인 콘텐츠 `AnimToTexture/Characters/Mannequin`(`DA_BoneAnimation`, `BP_AnimToTexture`, `M_Body_BoneAnimation`). 흐름: SkeletalMesh에서 StaticMesh 만들기 → `AnimToTextureDataAsset` 생성(SkeletalMesh, StaticMesh, Mode=Bone, Animations에 걷기, AutoPlay 켬) → 굽기 → StaticMesh 머티리얼을 Bone 애니메이션 머티리얼(인스턴스)로. MCP(NiagaraToolsets와 같이 켠 AllToolsets)로 같이 해도 된다
+- [ ] `DT_MonsterData` 그 몬스터 행의 `VATData`에 DataAsset 지정 (`VATAnimationIndex`는 걷기 순서, 보통 0)
+- [ ] PIE: 그 몬스터가 걷는 애니메이션으로 보이는지, 방향/높이가 전 SkeletalMesh와 같은지, 죽으면 사라지는지. 로그에 `Monster ISM created for ...`가 한 번 뜨는지
+- [ ] `VATData`가 없는 몬스터와 보스는 전처럼 보이는지
+
 ## 몬스터
 
 - [ ] 접촉 공격: 이제 무적이 아니다. 몬스터에 붙으면 HP가 깎이는지 확인 (아래 "무적 해제와 난이도 곡선" 참고)
