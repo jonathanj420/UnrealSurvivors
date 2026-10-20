@@ -69,14 +69,14 @@ void UDEBehavior_CullByCone::Execute(FDESkillContext& Context)
     const UDEMonsterQuerySubsystem* Query = World->GetSubsystem<UDEMonsterQuerySubsystem>();
     if (!Query) return;
 
-    TArray<ADEMonsterBase*> InRadius;
-    Query->QueryCircle(MyLoc, FinalRadius, InRadius);
+    TArray<AActor*> InRadius;
+    Query->QueryCircle(Context.Instigator, MyLoc, FinalRadius, InRadius);
 
     if (InRadius.Num() > 0)
     {
         float CosHalfAngle = FMath::Cos(FMath::DegreesToRadians(FinalAngle / 2.0f));
 
-        for (ADEMonsterBase* TargetActor : InRadius)
+        for (AActor* TargetActor : InRadius)
         {
             // 타겟을 향하는 방향 벡터
             FVector DirToTarget = (TargetActor->GetActorLocation() - MyLoc).GetSafeNormal();

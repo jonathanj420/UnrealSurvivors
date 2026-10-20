@@ -23,6 +23,7 @@
 #include "DEDamageTypes.h"
 #include "DECharacterData.h"
 #include "DEStatTypes.h"
+#include "DEMonsterQuerySubsystem.h"
 
 // Sets default values
 ADECharacterBase::ADECharacterBase()
@@ -131,12 +132,32 @@ void ADECharacterBase::BeginPlay()
         HealthComponent->ResetHealth(true);
     }
 
+    // 스킬 타겟 쿼리에 캐릭터로 등록 (몬스터는 그리드, 캐릭터는 이 목록)
+    if (UDEMonsterQuerySubsystem* Query = GetWorld()->GetSubsystem<UDEMonsterQuerySubsystem>())
+    {
+        Query->RegisterCharacter(this);
+    }
+
     TryApplyPlayerSetup();
+}
+
+void ADECharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+    if (UDEMonsterQuerySubsystem* Query = GetWorld()->GetSubsystem<UDEMonsterQuerySubsystem>())
+    {
+        Query->UnregisterCharacter(this);
+    }
+
+    Super::EndPlay(EndPlayReason);
 }
 
 void ADECharacterBase::PossessedBy(AController* NewController)
 {
     Super::PossessedBy(NewController);
+
+    // 플레이어블 마스터도 플레이어가 조종하면 Player 팀이다.
+    // AIController는 빙의할 때 팀을 맞추지 않으므로, 마스터 AI 컨트롤러는 자기 팀을 따로 Monster로 정해야 한다 (AIPerception용)
+    TeamId = (NewController && NewController->IsPlayerController()) ? DETeam::Player : DETeam::Monster;
 
     TryApplyPlayerSetup();
 }

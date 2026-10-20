@@ -3,12 +3,16 @@
 
 #include "DEMonsterQuerySubsystem.h"
 #include "DEMonsterBase.h"
+#include "DECharacterBase.h"
+#include "DETeam.h"
+#include "Components/CapsuleComponent.h"
 #include "Algo/Sort.h"
 
 void UDEMonsterQuerySubsystem::Deinitialize()
 {
     Grid.Empty();
     OccupiedCells.Empty();
+    Characters.Empty();
     Super::Deinitialize();
 }
 
@@ -85,81 +89,129 @@ void UDEMonsterQuerySubsystem::ForEachMonsterInBounds(const FVector2D& Min, cons
     }
 }
 
-void UDEMonsterQuerySubsystem::QueryCircle(const FVector& Center, float Radius, TArray<ADEMonsterBase*>& OutMonsters) const
+template <typename FuncType>
+void UDEMonsterQuerySubsystem::ForEachHostile(FGenericTeamId QuerierTeam, const FBox2D* Bounds, FuncType&& Func) const
+{
+    if (QuerierTeam == FGenericTeamId::NoTeam) return;
+
+    if (DETeam::AreHostile(QuerierTeam, DETeam::Monster))
+    {
+        auto MonsterFunc = [&Func](ADEMonsterBase* Mob)
+        {
+            Func(Mob, FVector2D(Mob->CachedLocation), Mob->CachedRadius);
+        };
+
+        if (Bounds)
+        {
+            ForEachMonsterInBounds(Bounds->Min, Bounds->Max, MonsterFunc);
+        }
+        else
+        {
+            for (const FIntPoint& Cell : OccupiedCells)
+            {
+                for (ADEMonsterBase* Mob : Grid.FindChecked(Cell))
+                {
+                    if (Mob && Mob->IsAlive()) MonsterFunc(Mob);
+                }
+            }
+        }
+    }
+
+    for (const TWeakObjectPtr<ADECharacterBase>& WeakCharacter : Characters)
+    {
+        ADECharacterBase* Character = WeakCharacter.Get();
+        if (!Character || Character->IsDead()) continue;
+        if (!DETeam::AreHostile(QuerierTeam, Character->GetGenericTeamId())) continue;
+
+        Func(Character, FVector2D(Character->GetActorLocation()), Character->GetCapsuleComponent()->GetScaledCapsuleRadius());
+    }
+}
+
+void UDEMonsterQuerySubsystem::QueryCircle(const AActor* Querier, const FVector& Center, float Radius, TArray<AActor*>& OutTargets) const
 {
     const FVector2D Center2D(Center);
-    ForEachMonsterInBounds(Center2D - Radius, Center2D + Radius, [&](ADEMonsterBase* Mob)
+    const FBox2D Bounds(Center2D - Radius, Center2D + Radius);
+    ForEachHostile(DETeam::GetTeam(Querier), &Bounds, [&](AActor* Target, const FVector2D& TargetLoc, float TargetRadius)
     {
-        const float HitDist = Radius + Mob->CachedRadius;
-        if (FVector2D::DistSquared(Center2D, FVector2D(Mob->CachedLocation)) <= HitDist * HitDist)
+        const float HitDist = Radius + TargetRadius;
+        if (FVector2D::DistSquared(Center2D, TargetLoc) <= HitDist * HitDist)
         {
-            OutMonsters.Add(Mob);
+            OutTargets.Add(Target);
         }
     });
 }
 
-ADEMonsterBase* UDEMonsterQuerySubsystem::QueryNearest(const FVector& Center, float MaxRadius) const
+AActor* UDEMonsterQuerySubsystem::QueryNearest(const AActor* Querier, const FVector& Center, float MaxRadius) const
 {
     const FVector2D Center2D(Center);
-    ADEMonsterBase* Nearest = nullptr;
+    AActor* Nearest = nullptr;
     float NearestDistSq = TNumericLimits<float>::Max();
 
-    auto Consider = [&](ADEMonsterBase* Mob)
+    const FBox2D Bounds(Center2D - MaxRadius, Center2D + MaxRadius);
+    ForEachHostile(DETeam::GetTeam(Querier), MaxRadius < 0.0f ? nullptr : &Bounds, [&](AActor* Target, const FVector2D& TargetLoc, float TargetRadius)
     {
-        const float DistSq = FVector2D::DistSquared(Center2D, FVector2D(Mob->CachedLocation));
+        const float DistSq = FVector2D::DistSquared(Center2D, TargetLoc);
+        if (MaxRadius >= 0.0f)
+        {
+            const float HitDist = MaxRadius + TargetRadius;
+            if (DistSq > HitDist * HitDist) return;
+        }
         if (DistSq < NearestDistSq)
         {
             NearestDistSq = DistSq;
-            Nearest = Mob;
-        }
-    };
-
-    if (MaxRadius < 0.0f)
-    {
-        for (const FIntPoint& Cell : OccupiedCells)
-        {
-            for (ADEMonsterBase* Mob : Grid.FindChecked(Cell))
-            {
-                if (Mob && Mob->IsAlive()) Consider(Mob);
-            }
-        }
-        return Nearest;
-    }
-
-    ForEachMonsterInBounds(Center2D - MaxRadius, Center2D + MaxRadius, [&](ADEMonsterBase* Mob)
-    {
-        const float HitDist = MaxRadius + Mob->CachedRadius;
-        if (FVector2D::DistSquared(Center2D, FVector2D(Mob->CachedLocation)) <= HitDist * HitDist)
-        {
-            Consider(Mob);
+            Nearest = Target;
         }
     });
     return Nearest;
 }
 
-void UDEMonsterQuerySubsystem::QuerySegment(const FVector& Start, const FVector& End, float Radius, TArray<ADEMonsterBase*>& OutMonsters) const
+void UDEMonsterQuerySubsystem::QuerySegment(const AActor* Querier, const FVector& Start, const FVector& End, float Radius, TArray<AActor*>& OutTargets) const
 {
     const FVector Start2D(Start.X, Start.Y, 0.0f);
     const FVector End2D(End.X, End.Y, 0.0f);
-    const FVector2D Min(FMath::Min(Start.X, End.X) - Radius, FMath::Min(Start.Y, End.Y) - Radius);
-    const FVector2D Max(FMath::Max(Start.X, End.X) + Radius, FMath::Max(Start.Y, End.Y) + Radius);
-    const int32 FirstNew = OutMonsters.Num();
+    const FVector2D StartXY(Start);
+    const FBox2D Bounds(
+        FVector2D(FMath::Min(Start.X, End.X) - Radius, FMath::Min(Start.Y, End.Y) - Radius),
+        FVector2D(FMath::Max(Start.X, End.X) + Radius, FMath::Max(Start.Y, End.Y) + Radius));
 
-    ForEachMonsterInBounds(Min, Max, [&](ADEMonsterBase* Mob)
+    // 관통 횟수가 정해진 발사체는 먼저 닿는 적부터 맞아야 하므로 Start에서 가까운 순으로 정렬한다
+    TArray<TPair<float, AActor*>, TInlineAllocator<16>> Hits;
+    ForEachHostile(DETeam::GetTeam(Querier), &Bounds, [&](AActor* Target, const FVector2D& TargetLoc, float TargetRadius)
     {
-        const FVector MobLoc2D(Mob->CachedLocation.X, Mob->CachedLocation.Y, 0.0f);
-        const float HitDist = Radius + Mob->CachedRadius;
-        if (FMath::PointDistToSegmentSquared(MobLoc2D, Start2D, End2D) <= HitDist * HitDist)
+        const float HitDist = Radius + TargetRadius;
+        if (FMath::PointDistToSegmentSquared(FVector(TargetLoc, 0.0f), Start2D, End2D) <= HitDist * HitDist)
         {
-            OutMonsters.Add(Mob);
+            Hits.Emplace(FVector2D::DistSquared(StartXY, TargetLoc), Target);
         }
     });
 
-    // 관통 횟수가 정해진 발사체는 먼저 닿는 적부터 맞아야 하므로 Start에서 가까운 순으로 정렬한다
-    const FVector2D StartXY(Start);
-    TArrayView<ADEMonsterBase*> NewResults(OutMonsters.GetData() + FirstNew, OutMonsters.Num() - FirstNew);
-    Algo::Sort(NewResults, [&StartXY](const ADEMonsterBase* A, const ADEMonsterBase* B)
+    Algo::SortBy(Hits, &TPair<float, AActor*>::Key);
+    for (const TPair<float, AActor*>& Hit : Hits)
     {
-        return FVector2D::DistSquared(StartXY, FVector2D(A->CachedLocation)) < FVector2D::DistSquared(StartXY, FVector2D(B->CachedLocation));
+        OutTargets.Add(Hit.Value);
+    }
+}
+
+void UDEMonsterQuerySubsystem::QueryAll(const AActor* Querier, TArray<AActor*>& OutTargets) const
+{
+    ForEachHostile(DETeam::GetTeam(Querier), nullptr, [&OutTargets](AActor* Target, const FVector2D&, float)
+    {
+        OutTargets.Add(Target);
+    });
+}
+
+void UDEMonsterQuerySubsystem::RegisterCharacter(ADECharacterBase* Character)
+{
+    if (Character)
+    {
+        Characters.AddUnique(Character);
+    }
+}
+
+void UDEMonsterQuerySubsystem::UnregisterCharacter(ADECharacterBase* Character)
+{
+    Characters.RemoveAll([Character](const TWeakObjectPtr<ADECharacterBase>& Weak)
+    {
+        return !Weak.IsValid() || Weak.Get() == Character;
     });
 }

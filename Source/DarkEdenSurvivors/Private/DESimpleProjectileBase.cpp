@@ -163,11 +163,11 @@ void ADESimpleProjectileBase::PerformCollisionDetection(float DeltaTime)
 	const UDEMonsterQuerySubsystem* Query = World->GetSubsystem<UDEMonsterQuerySubsystem>();
 	if (!Query) return;
 
-	// 1. 이전 위치에서 현재 위치까지 쓸고 지나간 영역의 몬스터 (가까운 순)
-	TArray<ADEMonsterBase*> HitMonsters;
-	Query->QuerySegment(StartLoc, EndLoc, Radius, HitMonsters);
+	// 1. 이전 위치에서 현재 위치까지 쓸고 지나간 영역의 적 (가까운 순)
+	TArray<AActor*> HitTargets;
+	Query->QuerySegment(GetInstigator(), StartLoc, EndLoc, Radius, HitTargets);
 
-	for (ADEMonsterBase* Target : HitMonsters)
+	for (AActor* Target : HitTargets)
 	{
 		// 2. 이미 맞힌 대상은 건너뛴다 (관통 중 같은 적을 다시 때리지 않도록)
 		if (HitCooldownMap.Contains(Target)) continue;

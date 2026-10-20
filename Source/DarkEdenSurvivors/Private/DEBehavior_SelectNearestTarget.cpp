@@ -25,8 +25,8 @@ void UDEBehavior_SelectNearestTarget::Execute(FDESkillContext& Context)
 	const UDEMonsterQuerySubsystem* Query = World->GetSubsystem<UDEMonsterQuerySubsystem>();
 	if (!Query) return;
 
-	// 3. 범위 내 가장 가까운 몬스터를 Context에 저장
-	if (ADEMonsterBase* Nearest = Query->QueryNearest(Context.Instigator->GetActorLocation(), Radius))
+	// 3. 범위 내 가장 가까운 적을 Context에 저장
+	if (AActor* Nearest = Query->QueryNearest(Context.Instigator, Context.Instigator->GetActorLocation(), Radius))
 	{
 		Context.Targets.Add(Nearest);
 	}

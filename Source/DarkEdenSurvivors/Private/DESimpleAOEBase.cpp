@@ -81,10 +81,10 @@ void ADESimpleAOEBase::Tick(float DeltaTime)
     const UDEMonsterQuerySubsystem* Query = GetWorld()->GetSubsystem<UDEMonsterQuerySubsystem>();
     if (!Query) return;
 
-    TArray<ADEMonsterBase*> Targets;
-    Query->QueryCircle(GetActorLocation(), Radius, Targets);
+    TArray<AActor*> Targets;
+    Query->QueryCircle(GetInstigator(), GetActorLocation(), Radius, Targets);
 
-    for (ADEMonsterBase* Target : Targets)
+    for (AActor* Target : Targets)
     {
         if (bHitOnContact && !CanHitTarget(Target)) continue;
         OnHitTarget(Target);

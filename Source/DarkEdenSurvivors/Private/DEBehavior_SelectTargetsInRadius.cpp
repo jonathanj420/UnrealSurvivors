@@ -2,31 +2,24 @@
 
 
 #include "DEBehavior_SelectTargetsInRadius.h"
-#include "DEMonsterBase.h"
 #include "DEMonsterQuerySubsystem.h"
 #include "Engine/World.h"
 #include "DESkillContext.h"
-#include "DEGameMode_Stage.h"
 #include "DrawDebugHelpers.h"
-#include "DEMonsterSpawnManager.h"
-#include "Kismet/GameplayStatics.h"
 
 void UDEBehavior_SelectTargetsInRadius::Execute(FDESkillContext& Context)
 {
     if (!Context.Instigator) return;
     UWorld* World = Context.Instigator->GetWorld();
 
-    // 맵 전체 검색: 스폰 매니저가 들고 있는 활성 몬스터를 그대로 쓴다
+    const UDEMonsterQuerySubsystem* Query = World->GetSubsystem<UDEMonsterQuerySubsystem>();
+    if (!Query) return;
+
+    // 맵 전체 검색 (이름은 Monsters지만 시전자와 적대인 대상 전부. 마스터가 쓰면 플레이어)
     if (bTargetAllMonsters)
     {
         Context.Targets.Reset();
-        if (ADEGameMode_Stage* GameMode = Cast<ADEGameMode_Stage>(UGameplayStatics::GetGameMode(World)))
-        {
-            if (ADEMonsterSpawnManager* SpawnManager = GameMode->GetMonsterSpawnManager())
-            {
-                Context.Targets.Append(SpawnManager->GetActiveMonsters());
-            }
-        }
+        Query->QueryAll(Context.Instigator, Context.Targets);
         return;
     }
 
@@ -64,27 +57,24 @@ void UDEBehavior_SelectTargetsInRadius::Execute(FDESkillContext& Context)
 
     const float FinalRadius = ResolveOverride(Radius, Context.Radius);
 
-    const UDEMonsterQuerySubsystem* Query = World->GetSubsystem<UDEMonsterQuerySubsystem>();
-    if (!Query) return;
-
-    // 2. 중심점마다 검색 (몬스터만 반환하므로 Instigator는 자연히 제외된다)
-    TArray<ADEMonsterBase*> Found;
+    // 2. 중심점마다 검색 (적대 대상만 반환하므로 Instigator는 자연히 제외된다)
+    TArray<AActor*> Found;
     for (const FVector& Center : CenterPoints)
     {
         Found.Reset();
-        Query->QueryCircle(Center, FinalRadius, Found);
+        Query->QueryCircle(Context.Instigator, Center, FinalRadius, Found);
 
-        for (ADEMonsterBase* Monster : Found)
+        for (AActor* Target : Found)
         {
             if (bAllowOverlap)
             {
-                // 옵션 켜짐: 여러 중심점에 걸린 몬스터는 그만큼 중복으로 담는다 (A, A, A...)
-                RawResults.Add(Monster);
+                // 옵션 켜짐: 여러 중심점에 걸린 대상은 그만큼 중복으로 담는다 (A, A, A...)
+                RawResults.Add(Target);
             }
             else
             {
                 // 옵션 꺼짐: Set으로 중복 제거 (A)
-                UniqueResults.Add(Monster);
+                UniqueResults.Add(Target);
             }
         }
     }

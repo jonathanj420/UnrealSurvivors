@@ -18,7 +18,8 @@ public class DarkEdenSurvivors : ModuleRules
             "Niagara",
 			"Json",
             "JsonUtilities",
-            "GameplayTags"
+            "GameplayTags",
+            "AIModule"
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {"DarkEdenSurvivorsSetting" });

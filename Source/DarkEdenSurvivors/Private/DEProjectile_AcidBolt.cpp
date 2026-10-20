@@ -90,10 +90,10 @@ void ADEProjectile_AcidBolt::Explode()
 
     if (const UDEMonsterQuerySubsystem* Query = World->GetSubsystem<UDEMonsterQuerySubsystem>())
     {
-        TArray<ADEMonsterBase*> Targets;
-        Query->QueryCircle(Center, Radius, Targets);
+        TArray<AActor*> Targets;
+        Query->QueryCircle(GetInstigator(), Center, Radius, Targets);
 
-        for (ADEMonsterBase* Target : Targets)
+        for (AActor* Target : Targets)
         {
             if (HitActors.Contains(Target)) continue;
             HitActors.Add(Target);

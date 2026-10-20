@@ -85,10 +85,10 @@ void ADESummon_GoreGland::PerformBloodPulse()
 
     if (const UDEMonsterQuerySubsystem* Query = World->GetSubsystem<UDEMonsterQuerySubsystem>())
     {
-        TArray<ADEMonsterBase*> Targets;
-        Query->QueryCircle(Center, Radius, Targets);
+        TArray<AActor*> Targets;
+        Query->QueryCircle(GetInstigator(), Center, Radius, Targets);
 
-        for (ADEMonsterBase* Target : Targets)
+        for (AActor* Target : Targets)
         {
             TryDealDamage(Target);
         }

@@ -36,7 +36,5 @@ void UDEBehavior_SelectTargetsBySweep::Execute(FDESkillContext& Context)
     const UDEMonsterQuerySubsystem* Query = World ? World->GetSubsystem<UDEMonsterQuerySubsystem>() : nullptr;
     if (!Query) return;
 
-    TArray<ADEMonsterBase*> HitMonsters;
-    Query->QuerySegment(StartLoc, EndLoc, FinalRadius, HitMonsters);
-    Context.Targets.Append(HitMonsters);
+    Query->QuerySegment(Context.Instigator, StartLoc, EndLoc, FinalRadius, Context.Targets);
 }

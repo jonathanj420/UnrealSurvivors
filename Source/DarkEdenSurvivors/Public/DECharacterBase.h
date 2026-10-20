@@ -4,6 +4,7 @@
 
 #include "DarkEdenSurvivors.h"
 #include "GameFramework/Character.h"
+#include "DETeam.h"
 #include "DECharacterBase.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnPlayerDiedDelegate);
@@ -16,7 +17,7 @@ class UDEAccessoryComponent;
 class UDELevelUpManagerComponent;
 
 UCLASS()
-class DARKEDENSURVIVORS_API ADECharacterBase : public ACharacter
+class DARKEDENSURVIVORS_API ADECharacterBase : public ACharacter, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -24,12 +25,19 @@ public:
 	// Sets default values for this character's properties
 	ADECharacterBase();
 
+	virtual FGenericTeamId GetGenericTeamId() const override { return TeamId; }
+	virtual void SetGenericTeamId(const FGenericTeamId& NewTeamId) override { TeamId = NewTeamId; }
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-	// 플레이어 컨트롤러에 빙의됐을 때 플레이어 전용 설정을 적용한다
+	// 팀을 정하고, 플레이어 컨트롤러에 빙의됐으면 플레이어 전용 설정을 적용한다
 	virtual void PossessedBy(AController* NewController) override;
+
+	// 빙의 전에는 NoTeam (스킬 타겟에도, 데미지 팀 판정에도 걸리지 않는다). PossessedBy에서 정한다
+	FGenericTeamId TeamId = FGenericTeamId::NoTeam;
 
 	// 플레이어가 조종하는 캐릭터에만 하는 설정 (메타 업그레이드, 픽업용 "Player" 태그, 피격 숫자 숨김).
 	// AI 마스터는 받지 않는다. BeginPlay와 빙의 중 늦게 오는 쪽에서 한 번만 적용된다

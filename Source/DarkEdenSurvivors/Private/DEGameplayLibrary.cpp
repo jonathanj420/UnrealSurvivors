@@ -6,10 +6,9 @@
 #include "Engine/World.h"
 #include "DEHealthComponent.h"
 #include "DECombatComponent.h"
-#include "DEGameMode_Stage.h"
 #include "DEStatusEffectComponent.h"
-#include "DEMonsterBase.h"
 #include "DECombatTypes.h"
+#include "DETeam.h"
 
 FDEDamageResult UDEGameplayLibrary::ApplyCombatDamage(
 	const FDEDamageRequest& Request)
@@ -22,6 +21,10 @@ FDEDamageResult UDEGameplayLibrary::ApplyCombatDamage(
 	FDEDamageResult Result;
 
 	if (!Request.Instigator || !Request.Victim) return Result;
+
+	// 같은 팀은 때리지 않는다. 타겟 쿼리가 이미 적대만 고르지만, 쿼리를 거치지 않는 데미지(Context.Targets 재사용 등)의 안전장치.
+	// 팀이 없는 쪽이 끼면 막지 않는다
+	if (DETeam::AreFriendly(DETeam::GetTeam(Request.Instigator), DETeam::GetTeam(Request.Victim))) return Result;
 
 	UDEHealthComponent* TargetHealth = Request.Victim->FindComponentByClass<UDEHealthComponent>();
 	if (!TargetHealth) return Result;
@@ -83,10 +86,10 @@ void UDEGameplayLibrary::ApplyAoEDamage(UWorld* World, const FVector& Origin, fl
 	const UDEMonsterQuerySubsystem* Query = World->GetSubsystem<UDEMonsterQuerySubsystem>();
 	if (!Query) return;
 
-	TArray<ADEMonsterBase*> Victims;
-	Query->QueryCircle(Origin, Radius, Victims);
+	TArray<AActor*> Victims;
+	Query->QueryCircle(BaseRequest.Instigator, Origin, Radius, Victims);
 
-	for (ADEMonsterBase* Victim : Victims)
+	for (AActor* Victim : Victims)
 	{
 		if (IgnoredActors.Contains(Victim)) continue;
 
@@ -110,7 +113,7 @@ AActor* UDEGameplayLibrary::GetNearestTarget(AActor* Instigator, float Radius)
 	if (!Query) return nullptr;
 
 	// Radius가 음수(-1)면 거리 제한 없이 맵 전체에서 찾는다
-	return Query->QueryNearest(Instigator->GetActorLocation(), Radius);
+	return Query->QueryNearest(Instigator, Instigator->GetActorLocation(), Radius);
 }
 
 //get random targets by radius
@@ -122,24 +125,17 @@ TArray<AActor*> UDEGameplayLibrary::GetRandomTargets(AActor* Instigator, float R
 	UWorld* World = Instigator->GetWorld();
 	if (!World) return Result;
 
-	TArray<AActor*> Candidates;
+	const UDEMonsterQuerySubsystem* Query = World->GetSubsystem<UDEMonsterQuerySubsystem>();
+	if (!Query) return Result;
 
+	TArray<AActor*> Candidates;
 	if (FMath::IsNearlyEqual(Radius, -1.0f))
 	{
-		auto* GM = Cast<ADEGameMode_Stage>(World->GetAuthGameMode());
-		if (GM)
-		{
-			for (ADEMonsterBase* Monster : GM->GetActiveMonsters())
-			{
-				if (Monster) Candidates.Add(Monster);
-			}
-		}
+		Query->QueryAll(Instigator, Candidates);
 	}
-	else if (const UDEMonsterQuerySubsystem* Query = World->GetSubsystem<UDEMonsterQuerySubsystem>())
+	else
 	{
-		TArray<ADEMonsterBase*> InRange;
-		Query->QueryCircle(Instigator->GetActorLocation(), Radius, InRange);
-		Candidates.Append(InRange);
+		Query->QueryCircle(Instigator, Instigator->GetActorLocation(), Radius, Candidates);
 	}
 
 	if (Candidates.Num() == 0) return Result;

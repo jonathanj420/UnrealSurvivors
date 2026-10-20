@@ -5,6 +5,7 @@
 #include "DarkEdenSurvivors.h"
 #include "GameFramework/Actor.h"
 #include "Data/DEMonsterData.h"
+#include "DETeam.h"
 #include "DEMonsterBase.generated.h"
 
 //class ADEMonsterBase;
@@ -18,13 +19,15 @@ class UDEHealthComponent;
 class ADECharacterBase;
 
 UCLASS()
-class DARKEDENSURVIVORS_API ADEMonsterBase : public AActor
+class DARKEDENSURVIVORS_API ADEMonsterBase : public AActor, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this actor's properties
 	ADEMonsterBase();
+
+	virtual FGenericTeamId GetGenericTeamId() const override { return DETeam::Monster; }
 
 protected:
 	// Called when the game starts or when spawned
