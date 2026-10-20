@@ -150,6 +150,7 @@ void UDEBehavior_InstantDamage::ApplyHit(const FDESkillContext& Context, TArray<
         PostHitData.Instigator = Context.Instigator;
         PostHitData.Target = Target;
         PostHitData.DamageAmount = Res.FinalDamage; // 실제 들어간 데미지 기록
+        PostHitData.SourceObject = Context.SourceSkill; // 로컬 이펙트가 후속 데미지(처형 등)를 낼 때 출처로 쓴다
         PostHitData.SourceContext = &Context;
 
         if (Context.SourceSkill)

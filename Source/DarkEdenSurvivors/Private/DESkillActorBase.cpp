@@ -193,6 +193,7 @@ bool ADESkillActorBase::TryDealDamage(AActor* Victim)
     EventData.Instigator = GetInstigator();
     EventData.Target = Victim;
     EventData.DamageAmount = Res.FinalDamage;
+    EventData.SourceObject = CachedContext.SourceSkill;
     EventData.SourceContext = &CachedContext;
 
     for (UDECombatEffect* Effect : LocalEffects)

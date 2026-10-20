@@ -90,25 +90,15 @@ void UDECombatComponent::HandleDamageDealt(const FDEDamageResult& Result)
     // --------------------------------------------------------
     if (Result.bIsDead)
     {
-        if (Result.SourceObject)
-        {
-            ++TotalKillCount;
-            BroadcastCombatEvent(ECombatEventTrigger::OnKill, EventData);
-            UE_LOG(LogTemp, Log, TEXT("Total Kill Count : %d"), TotalKillCount);
+        // 킬 집계와 글로벌 OnKill은 출처와 무관하다. 출처는 스킬별 처치 보상(OnTargetKilled)에만 필요하다
+        ++TotalKillCount;
+        BroadcastCombatEvent(ECombatEventTrigger::OnKill, EventData);
 
-            // ★ [AAA 핵심] 출처가 '처치 알림' 인터페이스를 달고 있는지 확인 후 직통 전화!
-            if (Result.SourceObject->Implements<UDEDamageInstigatorInterface>())
-            {
-                IDEDamageInstigatorInterface* Instigator = Cast<IDEDamageInstigatorInterface>(Result.SourceObject);
-                Instigator->OnTargetKilled(Result);
-            }
-        }
-        else
+        if (Result.SourceObject && Result.SourceObject->Implements<UDEDamageInstigatorInterface>())
         {
-            return;
-
+            IDEDamageInstigatorInterface* Instigator = Cast<IDEDamageInstigatorInterface>(Result.SourceObject);
+            Instigator->OnTargetKilled(Result);
         }
-        
     }
 
 }
