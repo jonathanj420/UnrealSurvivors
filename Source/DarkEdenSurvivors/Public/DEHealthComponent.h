@@ -10,6 +10,9 @@
 // 체력 변경 (현재 HP, 최대 HP)
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHPChanged, float /*CurrentHP*/, float /*MaxHP*/);
 
+// 실제로 HP가 깎였을 때 (무적시간에 막힌 피해는 제외). 피격 연출용
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnDamageTaken, float /*Damage*/, AActor* /*DamageInstigator*/);
+
 
 // 사망 이벤트
 // Killer: 막타를 친 Instigator (플레이어 Pawn). 치트 등으로 가해자가 없으면 nullptr
@@ -38,6 +41,12 @@ public:
     void SetInvulnerabilityTime(float InSeconds) { InvulnerabilityTime = FMath::Max(InSeconds, 0.f); }
     // 초당 회복량
     void SetRegeneration(float InPerSecond);
+
+    // 받은 피해 숫자를 머리 위에 띄울지. 플레이어는 끈다 (피격 플래시로 대신한다)
+    UPROPERTY(EditAnywhere, Category = "Health")
+    bool bShowDamageText = true;
+
+    FOnDamageTaken OnDamageTaken;
 
 public:
     // =====================

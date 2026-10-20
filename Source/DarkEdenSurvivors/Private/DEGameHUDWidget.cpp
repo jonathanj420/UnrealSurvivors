@@ -80,6 +80,16 @@ void UDEGameHUDWidget::UpdateHP(float CurrentHP, float MaxHP)
         float Percent = FMath::Clamp(CurrentHP / MaxHP, 0.0f, 1.0f);
         PB_HP->SetPercent(Percent);
     }
+
+    if (MaxHP > 0.0f)
+    {
+        const bool bNowLow = CurrentHP / MaxHP <= LowHPThreshold;
+        if (bNowLow != bLowHP)
+        {
+            bLowHP = bNowLow;
+            OnLowHPChanged(bLowHP);
+        }
+    }
 }
 
 void UDEGameHUDWidget::UpdateExp(float CurrentExp, float MaxExp)

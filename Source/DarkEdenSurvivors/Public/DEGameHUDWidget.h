@@ -25,6 +25,18 @@ public:
 	void UpdateLevel(int32 CurrentLevel);
 
 protected:
+	// HP 비율이 이 값 이하면 위험 상태 (화면 가장자리 비네트)
+	UPROPERTY(EditDefaultsOnly, Category = "HUD", meta = (ClampMin = "0", ClampMax = "1"))
+	float LowHPThreshold = 0.3f;
+
+	UPROPERTY(BlueprintReadOnly, Category = "HUD")
+	bool bLowHP = false;
+
+	// 위험 상태에 들어가거나 벗어날 때 한 번 불린다. WBP에서 비네트를 켜고 끈다
+	UFUNCTION(BlueprintImplementableEvent, Category = "HUD")
+	void OnLowHPChanged(bool bIsLowHP);
+
+protected:
 	virtual void NativeConstruct() override;
 	//virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	int32 LastSeconds = -1;

@@ -242,8 +242,11 @@ void UDEHealthComponent::ApplyFinalDamage(float InDamage, AActor* InInstigator, 
     // 체력바 갱신
     OnHPChanged.Broadcast(CurrentHP, MaxHP);
 
+    OnDamageTaken.Broadcast(InDamage, InInstigator);
+
     // 데미지 텍스트 띄우기
-    if (UWorld* World = GetWorld())
+    UWorld* World = bShowDamageText ? GetWorld() : nullptr;
+    if (World)
     {
         if (UDEDamageTextSubsystem* DmgSys = World->GetSubsystem<UDEDamageTextSubsystem>())
         {

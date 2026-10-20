@@ -6,6 +6,8 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "TimerManager.h"
 
 #include "DESkillManagerComponent.h"
 #include "DEActiveSkillBase.h"
@@ -34,6 +36,7 @@ ADECharacterBase::ADECharacterBase()
     StatComponent = CreateDefaultSubobject<UDEStatComponent>(TEXT("StatComponent"));
 
     HealthComponent= CreateDefaultSubobject<UDEHealthComponent>(TEXT("DEHealthComponent"));
+    HealthComponent->bShowDamageText = false;
 
     CombatComponent = CreateDefaultSubobject<UDECombatComponent>(TEXT("CombatComponent"));
 
@@ -106,6 +109,7 @@ void ADECharacterBase::BeginPlay()
     {
         // HP가 0이 되면 HealthComponent는 OnDying만 broadcast한다 (OnDeath는 사망 처리를 끝낸 쪽이 부른다)
         HealthComponent->OnDying.AddWeakLambda(this, [this](AActor* /*Killer*/) { Die(); });
+        HealthComponent->OnDamageTaken.AddUObject(this, &ADECharacterBase::OnDamageTaken);
     }
     if (ProgressionComponent)
     {
@@ -400,6 +404,18 @@ float ADECharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& Damag
     }
 
     return ActualDamage;
+}
+
+void ADECharacterBase::OnDamageTaken(float Damage, AActor* DamageInstigator)
+{
+    // 맞을 때마다 타이머를 다시 걸어서 연속 피격이면 끝까지 켜져 있다. 월드 타이머라 일시정지 중엔 멈춘다
+    GetMesh()->SetScalarParameterValueOnMaterials(HitFlashParameterName, 1.0f);
+    GetWorldTimerManager().SetTimer(HitFlashTimerHandle, this, &ADECharacterBase::EndHitFlash, HitFlashDuration, false);
+}
+
+void ADECharacterBase::EndHitFlash()
+{
+    GetMesh()->SetScalarParameterValueOnMaterials(HitFlashParameterName, 0.0f);
 }
 
 void ADECharacterBase::Heal(float Amount)

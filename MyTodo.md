@@ -135,6 +135,14 @@
 - [ ] 스테이지 GameMode BP Class Defaults > Stage|Difficulty에서 `MonsterHPCurve`/`MonsterDamageCurve`에 키 넣기 (X 분, Y 배율. 예: 0분 1.0, 10분 3.0, 20분 8.0, 30분 15.0). 비워 두면 배율 1. 짧게 테스트하려면 0분 1, 1분 10 같은 커브로 1분 뒤 몬스터가 확 단단해지는지 확인
 - [ ] BloodDrain은 최대 HP 비율 피해라 HP 배율이 올라도 같은 비율로 깎이는지
 
+## 피격 연출
+
+- [ ] 플레이어 캐릭터 머티리얼(BP 메시에 쓰는 것 전부)에 스칼라 파라미터 `HitFlash`(기본 0) 추가. 예: `Lerp(원래 색, 빨강, HitFlash)`를 Base Color나 Emissive에 연결. 이름을 바꾸려면 캐릭터 BP Class Defaults > Feedback > `HitFlashParameterName`
+- [ ] 맞을 때 캐릭터가 0.12초 번쩍이는지, 둘러싸여 계속 맞으면 계속 켜져 있는지 (`HitFlashDuration`으로 조절)
+- [ ] 플레이어 머리 위에 데미지 숫자가 안 뜨는지 (몬스터 숫자는 그대로)
+- [ ] `UI_GameHUD`에 화면 가장자리 비네트 이미지(기본 숨김)와 페이드/맥동 애니메이션 추가. Graph에서 `Event On Low HP Changed` 구현: true면 켜고 재생, false면 끄기. 기준은 Class Defaults의 `LowHPThreshold`(0.3)
+- [ ] HP 30% 아래로 떨어질 때 비네트가 켜지고, 회복해서 넘어가면 꺼지는지
+
 ## 성능 측정
 
 - [ ] `TestStage001`/`TestBlank`에서 `NavMeshBoundsVolume`, `RecastNavMesh` 삭제 (내비 사용처 없음. `TestPrototype`은 완료, 미커밋)

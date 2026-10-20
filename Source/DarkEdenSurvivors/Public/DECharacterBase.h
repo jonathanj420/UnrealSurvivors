@@ -145,6 +145,19 @@ protected:
 	UFUNCTION()
 	virtual void Die();
 
+	// 피격 플래시: 맞으면 메시 머티리얼의 이 스칼라 파라미터를 1로 올렸다가 HitFlashDuration 뒤 0으로 되돌린다.
+	// 머티리얼에 파라미터가 없으면 아무 일도 없다
+	UPROPERTY(EditDefaultsOnly, Category = "Feedback")
+	FName HitFlashParameterName = TEXT("HitFlash");
+
+	UPROPERTY(EditDefaultsOnly, Category = "Feedback", meta = (Units = "s"))
+	float HitFlashDuration = 0.12f;
+
+	FTimerHandle HitFlashTimerHandle;
+
+	void OnDamageTaken(float Damage, AActor* DamageInstigator);
+	void EndHitFlash();
+
 public:
 	float GetCapsuleRadius() const;
 public:

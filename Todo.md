@@ -27,7 +27,8 @@
 - [x] 난이도 곡선: `ADEGameMode_Stage`의 `MonsterHPCurve`/`MonsterDamageCurve`(X 경과 분, Y 배율, 비면 1)를 스폰 시점에 `ResetMonster`에서 DT 값에 곱한다
 - [ ] 몬스터별 `AttackInterval`(DT)은 전역 무적시간 때문에 거의 의미가 없어졌다. 0.2보다 크게 잡은 몬스터만 영향. 컬럼 정리 여부 결정
 - [x] `Curse` 스탯(파티 중 최댓값)은 뱀서처럼 몬스터 HP(곡선에 곱함), 이동속도, 수량(`MinimumCount` × Curse), 스폰 빈도(`SpawnInterval` ÷ Curse)를 올린다. 데미지에는 걸지 않는다. `SpawnLimit`(성능 상한)은 Curse와 무관
-- [ ] 플레이어가 맞을 때 몬스터와 같은 데미지 텍스트가 플레이어 머리 위에 뜬다 (`ApplyFinalDamage`). 피격 연출(화면 붉게, 깜빡임)로 바꿀지
+- [x] 플레이어 피격 연출: 데미지 숫자 끔(`UDEHealthComponent::bShowDamageText`), 피격 플래시(`OnDamageTaken` → 메시 머티리얼 `HitFlash` 0.12초), 저HP 비네트(`UDEGameHUDWidget::OnLowHPChanged`, 30% 이하)
+- [ ] `ECombatEventTrigger::OnTakeDamage`를 이제 `UDEHealthComponent::OnDamageTaken`에서 broadcast할 수 있다 (피격 시 발동하는 액세서리/퍽용)
 - [ ] 이동속도 배율 곡선은 없다 (HP/데미지만). 필요하면 같은 방식으로 추가
 - [x] 메타 업그레이드 Amount ×2: `FDEStatModifier::Multiplier` 기본값을 0으로 변경. 액세서리 DataAsset은 Multiplier를 전부 명시적으로 저장해 두어서 값이 그대로다 (Buman 0.1, 나머지 0). 다른 에셋 사용처 없음
 
