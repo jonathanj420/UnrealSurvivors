@@ -142,16 +142,16 @@
 지금 실제로 쓰이는 것: BloodyScarify 폭발(`BP_StatusEffect_BloodyScarifyExplosion`, DelayedExplosion, Independent), 스턴(BloodDrain, GlareOfBasilisk). Venom BP 두 개(`BP_StatusEffect_Venom_DoT`/`_Damage`)는 에셋 문자열 검색상 참조 없음 (Reference Viewer 확인은 MyTodo).
 
 바로 고칠 것 (설계 결정 불필요):
-- [ ] `UDECombatEffect_ApplyStatusEffect`가 `*EventData.SourceContext`를 null 체크 없이 역참조. 전역 OnHit/OnKill(`HandleDamageDealt`)에서는 null이라 장신구/퍽에 붙이면 크래시. 지금은 BloodyScarify 로컬 이펙트만 써서 안 터짐
-- [ ] `TickComponent`/`RemoveAllEffects`가 `ActiveEffects[i]` 참조를 잡은 채 `Tick`/`OnRemove`를 부른다. 그 안의 데미지 → OnHit/OnKill → 같은 대상 `AddEffect`로 배열이 재할당되면 참조가 깨진다. 만료 처리를 참조 재조회나 분리된 목록으로
-- [ ] 베이스 `OnApply`/`OnRemove`가 매번 `LogTemp` Warning (BloodDrain 한 번에 수십 줄). Verbose로
-- [ ] `FActiveStatusEffect::SourceContext`가 `FDESkillContext` 전체를 복사한다 (Targets 배열, CustomValues 맵, CustomLocations). 300마리 범위 적용이면 300개짜리 배열 300번 복사. 읽는 곳은 DelayedExplosion의 `Radius` 하나. UPROPERTY가 아니라 안의 액터 포인터도 GC가 모른다. 필요한 값만 담도록
-- [ ] 베이스의 안 쓰는 연출 필드 삭제: `EffectParticle`, `bApplyMaterialTint`, `TintParameterName`, `TintColor`, `OriginalColor` (Stun의 주석 블록 포함). 색 연출은 ISM CustomData로 갈 예정
-- [ ] DelayedExplosion이 `Req.DamageTags = StatusTags`로 상태 태그를 데미지 태그 자리에 넣는다
+- [x] `UDECombatEffect_ApplyStatusEffect`가 `*EventData.SourceContext`를 null 체크 없이 역참조. 전역 OnHit/OnKill(`HandleDamageDealt`)에서는 null이라 장신구/퍽에 붙이면 크래시. 이제 null이면 Radius 0(효과 기본값)
+- [x] `TickComponent`/`RemoveAllEffects`/`RemoveEffectsByTag`가 `ActiveEffects[i]` 참조를 잡은 채 `Tick`/`OnRemove`를 부르던 문제. 만료/제거할 효과는 배열에서 먼저 빼서 복사본으로 `OnRemove`, `Tick` 뒤에는 인덱스로 다시 잡는다(`IsValidIndex`). `RemoveAllEffects`는 배열을 비운 뒤 `OnRemove`를 부르고, 그 사이 새로 걸린 효과가 있으면 Tick을 다시 켠다. `Replace` 정책도 옛 효과를 먼저 빼고 새 효과로 추가
+- [x] 베이스 `OnApply`/`OnRemove` 로그를 `LogDarkEdenSurvivors` Verbose로
+- [x] `FActiveStatusEffect::SourceContext`(Context 전체 복사)를 `float Radius` 하나로. `AddEffect`의 마지막 인자도 Context 대신 `Radius`(기본 0)
+- [x] 베이스의 안 쓰는 연출 필드 삭제: `EffectParticle`, Tint 4개, Stun의 주석 블록
+- [x] DelayedExplosion이 상태 태그를 데미지 태그로 넣던 문제. 별도 `ExplosionDamageTags`(기본 빈 값)
 
-결정 필요 (Claude 추천안):
-- [ ] `Stack` 정책이 스택 수만 올리고 `Power`/`Duration`은 처음 값 그대로. 독을 계속 맞히면 스킬 레벨이 올라도 이미 걸린 독의 틱 데미지가 안 오른다. 추천: 재적용 시 Power는 max(기존, 새 값), 지속시간은 남은 시간과 새 값 중 긴 쪽 (Refresh와 같은 규칙)
-- [ ] 면역 `ImmuneTags`가 컴포넌트 EditDefaultsOnly인데 몬스터 BP가 없어 설정할 곳이 없다. 추천: 몬스터 DT에 `ImmuneStatusTags` 컬럼, `ResetMonster`에서 복사 (`bImmuneToBloodDrain`과 같은 방식)
+결정 (2026-10-21, 추천안대로):
+- [x] `Stack` 정책 재적용 시 Power와 Radius는 max(기존, 새 값), 지속시간은 `bRefreshDurationOnStack`이면 남은 시간과 새 값 중 긴 쪽 (Refresh와 같은 `RefreshDuration`). 최대 스택이어도 Power/지속시간은 갱신한다 (전엔 최대 스택이면 아무것도 안 했음). `Refresh`도 Radius를 max로
+- [x] 면역: 몬스터 DT에 `ImmuneStatusTags` 컬럼, `ResetMonster`에서 `SetImmuneTags`로 복사. 보스 자동 면역은 넣지 않았다 (광흡 면역만 보스 자동)
 
 나중에:
 - [ ] `UDEBehavior_ApplyStatusEffect`는 `ADEMonsterBase` 캐스트로만 건다 (CombatEffect 쪽은 `FindComponentByClass`). 마스터(적 캐릭터)도 맞으려면 컴포넌트 기준으로

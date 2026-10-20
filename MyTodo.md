@@ -170,6 +170,10 @@
 ## 상태이상
 
 - [ ] Reference Viewer: `BP_StatusEffect_Venom_DoT`, `BP_StatusEffect_Venom_Damage`를 쓰는 스킬이 있는지 (에셋 문자열 검색으로는 없음)
+- [ ] BloodyScarify: 폭발 범위가 전처럼 스킬 Radius를 따르는지, 폭발이 연쇄로 다른 몬스터를 죽여도 크래시가 없는지
+- [ ] BloodDrain, GlareOfBasilisk 스턴이 전처럼 걸리고 풀리는지
+- [ ] `BP_StatusEffect_BloodyScarifyExplosion`에 새 `ExplosionDamageTags`가 생겼다 (전엔 StatusTags가 데미지 태그로 들어갔다). 속성 태그(`Damage.Affinity.*` 등)를 붙일 거면 여기에. 지금 데미지 태그를 읽는 곳은 Execution/InstantKill/DoT뿐이라 비워둬도 동작은 같다
+- [ ] `DT_MonsterData`에 `ImmuneStatusTags` 컬럼이 생겼다. 스턴 면역 몬스터를 만들려면 `Status.Debuff.Stun`처럼 효과 BP의 StatusTags와 같은 태그를 넣는다 (보스도 자동 면역은 아님. 광흡 면역은 따로 `bImmuneToBloodDrain`)
 
 ## 성능 측정
 
