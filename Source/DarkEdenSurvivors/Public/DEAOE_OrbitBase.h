@@ -25,6 +25,7 @@ public:
 
     // 초기 각도 설정
     void InitOrbit(float InStartAngle);
+    float GetCurrentAngle() const { return CurrentAngle; }
 
 protected:
     float CurrentOrbitRadius = 150.0f;

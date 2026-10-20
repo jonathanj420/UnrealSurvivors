@@ -22,6 +22,10 @@ class DARKEDENSURVIVORS_API UDEBehavior_SpawnOrbit : public UDESkillBehavior
 
 public:
 	virtual void Execute(FDESkillContext& Context) override;
+	virtual void OnContextRefreshed(const FDESkillContext& Context) override;
+
+private:
+	void SpawnOneOrbit(const FDESkillContext& Context, class UDEPoolSubsystem& Pool, float StartAngle) const;
 
 public:
 	/** 스폰할 Orbit AOE 클래스 (Danse Macabre, Skull 등) */

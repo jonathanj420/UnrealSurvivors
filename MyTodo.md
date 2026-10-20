@@ -70,6 +70,7 @@
 - [ ] 소환 스킬(GoreGland 등): 소환수가 수명이 다해 사라진 뒤 레벨업하면 빈자리만큼 새로 소환되는지, 사라진 소환수가 그 자리에서 다시 나타나지 않는지
 - [ ] 마늘형 오라(SpawnAOE, Key 있음): 레벨업 때 오라가 두 개로 늘지 않고 크기와 데미지만 바뀌는지
 - [ ] 이동 장판(SpawnOnMove)과 궤도 스킬을 재료로 진화: 깔려 있던 장판과 궤도가 진화 순간 사라지는지
+- [ ] 궤도 스킬(DanseMacabre)의 ExecutionType이 무엇인지 (`bCooldownAfterDuration = true`라 Duration으로 추정). Permanent면: 레벨업으로 개수가 늘 때 해골이 즉시 늘고 균등 간격으로 재배치되는지, 스탯이 바뀔 때 해골이 튀지 않는지
 - [ ] `PlayUI`로 띄우는 위젯 BP가 스스로 `RemoveFromParent`하는지 (C++은 띄우기만 한다)
 - [ ] `FireProjectile`이 `FilterTargets`로 여러 타겟을 골라도 첫 타겟 방향으로만 쏘는 게 의도인지
 - [ ] `CullByCone`을 쓰는 BP 스킬(TalonOfCrow 등)에서 `ConeAngle`을 60 말고 다른 값으로 넣어둔 게 있는지. 이제 그 값이 실제로 적용된다 (DT에 Angle이 없을 때)
