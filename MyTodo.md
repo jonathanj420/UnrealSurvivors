@@ -84,6 +84,12 @@
   - `ApplyStatusEffect`의 Interval을 넣어둔 BP와 레거시 BloodyScarify(0): 전엔 DT `"Interval"`이 있으면 그게 이겼는데, 이제 프로퍼티가 이긴다
 - [ ] AcidBolt가 지금 어떻게 동작하는지: 스킬 클래스가 C++ `DESkill_AcidBolt`인지 BP인지, BP라면 `FireProjectileRadial`의 `ProjectileClasses`를 채웠는지
 
+## 투사체 판정 범위
+
+- [ ] 투사체의 콜리전 구체가 이제 DT Radius 크기로 보인다 (판정도 원래 DT Radius였음). `show Collision`으로 Inferno를 쏴서 구체에 닿은 몬스터만 맞는지 확인
+- [ ] 투사체 스킬마다 구체 크기가 나이아가라/메시와 맞는지 보고, 안 맞으면 `DESkillDataTable`의 Radius를 조정 (Inferno, DiabloInferno, BloodyKnife, AcidBolt 등). 생성자의 `InitSphereRadius`는 이제 의미 없다
+- [ ] DT Radius가 0인 투사체 스킬이 있으면 몬스터 캡슐 반경으로만 맞는다 (전과 같음). 구체가 안 보이면 그 경우
+
 ## AOE
 
 - [ ] Darkness/GreyDarkness: 범위 안 몬스터가 HitInterval마다 한꺼번에 맞는지, 처음 켰을 때 바로 한 번 맞는지 확인

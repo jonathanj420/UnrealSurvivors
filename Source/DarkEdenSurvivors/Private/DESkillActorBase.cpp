@@ -72,11 +72,8 @@ void ADESkillActorBase::InitializeFromContext(const FDESkillContext& Context)
     KnockbackForce = Context.KnockbackForce;
     LifeTime = Context.Duration;
 
-    // 크기 조절
-    if (Radius > 0.f)
-    {
-        SetSize(Radius);
-    }
+    // 판정 반경은 Radius(DT)다. 액터 스케일은 바꾸지 않는다 (메시와 나이아가라 크기는 에셋 그대로).
+    // 콜리전 구체를 판정 반경에 맞추는 건 서브클래스가 한다 (투사체, 장판)
 
     ResetState();
 }
@@ -212,12 +209,4 @@ bool ADESkillActorBase::TryDealDamage(AActor* Victim)
     }
 
     return true;
-}
-
-void ADESkillActorBase::SetSize(float NewSize)
-{
-    
-    SetActorScale3D(FVector(NewSize / Radius));
-    Radius = NewSize;
-
 }

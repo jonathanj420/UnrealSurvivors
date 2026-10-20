@@ -125,7 +125,6 @@ public:
     void SetDamage(float v) { Damage = v; }
     void SetKnockbackForce(float v) { KnockbackForce = v; }
     void SetLifeTime(float v) { LifeTime = v; }
-    void SetSize(float NewSize);
     void SetCritChance(float v) { CritChance = v; }
     void SetCanCrit(bool v) { bCanCrit = v; }
     void SetRadius(float v) { Radius = v; }

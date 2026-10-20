@@ -78,6 +78,13 @@ void ADESimpleProjectileBase::InitializeFromContext(const FDESkillContext& Conte
 
 	// 3. ★ 부모 초기화 호출 (이 안에서 가상 함수인 ResetState()가 호출되며 깔끔하게 1번만 켜짐)
 	Super::InitializeFromContext(Context);
+
+	// 히트 판정(PerformCollisionDetection)은 DT Radius로 한다. 콜리전 표시가 실제 판정 범위를 보여주도록 구체를 맞춘다.
+	// 생성자의 InitSphereRadius 값은 판정에 쓰이지 않는다
+	if (CollisionComponent)
+	{
+		CollisionComponent->SetSphereRadius(FMath::Max(Radius, 0.f));
+	}
 }
 
 void ADESimpleProjectileBase::ResetState()
