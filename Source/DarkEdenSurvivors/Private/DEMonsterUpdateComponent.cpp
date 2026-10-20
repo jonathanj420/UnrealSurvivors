@@ -40,7 +40,7 @@ void UDEMonsterUpdateComponent::UpdateMovementAndAttack(float DeltaTime, TArray<
 {
     const FVector PlayerLocation = Player->GetActorLocation();
     const double CurrentWorldTime = GetWorld()->GetTimeSeconds();
-    const float PlayerRadius = Player->GetCapsuleHalfRadius();
+    const float PlayerRadius = Player->GetCapsuleRadius();
 
     for (int32 i = ActiveMonsters.Num() - 1; i >= 0; --i)
     {

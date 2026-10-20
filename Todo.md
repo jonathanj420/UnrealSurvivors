@@ -64,6 +64,14 @@
 - [ ] 죽은 코드: `GetRandomSkillChoices`, `GetUpgradeableSkills`, `ApplyCharacterDamageMultiplier`, `DeltaCheck`, `TotalReducedCooldownAmount`, `AccessoryWeight`, `bCooldownAfterDuration`(set만 하고 안 읽음)
 - [ ] 스킬 DT를 생성자의 하드코딩 경로로 로드해서 `SkillRowMap`을 만든다. `SkillRowTable`은 EditAnywhere라 BP에서 바꿔도 맵에 반영되지 않는다
 
+## CharacterBase (2026-10-20 리뷰)
+
+- [x] 디버그 치트(`MyDebugCheat`, `MyAnotherDebugCheat`, `ForceLevelUp`, `ForceLevelUpSkill`)를 Shipping에서 제외: 입력 바인딩과 본문을 `#if !UE_BUILD_SHIPPING`으로. UFUNCTION 선언은 UHT 제약으로 남김. 안 쓰던 `DebugAccessoryToEquip`과 생성자의 `DEAccessory_SeongsBless` 하드 로드 삭제
+- [x] 죽은 코드 삭제: `DEPlayerController` 캐시, `ActiveAOEMap`, `ActiveSkills`/`CurrentActiveSkillIndex`/`UseActiveSkill`, `IFrame`, 빈 `PostInitializeComponents`, 디버그 메시지만 띄우던 `BloodDrain()`과 그 입력 바인딩, `ForceKill`, `OnActiveSkillInput`의 로그, 헤더의 `DESkillBase.h` include
+- [x] 자동 스킬 일시정지 플래그 중복 제거: 캐릭터의 `bAutoSkillsPaused`/`IsAutoSkillsPaused` 삭제, 상태는 SkillManager만. `GetCapsuleHalfRadius` → `GetCapsuleRadius`(반경을 반환하므로). `IsDead`/`AddExp`/`SetMaxHP` null 체크
+- [ ] 메인 메뉴 캐릭터 선택이 게임에 반영되지 않는다: `UDEMainMenuWidget::SelectedCharacterID`는 위젯 안에만 있고, `ADEGameMode_Stage`는 `DefaultPawnClass = ADEFemaleVampire` 고정. `UDECharacterData`(`LevelMilestones`)는 C++에서 읽는 곳이 없다. 로비 → 스테이지 흐름 설계 필요
+- [ ] 카메라 모드(`FREETPS`/`FPS`/`ViewChange`)는 일단 유지 (개발자 결정, 2026-10-20)
+
 ## Behavior (2026-10-20 리뷰)
 
 - [x] 스폰 액터 기록을 두 가지로 통일: 키당 하나인 오라는 `OwnedSkillActorMap` + `FindKeyedSkillActor`(`IsActiveFor` 확인), 여러 개 스폰되는 액터(SpawnAOE의 키 없는 장판, SpawnOrbit, SpawnSummon, SpawnOnMove)는 `RegisterSkillActor`로 배열에 등록하고 등록할 때 죽은 항목을 정리. `FDESkillContext::SpawnedAOEs` 삭제. `CancelSkill`은 두 곳만 거둔다

@@ -92,6 +92,13 @@
 - [ ] 투사체 스킬마다 구체 크기가 나이아가라/메시와 맞는지 보고, 안 맞으면 `DESkillDataTable`의 Radius를 조정 (Inferno, DiabloInferno, BloodyKnife, AcidBolt 등). 생성자의 `InitSphereRadius`는 이제 의미 없다
 - [ ] DT Radius가 0인 투사체 스킬이 있으면 몬스터 캡슐 반경으로만 맞는다 (전과 같음). 구체가 안 보이면 그 경우
 
+## CharacterBase 정리 후 확인
+
+- [ ] BP 컴파일: 캐릭터에서 `DebugAccessoryToEquip` 프로퍼티를 삭제했다 (BP에서 값만 넣었다면 문제없음)
+- [ ] Project Settings > Input의 `BloodDrain` 액션 매핑은 이제 C++에서 바인딩하지 않는다 (디버그 메시지만 띄우던 것). 흡혈은 `ActiveSkill` 키. 필요 없으면 매핑 삭제
+- [ ] 치트 키(DebugCheat, AnotherDebugCheat)와 콘솔 `ForceLevelUp`이 에디터/Development에서는 여전히 동작하는지
+- [ ] 흡혈 시전 중 자동 스킬이 멈췄다가 끝나면 다시 도는지 (일시정지 플래그를 SkillManager 하나로 합침)
+
 ## AOE
 
 - [ ] Darkness/GreyDarkness: 범위 안 몬스터가 HitInterval마다 한꺼번에 맞는지, 처음 켰을 때 바로 한 번 맞는지 확인

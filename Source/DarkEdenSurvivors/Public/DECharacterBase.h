@@ -4,7 +4,6 @@
 
 #include "DarkEdenSurvivors.h"
 #include "GameFramework/Character.h"
-#include "DESkillBase.h" // UDESkillBase 클래스 정의 포함
 #include "DECharacterBase.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnPlayerDiedDelegate);
@@ -32,7 +31,6 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	virtual void PostInitializeComponents() override;
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -63,9 +61,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	class UCameraComponent* Camera;
 
-	UPROPERTY()
-	class ADEPlayerController* DEPlayerController;
-
 	enum class EControlMode
 	{
 		FIXEDTPS,
@@ -82,9 +77,6 @@ protected:
 	float ArmRotationSpeed = 0.0f;
 	bool IsFPS;
 	bool bMoveCamera;
-	float IFrame = 0.5;
-protected:
-
 
 private:
 	UFUNCTION()
@@ -102,20 +94,14 @@ private:
 	UFUNCTION()
 	void ViewChange();
 
-	//***ATTACK***
-	UFUNCTION()
-	void BloodDrain();
 	UPROPERTY(VisibleinstanceOnly, BlueprintReadOnly, Category = Attack, Meta = (AllowPrivateAccess = true))
 	bool bCanMove;
 public:
 	void SetCanMove(bool bInCanMove);
 	bool CanMove() const { return bCanMove; }
-protected:
-	bool bAutoSkillsPaused = false;
 
-public:
+	// 자동 스킬 발동 멈춤 (흡혈 시전 중 등). 상태는 SkillManager가 갖는다
 	void SetAutoSkillsPaused(bool bPaused);
-	bool IsAutoSkillsPaused() const { return bAutoSkillsPaused; }
 
 public:
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
@@ -133,20 +119,11 @@ public:
 	UFUNCTION()
 	UDESkillManagerComponent* GetSkillManagerComponent() { return SkillManager; }
 
-	TMap<FName, TWeakObjectPtr<class ADESimpleAOEBase>> ActiveAOEMap;
-
 protected:
 	UPROPERTY()
 	class UDEActiveSkillBase* ActiveSkill;
 
-	//UPROPERTY()
 	void OnActiveSkillInput();
-
-	UPROPERTY()
-	TArray<class UDEActiveSkillBase*> ActiveSkills;
-
-	int32 CurrentActiveSkillIndex = 0;
-	void UseActiveSkill();
 
 	float BloodDrainGauge;
 	float BloodDrainGaugeMax;
@@ -158,13 +135,12 @@ public:
 	bool CanActivateBloodDrain();
 	float GetBloodDrainGainPerKill();
 	bool IsDead() const;
-	void ForceKill() { Die(); }
 protected:
 	UFUNCTION()
 	virtual void Die();
 
 public:
-	float GetCapsuleHalfRadius();
+	float GetCapsuleRadius() const;
 public:
 	// [4] 접근자 (Getter) - 다른 클래스에서 편하게 가져다 쓰라고 만듦
 	UFUNCTION(BlueprintCallable, Category = "Components")
@@ -188,6 +164,8 @@ public:
 	FOnPlayerDiedDelegate OnPlayerDied;
 
 public:
+	// 디버그 치트. Shipping 빌드에서는 입력 바인딩이 없고 본문이 비어 있다
+	// (UFUNCTION은 #if로 감쌀 수 없어서 선언은 남긴다)
 	void MyDebugCheat();
 	void MyAnotherDebugCheat();
 	UFUNCTION(Exec)
@@ -195,11 +173,8 @@ public:
 	UFUNCTION(Exec)
 	void ForceLevelUpSkill(int32 SkillId);
 
-	public:
-		// ★ 디버그용 악세서리 장착 슬롯
-		UPROPERTY(EditAnywhere, Category = "Debug|Cheat")
-		class UDEAccessoryData* DebugAccessoryToEquip;
-
-		UPROPERTY(EditDefaultsOnly, Category = "Character Data")
-		class UDECharacterData* CharacterData;
+public:
+	// 아직 C++에서 읽지 않는다 (캐릭터 선택 흐름과 함께 연결 예정)
+	UPROPERTY(EditDefaultsOnly, Category = "Character Data")
+	class UDECharacterData* CharacterData;
 };

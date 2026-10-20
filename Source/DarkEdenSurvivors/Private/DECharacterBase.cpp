@@ -8,7 +8,6 @@
 #include "Components/CapsuleComponent.h"
 
 #include "DESkillManagerComponent.h"
-#include "DEPlayerController.h"
 #include "DEActiveSkillBase.h"
 #include "DESkill_BloodDrain.h"
 #include "DEStatComponent.h"
@@ -20,7 +19,6 @@
 #include "DELevelUpManagerComponent.h"
 #include "DEGameInstance.h"
 #include "DEDamageTypes.h"
-#include "DEAccessoryData.h"
 
 // Sets default values
 ADECharacterBase::ADECharacterBase()
@@ -69,26 +67,12 @@ ADECharacterBase::ADECharacterBase()
     BloodDrainGauge=0.0f;
     BloodDrainGaugeMax=10.0f;
     BloodDrainGainPerKill=5.0f;
-
-    static ConstructorHelpers::FObjectFinder<UDEAccessoryData> AccessoryAsset(TEXT("/Game/DarkEden/Data/Accessories/DEAccessory_SeongsBless.DEAccessory_SeongsBless"));
-    // 에셋을 성공적으로 찾았다면?
-    if (AccessoryAsset.Succeeded())
-    {
-        // 변수에 쏙 넣어줍니다.
-        DebugAccessoryToEquip = AccessoryAsset.Object;
-    }
-
 }
 
 // Called when the game starts or when spawned
 void ADECharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-    if (IsPlayerControlled())
-    {
-        DEPlayerController = Cast<ADEPlayerController>(GetController());
-
-    }
 
     if (StatComponent)
     {
@@ -170,11 +154,6 @@ void ADECharacterBase::Tick(float DeltaTime)
 
 }
 
-void ADECharacterBase::PostInitializeComponents()
-{
-    Super::PostInitializeComponents();
-}
-
 // Called to bind functionality to input
 void ADECharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -189,11 +168,13 @@ void ADECharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
     PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ADECharacterBase::Jump);
     PlayerInputComponent->BindAction("ViewChange", IE_Pressed, this, &ADECharacterBase::ViewChange);
 
-    PlayerInputComponent->BindAction("BloodDrain", IE_Pressed, this, &ADECharacterBase::BloodDrain);
+    // 흡혈(BloodDrain)은 ActiveSkill 입력으로 발동한다
     PlayerInputComponent->BindAction("ActiveSkill", IE_Pressed, this, &ADECharacterBase::OnActiveSkillInput);
+
+#if !UE_BUILD_SHIPPING
     PlayerInputComponent->BindAction("DebugCheat", IE_Pressed, this, &ADECharacterBase::MyDebugCheat);
     PlayerInputComponent->BindAction("AnotherDebugCheat", IE_Pressed, this, &ADECharacterBase::MyAnotherDebugCheat);
-
+#endif
 
 }
 
@@ -339,17 +320,6 @@ void ADECharacterBase::ViewChange()
     }
 }
 
-void ADECharacterBase::BloodDrain()
-{
-    //테스트 용도
-    if (GEngine)
-    {
-        GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Green, TEXT("BloodDrain"));
-    }
-
-
-}
-
 void ADECharacterBase::SetCanMove(bool bInCanMove)
 {
     bCanMove = bInCanMove;
@@ -361,28 +331,16 @@ void ADECharacterBase::SetCanMove(bool bInCanMove)
 }
 void ADECharacterBase::SetAutoSkillsPaused(bool bPaused)
 {
-    if (bAutoSkillsPaused == bPaused)
-        return;
+    if (!SkillManager) return;
 
-    bAutoSkillsPaused = bPaused;
-
-    if (SkillManager!=nullptr)
+    if (bPaused)
     {
-        if (bPaused)
-        {
-            SkillManager->PauseAutoSkills();
-        }
-        else
-        {
-            SkillManager->ResumeAutoSkills();
-        }
+        SkillManager->PauseAutoSkills();
     }
-}
-void ADECharacterBase::UseActiveSkill()
-{
-    ActiveSkill->ActivateSkill();
-
-
+    else
+    {
+        SkillManager->ResumeAutoSkills();
+    }
 }
 
 float ADECharacterBase::GetBloodDrainGainPerKill()
@@ -468,20 +426,23 @@ void ADECharacterBase::Die()
 
 bool ADECharacterBase::IsDead() const
 {
-    return HealthComponent->IsDead();
+    return HealthComponent && HealthComponent->IsDead();
 }
 
 void ADECharacterBase::AddExp(float v)
 {
-    //StatComponent->AddExp(v);
-    ProgressionComponent->AddExp(v);
-
+    if (ProgressionComponent)
+    {
+        ProgressionComponent->AddExp(v);
+    }
 }
 
 void ADECharacterBase::SetMaxHP(float NewMaxHP)
 {
-    HealthComponent->SetMaxHP(NewMaxHP, false);
-
+    if (HealthComponent)
+    {
+        HealthComponent->SetMaxHP(NewMaxHP, false);
+    }
 }
 
 void ADECharacterBase::OnCharacterLevelUp(int32 NewLevel)
@@ -497,92 +458,60 @@ void ADECharacterBase::OnActiveSkillInput()
 {
     if (ActiveSkill)
     {
-        UE_LOG(LogTemp, Warning, TEXT("arimasuyo"));
         ActiveSkill->ActivateSkill();
     }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("naidesuyo"));
-        return;
-
-    }
-    
-
-
 }
 
-float ADECharacterBase::GetCapsuleHalfRadius()
+float ADECharacterBase::GetCapsuleRadius() const
 {
     return GetCapsuleComponent()->GetScaledCapsuleRadius();
 }
 
 void ADECharacterBase::MyDebugCheat()
 {
-
-    //put every action i want to do, and press E to go EZ :)
-
+#if !UE_BUILD_SHIPPING
     if (GEngine)
     {
         GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("Cheat Activated"));
     }
     SkillManager->LevelUpSkill(BaseSkillID);
-
-
-
-    //    FDEStatModifier MaxHPCheatMode(EDEStatType::MaxHP, 50.0f, 0.0f);
-    //    StatComponent->ApplyModifier(MaxHPCheatMode);
-
-
+#endif
 }
 
 void ADECharacterBase::MyAnotherDebugCheat()
 {
+#if !UE_BUILD_SHIPPING
     if (GEngine)
     {
         GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("Cheat Activated"));
     }
     TArray<int32> ConsumedSkillIDs;
-    //int32 BaseID = -1;
     int32 ResultID = -1;
 
-    // 1. 진화 조건을 만족하는 무기가 있는지 검사!
+    // 진화 조건을 만족하는 무기가 있으면 바로 진화
     if (SkillManager->CheckEvolution(ConsumedSkillIDs, ResultID))
     {
-        //UE_LOG(LogTemp, Warning, TEXT("[Cheat] 진화 조건 달성! %d번 무기를 %d번으로 진화시킵니다!"), BaseID, ResultID);
-
-        // 2. 조건 맞으면 바로 진화 폭탄 투하!
         SkillManager->EvolveSkill(ConsumedSkillIDs, ResultID);
     }
-    else
-    {
-        //UE_LOG(LogTemp, Error, TEXT("[Cheat] 꽝! 진화 조건을 만족하는 무기가 없습니다. (만렙 무기나 악세서리가 있는지 확인하세요)"));
-    }
-
-    //FDEStatModifier Cheat(EDEStatType::Amount, 1.0f, 0.0f);
-   // FDEStatModifier Cheat(EDEStatType::Cooldown, 0.1f, 0.0f);
-    
-
-    // 2. 스탯 컴포넌트에 던져주기
-    //StatComponent->ApplyModifier(Cheat);
- 
- 
-    //if (AccessoryComponent && DebugAccessoryToEquip)
-    //{
-    //    // 인벤토리에 강제로 꽂아버리기!
-    //    //AccessoryComponent->AddAccessory(DebugAccessoryToEquip);
-    //    AccessoryComponent->LevelUpAccessory(DebugAccessoryToEquip);
-
-
+#endif
 }
 
 void ADECharacterBase::ForceLevelUp()
 {
-    UE_LOG(LogTemp, Warning, TEXT("Force level up"));
-    ProgressionComponent->LevelUp();
-
+#if !UE_BUILD_SHIPPING
+    if (ProgressionComponent)
+    {
+        ProgressionComponent->LevelUp();
+    }
+#endif
 }
 
 void ADECharacterBase::ForceLevelUpSkill(int32 SkillId)
 {
-    SkillManager->LevelUpSkill(SkillId);
+#if !UE_BUILD_SHIPPING
+    if (SkillManager)
+    {
+        SkillManager->LevelUpSkill(SkillId);
+    }
+#endif
 }
