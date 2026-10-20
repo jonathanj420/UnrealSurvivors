@@ -394,8 +394,9 @@ float ADECharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& Damag
         DmgRequest.DamageCauser = DamageCauser;
         DmgRequest.CritChance = 0.0f; // 일반 피격은 크리티컬 확률 0 (필요 시 수정)
 
-        // 2. 통합된 처리 함수 호출
-        //HealthComponent->ProcessDamage(DmgRequest);
+        // 2. 통합된 처리 함수 호출. 엔진 ApplyDamage(BP 등)로 들어온 피해용. 몬스터 접촉 공격은 ApplyCombatDamage로 직접 온다
+        DmgRequest.Victim = this;
+        HealthComponent->ProcessDamage(DmgRequest);
     }
 
     return ActualDamage;

@@ -27,7 +27,7 @@
 
 ## 몬스터
 
-- [ ] 접촉 공격: 무적이라 화면엔 안 보인다. `ADECharacterBase::TakeDamage`에 브레이크포인트를 걸고 몬스터가 붙었을 때 걸리는지 확인 (전에는 오버랩 이벤트가 꺼져 있어서 한 번도 안 불렸다)
+- [ ] 접촉 공격: 이제 무적이 아니다. 몬스터에 붙으면 HP가 깎이는지 확인 (아래 "무적 해제와 난이도 곡선" 참고)
 - [ ] `DT_MonsterData`에서 CapsuleRadius가 42가 아닌 몬스터가 스킬에 맞는 범위가 체감상 달라졌는지 확인 (전에는 물리 캡슐이 항상 기본 42/96이었다)
 - [ ] MinimumCount 버스트 때 프레임 튐이 줄었는지 확인
 - [ ] 멀리 떨어진 몬스터가 플레이어 근처로 재배치될 때 뜨거나 박히지 않는지 확인 (특히 CapsuleHalfHeight가 96이 아닌 몬스터)
@@ -105,7 +105,7 @@
 - [ ] 스테이지 맵을 PIE로 바로 켰을 때 지금처럼 FemaleVampire로 나오는지
 - [ ] 메뉴 위젯 BP(`UDEMainMenuWidget` 자식)에서 `CharacterDataTable` 프로퍼티를 삭제했다. 캐릭터 목록이 그대로 뜨는지 (이제 GameInstance가 `DT_Characters`를 직접 로드)
 - [ ] 스테이지 GameMode BP가 `DefaultPawnClass`를 따로 지정했다면 그 값이 옵션 없을 때의 기본값이다
-- [ ] 플레이어 사망 시 게임오버가 뜨는지: `ADECharacterBase::TakeDamage`의 `ProcessDamage` 주석을 잠깐 풀고 몬스터에게 맞아 죽어본다. 결산 화면이 뜨고 멈추면 OK (OnDying/OnDeath 불일치와 바인딩 위치를 둘 다 고침). 확인 후 무적으로 되돌릴지 결정
+- [ ] 플레이어 사망 시 게임오버가 뜨는지: 무적을 해제했으니 몬스터에게 맞아 죽어본다. 결산 화면이 "게임 오버"로 뜨고 멈추면 OK
 - [ ] 캐릭터 BP에 `CharacterData`를 지정하고 `LevelMilestones`에 항목을 넣어 레벨업 때 스탯이 오르는지. `MultiplierBonus`는 이제 "추가 %"다 (20% 증가 = 0.2). 기존 CharacterData 에셋에 1.2 같은 값을 넣어뒀다면 고쳐야 한다
 
 ## AOE
@@ -124,6 +124,16 @@
 - [ ] 스테이지 GameMode BP의 Class Defaults에서 `StageDuration`을 30 같은 짧은 값으로 바꿔 PIE: 30초에 멈추고 결과창이 클리어로 뜨는지, 시간이 0:30인지, 골드가 한 번만 정산되는지 확인 후 1800으로 되돌리기
 - [ ] ESC 메뉴의 나가기는 지금처럼 게임오버로 뜨는지
 - [ ] 웨이브 DT가 30분까지 채워져 있는지 (마지막 웨이브 이후 무엇이 나오는지)
+
+## 무적 해제와 난이도 곡선
+
+- [ ] 몬스터 여러 마리에 둘러싸였을 때 HP가 대략 0.2초에 한 번씩만 깎이는지 (데미지 텍스트 간격으로 확인 가능)
+- [ ] 콘솔 `God`으로 무적이 켜지고 꺼지는지 (`God mode on`/`off` 메시지)
+- [ ] 캐릭터 BP의 StatComponent에서 `Armor`, `Regeneration`을 잠깐 올려 보기: Armor 5면 데미지 5인 몬스터에게 1씩, Regeneration 2면 1초마다 2씩 차는지
+- [ ] 캐릭터 BP StatComponent의 `InvulnerabilityTime` Base가 0.2인지 (BP가 예전 값을 저장해 두었으면 0일 수 있다. 0이면 무적시간 없음)
+- [ ] 몬스터 DT의 `AttackDamage`가 지금 기준에 맞는지 (전에는 아무 의미 없었던 값)
+- [ ] 스테이지 GameMode BP Class Defaults > Stage|Difficulty에서 `MonsterHPCurve`/`MonsterDamageCurve`에 키 넣기 (X 분, Y 배율. 예: 0분 1.0, 10분 3.0, 20분 8.0, 30분 15.0). 비워 두면 배율 1. 짧게 테스트하려면 0분 1, 1분 10 같은 커브로 1분 뒤 몬스터가 확 단단해지는지 확인
+- [ ] BloodDrain은 최대 HP 비율 피해라 HP 배율이 올라도 같은 비율로 깎이는지
 
 ## 성능 측정
 

@@ -28,6 +28,18 @@ protected:
     virtual void BeginPlay() override;
 
 public:
+    // 재생이 있을 때만 1초 간격으로 돈다
+    virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+    // 받는 피해 규칙. 플레이어는 StatComponent가 스탯 값을 넣어 주고, 몬스터는 기본값 0을 쓴다
+    // Armor: 피해를 고정량만큼 줄인다. 0이 되지는 않는다 (최소 1, 원래 1보다 작으면 그대로)
+    void SetArmor(float InArmor) { Armor = FMath::Max(InArmor, 0.f); }
+    // 피해를 받은 뒤 이 시간(초) 동안 모든 피해를 무시한다
+    void SetInvulnerabilityTime(float InSeconds) { InvulnerabilityTime = FMath::Max(InSeconds, 0.f); }
+    // 초당 회복량
+    void SetRegeneration(float InPerSecond);
+
+public:
     // =====================
     // Damage / Heal API
     // =====================
@@ -77,6 +89,18 @@ private:
     float CurrentHP = 100.f;
 
     bool bIsDead = false;
+
+    UPROPERTY(VisibleInstanceOnly, Category = "Health|Defense")
+    float Armor = 0.f;
+
+    UPROPERTY(VisibleInstanceOnly, Category = "Health|Defense")
+    float InvulnerabilityTime = 0.f;
+
+    UPROPERTY(VisibleInstanceOnly, Category = "Health|Defense")
+    float Regeneration = 0.f;
+
+    // 월드 시간 기준. 일시정지 중에는 흐르지 않는다
+    double InvulnerableUntil = 0.0;
 
 private:
     void HandleDeath(AActor* Killer);

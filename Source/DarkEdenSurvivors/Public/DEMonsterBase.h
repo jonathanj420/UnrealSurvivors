@@ -109,7 +109,8 @@ public:
 	float GetCurrentHP() const;
 	float GetMaxHP() const;
 	FOnMonsterDeath OnMonsterDeath;
-	void ResetMonster(const struct FDEMonsterData* Data);
+	// 배율은 스테이지 난이도 곡선 (ADEGameMode_Stage::GetMonsterHPMultiplier 등). DT 값에 곱한다
+	void ResetMonster(const struct FDEMonsterData* Data, float HPMultiplier = 1.0f, float DamageMultiplier = 1.0f);
 	void SetCanMove(bool bNewCanMove);
 
 	// 매니저가 고속으로 읽어갈 상태 플래그

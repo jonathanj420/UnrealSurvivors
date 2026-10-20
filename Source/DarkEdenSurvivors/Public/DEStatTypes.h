@@ -46,6 +46,9 @@ enum class EDEStatType : uint8
     Curse           UMETA(DisplayName = "Curse (Enemy Buff)"),   // 저주 (적 강화)
     Revival         UMETA(DisplayName = "Revival Count"),        // 부활 횟수 +
 
+    // 값이 저장된 에셋이 있을 수 있어서 기존 항목 사이가 아니라 끝에 추가한다
+    Invulnerability UMETA(DisplayName = "Invulnerability Time"), // 피격 후 무적시간 (초)
+
     // ==========================================
     // [Max] 반복문용 (항상 마지막에)
     // ==========================================

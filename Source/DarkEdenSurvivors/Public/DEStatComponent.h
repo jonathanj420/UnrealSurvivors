@@ -81,6 +81,10 @@ public:
 	// [3] Utility Stats (��ƿ��Ƽ/�Ĺ�)
 	// =========================================================
 
+	// 피격 후 무적시간(초). 접촉 피해가 몬스터 수에 비례해 쌓이지 않게 한다
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Physical")
+	FGameplayStat InvulnerabilityTime;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats | Utility")
 	FGameplayStat Luck;
 

@@ -5,6 +5,7 @@
 #include "Engine/Engine.h"
 #include "Components/SphereComponent.h"
 #include "DECharacterBase.h"
+#include "DEHealthComponent.h"
 #include "DEGameInstance.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -28,6 +29,7 @@ UDEStatComponent::UDEStatComponent()
 	MaxHP = FGameplayStat(100.0f);
 	Regeneration = FGameplayStat(0.0f);
 	Armor = FGameplayStat(0.0f);
+	InvulnerabilityTime = FGameplayStat(0.2f);
 
 	Luck = FGameplayStat(1.0f);
 	Greed = FGameplayStat(1.0f);
@@ -55,6 +57,7 @@ void UDEStatComponent::BeginPlay()
 	StatRegistry.Add(EDEStatType::MaxHP, &MaxHP);
 	StatRegistry.Add(EDEStatType::Regeneration, &Regeneration);
 	StatRegistry.Add(EDEStatType::Armor, &Armor);
+	StatRegistry.Add(EDEStatType::Invulnerability, &InvulnerabilityTime);
 
 	StatRegistry.Add(EDEStatType::Luck, &Luck);
 	StatRegistry.Add(EDEStatType::Greed, &Greed);
@@ -102,6 +105,27 @@ void UDEStatComponent::RefreshDerivedStats(EDEStatType StatType)
 			OwnedChar->SetMaxHP(MaxHP.GetValue());
 		}
 		break;
+
+	case EDEStatType::Armor:
+		if (UDEHealthComponent* Health = OwnedChar ? OwnedChar->GetHealthComponent() : nullptr)
+		{
+			Health->SetArmor(Armor.GetValue());
+		}
+		break;
+
+	case EDEStatType::Regeneration:
+		if (UDEHealthComponent* Health = OwnedChar ? OwnedChar->GetHealthComponent() : nullptr)
+		{
+			Health->SetRegeneration(Regeneration.GetValue());
+		}
+		break;
+
+	case EDEStatType::Invulnerability:
+		if (UDEHealthComponent* Health = OwnedChar ? OwnedChar->GetHealthComponent() : nullptr)
+		{
+			Health->SetInvulnerabilityTime(InvulnerabilityTime.GetValue());
+		}
+		break;
 	}
 }
 
@@ -115,6 +139,9 @@ void UDEStatComponent::InitAsPlayer(ADECharacterBase* InPlayer)
 	RefreshDerivedStats(EDEStatType::MoveSpeed);
 	RefreshDerivedStats(EDEStatType::MaxHP);
 	RefreshDerivedStats(EDEStatType::Magnet);
+	RefreshDerivedStats(EDEStatType::Armor);
+	RefreshDerivedStats(EDEStatType::Regeneration);
+	RefreshDerivedStats(EDEStatType::Invulnerability);
 }
 
 void UDEStatComponent::ApplyMetaUpgrades()

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "DEGameModeBase.h"
+#include "Curves/CurveFloat.h"
 #include "DEGameMode_Stage.generated.h"
 
 /**
@@ -35,6 +36,20 @@ public:
 
 
     int32 GetSpawnLimit() const { return SpawnLimit; }
+
+    // 난이도 곡선: 지금 경과 시간(분)에서 새로 스폰되는 몬스터에 곱할 배율. 커브가 비어 있으면 1
+    float GetMonsterHPMultiplier() const;
+    float GetMonsterDamageMultiplier() const;
+
+protected:
+    // X: 경과 시간(분), Y: DT 값에 곱할 배율. Class Defaults에서 직접 그리거나 CurveFloat 에셋을 지정한다
+    UPROPERTY(EditDefaultsOnly, Category = "Stage|Difficulty")
+    FRuntimeFloatCurve MonsterHPCurve;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Stage|Difficulty")
+    FRuntimeFloatCurve MonsterDamageCurve;
+
+    float EvaluateDifficultyCurve(const FRuntimeFloatCurve& Curve) const;
 
 protected:
     UPROPERTY(VisibleInstanceOnly, Category = "GameInfo")

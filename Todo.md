@@ -23,7 +23,12 @@
 - [x] 스테이지 클리어: `StageDuration`(기본 1800초, 0 이하면 없음)만큼 버티면 `StageClear` → 결과창에 클리어 표시 (`SetResultData`의 `bCleared`, `Text_ResultTitle`)
 - [ ] 클리어 보상과 기록: 클리어 골드 보너스, 세이브에 스테이지 클리어 여부 저장(해금용). 미정
 - [ ] `StageDuration`이 GameMode 단위라 스테이지마다 다르게 하려면 GameMode BP를 나눠야 한다. 스테이지별로 필요해지면 `FDEStageRow`로 옮기고 로비에서 옵션으로 넘기기 (캐릭터 선택과 같은 방식)
-- [ ] 몬스터 접촉 공격을 `UGameplayStatics::ApplyDamage`에서 `ApplyCombatDamage`로 (`ADEMonsterBase::ExecuteAttackLogic`). `ApplyCombatDamage`는 `ProcessDamage`를 직접 불러 무적(`TakeDamage`)을 우회하므로 무적 해제할 때 같이
+- [x] 무적 해제: 몬스터 접촉 공격을 `ApplyCombatDamage`로. 플레이어 HealthComponent에 피격 후 무적시간(스탯 `Invulnerability`, 0.2초), Armor(고정 감소, 최소 1), Regeneration(1초 간격 Tick) 적용. 테스트 무적은 콘솔 `God`
+- [x] 난이도 곡선: `ADEGameMode_Stage`의 `MonsterHPCurve`/`MonsterDamageCurve`(X 경과 분, Y 배율, 비면 1)를 스폰 시점에 `ResetMonster`에서 DT 값에 곱한다
+- [ ] 몬스터별 `AttackInterval`(DT)은 전역 무적시간 때문에 거의 의미가 없어졌다. 0.2보다 크게 잡은 몬스터만 영향. 컬럼 정리 여부 결정
+- [ ] `Curse` 스탯(적 강화)은 읽는 곳이 없다. 뱀서처럼 난이도 배율에 곱할지 결정
+- [ ] 플레이어가 맞을 때 몬스터와 같은 데미지 텍스트가 플레이어 머리 위에 뜬다 (`ApplyFinalDamage`). 피격 연출(화면 붉게, 깜빡임)로 바꿀지
+- [ ] 이동속도 배율 곡선은 없다 (HP/데미지만). 필요하면 같은 방식으로 추가
 - [x] 메타 업그레이드 Amount ×2: `FDEStatModifier::Multiplier` 기본값을 0으로 변경. 액세서리 DataAsset은 Multiplier를 전부 명시적으로 저장해 두어서 값이 그대로다 (Buman 0.1, 나머지 0). 다른 에셋 사용처 없음
 
 ## 3. 죽은 코드 삭제 (BP 참조 확인 후)

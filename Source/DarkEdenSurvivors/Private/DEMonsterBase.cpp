@@ -13,6 +13,7 @@
 #include "DEStatusEffectComponent.h"
 #include "Data/DEMonsterData.h"
 #include "DEDamageTypes.h"
+#include "DEGameplayLibrary.h"
 
 
 // Sets default values
@@ -213,7 +214,7 @@ float ADEMonsterBase::GetMaxHP() const
 	return HealthComponent->GetMaxHP();
 }
 
-void ADEMonsterBase::ResetMonster(const FDEMonsterData* Data)
+void ADEMonsterBase::ResetMonster(const FDEMonsterData* Data, float HPMultiplier, float DamageMultiplier)
 {
 	TRACE_CPUPROFILER_EVENT_SCOPE(ADEMonsterBase::ResetMonster);
 
@@ -269,9 +270,9 @@ void ADEMonsterBase::ResetMonster(const FDEMonsterData* Data)
 
 
 	// 4. 스탯 적용 (기존과 동일)
-	HealthComponent->SetMaxHP(Data->MaxHP,true);
+	HealthComponent->SetMaxHP(Data->MaxHP * HPMultiplier, true);
 	MoveSpeed = Data->MoveSpeed;
-	AttackDamage = Data->AttackDamage;
+	AttackDamage = Data->AttackDamage * DamageMultiplier;
 	AttackInterval = Data->AttackInterval;
 	KnockbackResistance = Data->KnockbackResistance;
 	DropTable = Data->DropTable;
@@ -365,15 +366,15 @@ void ADEMonsterBase::ExecuteAttackLogic(double CurrentTime, ADECharacterBase* Ta
 	if (CurrentTime - LastAttackTime < AttackInterval)
 		return;
 
-	// --- [실행] 알맹이는 그대로 사용! ---
-	// ApplyCombatDamage는 ProcessDamage를 직접 불러 플레이어 무적(TakeDamage)을 우회하므로, 무적 해제 때 같이 바꾼다
-	UGameplayStatics::ApplyDamage(
-		Target,
-		AttackDamage,
-		nullptr,
-		this,
-		UDamageType::StaticClass()
-	);
+	// 플레이어의 무적시간과 Armor는 플레이어 HealthComponent::ProcessDamage가 적용한다
+	FDEDamageRequest Request;
+	Request.Instigator = this;
+	Request.DamageCauser = this;
+	Request.SourceObject = this;
+	Request.Victim = Target;
+	Request.BaseDamage = AttackDamage;
+	Request.bCanTriggerOnHit = false;
+	UDEGameplayLibrary::ApplyCombatDamage(Request);
 
 	// 4. [기록] "나 방금 때렸음" 도장 찍기
 	LastAttackTime = CurrentTime;

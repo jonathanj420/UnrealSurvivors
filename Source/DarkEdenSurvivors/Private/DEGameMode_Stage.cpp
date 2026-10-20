@@ -53,6 +53,28 @@ void ADEGameMode_Stage::Tick(float DeltaTime)
     }
 }
 
+float ADEGameMode_Stage::GetMonsterHPMultiplier() const
+{
+    return EvaluateDifficultyCurve(MonsterHPCurve);
+}
+
+float ADEGameMode_Stage::GetMonsterDamageMultiplier() const
+{
+    return EvaluateDifficultyCurve(MonsterDamageCurve);
+}
+
+float ADEGameMode_Stage::EvaluateDifficultyCurve(const FRuntimeFloatCurve& Curve) const
+{
+    const FRichCurve* RichCurve = Curve.GetRichCurveConst();
+    if (!RichCurve || RichCurve->GetNumKeys() == 0)
+    {
+        return 1.0f;
+    }
+
+    // 0 이하 배율은 HP 0 몬스터를 만들므로 막는다
+    return FMath::Max(RichCurve->Eval(ElapsedTime / 60.0f, 1.0f), 0.01f);
+}
+
 void ADEGameMode_Stage::BeginPlay()
 {
     Super::BeginPlay();

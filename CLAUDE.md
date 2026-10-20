@@ -60,8 +60,8 @@ UE 5.7 / C++로 만드는 *Vampire Survivors*류 액션 서바이벌 게임이�
 
 ## 의도된 상태 (버그 아님)
 
-- **플레이어 무적:** `ADECharacterBase::TakeDamage`의 `HealthComponent->ProcessDamage` 호출을 테스트용으로 주석 처리해 두었다. 개발자가 요청하기 전에는 켜지 않는다.
-  - 주석을 풀면 바로 게임오버까지 이어진다: HP 0 → `OnDying` → `ADECharacterBase::Die` → `OnPlayerDied` → `ADEGameMode_Stage::GameOver` (2026-10-20에 OnDying/OnDeath 불일치 수정).
+- **플레이어 피격 (2026-10-20 무적 해제):** 몬스터 접촉 공격은 `ApplyCombatDamage`로 들어온다. 플레이어 `UDEHealthComponent`가 피격 후 무적시간(스탯 `Invulnerability`, 기본 0.2초, 뱀서는 0.24초)과 Armor(고정 감소, 0이 되지 않음)를 적용한다. 테스트할 때 무적은 콘솔 `God`(엔진 치트, `bCanBeDamaged`를 끈다)으로 켠다. 코드를 주석 처리해서 무적을 만들지 않는다.
+  - 사망 흐름: HP 0 → `OnDying` → `ADECharacterBase::Die` → `OnPlayerDied` → `ADEGameMode_Stage::GameOver` → `EndStage`
 - **사망 이벤트 두 단계:** `UDEHealthComponent`는 HP 0일 때 `OnDying`만 broadcast한다. 소유 액터는 `OnDying`에 사망 처리를 바인딩하고, 처리가 끝나면 `OnDeath`를 직접 broadcast한다 (몬스터 `ExecuteFinalDeath`, 플레이어 `Die`).
 
 ## 빌드

@@ -426,7 +426,10 @@ ADEMonsterBase* ADEMonsterSpawnManager::SpawnFromPool(FVector& Location, const F
 
     // 5. 공통 초기화
     SpawnedMonster->SetActorLocationAndRotation(Location, FRotator::ZeroRotator, false, nullptr, ETeleportType::TeleportPhysics);
-    SpawnedMonster->ResetMonster(DataToApply);
+    // 난이도 곡선은 스폰 시점의 경과 시간으로 정한다. 살아 있는 몬스터는 다시 계산하지 않는다
+    const float HPMultiplier = GameMode ? GameMode->GetMonsterHPMultiplier() : 1.0f;
+    const float DamageMultiplier = GameMode ? GameMode->GetMonsterDamageMultiplier() : 1.0f;
+    SpawnedMonster->ResetMonster(DataToApply, HPMultiplier, DamageMultiplier);
 
     ActiveMonsters.Add(SpawnedMonster);
     return SpawnedMonster;

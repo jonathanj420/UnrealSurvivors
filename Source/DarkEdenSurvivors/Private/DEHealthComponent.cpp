@@ -7,7 +7,27 @@
 
 UDEHealthComponent::UDEHealthComponent()
 {
-    PrimaryComponentTick.bCanEverTick = false;
+    // 재생이 생기면 SetRegeneration이 켠다. 몬스터는 계속 꺼져 있다
+    PrimaryComponentTick.bCanEverTick = true;
+    PrimaryComponentTick.bStartWithTickEnabled = false;
+    PrimaryComponentTick.TickInterval = 1.0f;
+}
+
+void UDEHealthComponent::SetRegeneration(float InPerSecond)
+{
+    Regeneration = FMath::Max(InPerSecond, 0.f);
+    SetComponentTickEnabled(Regeneration > 0.f);
+}
+
+void UDEHealthComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+    Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+    // 매초 회복 텍스트가 뜨지 않게 Heal 대신 직접 올린다. DeltaTime은 TickInterval(1초) 근처
+    if (bIsDead || Regeneration <= 0.f || CurrentHP >= MaxHP) return;
+
+    CurrentHP = FMath::Min(CurrentHP + Regeneration * DeltaTime, MaxHP);
+    OnHPChanged.Broadcast(CurrentHP, MaxHP);
 }
 
 void UDEHealthComponent::BeginPlay()
@@ -46,6 +66,7 @@ void UDEHealthComponent::ResetHealth(bool bHealToFull)
 {
     // 1. 사망 플래그 초기화 (가장 중요!)
     bIsDead = false;
+    InvulnerableUntil = 0.0;
 
     // 3. 체력 복구
     if (bHealToFull)
@@ -144,6 +165,18 @@ FDEDamageResult UDEHealthComponent::ProcessDamage(const FDEDamageRequest& Reques
         return Result;
     }
 
+    // 콘솔 God 치트(UCheatManager::God)가 끈다. ApplyCombatDamage는 AActor::TakeDamage를 거치지 않으므로 여기서 본다
+    if (GetOwner() && !GetOwner()->CanBeDamaged())
+    {
+        return Result;
+    }
+
+    const double Now = GetWorld()->GetTimeSeconds();
+    if (Now < InvulnerableUntil)
+    {
+        return Result;
+    }
+
     float CalculatedDamage = 0.0f;
     bool bCriticalSuccess = false;
 
@@ -151,8 +184,10 @@ FDEDamageResult UDEHealthComponent::ProcessDamage(const FDEDamageRequest& Reques
     static const FGameplayTag Tag_InstantKill = FGameplayTag::RequestGameplayTag(FName("Damage.Mechanic.InstantKill"));
     static const FGameplayTag Tag_DoT = FGameplayTag::RequestGameplayTag(FName("Damage.Mechanic.DoT"));
 
+    const bool bIsExecution = Request.DamageTags.HasTag(Tag_Execution) || Request.DamageTags.HasTag(Tag_InstantKill);
+
     // 가방 안에 처형이나 즉사 태그가 들어있다면?
-    if (Request.DamageTags.HasTag(Tag_Execution) || Request.DamageTags.HasTag(Tag_InstantKill))
+    if (bIsExecution)
     {
         CalculatedDamage = CurrentHP;
         bCriticalSuccess = true;
@@ -172,6 +207,12 @@ FDEDamageResult UDEHealthComponent::ProcessDamage(const FDEDamageRequest& Reques
         }
         CalculatedDamage = bCriticalSuccess ? (Request.BaseDamage * Request.CritDamageMultiplier) : Request.BaseDamage;
     }
+
+    if (!bIsExecution && Armor > 0.f && CalculatedDamage > 0.f)
+    {
+        CalculatedDamage = FMath::Max(CalculatedDamage - Armor, FMath::Min(CalculatedDamage, 1.f));
+    }
+
     Result.FinalDamage = CalculatedDamage;
     Result.bIsCritical = bCriticalSuccess;
 
@@ -179,6 +220,11 @@ FDEDamageResult UDEHealthComponent::ProcessDamage(const FDEDamageRequest& Reques
     if (Result.FinalDamage > 0.0f)
     {
         ApplyFinalDamage(Result.FinalDamage, Request.Instigator, bCriticalSuccess, Request.DamageTags);
+
+        if (InvulnerabilityTime > 0.f)
+        {
+            InvulnerableUntil = Now + InvulnerabilityTime;
+        }
     }
 
     // 5. ApplyFinalDamage를 거치면서 죽었을 수 있으므로 갱신
