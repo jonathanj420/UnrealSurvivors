@@ -114,7 +114,7 @@
 - [x] BloodDrain 배리어가 바깥에서 밀려 들어오던 문제: `ResolveMonsterOverlap`에서 `bCanMove`가 false인 몬스터는 벽으로 취급한다. 벽은 밀리지 않고, 움직이는 쪽이 겹친 만큼 한 번에 밀려난다 (플레이어 밀어내기와 같은 방식). 둘 다 벽이면 건너뛴다. 연쇄 넉백도 벽에는 전달되지 않는다
   - 동작 변경: 다른 스킬의 스턴/석화(`UDEStatusEffect_Stun`)도 같은 벽이 된다. 스킬이 스턴된 몬스터에 직접 거는 넉백은 그대로 들어간다
   - 벽 사이 틈이 몬스터 지름보다 넓으면 그 틈으로는 들어온다. 링 밀도는 범위 안 몬스터 수에 달려 있다
-- [ ] BloodDrain 데미지 방식: 지금 고정 `DrainAmountPerMonster`(회복량과 같은 값). 원작처럼 대상 체력 %로 할지 결정. 엘리트 면역 여부 결정 (원작은 몬스터마다 다름 → 몬스터 DT에 면역 플래그를 두는 방식 후보)
+- [x] BloodDrain 데미지는 대상 최대 HP의 % (`DrainDamagePercent`, 기본 0.3). 회복량은 마리당 고정 `DrainAmountPerMonster` 그대로. 면역은 몬스터 DT 행의 `bImmuneToBloodDrain`, 보스는 이 값과 상관없이 항상 면역 (개발자 결정, 2026-10-20)
 - [ ] BloodDrain 특화 빌드(범위 증가 퍽/악세서리) 구상 중. 지금 `DrainRadius`/`StunDuration`/데미지는 고정값이라 스탯(AreaSize 등)을 받지 않는다
 - [ ] 이동불가가 `bCanMove` bool 하나라 서로 다른 스턴 클래스가 겹치면 먼저 끝난 쪽이 풀어 버린다. 같은 클래스는 `StackPolicy::Ignore`(기본)라 나중 스턴의 더 긴 시간이 무시된다
 - [ ] `ADEMonsterBase::TakeDamage` 오버라이드는 이제 C++ 호출처가 없다 (BP에서 몬스터에 `Apply Damage`를 부르는지 확인 후 삭제)

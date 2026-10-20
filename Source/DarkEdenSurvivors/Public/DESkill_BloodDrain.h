@@ -30,9 +30,13 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "BloodDrain")
     float DrainRadius = 500.f;
 
-    /** 몬스터 1마리당 흡혈량 */
+    /** 몬스터 1마리당 플레이어 회복량 (고정값. 데미지는 DrainDamagePercent) */
     UPROPERTY(EditDefaultsOnly, Category = "BloodDrain")
     float DrainAmountPerMonster = 5.f;
+
+    /** 마무리 데미지. 대상 최대 HP에 대한 비율 (0.3 = 30%). 1 이상이면 한 번에 죽는다 */
+    UPROPERTY(EditDefaultsOnly, Category = "BloodDrain", meta = (ClampMin = "0.0"))
+    float DrainDamagePercent = 0.3f;
 
     /** 몬스터 스턴 시간 */
     UPROPERTY(EditDefaultsOnly, Category = "BloodDrain")

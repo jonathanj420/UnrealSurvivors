@@ -139,6 +139,8 @@
 - [ ] 석화/스턴 스킬(GlareOfBasilisk 등)에 걸린 몬스터도 이제 다른 몬스터를 막는 벽이 된다. 의도와 맞는지 확인
 - [ ] `NS_BloodDrainCustom`에 float User Parameter `DrainDuration`(시전 시간, 초) 추가. 흐름이 플레이어에게 모이는 시점을 이 값에 맞추면 마무리 데미지와 맞는다. 위치 배열은 기존 `MonsterPosi`, 플레이어는 `PlayerPosition`
 - [ ] 몬스터 DT에서 보스 행의 `MonsterRank`가 Boss인지 확인. 이제 DT 값이 몬스터에 들어가고, Boss면 광흡 대상에서 빠진다
+- [ ] 몬스터 DT에서 광흡 면역으로 할 엘리트 행에 `bImmuneToBloodDrain` 체크 (새 컬럼, 기본 false)
+- [ ] BloodDrain BP(있으면)에서 `DrainDamagePercent` 조정 (기본 0.3 = 최대 HP의 30%)
 - [ ] Reference Viewer: `ADEMonsterBase::Die`, `UDEHealthComponent::InstantKill`, BP에서 몬스터에게 `Apply Damage`를 부르는 곳이 있는지
 
 ## SpawnManager 정리 후 확인

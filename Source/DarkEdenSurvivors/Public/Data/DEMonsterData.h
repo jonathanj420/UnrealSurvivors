@@ -54,6 +54,9 @@ public:
 	TArray<FDEMonsterDropInfo> DropTable;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "System")
 	EDEMonsterRank MonsterRank = EDEMonsterRank::Normal;
+	// 광흡(BloodDrain) 면역. 보스는 이 값과 상관없이 항상 면역
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "System")
+	bool bImmuneToBloodDrain = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "System")
 	TSoftClassPtr<class ADEMonsterBase> OverrideClass;
 

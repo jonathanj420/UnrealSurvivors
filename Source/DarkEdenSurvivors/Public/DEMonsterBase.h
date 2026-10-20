@@ -75,6 +75,7 @@ public:
 
 	// 등급을 반환하는 Get 함수
 	EDEMonsterRank GetMonsterRank() const { return MonsterRank; }
+	bool IsImmuneToBloodDrain() const { return bImmuneToBloodDrain; }
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Monster|Drop")
 	TArray<FDEMonsterDropInfo> DropTable;
 
@@ -126,6 +127,9 @@ public:
 
 private:
 	uint32 SpawnSerial = 0;
+
+	// ResetMonster에서 DT 행의 bImmuneToBloodDrain과 보스 여부로 정한다
+	bool bImmuneToBloodDrain = false;
 
 
 

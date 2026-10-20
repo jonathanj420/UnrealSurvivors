@@ -179,8 +179,8 @@ void UDESkill_BloodDrain::CollectTargets(
         if (!Monster || !Monster->IsAlive())
             continue;
 
-        // 보스는 광흡 면역
-        if (Monster->GetMonsterRank() == EDEMonsterRank::Boss)
+        // 보스는 항상, 그 외는 DT 행 설정에 따라 광흡 면역
+        if (Monster->IsImmuneToBloodDrain())
             continue;
 
         const float DistSq = FVector::DistSquared(
@@ -245,7 +245,7 @@ void UDESkill_BloodDrain::ApplyFinishDamage(
     Req.DamageCauser = Player;
     Req.SourceObject = const_cast<UDESkill_BloodDrain*>(this);
     Req.Victim = Monster;
-    Req.BaseDamage = DrainAmountPerMonster;
+    Req.BaseDamage = Monster->GetMaxHP() * DrainDamagePercent;
 
     UDEGameplayLibrary::ApplyCombatDamage(Req);
 }
