@@ -163,11 +163,17 @@
 컨셉: 다크에덴의 뱀파이어 마스터. 플레이어와 같은 인간 크기, 같은 뱀파이어 스킬(+강화/전용 스킬)을 쓰는 "또 하나의 플레이어". `ADECharacterBase` 서브클래스 + AI 컨트롤러. 나중에 플레이어블(히든/DLC)로도 연다. 조우: 필드(잡몹과 함께), 레어 맵(1:1), 필드 → 보스룸. 보스룸은 같은 레벨 안 아레나로 텔레포트하는 방향 (런 상태가 Pawn에 있어서 맵 이동 시 사라짐)
 
 - [x] 1. CharacterBase 분리: 플레이어 전용 설정(메타 업그레이드, 픽업용 `Player` 태그, 피격 숫자 숨김)을 `TryApplyPlayerSetup`으로. BeginPlay와 `PossessedBy` 중 늦은 쪽에서, 플레이어 컨트롤러일 때만 한 번. `UDEStatComponent::InitAsPlayer` → `InitForCharacter` + `ApplyMetaUpgrades` 분리
-- [ ] 2. 진영: `IGenericTeamAgentInterface`로 팀 ID. 스킬 타겟 쿼리가 몬스터 + 적대 캐릭터를 찾게, 마스터가 플레이어 스킬에 맞게
+- [x] 2. 진영 (2026-10-21, 추천안대로): `IGenericTeamAgentInterface`, 팀 상수와 판정은 `DETeam.h` (Player=0, Monster=1, `AreHostile`/`AreFriendly`). Build.cs에 `AIModule` 추가
+  - 몬스터는 항상 Monster. 캐릭터는 `PossessedBy`에서 플레이어 컨트롤러면 Player, 아니면 Monster (빙의 전 NoTeam). 플레이어블 마스터도 플레이어가 조종하면 Player
+  - `UDEMonsterQuerySubsystem`의 쿼리가 `Querier`를 받아 적대 대상만 `AActor*`로 반환한다. 몬스터는 그리드, 캐릭터는 `RegisterCharacter`(CharacterBase BeginPlay/EndPlay) 목록을 선형으로. Querier에 팀이 없으면 빈 결과. 맵 전체용 `QueryAll` 추가 (`bTargetAllMonsters`, `GetRandomTargets(-1)`이 스폰 매니저 목록 대신 사용)
+  - 호출처 11곳: Behavior는 `Context.Instigator`, 스킬 액터는 `GetInstigator()`, `ApplyAoEDamage`는 `BaseRequest.Instigator`
+  - `ApplyCombatDamage`: 둘 다 팀이 있고 같은 팀이면 데미지 없음 (팀 없는 쪽이 끼면 막지 않음)
+  - 남은 것: 3번에서 마스터 AIController의 팀을 `SetGenericTeamId(Monster)`로 따로 맞춰야 한다 (AIController는 빙의할 때 폰 팀을 따라가지 않음, AIPerception은 컨트롤러 팀을 본다). 넉백/상태이상 Behavior는 아직 몬스터 캐스트로만 걸리고(상태이상 "나중에" 참고), `FilterTargets`의 LowestHP/HighestHP는 캐릭터를 맨 뒤로 보낸다. 서브시스템 이름(`Monster`QuerySubsystem)은 그대로 둠
+  - `ADEGameMode_Stage::GetActiveMonsters`의 C++ 호출처가 없어졌다 (BP 확인 전 유지)
 - [ ] 3. 마스터 AI: AIController + C++ Utility AI (이동, 거리 조절, 회피, 스킬 사용). 공정성: 마스터도 쿨다운, 회피 쿨다운, 짧은 예고
 - [ ] 4. 조우: 필드 스폰 → 레어 맵 → 보스룸
 - [ ] `ADECharacterBase::Die`가 `OnPlayerDied`를 부른다. 게임오버 바인딩은 GameMode가 플레이어 폰에만 하니 마스터가 죽어도 게임오버는 안 나지만, 마스터 사망 처리(보상, 연출)는 따로 필요
-- [ ] `ADEItemBase`가 `ADEFemaleVampire`로 캐스트해서 줍는다 (마스터가 같은 클래스면 주울 수 있음). 쓰이는지 확인 후 정리
+- [ ] `ADEItemBase`가 `ADEFemaleVampire`로 캐스트해서 줍는다 (마스터가 같은 클래스면 주울 수 있음). C++ 참조 0, Content 문자열 검색 0 (2026-10-21). Reference Viewer 확인 후 삭제 (MyTodo)
 
 ## 몬스터 최적화 (목표 동시 1000마리)
 
