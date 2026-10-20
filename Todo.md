@@ -157,6 +157,10 @@
 - [x] 측정 ② 캡슐 `NoCollision` 임시 실험 (2026-10-20, 300마리, 원복함): Game 9.64 (-3.2ms), Draw 10.94, RHIT 7.18, GPU 5.41 (`Docs/nocolunit.png`). 콜리전(Chaos 바디 갱신) 비용은 300마리에 약 3ms. Draw가 6.1에서 10.9로 오른 이유는 불명 (에디터를 띄워둔 상태였음)
   - `stat game` (`Docs/nocolgame.png`): World Tick 6.48, Tick Time 6.15 (Ticks Queued 345, 몬스터 액터 Tick은 꺼져 있으니 대부분 SkeletalMesh 컴포넌트 Tick으로 추정, `stat anim`으로 확인 필요), Post Tick Component Update 3.13, Transform or RenderData 2.57 (616회 = 몬스터당 2개 컴포넌트), MoveComponent 1.19 (303회)
   - 결론: 남은 비용은 몬스터별 SkeletalMesh(애니메이션 Tick, 트랜스폼/렌더 데이터 갱신, 드로우)에 몰려 있다. SpatialGrid는 약 3ms, ISM + VAT가 더 큰 덩어리
+- [x] 측정 ③ SpatialGrid + 캡슐 `NoCollision` 커밋(`6e2a94b`) 후 (2026-10-20, 300마리, 에디터 닫음): Frame 8.53, Game 7.51 (①보다 -5.3ms), Draw 8.35, RHIT 5.17, GPU 4.82, Draws 793 (`Docs/statunit.png`)
+  - `stat game` (`Docs/statgame.png`): World Tick 5.88, Tick Time 5.57 (Ticks Queued 341), Post Tick Component Update 2.85, Transform or RenderData 2.35 (612회), MoveComponent 0.98 (300회)
+  - ②(Game 9.64)보다 2ms 더 줄었는데, ②는 에디터를 띄운 채 쟀으니 그 차이가 섞여 있다. 깨끗한 비교는 ① 대비 -5.3ms
+  - 이제 Draw(렌더 스레드 8.35)가 Game(7.51)보다 커서 프레임을 정한다. 둘 다 몬스터별 SkeletalMesh 비용이라 다음은 ISM + VAT
 - [ ] 측정 순서 (한 번에 하나씩 바꿔서 효과를 분리한다): ① 내비 제외 빌드(`f9ff2fc`)로 재측정 → ② 임시 실험: `DEMonsterBase.cpp`의 캡슐을 `NoCollision`으로 바꿔 Game ms가 얼마나 주는지 확인 (스킬 판정은 깨짐, 측정 후 원복) → ③ `r.RayTracing=False`. 숫자가 애매하면 Unreal Insights(`-trace=default`)로 GameThread 프로파일. ②에서 많이 줄면 SpatialGrid 쿼리를 먼저, 거의 안 줄면 ISM + VAT를 먼저
 - [ ] 스킬 타겟 쿼리를 물리 씬 대신 SpatialGrid로, 몬스터 콜리전 끄기 (Chaos 바디 갱신 제거. 측정 ②에서 300마리 약 3ms)
   - [x] `UDEMonsterQuerySubsystem`(WorldSubsystem)에 그리드 이동. `UDEMonsterUpdateComponent::ResolveOverlaps`가 `RebuildGrid`로 채우고 겹침 해소에도 그대로 쓴다. 2D 쿼리 `QueryCircle`/`QueryNearest`/`QuerySegment`(Start에서 가까운 순). 쿼리 범위는 최대 몬스터 반지름 + 프레임당 최대 이동량(`MaxPushPerFrame`)만큼 넓힌다. 살아 있는 몬스터만 반환. 콘은 `QueryCircle` + 호출처 각도 필터

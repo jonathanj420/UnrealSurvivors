@@ -162,9 +162,8 @@
 
 ## 몬스터 콜리전 끄기 후 확인
 
-- [ ] 몬스터 BP(DT_MonsterData의 클래스들)를 열어 Capsule의 Collision Presets가 `NoCollision`인지 확인. BP에서 프리셋을 따로 바꿔 저장해 둔 게 있으면 그 값이 남아서 콜리전이 켜진 채로 돈다
-- [ ] PIE에서 `show Collision`: 몬스터 캡슐이 안 보이고 스킬은 그대로 맞는지
-- [ ] 재측정: 에디터를 닫고 Standalone, `t.MaxFPS 0`, `r.VSync 0`, `TestPrototype` 300마리 `stat unit` + `stat game`. 비교 기준은 측정 ①(Game 12.80)과 ②(Game 9.64). 캡처는 새 이름으로 (예: `Docs/nocol_final_unit.png`)
+- [x] PIE에서 `show Collision`: 몬스터 캡슐이 안 보이고 스킬은 그대로 맞는지
+- [x] 재측정 (Game 7.51ms, Todo 측정 ③): 에디터를 닫고 Standalone, `t.MaxFPS 0`, `r.VSync 0`, `TestPrototype` 300마리 `stat unit` + `stat game`. 비교 기준은 측정 ①(Game 12.80)과 ②(Game 9.64). 캡처는 새 이름으로 (예: `Docs/nocol_final_unit.png`)
 
 ## 성능 측정
 
