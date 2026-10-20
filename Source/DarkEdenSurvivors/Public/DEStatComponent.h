@@ -124,10 +124,10 @@ private:
 	TMap<EDEStatType, FGameplayStat*> StatRegistry;
 
 public:
-	void InitAsPlayer(ADECharacterBase* InPlayer);
+	// 모든 캐릭터 (플레이어, AI 마스터): 소유 캐릭터를 잡고 파생 값(이동속도, 최대 HP 등)을 반영한다
+	void InitForCharacter(ADECharacterBase* InCharacter);
 
-protected:
-    // 영구 강화(Meta-Progression) 수치 적용
+    // 영구 강화(Meta-Progression) 수치 적용. 플레이어가 조종하는 캐릭터만, 한 번만 부른다 (ADECharacterBase::TryApplyPlayerSetup)
     void ApplyMetaUpgrades();
 
 public:

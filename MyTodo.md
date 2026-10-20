@@ -143,6 +143,12 @@
 - [ ] `UI_GameHUD`에 화면 가장자리 비네트 이미지(기본 숨김)와 페이드/맥동 애니메이션 추가. Graph에서 `Event On Low HP Changed` 구현: true면 켜고 재생, false면 끄기. 기준은 Class Defaults의 `LowHPThreshold`(0.3)
 - [ ] HP 30% 아래로 떨어질 때 비네트가 켜지고, 회복해서 넘어가면 꺼지는지
 
+## 캐릭터 플레이어 전용 설정 분리
+
+- [ ] 메타 업그레이드(상점 HP/데미지/속도 등)가 여전히 적용되는지. 시작 HP가 늘어난 최대 HP로 가득 찬 상태인지 (전에는 최대 HP만 늘고 현재 HP는 100이었을 수 있음)
+- [ ] 경험치 구슬, 골드, 상자 등 픽업을 여전히 주울 수 있는지 (`Player` 태그를 생성자에서 빙의 시점으로 옮김)
+- [ ] 플레이어 머리 위 데미지 숫자가 여전히 안 뜨는지
+
 ## 성능 측정
 
 - [ ] `TestStage001`/`TestBlank`에서 `NavMeshBoundsVolume`, `RecastNavMesh` 삭제 (내비 사용처 없음. `TestPrototype`은 완료, 미커밋)

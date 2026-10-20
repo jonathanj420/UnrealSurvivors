@@ -134,6 +134,17 @@
 - [ ] `ResetMonster`에서 `SetMaxHP(…, true)` 뒤 `ResetHealth()`를 두 번 더 부른다 (무해)
 - [ ] `HandleDamageDealt`의 `Cast<IDEDamageInstigatorInterface>`는 BP 구현 인터페이스면 null이라 크래시. 지금은 C++ 구현체뿐
 
+## 마스터(보스) (2026-10-20 결정)
+
+컨셉: 다크에덴의 뱀파이어 마스터. 플레이어와 같은 인간 크기, 같은 뱀파이어 스킬(+강화/전용 스킬)을 쓰는 "또 하나의 플레이어". `ADECharacterBase` 서브클래스 + AI 컨트롤러. 나중에 플레이어블(히든/DLC)로도 연다. 조우: 필드(잡몹과 함께), 레어 맵(1:1), 필드 → 보스룸. 보스룸은 같은 레벨 안 아레나로 텔레포트하는 방향 (런 상태가 Pawn에 있어서 맵 이동 시 사라짐)
+
+- [x] 1. CharacterBase 분리: 플레이어 전용 설정(메타 업그레이드, 픽업용 `Player` 태그, 피격 숫자 숨김)을 `TryApplyPlayerSetup`으로. BeginPlay와 `PossessedBy` 중 늦은 쪽에서, 플레이어 컨트롤러일 때만 한 번. `UDEStatComponent::InitAsPlayer` → `InitForCharacter` + `ApplyMetaUpgrades` 분리
+- [ ] 2. 진영: `IGenericTeamAgentInterface`로 팀 ID. 스킬 타겟 쿼리가 몬스터 + 적대 캐릭터를 찾게, 마스터가 플레이어 스킬에 맞게
+- [ ] 3. 마스터 AI: AIController + C++ Utility AI (이동, 거리 조절, 회피, 스킬 사용). 공정성: 마스터도 쿨다운, 회피 쿨다운, 짧은 예고
+- [ ] 4. 조우: 필드 스폰 → 레어 맵 → 보스룸
+- [ ] `ADECharacterBase::Die`가 `OnPlayerDied`를 부른다. 게임오버 바인딩은 GameMode가 플레이어 폰에만 하니 마스터가 죽어도 게임오버는 안 나지만, 마스터 사망 처리(보상, 연출)는 따로 필요
+- [ ] `ADEItemBase`가 `ADEFemaleVampire`로 캐스트해서 줍는다 (마스터가 같은 클래스면 주울 수 있음). 쓰이는지 확인 후 정리
+
 ## 몬스터 최적화 (목표 동시 1000마리)
 
 - [x] 접촉 공격을 오버랩 이벤트 대신 거리 판정으로 (`6207bc9`)

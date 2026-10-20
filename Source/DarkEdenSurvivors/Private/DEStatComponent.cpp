@@ -129,12 +129,9 @@ void UDEStatComponent::RefreshDerivedStats(EDEStatType StatType)
 	}
 }
 
-void UDEStatComponent::InitAsPlayer(ADECharacterBase* InPlayer)
+void UDEStatComponent::InitForCharacter(ADECharacterBase* InCharacter)
 {
-	OwnedChar = InPlayer;
-    
-    // 영구 강화 수치 적용
-    ApplyMetaUpgrades();
+	OwnedChar = InCharacter;
 
 	RefreshDerivedStats(EDEStatType::MoveSpeed);
 	RefreshDerivedStats(EDEStatType::MaxHP);

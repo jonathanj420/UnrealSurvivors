@@ -28,6 +28,14 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	// 플레이어 컨트롤러에 빙의됐을 때 플레이어 전용 설정을 적용한다
+	virtual void PossessedBy(AController* NewController) override;
+
+	// 플레이어가 조종하는 캐릭터에만 하는 설정 (메타 업그레이드, 픽업용 "Player" 태그, 피격 숫자 숨김).
+	// AI 마스터는 받지 않는다. BeginPlay와 빙의 중 늦게 오는 쪽에서 한 번만 적용된다
+	void TryApplyPlayerSetup();
+	bool bPlayerSetupApplied = false;
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

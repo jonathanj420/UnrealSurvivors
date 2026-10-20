@@ -30,13 +30,11 @@ ADECharacterBase::ADECharacterBase()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-    Tags.Add(FName("Player"));
 
 
     StatComponent = CreateDefaultSubobject<UDEStatComponent>(TEXT("StatComponent"));
 
     HealthComponent= CreateDefaultSubobject<UDEHealthComponent>(TEXT("DEHealthComponent"));
-    HealthComponent->bShowDamageText = false;
 
     CombatComponent = CreateDefaultSubobject<UDECombatComponent>(TEXT("CombatComponent"));
 
@@ -81,7 +79,7 @@ void ADECharacterBase::BeginPlay()
 
     if (StatComponent)
     {
-        StatComponent->InitAsPlayer(this);
+        StatComponent->InitForCharacter(this);
         if (SkillManager)
         {
             SkillManager->InitStatComp(StatComponent);
@@ -126,6 +124,49 @@ void ADECharacterBase::BeginPlay()
     SetControlMode(EControlMode::FIXEDTPS);
     ActiveSkill = NewObject<UDESkill_BloodDrain>(this);
     ActiveSkill->InitSkill(this);
+
+    // 마일스톤으로 최대 HP가 올랐을 수 있으니 가득 채우고 시작
+    if (HealthComponent)
+    {
+        HealthComponent->ResetHealth(true);
+    }
+
+    TryApplyPlayerSetup();
+}
+
+void ADECharacterBase::PossessedBy(AController* NewController)
+{
+    Super::PossessedBy(NewController);
+
+    TryApplyPlayerSetup();
+}
+
+void ADECharacterBase::TryApplyPlayerSetup()
+{
+    // GameMode가 스폰한 플레이어 폰은 BeginPlay보다 빙의가 먼저 올 수도, 나중에 올 수도 있다.
+    // StatComponent의 스탯 등록은 BeginPlay에서 끝나므로 둘 다 지난 뒤에 적용한다
+    if (bPlayerSetupApplied || !HasActorBegunPlay() || !IsPlayerControlled()) return;
+    bPlayerSetupApplied = true;
+
+    // 픽업은 이 태그로 주울 수 있는 대상을 고른다 (ADEPickupBase)
+    Tags.AddUnique(FName("Player"));
+
+    if (HealthComponent)
+    {
+        // 플레이어는 피격 플래시로 대신한다
+        HealthComponent->bShowDamageText = false;
+    }
+
+    if (StatComponent)
+    {
+        StatComponent->ApplyMetaUpgrades();
+    }
+
+    // 메타 업그레이드로 최대 HP가 올랐을 수 있다
+    if (HealthComponent)
+    {
+        HealthComponent->ResetHealth(true);
+    }
 }
 
 // Called every frame
