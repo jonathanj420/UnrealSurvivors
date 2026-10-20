@@ -19,56 +19,45 @@ void UDEBehavior_SpawnOrbit::Execute(FDESkillContext& Context)
         return;
     }
 
-    AActor* Instigator = Context.Instigator;
-    if (!Instigator) return;
-
-    UWorld* World = Instigator->GetWorld();
-    if (!World) return;
-
-    UDEPoolSubsystem* Pool = World->GetSubsystem<UDEPoolSubsystem>();
-    if (!Pool) return;
-
-    // --------------------------------------------------
-    // 1. Orbit 개수 & 각도 계산
-    // --------------------------------------------------
-    const int32 TotalAmount = FMath::Max(1, Context.Amount);
-    const float AngleStep = 360.0f / static_cast<float>(TotalAmount);
-
-    // --------------------------------------------------
-    // 2. Orbit AOE 스폰
-    // --------------------------------------------------
-    for (int32 i = 0; i < TotalAmount; ++i)
-    {
-        SpawnOneOrbit(Context, *Pool, i * AngleStep);
-    }
+    // 이전 발동의 궤도가 아직 살아 있으면 (수명이 없거나 쿨다운보다 길 때) 새로 쌓지 않고 재배치한다
+    ArrangeOrbits(Context, true);
 }
 
 void UDEBehavior_SpawnOrbit::OnContextRefreshed(const FDESkillContext& Context)
 {
-    // Permanent 궤도 스킬은 재발동 없이 여기로만 레벨업이 들어온다. 살아 있는 궤도를 새 개수로 다시 배치한다
-    if (!OrbitAOEClass || !Context.Instigator || !Context.SourceSkill) return;
+    // Permanent 궤도 스킬은 재발동 없이 여기로만 레벨업이 들어온다.
+    // 아직 발동 전이면 Execute가 새 Context로 스폰하므로 여기서는 스폰하지 않는다
+    if (!OrbitAOEClass) return;
+    ArrangeOrbits(Context, false);
+}
+
+void UDEBehavior_SpawnOrbit::ArrangeOrbits(const FDESkillContext& Context, bool bSpawnIfNone)
+{
+    if (!Context.Instigator) return;
 
     UWorld* World = Context.Instigator->GetWorld();
     UDEPoolSubsystem* Pool = World ? World->GetSubsystem<UDEPoolSubsystem>() : nullptr;
     if (!Pool) return;
 
     TArray<ADEAOE_OrbitBase*> LiveOrbits;
-    for (const TWeakObjectPtr<ADESkillActorBase>& Actor : Context.SourceSkill->GetLiveSkillActors())
+    if (Context.SourceSkill)
     {
-        if (Actor.IsValid() && Actor->IsA(OrbitAOEClass))
+        for (const TWeakObjectPtr<ADESkillActorBase>& Actor : Context.SourceSkill->GetLiveSkillActors())
         {
-            LiveOrbits.Add(Cast<ADEAOE_OrbitBase>(Actor.Get()));
+            if (Actor.IsValid() && Actor->IsA(OrbitAOEClass))
+            {
+                LiveOrbits.Add(Cast<ADEAOE_OrbitBase>(Actor.Get()));
+            }
         }
     }
 
-    // 아직 발동 전이면 Execute가 새 Context로 스폰한다
-    if (LiveOrbits.Num() == 0) return;
+    if (LiveOrbits.Num() == 0 && !bSpawnIfNone) return;
 
     const int32 TotalAmount = FMath::Max(1, Context.Amount);
     const float AngleStep = 360.0f / static_cast<float>(TotalAmount);
 
-    // 첫 궤도의 현재 각도를 기준으로 균등 재배치해서 갱신 순간 궤도가 튀지 않게 한다
-    const float BaseAngle = LiveOrbits[0]->GetCurrentAngle();
+    // 살아 있는 궤도가 있으면 첫 궤도의 현재 각도를 기준으로 균등 재배치해서 궤도가 튀지 않게 한다
+    const float BaseAngle = LiveOrbits.Num() > 0 ? LiveOrbits[0]->GetCurrentAngle() : 0.0f;
 
     for (int32 i = 0; i < TotalAmount; ++i)
     {

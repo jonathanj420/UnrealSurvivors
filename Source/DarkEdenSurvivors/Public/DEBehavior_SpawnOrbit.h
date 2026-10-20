@@ -25,6 +25,8 @@ public:
 	virtual void OnContextRefreshed(const FDESkillContext& Context) override;
 
 private:
+	// 살아 있는 궤도를 Context.Amount개로 맞춘다. 있는 건 재사용하고 갱신, 모자라면 스폰, 남으면 반환
+	void ArrangeOrbits(const FDESkillContext& Context, bool bSpawnIfNone);
 	void SpawnOneOrbit(const FDESkillContext& Context, class UDEPoolSubsystem& Pool, float StartAngle) const;
 
 public:
