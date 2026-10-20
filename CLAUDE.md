@@ -61,7 +61,8 @@ UE 5.7 / C++로 만드는 *Vampire Survivors*류 액션 서바이벌 게임이�
 ## 의도된 상태 (버그 아님)
 
 - **플레이어 무적:** `ADECharacterBase::TakeDamage`의 `HealthComponent->ProcessDamage` 호출을 테스트용으로 주석 처리해 두었다. 개발자가 요청하기 전에는 켜지 않는다.
-  - 다시 켤 때 주의: `UDEHealthComponent::HandleDeath`는 `OnDying`만 broadcast하는데, 캐릭터는 `OnDeath`에 `Die`를 바인딩해 두었다. 그래서 주석만 풀면 게임오버가 되지 않는다.
+  - 주석을 풀면 바로 게임오버까지 이어진다: HP 0 → `OnDying` → `ADECharacterBase::Die` → `OnPlayerDied` → `ADEGameMode_Stage::GameOver` (2026-10-20에 OnDying/OnDeath 불일치 수정).
+- **사망 이벤트 두 단계:** `UDEHealthComponent`는 HP 0일 때 `OnDying`만 broadcast한다. 소유 액터는 `OnDying`에 사망 처리를 바인딩하고, 처리가 끝나면 `OnDeath`를 직접 broadcast한다 (몬스터 `ExecuteFinalDeath`, 플레이어 `Die`).
 
 ## 빌드
 

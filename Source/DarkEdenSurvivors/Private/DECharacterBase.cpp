@@ -104,7 +104,8 @@ void ADECharacterBase::BeginPlay()
     }
     if (HealthComponent)
     {
-        HealthComponent->OnDeath.AddUObject(this, &ADECharacterBase::Die);
+        // HP가 0이 되면 HealthComponent는 OnDying만 broadcast한다 (OnDeath는 사망 처리를 끝낸 쪽이 부른다)
+        HealthComponent->OnDying.AddUObject(this, &ADECharacterBase::Die);
     }
     if (ProgressionComponent)
     {
@@ -411,22 +412,19 @@ void ADECharacterBase::Heal(float Amount)
 
 void ADECharacterBase::Die()
 {
-    // 1. 컨트롤러 입력 막기 (더 이상 움직이면 안 됨)
-    //if (DEPlayerController)
-    //{
-    //    DisableInput(DEPlayerController);
-    //}
-
-    // 2. 충돌 끄기 (몬스터가 시체 그만 때리게)
+    // 충돌 끄기 (몬스터가 시체 그만 때리게)
     GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-    if (OnPlayerDied.IsBound())
+    // 게임오버 (GameMode가 SetPlayerDefaults에서 바인딩)
+    OnPlayerDied.Broadcast();
+
+    // 사망 처리 끝. 몬스터의 ExecuteFinalDeath와 같은 단계
+    if (HealthComponent)
     {
-        OnPlayerDied.Broadcast();
+        HealthComponent->OnDeath.Broadcast();
     }
 
-    // 로그 확인
-    UE_LOG(LogTemp, Warning, TEXT("Player Died!"));
+    UE_LOG(LogDarkEdenSurvivors, Log, TEXT("[Player] Died"));
 }
 
 bool ADECharacterBase::IsDead() const

@@ -121,11 +121,8 @@ void UDEHealthComponent::HandleDeath(AActor* DamageCauser)
     CurrentHP = 0.f;
 
     OnHPChanged.Broadcast(CurrentHP, MaxHP);
-    //UE_LOG(LogTemp, Warning, TEXT("Broadcasting OnDying by HealthComponent "));
+    // OnDeath는 소유 액터가 사망 처리를 끝낸 뒤 broadcast한다
     OnDying.Broadcast();
-    //UE_LOG(LogTemp, Warning, TEXT("Broadcasting OnDeath by HealthComponent "));
-    //OnDeath.Broadcast();
-   // UE_LOG(LogTemp, Error, TEXT("Actually Died"));
     // 여기서는 Destroy / 애니메이션 처리 안 함
     // 소유 Actor(Character/Monster)가 책임지게 함 (AAA 스타일)
 }

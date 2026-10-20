@@ -57,7 +57,11 @@ public:
     // =====================
 
     FOnHPChanged OnHPChanged;
+
+    // 사망은 두 단계다. 소유 액터는 OnDying에 반응해 죽음을 처리한다.
+    // OnDying: HP가 0이 된 순간 HealthComponent가 broadcast한다
     FOnDying OnDying;
+    // OnDeath: 소유 액터가 사망 처리를 끝냈을 때 소유 액터가 broadcast한다 (몬스터는 ExecuteFinalDeath). HealthComponent는 부르지 않는다
     FOnDeath OnDeath;
 
 private:

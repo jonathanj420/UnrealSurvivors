@@ -105,7 +105,7 @@
 - [ ] 스테이지 맵을 PIE로 바로 켰을 때 지금처럼 FemaleVampire로 나오는지
 - [ ] 메뉴 위젯 BP(`UDEMainMenuWidget` 자식)에서 `CharacterDataTable` 프로퍼티를 삭제했다. 캐릭터 목록이 그대로 뜨는지 (이제 GameInstance가 `DT_Characters`를 직접 로드)
 - [ ] 스테이지 GameMode BP가 `DefaultPawnClass`를 따로 지정했다면 그 값이 옵션 없을 때의 기본값이다
-- [ ] 플레이어 사망 시 게임오버가 뜨는지 (바인딩 위치를 옮김. 무적 상태라 `ForceKill`이 없으니 체력 컴포넌트 주석을 잠깐 풀어야 확인 가능. CLAUDE.md의 OnDying/OnDeath 주의사항 참고)
+- [ ] 플레이어 사망 시 게임오버가 뜨는지: `ADECharacterBase::TakeDamage`의 `ProcessDamage` 주석을 잠깐 풀고 몬스터에게 맞아 죽어본다. 결산 화면이 뜨고 멈추면 OK (OnDying/OnDeath 불일치와 바인딩 위치를 둘 다 고침). 확인 후 무적으로 되돌릴지 결정
 - [ ] 캐릭터 BP에 `CharacterData`를 지정하고 `LevelMilestones`에 항목을 넣어 레벨업 때 스탯이 오르는지. `MultiplierBonus`는 이제 "추가 %"다 (20% 증가 = 0.2). 기존 CharacterData 에셋에 1.2 같은 값을 넣어뒀다면 고쳐야 한다
 
 ## AOE
