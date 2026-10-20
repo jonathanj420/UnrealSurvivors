@@ -94,9 +94,9 @@ void UDECombatComponent::HandleDamageDealt(const FDEDamageResult& Result)
         ++TotalKillCount;
         BroadcastCombatEvent(ECombatEventTrigger::OnKill, EventData);
 
-        if (Result.SourceObject && Result.SourceObject->Implements<UDEDamageInstigatorInterface>())
+        // Implements<>는 BP에서 붙인 인터페이스도 true지만 그때 네이티브 Cast는 null이다. Cast 결과로만 판단한다
+        if (IDEDamageInstigatorInterface* Instigator = Cast<IDEDamageInstigatorInterface>(Result.SourceObject))
         {
-            IDEDamageInstigatorInterface* Instigator = Cast<IDEDamageInstigatorInterface>(Result.SourceObject);
             Instigator->OnTargetKilled(Result);
         }
     }

@@ -7,8 +7,8 @@
 #include "DEDamageTypes.h"
 #include "DEDamageInstigatorInterface.generated.h"
 
-// This class does not need to be modified.
-UINTERFACE(MinimalAPI)
+// 함수가 C++ 가상 함수뿐이라 BP에서는 구현할 수 없다
+UINTERFACE(MinimalAPI, meta = (CannotImplementInterfaceInBlueprint))
 class UDEDamageInstigatorInterface : public UInterface
 {
 	GENERATED_BODY()
