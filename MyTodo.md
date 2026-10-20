@@ -135,7 +135,8 @@
 
 - [ ] 몬스터를 잡을 때마다 BloodDrain 게이지가 전처럼 차는지 확인 (이제 막타 친 플레이어에게 준다)
 - [ ] 스킬 BP의 `LocalEffects`에 Execution을 단 게 있으면, 처형 킬에서 Output Log에 `SourceObject null` Warning이 더는 안 뜨는지 확인
-- [ ] BloodDrain 시전 중 범위 안 몬스터가 실제로 멈추는지 확인 (전엔 스턴이 안 걸렸다). 바깥 몬스터에 밀려 링이 좁혀지는 건 아직 안 고침
+- [ ] BloodDrain 시전 중 범위 안 몬스터가 실제로 멈추는지, 바깥 몬스터가 링을 밀고 들어오지 않는지 확인. 몬스터가 많을 때 벽 앞에서 떨리거나 겹쳐 보이면 알려줘
+- [ ] 석화/스턴 스킬(GlareOfBasilisk 등)에 걸린 몬스터도 이제 다른 몬스터를 막는 벽이 된다. 의도와 맞는지 확인
 - [ ] `NS_BloodDrainCustom`에 float User Parameter `DrainDuration`(시전 시간, 초) 추가. 흐름이 플레이어에게 모이는 시점을 이 값에 맞추면 마무리 데미지와 맞는다. 위치 배열은 기존 `MonsterPosi`, 플레이어는 `PlayerPosition`
 - [ ] 몬스터 DT에서 보스 행의 `MonsterRank`가 Boss인지 확인. 이제 DT 값이 몬스터에 들어가고, Boss면 광흡 대상에서 빠진다
 - [ ] Reference Viewer: `ADEMonsterBase::Die`, `UDEHealthComponent::InstantKill`, BP에서 몬스터에게 `Apply Damage`를 부르는 곳이 있는지

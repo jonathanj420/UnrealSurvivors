@@ -160,11 +160,16 @@ void UDEMonsterUpdateComponent::ResolveMonsterOverlap(ADEMonsterBase* A, ADEMons
 
     if (DistSq >= MinDistSq) return;
 
+    // 움직일 수 없는 몬스터(스턴, 석화)는 밀리지 않는 벽이다. 바깥 몬스터가 BloodDrain 배리어를 밀고 들어오지 않게 한다
+    const bool bAnchoredA = !A->bCanMove;
+    const bool bAnchoredB = !B->bCanMove;
+    if (bAnchoredA && bAnchoredB) return;
+
     if (DistSq < KINDA_SMALL_NUMBER)
     {
         FVector Nudge = FVector(FMath::FRandRange(-1.f, 1.f), FMath::FRandRange(-1.f, 1.f), 0.f).GetSafeNormal();
-        A->PendingOverlapPush -= Nudge;
-        B->PendingOverlapPush += Nudge;
+        if (!bAnchoredA) A->PendingOverlapPush -= Nudge;
+        if (!bAnchoredB) B->PendingOverlapPush += Nudge;
         return;
     }
 
@@ -183,23 +188,37 @@ void UDEMonsterUpdateComponent::ResolveMonsterOverlap(ADEMonsterBase* A, ADEMons
     // 3. 나눗셈(/) 대신 곱셈(*) 사용! CPU가 기립박수 칩니다.
     const FVector PushDir = Delta * InvDist;
     const float Penetration = MinDist - Dist;
-    FVector PushOffset = PushDir * (Penetration * 0.05f);
+    if (bAnchoredA)
+    {
+        // 벽 쪽은 그대로 두고, 움직이는 쪽을 겹친 만큼 한 번에 밀어낸다 (플레이어 밀어내기와 같은 방식).
+        // 서로 나눠 밀 때처럼 조금씩 밀면 뒤에서 미는 무리에 눌려 벽을 통과한다
+        B->PendingOverlapPush += PushDir * Penetration;
+    }
+    else if (bAnchoredB)
+    {
+        A->PendingOverlapPush -= PushDir * Penetration;
+    }
+    else
+    {
+        FVector PushOffset = PushDir * (Penetration * 0.05f);
 
-    A->PendingOverlapPush -= PushOffset;
-    B->PendingOverlapPush += PushOffset;
+        A->PendingOverlapPush -= PushOffset;
+        B->PendingOverlapPush += PushOffset;
+    }
 
     // 넉백 최적화 로직은 완벽하므로 그대로 유지! (SizeSquared 최고입니다)
     const float AKnockSq = A->KnockbackVelocity.SizeSquared();
     const float BKnockSq = B->KnockbackVelocity.SizeSquared(); // ← 여기로 올려야 함
 
+    // 벽에 부딪힌 넉백은 전달되지 않고 줄어들기만 한다
     if (AKnockSq > 1.f)
     {
-        B->ApplyKnockback(PushDir, FMath::Sqrt(AKnockSq) * ChainKnockbackTransfer);
+        if (!bAnchoredB) B->ApplyKnockback(PushDir, FMath::Sqrt(AKnockSq) * ChainKnockbackTransfer);
         A->KnockbackVelocity *= 0.5f;
     }
     if (BKnockSq > 1.f)
     {
-        A->ApplyKnockback(-PushDir, FMath::Sqrt(BKnockSq) * ChainKnockbackTransfer);
+        if (!bAnchoredA) A->ApplyKnockback(-PushDir, FMath::Sqrt(BKnockSq) * ChainKnockbackTransfer);
         B->KnockbackVelocity *= 0.5f;
     }
 }

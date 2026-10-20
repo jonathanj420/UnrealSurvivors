@@ -111,7 +111,9 @@
   - 스턴이 몬스터를 멈추지 못하던 문제: `22a76da`에서 이동 체크가 `IsStunned`에서 `bCanMove`로 바뀌었는데 BloodDrain만 옛 `ApplyStun`(CCState)을 썼다. `StunEffectClass`(기본 `UDEStatusEffect_Stun`) 상태이상으로 건다. 옛 CC(`ApplyStun`/`IsStunned`/`UpdateCrowdControl`/`EMonsterCrowdControl`) 삭제
   - 시전 중 다른 스킬에 죽고 풀에서 재사용된 몬스터가 마무리 데미지와 회복을 받던 문제: `ADEMonsterBase::GetSpawnSerial`(ResetMonster마다 증가)로 거른다
   - 보스는 광흡 면역. `ResetMonster`가 이제 DT의 `MonsterRank`를 몬스터에 복사한다 (전엔 복사하지 않아 C++에서 등급이 항상 Normal)
-- [ ] BloodDrain 배리어가 바깥에서 밀려 들어온다: `ResolveMonsterOverlap`이 `bCanMove`와 무관하게 양쪽을 밀어서, 바깥 몬스터가 스턴된 링을 안쪽으로 민다. 움직일 수 없는 쪽은 고정하고 움직이는 쪽만 밀어내는 방식 검토 (몬스터 최적화와 같이)
+- [x] BloodDrain 배리어가 바깥에서 밀려 들어오던 문제: `ResolveMonsterOverlap`에서 `bCanMove`가 false인 몬스터는 벽으로 취급한다. 벽은 밀리지 않고, 움직이는 쪽이 겹친 만큼 한 번에 밀려난다 (플레이어 밀어내기와 같은 방식). 둘 다 벽이면 건너뛴다. 연쇄 넉백도 벽에는 전달되지 않는다
+  - 동작 변경: 다른 스킬의 스턴/석화(`UDEStatusEffect_Stun`)도 같은 벽이 된다. 스킬이 스턴된 몬스터에 직접 거는 넉백은 그대로 들어간다
+  - 벽 사이 틈이 몬스터 지름보다 넓으면 그 틈으로는 들어온다. 링 밀도는 범위 안 몬스터 수에 달려 있다
 - [ ] BloodDrain 데미지 방식: 지금 고정 `DrainAmountPerMonster`(회복량과 같은 값). 원작처럼 대상 체력 %로 할지 결정. 엘리트 면역 여부 결정 (원작은 몬스터마다 다름 → 몬스터 DT에 면역 플래그를 두는 방식 후보)
 - [ ] BloodDrain 특화 빌드(범위 증가 퍽/악세서리) 구상 중. 지금 `DrainRadius`/`StunDuration`/데미지는 고정값이라 스탯(AreaSize 등)을 받지 않는다
 - [ ] 이동불가가 `bCanMove` bool 하나라 서로 다른 스턴 클래스가 겹치면 먼저 끝난 쪽이 풀어 버린다. 같은 클래스는 `StackPolicy::Ignore`(기본)라 나중 스턴의 더 긴 시간이 무시된다
