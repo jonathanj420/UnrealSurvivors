@@ -30,7 +30,7 @@ void ADEAOE_OrbitBase::Tick(float DeltaTime)
     }
 
     // 3. 공전 계산 (시계 방향: -=, 반시계: +=)
-    // 데이터 테이블 Speed가 음수면 시계, 양수면 반시계로 돔
+    // OrbitSpeed(DT OptionValues)가 음수면 시계, 양수면 반시계로 돔
     CurrentAngle += RotationSpeed * DeltaTime;
 
     // 각도 정규화 (0~360 유지)
@@ -64,4 +64,22 @@ void ADEAOE_OrbitBase::Tick(float DeltaTime)
 void ADEAOE_OrbitBase::InitOrbit(float InStartAngle)
 {
     CurrentAngle = InStartAngle;
+}
+
+void ADEAOE_OrbitBase::InitializeFromContext(const FDESkillContext& Context)
+{
+    CurrentOrbitRadius = GetOrbitRadius(Context);
+    RotationSpeed = GetOrbitSpeed(Context);
+
+    Super::InitializeFromContext(Context);
+}
+
+float ADEAOE_OrbitBase::GetOrbitRadius(const FDESkillContext& Context)
+{
+    return Context.GetValue(TEXT("OrbitRadius"), 150.0f) * Context.FinalSnapshot.EffectSizeMultiplier;
+}
+
+float ADEAOE_OrbitBase::GetOrbitSpeed(const FDESkillContext& Context)
+{
+    return Context.GetValue(TEXT("OrbitSpeed"), 180.0f) * Context.FinalSnapshot.ProjectileSpeedMultiplier;
 }

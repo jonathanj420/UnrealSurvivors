@@ -72,7 +72,8 @@
   - 동작 변경: `CancelSkill`(진화)이 마지막 발동분뿐 아니라 살아 있는 키 없는 장판 전부를 거둔다
   - SpawnOrbit의 풀 액터 `Destroy()` 제거
 - [x] `SpawnOrbit::OnContextRefreshed` 추가: Permanent 궤도 스킬이 레벨업(또는 스탯 변화)하면 살아 있는 궤도를 새 개수로 재배치한다. 기존 궤도는 재사용해 스탯만 갱신하고, 모자라면 스폰, 남으면 반환. 첫 궤도의 현재 각도를 기준으로 균등 배치. Duration 궤도 스킬은 원래대로 다음 발동부터 반영
-- [ ] 궤도 반경과 회전 속도가 `ADEAOE_OrbitBase`의 하드코딩(150, 180도/초)이다. `SpawnOrbit`은 OptionValues `"OrbitRadius"`를 스폰 위치에만 쓰고, 첫 Tick에 150으로 돌아간다. 헤더 주석의 "DT Speed가 음수면 시계"도 구현 안 됨
+- [x] 궤도 반경과 회전 속도를 DT에서: `ADEAOE_OrbitBase::InitializeFromContext`가 OptionValues `"OrbitRadius"`(기본 150) x 범위 스탯, `"OrbitSpeed"`(도/초, 기본 180, 음수면 시계) x 투사체 속도 스탯을 쓴다. 스폰 위치도 같은 반경. 전엔 150/180 하드코딩이라 스폰 위치만 `"OrbitRadius"`를 쓰고 첫 Tick에 150으로 돌아갔다
+  - 동작 변경: 범위/투사체 속도 스탯이 이제 궤도 반경/회전 속도에 반영된다 (뱀서 King Bible과 같은 방식)
 - [ ] Duration 궤도 스킬인데 Duration이 0이면 궤도의 LifeTime이 0이라 타이머 없이 영구히 남고, 매 발동마다 쌓인다 (`ADESimpleAOEBase`는 음수만 무한으로 본다)
 - [x] `CullByCone::ConeAngle`이 이제 읽힌다 (DT `"Angle"`이 우선, 없으면 ConeAngle). 기본값을 120에서 60으로 바꿔서 손대지 않은 BP는 전과 같은 60도
 - [x] `InstantDamage::HitCount`/`HitInterval` 구현 (개발자 결정, 2026-10-20). 간격 0이면 한 번에, 0보다 크면 첫 타격 후 남은 타격을 타이머로. 파이프라인은 기다리지 않는다. `IsInProgress`로 다음 발동을 미루고 `EndBehavior`에서 정리. 타격으로 죽은 타겟은 바로 빼서 풀에서 재사용된 몬스터를 때리지 않는다 (다른 스킬이 죽인 뒤 간격 안에 재사용되면 막지 못함). 뒤 Behavior가 보는 `Context.Targets`는 바꾸지 않는다

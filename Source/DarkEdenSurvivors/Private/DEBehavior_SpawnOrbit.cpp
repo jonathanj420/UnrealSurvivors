@@ -96,7 +96,7 @@ void UDEBehavior_SpawnOrbit::SpawnOneOrbit(const FDESkillContext& Context, UDEPo
     AActor* Instigator = Context.Instigator;
 
     // 원점(플레이어)에서 스폰하면 스폰하자마자 플레이어와 겹친 몬스터를 때리므로 궤도 위에서 스폰한다
-    const FVector Offset = FRotator(0.f, StartAngle, 0.f).RotateVector(FVector(Context.GetValue(TEXT("OrbitRadius"), 150.0f), 0.f, 0.f));
+    const FVector Offset = FRotator(0.f, StartAngle, 0.f).RotateVector(FVector(ADEAOE_OrbitBase::GetOrbitRadius(Context), 0.f, 0.f));
     const FVector SpawnLocation = Instigator->GetActorLocation() + Offset;
 
     // OrbitAOEClass가 ADEAOE_OrbitBase 계열이라 캐스트가 실패할 일은 없다
