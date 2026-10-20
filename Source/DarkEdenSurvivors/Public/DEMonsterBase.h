@@ -43,14 +43,10 @@ public:
 
 
 protected:
-	UPROPERTY(VisibleAnywhere)
-	USceneComponent* Root;
 	UPROPERTY(EditAnywhere, Category = "Monster Base")
 	class UCapsuleComponent* Capsule;
 	UPROPERTY(EditAnywhere, Category = "Monster Base")
 	class USkeletalMeshComponent* Mesh;
-	UPROPERTY(EditAnywhere, Category = "Monster Base")
-	class UStaticMeshComponent* TestMesh;
 public:
 	UPROPERTY(VisibleAnywhere)
 	class UDEStatusEffectComponent* StatusEffectComponent;
@@ -91,16 +87,9 @@ public:
 
 public:
 	void MoveToPlayer(float DeltaTime, const FVector& PlayerLocation, const FVector& MyLocation);
-	//void ApplyDamage(float value);
-	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
-		AController* EventInstigator, AActor* DamageCauser) override;
 	void ApplyKnockback(const FVector& Direction, float Strength = -1.0f);
 	void UpdateKnockback(float DeltaTime);
 	void ResetForPool();
-	UFUNCTION()
-	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-		bool bFromSweep, const FHitResult& SweepResult);
 	float GetCollisionRadius() const;
 	float GetCapsuleHalfHeight() const;
 	float GetMoveSpeed() const;
@@ -135,7 +124,6 @@ private:
 
 
 protected:
-	void Die();
 	void StartDying(AActor* Killer);
 	public:
 
@@ -148,11 +136,4 @@ protected:
 public:
 	// UpdateComponent가 접촉(거리) 판정 후 호출한다
 	void ExecuteAttackLogic(double CurrentTime, ADECharacterBase* Target);
-
-	//***************** AI ****************
-protected:
-	UPROPERTY(EditAnywhere, Category = "AI")
-	class ADECharacterBase* TargetPlayer;
-
-
 };

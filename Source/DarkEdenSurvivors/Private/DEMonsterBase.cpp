@@ -5,7 +5,6 @@
 #include "Components/CapsuleComponent.h"
 #include "Engine/CollisionProfile.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "Components/StaticMeshComponent.h"
 #include "EngineUtils.h"
 #include "DECharacterBase.h"
 #include "Kismet/GameplayStatics.h"
@@ -96,48 +95,6 @@ void ADEMonsterBase::MoveToPlayer(float DeltaTime, const FVector& PlayerLocation
 }
 
 
-float ADEMonsterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
-{
-
-	// 1. 부모 클래스 로직 실행 (중요)
-	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-
-	// 2. 체력 컴포넌트가 있다면 '우리의 시스템'으로 진입
-	if (HealthComponent)
-	{
-		// [AAA 스타일] 요청서(Request) 작성
-		FDEDamageRequest Req;
-
-		// 2-1. 값 채우기
-		Req.BaseDamage = ActualDamage;
-		Req.DamageCauser = DamageCauser; // 때린 무기(투사체 or 칼)
-
-		// ★ 중요: 언리얼 기본 함수는 Controller를 줍니다. 우린 Pawn(캐릭터)이 필요합니다.
-		if (EventInstigator)
-		{
-			Req.Instigator = EventInstigator->GetPawn();
-		}
-		else
-		{
-			Req.Instigator = DamageCauser; // 컨트롤러가 없으면 그냥 때린 놈을 주범으로
-		}
-
-		// 2-2. 크리티컬 등 추가 정보 (기본 피격은 보통 크리 0%)
-		Req.CritChance = 0.0f;
-		Req.CritDamageMultiplier = 1.0f;
-
-		// 3. 결재 올리기 (여기서 방어력 계산 등이 수행됨)
-		FDEDamageResult Res = HealthComponent->ProcessDamage(Req);
-
-		// 4. 실제로 들어간 데미지를 리턴 (언리얼 규칙 준수)
-		return Res.FinalDamage;
-	}
-
-	return 0.0f;
-
-
-}
-
 void ADEMonsterBase::ApplyKnockback(const FVector& Direction, float Strength)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Knockback : %f Applied"), Strength);
@@ -160,10 +117,6 @@ void ADEMonsterBase::UpdateKnockback(float DeltaTime)
 	{
 		KnockbackVelocity = FVector::ZeroVector;
 	}
-}
-
-void ADEMonsterBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
 }
 
 void ADEMonsterBase::SetCanMove(bool bNewCanMove)
@@ -284,7 +237,6 @@ void ADEMonsterBase::ResetMonster(const FDEMonsterData* Data, const FDEMonsterSt
 	SetActorTickEnabled(false);
 	bIsAlive = true;
 	bIsDying = false;
-	if (HealthComponent) HealthComponent->ResetHealth(true);
 }
 void ADEMonsterBase::ResetForPool()
 {
@@ -302,19 +254,6 @@ void ADEMonsterBase::ResetForPool()
 	// 비활성화: 숨기고 Tick 끔
 	SetActorHiddenInGame(true);
 	SetActorTickEnabled(false);
-}
-
-void ADEMonsterBase::Die()
-{
-	//UE_LOG(LogTemp, Warning, TEXT("Calling Monster Die"));
-	if (bIsDying) return;  // 이중 죽음 방지
-	bIsDying = true;
-	bIsAlive = false;
-
-	StatusEffectComponent->RemoveAllEffects();
-	//DropExp();
-
-	OnMonsterDeath.Broadcast(this, nullptr);
 }
 
 void ADEMonsterBase::StartDying(AActor* Killer)

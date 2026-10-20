@@ -426,27 +426,6 @@ bool ADECharacterBase::CanActivateBloodDrain()
     return BloodDrainGauge >= BloodDrainGaugeMax;
 }
 
-float ADECharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
-{
-    float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-
-    if (HealthComponent)
-    {
-        // 1. 단순 데미지도 구조체(Request)로 포장해서 처리 요청
-        // 그래야 HealthComponent 안의 크리티컬/방어력 로직을 통과함
-        FDEDamageRequest DmgRequest;
-        DmgRequest.BaseDamage = ActualDamage;
-        DmgRequest.DamageCauser = DamageCauser;
-        DmgRequest.CritChance = 0.0f; // 일반 피격은 크리티컬 확률 0 (필요 시 수정)
-
-        // 2. 통합된 처리 함수 호출. 엔진 ApplyDamage(BP 등)로 들어온 피해용. 몬스터 접촉 공격은 ApplyCombatDamage로 직접 온다
-        DmgRequest.Victim = this;
-        HealthComponent->ProcessDamage(DmgRequest);
-    }
-
-    return ActualDamage;
-}
-
 void ADECharacterBase::OnDamageTaken(float Damage, AActor* DamageInstigator)
 {
     // 맞을 때마다 타이머를 다시 걸어서 연속 피격이면 끝까지 켜져 있다. 월드 타이머라 일시정지 중엔 멈춘다

@@ -116,10 +116,6 @@ private:
 public:
     UFUNCTION(BlueprintCallable, Category = "Combat")
     FDEDamageResult ProcessDamage(const FDEDamageRequest& Request);
-
-    // 데미지 공식을 무시하고 즉시 처형 (Execute)
-    UFUNCTION(BlueprintCallable, Category = "Health")
-    void InstantKill(AActor* Executioner, bool bShowDamage /* = false */);
 protected:
     void ApplyFinalDamage(float InDamage, AActor* InInstigator, bool bInIsCritical, const FGameplayTagContainer& InDamageTags);
 

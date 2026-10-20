@@ -46,7 +46,7 @@
 
 ## 4. 경로 통일
 
-- [ ] 데미지 경로
+- [x] 데미지 경로: 엔진 `TakeDamage` 오버라이드(몬스터, 캐릭터)를 삭제해서 `ApplyCombatDamage` 하나만 남았다. Content에 `ApplyDamage` 참조 0 (2026-10-21)
 - [x] 일시정지와 입력 모드 관리를 한 곳으로: `ADEPlayerController`가 멈춘 이유 집합(`EDEPauseReason`: LevelUp/Chest/PauseMenu/GameOver)을 갖고, `SetPause`/입력 모드/커서는 `ApplyPauseState` 한 곳에서만 바꾼다. 이유가 하나라도 남아 있으면 멈춘 상태 유지. 멈춘 동안 입력 모드는 GameAndUI (UIOnly는 ESC 바인딩까지 막는다). ESC는 다른 이유로 멈춰 있으면 무시. `GameOver`도 이 경로를 쓰고 `GetFirstPlayerController`로 입력 모드를 바꾸던 코드 삭제. `ResumeGame` 삭제. 멀티플레이에서 이유별로 월드를 멈출지는 `ApplyPauseState`에서 정하면 된다
   - BloodDrain의 `SetAutoSkillsPaused`는 월드 일시정지가 아니라 게임플레이 규칙이라 대상 아님
 - [ ] 스턴 2개 → StatusEffect 하나로
@@ -126,12 +126,13 @@
 - [x] BloodDrain 데미지는 대상 최대 HP의 % (`DrainDamagePercent`, 기본 0.3). 회복량은 마리당 고정 `DrainAmountPerMonster` 그대로. 면역은 몬스터 DT 행의 `bImmuneToBloodDrain`, 보스는 이 값과 상관없이 항상 면역 (개발자 결정, 2026-10-20)
 - [ ] BloodDrain 특화 빌드(범위 증가 퍽/악세서리) 구상 중. 지금 `DrainRadius`/`StunDuration`/데미지는 고정값이라 스탯(AreaSize 등)을 받지 않는다
 - [ ] 이동불가가 `bCanMove` bool 하나라 서로 다른 스턴 클래스가 겹치면 먼저 끝난 쪽이 풀어 버린다. 같은 클래스는 `StackPolicy::Ignore`(기본)라 나중 스턴의 더 긴 시간이 무시된다
-- [ ] `ADEMonsterBase::TakeDamage` 오버라이드는 이제 C++ 호출처가 없다 (BP에서 몬스터에 `Apply Damage`를 부르는지 확인 후 삭제)
+- [x] `ADEMonsterBase::TakeDamage`/`ADECharacterBase::TakeDamage` 오버라이드 삭제 (Content 참조 0)
 - [ ] 글로벌 OnPreHit(`ApplyCombatDamage`)이 DoT 틱과 처형에도 걸린다. 상태이상 피해 보정은 DoT를 제외하는데 글로벌 PreHit은 안 한다. 의도인지 결정. 글로벌 `PreHitData`에는 `SourceObject`/`SourceContext`가 없어 스킬별 조건 PreHit은 만들 수 없다
-- [ ] 죽은 코드 (BP 확인 후): `ADEMonsterBase::Die`(`StartDying`과 중복), `UDEHealthComponent::InstantKill`(킬 집계를 안 거침), `UDECombatComponent::OnEnemyKilled`(broadcast 없음), `FDEDamageRequest::LifeStealChance`(안 읽음)
+- [x] 죽은 코드 삭제: `ADEMonsterBase::Die`(`StartDying`과 중복), `UDEHealthComponent::InstantKill`(킬 집계를 안 거침. 에셋의 "InstantKill"은 태그 `Damage.Mechanic.InstantKill`뿐), 몬스터의 빈 `OnOverlapBegin`, 안 쓰는 `Root`/`TestMesh`/`TargetPlayer`
+- [ ] 죽은 코드 (BP 확인 후): `UDECombatComponent::OnEnemyKilled`(broadcast 없음), `FDEDamageRequest::LifeStealChance`(안 읽음)
 - [ ] `ECombatEventTrigger::OnCrit`/`OnTakeDamage`를 broadcast하는 곳이 없다. 이 트리거로 만든 이펙트는 아무 반응이 없다
 - [ ] `TotalDamageDealt`가 오버킬을 포함한다 (HP 차감 전 `FinalDamage`). 통계로 쓸 거면 실제 깎인 양으로
-- [ ] `ResetMonster`에서 `SetMaxHP(…, true)` 뒤 `ResetHealth()`를 두 번 더 부른다 (무해)
+- [x] `ResetMonster`의 중복 `ResetHealth` 호출 정리
 - [ ] `HandleDamageDealt`의 `Cast<IDEDamageInstigatorInterface>`는 BP 구현 인터페이스면 null이라 크래시. 지금은 C++ 구현체뿐
 
 ## 마스터(보스) (2026-10-20 결정)

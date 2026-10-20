@@ -299,29 +299,3 @@ void UDEHealthComponent::ApplyFinalDamage(float InDamage, AActor* InInstigator, 
     }
 }
 
-
-void UDEHealthComponent::InstantKill(AActor* Executioner, bool bShowDamage /* = false */)
-{
-    if (bIsDead) return;
-
-    // 1. 일반 즉사 데미지 연출 (함정, 폭발 등)
-    if (bShowDamage && GetOwner())
-    {
-        if (UDEDamageTextSubsystem* DmgSys = GetWorld()->GetSubsystem<UDEDamageTextSubsystem>())
-        {
-            FDamageVisualInfo DmgInfo;
-            DmgInfo.WorldLocation = GetOwner()->GetActorLocation() + FVector(0, 0, 100);
-            DmgInfo.Amount = MaxHP; // 최대 체력만큼의 데미지 숫자!
-            DmgInfo.TextType = EDamageTextType::Critical; // 크고 빨간 숫자로 띄움
-
-            DmgSys->ShowDamage(DmgInfo);
-        }
-    }
-
-    // 2. 데이터 처리
-    CurrentHP = 0.0f;
-    OnHPChanged.Broadcast(CurrentHP, MaxHP);
-    HandleDeath(Executioner);
-
-}
-

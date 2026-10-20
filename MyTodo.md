@@ -188,7 +188,7 @@
 - [ ] 몬스터 DT에서 보스 행의 `MonsterRank`가 Boss인지 확인. 이제 DT 값이 몬스터에 들어가고, Boss면 광흡 대상에서 빠진다
 - [ ] 몬스터 DT에서 광흡 면역으로 할 엘리트 행에 `bImmuneToBloodDrain` 체크 (새 컬럼, 기본 false)
 - [ ] BloodDrain BP(있으면)에서 `DrainDamagePercent` 조정 (기본 0.3 = 최대 HP의 30%)
-- [ ] Reference Viewer: `ADEMonsterBase::Die`, `UDEHealthComponent::InstantKill`, BP에서 몬스터에게 `Apply Damage`를 부르는 곳이 있는지
+- [ ] 에디터를 열 때 BP 컴파일 에러가 없는지: `UDEHealthComponent::InstantKill`(BlueprintCallable)과 몬스터/캐릭터 `TakeDamage` 오버라이드를 삭제했다. 에셋 문자열 검색으로는 참조가 없었다
 
 ## SpawnManager 정리 후 확인
 
