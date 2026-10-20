@@ -12,7 +12,8 @@ DECLARE_MULTICAST_DELEGATE_TwoParams(FOnHPChanged, float /*CurrentHP*/, float /*
 
 
 // 사망 이벤트
-DECLARE_MULTICAST_DELEGATE(FOnDying);
+// Killer: 막타를 친 Instigator (플레이어 Pawn). 치트 등으로 가해자가 없으면 nullptr
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnDying, AActor* /*Killer*/);
 DECLARE_MULTICAST_DELEGATE(FOnDeath);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -78,7 +79,7 @@ private:
     bool bIsDead = false;
 
 private:
-    void HandleDeath(AActor* DamageCauser);
+    void HandleDeath(AActor* Killer);
 public:
     UFUNCTION(BlueprintCallable, Category = "Combat")
     FDEDamageResult ProcessDamage(const FDEDamageRequest& Request);
@@ -87,7 +88,7 @@ public:
     UFUNCTION(BlueprintCallable, Category = "Health")
     void InstantKill(AActor* Executioner, bool bShowDamage /* = false */);
 protected:
-    void ApplyFinalDamage(float InDamage, AActor* InCauser, bool bInIsCritical, const FGameplayTagContainer& InDamageTags);
+    void ApplyFinalDamage(float InDamage, AActor* InInstigator, bool bInIsCritical, const FGameplayTagContainer& InDamageTags);
 
 public:
     // 기본 타격음 (살점 맞는 소리 등)

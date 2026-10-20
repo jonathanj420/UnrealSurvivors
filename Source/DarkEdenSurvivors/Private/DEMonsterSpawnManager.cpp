@@ -464,7 +464,7 @@ FVector ADEMonsterSpawnManager::GetRandomSpawnLocation()
 }
 
 
-void ADEMonsterSpawnManager::OnMonsterDied(ADEMonsterBase* Monster)
+void ADEMonsterSpawnManager::OnMonsterDied(ADEMonsterBase* Monster, AActor* Killer)
 {
     //UE_LOG(LogTemp, Warning, TEXT("Calling On Monster Died in Manager"));
     if (!Monster) return;
@@ -495,9 +495,10 @@ void ADEMonsterSpawnManager::OnMonsterDied(ADEMonsterBase* Monster)
 
 
 
-    if (Player)
+    // 게이지는 막타를 친 플레이어에게. 가해자가 없는 죽음(치트 등)은 주지 않는다
+    if (ADECharacterBase* KillerCharacter = Cast<ADECharacterBase>(Killer))
     {
-        Player->AddBloodDrainGauge(Player->GetBloodDrainGainPerKill());
+        KillerCharacter->AddBloodDrainGauge(KillerCharacter->GetBloodDrainGainPerKill());
     }
 
     // 즉시 빼야 다음 Tick의 ReplenishToMinimum이 바로 보충한다

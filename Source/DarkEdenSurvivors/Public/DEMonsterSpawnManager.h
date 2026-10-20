@@ -99,7 +99,7 @@ public:
 
 
 public:
-    void OnMonsterDied(class ADEMonsterBase* Monster);
+    void OnMonsterDied(class ADEMonsterBase* Monster, AActor* Killer);
     const TArray<ADEMonsterBase*>& GetActiveMonsters() const;
 
 

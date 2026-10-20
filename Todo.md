@@ -101,6 +101,19 @@
   - 맵 전체 검색이 `GetGameMode`를 거치는 건 그대로 둠. 멀티에서도 스킬 판정은 서버에서 돌 것이라 문제 아님
 - [ ] OptionValues 키가 문자열로 흩어져 있다 (`"Range"`, `"Angle"`, `"Interval"`, `"HitInterval"`, `"OrbitRadius"`, `"Radius"`). 키 상수를 한 곳에 모을지 검토. `SelectNearestTarget`의 `"Radius"` 키는 DT의 Radius 컬럼과 이름이 겹친다
 
+## 데미지/체력/킬 (2026-10-20 리뷰)
+
+- [x] 스킬 로컬 OnHit에서 처형한 킬이 집계되지 않던 문제: `InstantDamage`와 `ADESkillActorBase::TryDealDamage`의 로컬 이펙트용 `FCombatEventData`가 `SourceObject`를 비워 둬서, 로컬 Execution의 후속 요청이 출처 없이 나갔다. 둘 다 `SourceSkill`을 넣는다
+  - `UDECombatComponent::HandleDamageDealt`: 킬 집계와 글로벌 OnKill은 출처와 상관없이 한다. 출처는 `OnTargetKilled`에만 필요. 킬마다 찍던 `Total Kill Count` 로그 삭제
+- [x] 사망 이벤트에 킬러를 싣는다 (멀티 대비): `FOnDying(AActor* Killer)`, `FOnMonsterDeath(Monster, Killer)`. 킬러는 `Request.Instigator`(스킬 액터인 DamageCauser가 아님). BloodDrain 게이지는 캐싱한 `Player` 대신 킬러에게 준다. 가해자 없는 죽음(`SetCurrentHP` 치트)은 게이지 없음
+- [ ] BloodDrain 마무리 데미지(`UDESkill_BloodDrain::ApplyFinishDamage`)가 `UGameplayStatics::ApplyDamage` → `ADEMonsterBase::TakeDamage` → `ProcessDamage`로 가서 OnPreHit, 피해 보정, OnHit/OnKill, 킬 집계를 건너뛴다. `ApplyCombatDamage`로 바꾸면 몬스터 `TakeDamage` 오버라이드는 C++ 호출처가 없어진다 (BP 확인 필요)
+- [ ] 글로벌 OnPreHit(`ApplyCombatDamage`)이 DoT 틱과 처형에도 걸린다. 상태이상 피해 보정은 DoT를 제외하는데 글로벌 PreHit은 안 한다. 의도인지 결정. 글로벌 `PreHitData`에는 `SourceObject`/`SourceContext`가 없어 스킬별 조건 PreHit은 만들 수 없다
+- [ ] 죽은 코드 (BP 확인 후): `ADEMonsterBase::Die`(`StartDying`과 중복), `UDEHealthComponent::InstantKill`(킬 집계를 안 거침), `UDECombatComponent::OnEnemyKilled`(broadcast 없음), `FDEDamageRequest::LifeStealChance`(안 읽음)
+- [ ] `ECombatEventTrigger::OnCrit`/`OnTakeDamage`를 broadcast하는 곳이 없다. 이 트리거로 만든 이펙트는 아무 반응이 없다
+- [ ] `TotalDamageDealt`가 오버킬을 포함한다 (HP 차감 전 `FinalDamage`). 통계로 쓸 거면 실제 깎인 양으로
+- [ ] `ResetMonster`에서 `SetMaxHP(…, true)` 뒤 `ResetHealth()`를 두 번 더 부른다 (무해)
+- [ ] `HandleDamageDealt`의 `Cast<IDEDamageInstigatorInterface>`는 BP 구현 인터페이스면 null이라 크래시. 지금은 C++ 구현체뿐
+
 ## 몬스터 최적화 (목표 동시 1000마리)
 
 - [x] 접촉 공격을 오버랩 이벤트 대신 거리 판정으로 (`6207bc9`)

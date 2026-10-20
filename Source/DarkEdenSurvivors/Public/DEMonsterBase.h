@@ -10,7 +10,7 @@
 //class ADEMonsterBase;
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMonsterDeath, ADEMonsterBase*, Monster);
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMonsterDeath, ADEMonsterBase*, Monster);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnMonsterDeath, ADEMonsterBase*);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnMonsterDeath, ADEMonsterBase* /*Monster*/, AActor* /*Killer*/);
 
 enum class EMonsterCrowdControl : uint8
 {
@@ -145,7 +145,7 @@ private:
 
 protected:
 	void Die();
-	void StartDying();
+	void StartDying(AActor* Killer);
 	public:
 
 	void ExecuteFinalDeath();

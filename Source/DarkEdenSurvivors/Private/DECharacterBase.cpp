@@ -105,7 +105,7 @@ void ADECharacterBase::BeginPlay()
     if (HealthComponent)
     {
         // HP가 0이 되면 HealthComponent는 OnDying만 broadcast한다 (OnDeath는 사망 처리를 끝낸 쪽이 부른다)
-        HealthComponent->OnDying.AddUObject(this, &ADECharacterBase::Die);
+        HealthComponent->OnDying.AddWeakLambda(this, [this](AActor* /*Killer*/) { Die(); });
     }
     if (ProgressionComponent)
     {

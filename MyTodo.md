@@ -131,6 +131,12 @@
 
 - [ ] 플레이 중 Output Log에 `[Pool] Duplicate return ignored: <액터 이름>`이 뜨는지 확인. 뜨면 액터 이름을 알려줘 (이중 반환하는 호출처 추적용. AcidBolt, 스킬 진화/취소 시점 위주로)
 
+## 킬 집계/킬러 전달 후 확인
+
+- [ ] 몬스터를 잡을 때마다 BloodDrain 게이지가 전처럼 차는지 확인 (이제 막타 친 플레이어에게 준다)
+- [ ] 스킬 BP의 `LocalEffects`에 Execution을 단 게 있으면, 처형 킬에서 Output Log에 `SourceObject null` Warning이 더는 안 뜨는지 확인
+- [ ] Reference Viewer: `ADEMonsterBase::Die`, `UDEHealthComponent::InstantKill`, BP에서 몬스터에게 `Apply Damage`를 부르는 곳이 있는지
+
 ## SpawnManager 정리 후 확인
 
 - [ ] `TestPrototype`/`TestStage001`/`TestBlank` 맵을 열어 SpawnManager 인스턴스가 정상 로드되는지 확인하고 다시 저장. 루트였던 `MonsterHISM`이 빠지고 `RootScene`이 루트가 되면서 액터 위치가 원점으로 갈 수 있다 (코드는 SpawnManager 위치를 안 쓰므로 동작엔 영향 없음)

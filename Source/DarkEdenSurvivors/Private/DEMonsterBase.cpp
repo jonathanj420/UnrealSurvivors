@@ -309,10 +309,10 @@ void ADEMonsterBase::Die()
 	SetActorEnableCollision(false);
 	//DropExp();
 
-	OnMonsterDeath.Broadcast(this);
+	OnMonsterDeath.Broadcast(this, nullptr);
 }
 
-void ADEMonsterBase::StartDying()
+void ADEMonsterBase::StartDying(AActor* Killer)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Monster Starts Dying"));
 	if (bIsDying) return;  // 이중 죽음 방지
@@ -320,7 +320,7 @@ void ADEMonsterBase::StartDying()
 	bIsAlive = false;
 	SetActorEnableCollision(false);
 
-	OnMonsterDeath.Broadcast(this);
+	OnMonsterDeath.Broadcast(this, Killer);
 
 
 	//FinishDeath();

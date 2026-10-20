@@ -113,7 +113,7 @@ void UDEHealthComponent::SetCurrentHP(float NewHP)
         // 필요하다면 OnResurrect 같은 이벤트 추가 브로드캐스트
     }
 }
-void UDEHealthComponent::HandleDeath(AActor* DamageCauser)
+void UDEHealthComponent::HandleDeath(AActor* Killer)
 {
     if (bIsDead) return;
 
@@ -122,7 +122,7 @@ void UDEHealthComponent::HandleDeath(AActor* DamageCauser)
 
     OnHPChanged.Broadcast(CurrentHP, MaxHP);
     // OnDeath는 소유 액터가 사망 처리를 끝낸 뒤 broadcast한다
-    OnDying.Broadcast();
+    OnDying.Broadcast(Killer);
     // 여기서는 Destroy / 애니메이션 처리 안 함
     // 소유 Actor(Character/Monster)가 책임지게 함 (AAA 스타일)
 }
@@ -175,10 +175,10 @@ FDEDamageResult UDEHealthComponent::ProcessDamage(const FDEDamageRequest& Reques
     Result.FinalDamage = CalculatedDamage;
     Result.bIsCritical = bCriticalSuccess;
 
-    // 4. 실제 체력 차감 및 UI 처리 (여기서 Request.DamageCauser를 넘기기 때문에 쿨감 버그 해결!)
+    // 4. 실제 체력 차감 및 UI 처리. 킬은 스킬 액터(DamageCauser)가 아니라 시전자(Instigator)에게 돌아간다
     if (Result.FinalDamage > 0.0f)
     {
-        ApplyFinalDamage(Result.FinalDamage, Request.DamageCauser, bCriticalSuccess, Request.DamageTags);
+        ApplyFinalDamage(Result.FinalDamage, Request.Instigator, bCriticalSuccess, Request.DamageTags);
     }
 
     // 5. ApplyFinalDamage를 거치면서 죽었을 수 있으므로 갱신
@@ -187,7 +187,7 @@ FDEDamageResult UDEHealthComponent::ProcessDamage(const FDEDamageRequest& Reques
     return Result;
 }
 
-void UDEHealthComponent::ApplyFinalDamage(float InDamage, AActor* InCauser, bool bInIsCritical, const FGameplayTagContainer& InDamageTags)
+void UDEHealthComponent::ApplyFinalDamage(float InDamage, AActor* InInstigator, bool bInIsCritical, const FGameplayTagContainer& InDamageTags)
 {
     if (bIsDead) return;
 
@@ -246,7 +246,7 @@ void UDEHealthComponent::ApplyFinalDamage(float InDamage, AActor* InCauser, bool
     // 사망 처리
     if (CurrentHP <= 0.0f)
     {
-        HandleDeath(InCauser);
+        HandleDeath(InInstigator);
     }
 }
 
