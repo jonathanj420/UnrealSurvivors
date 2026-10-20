@@ -219,6 +219,10 @@ void ADEMonsterBase::ResetMonster(const FDEMonsterData* Data)
 
 	if (!Data) return;
 
+	++SpawnSerial;
+	// 한 클래스가 여러 DT 행을 쓰므로 등급은 BP 기본값이 아니라 행에서 가져온다
+	MonsterRank = Data->MonsterRank;
+
 	//mesh for later
 	// 1. 메쉬 교체 (Get() 사용 - 미리 로드되어 있어야 함)
 	if (!Data->MonsterMesh.IsNull())
@@ -351,33 +355,6 @@ bool ADEMonsterBase::IsAlive() const
 
 
 }
-void ADEMonsterBase::ApplyStun(float Duration)
-{
-	const float Now = GetWorld()->GetTimeSeconds();
-
-	CCState = EMonsterCrowdControl::Stun;
-
-	// ✔ 핵심: 기존 스턴보다 길면 갱신
-	CCEndTime = FMath::Max(CCEndTime, Now + Duration);
-}
-
-bool ADEMonsterBase::IsStunned() const
-{
-	return CCState == EMonsterCrowdControl::Stun;
-}
-
-void ADEMonsterBase::UpdateCrowdControl(float CurrentTime)
-{
-	if (CCState == EMonsterCrowdControl::None)
-		return;
-
-	if (CurrentTime >= CCEndTime)
-	{
-		CCState = EMonsterCrowdControl::None;
-		CCEndTime = 0.f;
-	}
-}
-
 void ADEMonsterBase::ExecuteAttackLogic(double CurrentTime, ADECharacterBase* Target)
 {
 	if (!Target || Target->IsDead()) return;

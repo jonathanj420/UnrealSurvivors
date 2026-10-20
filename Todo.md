@@ -106,7 +106,16 @@
 - [x] 스킬 로컬 OnHit에서 처형한 킬이 집계되지 않던 문제: `InstantDamage`와 `ADESkillActorBase::TryDealDamage`의 로컬 이펙트용 `FCombatEventData`가 `SourceObject`를 비워 둬서, 로컬 Execution의 후속 요청이 출처 없이 나갔다. 둘 다 `SourceSkill`을 넣는다
   - `UDECombatComponent::HandleDamageDealt`: 킬 집계와 글로벌 OnKill은 출처와 상관없이 한다. 출처는 `OnTargetKilled`에만 필요. 킬마다 찍던 `Total Kill Count` 로그 삭제
 - [x] 사망 이벤트에 킬러를 싣는다 (멀티 대비): `FOnDying(AActor* Killer)`, `FOnMonsterDeath(Monster, Killer)`. 킬러는 `Request.Instigator`(스킬 액터인 DamageCauser가 아님). BloodDrain 게이지는 캐싱한 `Player` 대신 킬러에게 준다. 가해자 없는 죽음(`SetCurrentHP` 치트)은 게이지 없음
-- [ ] BloodDrain 마무리 데미지(`UDESkill_BloodDrain::ApplyFinishDamage`)가 `UGameplayStatics::ApplyDamage` → `ADEMonsterBase::TakeDamage` → `ProcessDamage`로 가서 OnPreHit, 피해 보정, OnHit/OnKill, 킬 집계를 건너뛴다. `ApplyCombatDamage`로 바꾸면 몬스터 `TakeDamage` 오버라이드는 C++ 호출처가 없어진다 (BP 확인 필요)
+- [x] BloodDrain 정리 (컨셉: 방어형 폭주 재해석, 범위 내 적을 묶어 배리어로. 개발자 결정, 2026-10-20)
+  - 마무리 데미지를 `ApplyCombatDamage`로. BloodDrain 킬도 킬 집계, OnHit/OnKill, 게이지가 붙는다 (킬 판정은 나게, 개발자 결정). 크리티컬 없음
+  - 스턴이 몬스터를 멈추지 못하던 문제: `22a76da`에서 이동 체크가 `IsStunned`에서 `bCanMove`로 바뀌었는데 BloodDrain만 옛 `ApplyStun`(CCState)을 썼다. `StunEffectClass`(기본 `UDEStatusEffect_Stun`) 상태이상으로 건다. 옛 CC(`ApplyStun`/`IsStunned`/`UpdateCrowdControl`/`EMonsterCrowdControl`) 삭제
+  - 시전 중 다른 스킬에 죽고 풀에서 재사용된 몬스터가 마무리 데미지와 회복을 받던 문제: `ADEMonsterBase::GetSpawnSerial`(ResetMonster마다 증가)로 거른다
+  - 보스는 광흡 면역. `ResetMonster`가 이제 DT의 `MonsterRank`를 몬스터에 복사한다 (전엔 복사하지 않아 C++에서 등급이 항상 Normal)
+- [ ] BloodDrain 배리어가 바깥에서 밀려 들어온다: `ResolveMonsterOverlap`이 `bCanMove`와 무관하게 양쪽을 밀어서, 바깥 몬스터가 스턴된 링을 안쪽으로 민다. 움직일 수 없는 쪽은 고정하고 움직이는 쪽만 밀어내는 방식 검토 (몬스터 최적화와 같이)
+- [ ] BloodDrain 데미지 방식: 지금 고정 `DrainAmountPerMonster`(회복량과 같은 값). 원작처럼 대상 체력 %로 할지 결정. 엘리트 면역 여부 결정 (원작은 몬스터마다 다름 → 몬스터 DT에 면역 플래그를 두는 방식 후보)
+- [ ] BloodDrain 특화 빌드(범위 증가 퍽/악세서리) 구상 중. 지금 `DrainRadius`/`StunDuration`/데미지는 고정값이라 스탯(AreaSize 등)을 받지 않는다
+- [ ] 이동불가가 `bCanMove` bool 하나라 서로 다른 스턴 클래스가 겹치면 먼저 끝난 쪽이 풀어 버린다. 같은 클래스는 `StackPolicy::Ignore`(기본)라 나중 스턴의 더 긴 시간이 무시된다
+- [ ] `ADEMonsterBase::TakeDamage` 오버라이드는 이제 C++ 호출처가 없다 (BP에서 몬스터에 `Apply Damage`를 부르는지 확인 후 삭제)
 - [ ] 글로벌 OnPreHit(`ApplyCombatDamage`)이 DoT 틱과 처형에도 걸린다. 상태이상 피해 보정은 DoT를 제외하는데 글로벌 PreHit은 안 한다. 의도인지 결정. 글로벌 `PreHitData`에는 `SourceObject`/`SourceContext`가 없어 스킬별 조건 PreHit은 만들 수 없다
 - [ ] 죽은 코드 (BP 확인 후): `ADEMonsterBase::Die`(`StartDying`과 중복), `UDEHealthComponent::InstantKill`(킬 집계를 안 거침), `UDECombatComponent::OnEnemyKilled`(broadcast 없음), `FDEDamageRequest::LifeStealChance`(안 읽음)
 - [ ] `ECombatEventTrigger::OnCrit`/`OnTakeDamage`를 broadcast하는 곳이 없다. 이 트리거로 만든 이펙트는 아무 반응이 없다

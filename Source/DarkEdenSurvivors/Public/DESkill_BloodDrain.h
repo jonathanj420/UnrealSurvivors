@@ -10,6 +10,7 @@
 class ADEMonsterBase;
 class ADECharacterBase;
 class UNiagaraSystem;
+class UDEStatusEffectBase;
 
 
 /**
@@ -37,6 +38,10 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "BloodDrain")
     float StunDuration = 3.0f;
 
+    /** 대상에게 거는 이동불가 상태이상. 몬스터 이동은 bCanMove만 보므로 상태이상을 거쳐야 멈추고, 죽으면 RemoveAllEffects로 풀린다 */
+    UPROPERTY(EditDefaultsOnly, Category = "BloodDrain")
+    TSubclassOf<UDEStatusEffectBase> StunEffectClass;
+
     //************* Effect and Sound**************
     /** 광흡 이펙트 (몬스터 → 플레이어) */
     UPROPERTY(EditDefaultsOnly, Category = "BloodDrain")
@@ -45,7 +50,8 @@ protected:
     USoundBase* BloodDrainSound;
 
 protected:
-    TArray<TWeakObjectPtr<ADEMonsterBase>> CachedTargets;
+    // 몬스터와 잡을 당시의 SpawnSerial. 시전 중 다른 스킬에 죽고 풀에서 재사용된 몬스터는 마무리 대상에서 뺀다
+    TArray<TPair<TWeakObjectPtr<ADEMonsterBase>, uint32>> CachedTargets;
     FTimerHandle BloodDrainTimerHandle;
 private:
     /** 광흡 시작 처리 (스턴 + 이펙트) */

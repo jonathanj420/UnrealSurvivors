@@ -12,14 +12,6 @@
 //DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMonsterDeath, ADEMonsterBase*, Monster);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnMonsterDeath, ADEMonsterBase* /*Monster*/, AActor* /*Killer*/);
 
-enum class EMonsterCrowdControl : uint8
-{
-	None,
-	Stun,
-	// Slow,
-	// Root,
-	// Fear ...
-};
 
 class UDEStatComponent;
 class UDEHealthComponent;
@@ -129,17 +121,11 @@ protected:
 
 
 public:
-	// ===== CC =====
-	void ApplyStun(float Duration);
-	bool IsStunned() const;
-	void UpdateCrowdControl(float CurrentTime);
+	// 풀에서 꺼낼 때마다 증가한다. 약포인터로 들고 있던 대상이 그 사이 죽고 재사용됐는지 가릴 때 쓴다
+	uint32 GetSpawnSerial() const { return SpawnSerial; }
 
 private:
-	// 현재 CC 상태
-	EMonsterCrowdControl CCState = EMonsterCrowdControl::None;
-
-	// CC 종료 시간 (World Time)
-	float CCEndTime = 0.f;
+	uint32 SpawnSerial = 0;
 
 
 

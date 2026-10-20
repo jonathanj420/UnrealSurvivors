@@ -8,6 +8,10 @@
 #include "DEMonsterSpawnManager.h"
 
 #include "DEGameMode_Stage.h"
+#include "DEGameplayLibrary.h"
+#include "DEStatusEffectComponent.h"
+#include "DEStatusEffect_Stun.h"
+#include "DESkillContext.h"
 
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraComponent.h"
@@ -18,6 +22,8 @@
 
 UDESkill_BloodDrain::UDESkill_BloodDrain()
 {
+    StunEffectClass = UDEStatusEffect_Stun::StaticClass();
+
     static ConstructorHelpers::FObjectFinder<UNiagaraSystem>
         NS_BloodDrain(TEXT("/Game/DarkEden/Data/Niagara/NS_BloodDrainCustom.NS_BloodDrainCustom"));
 
@@ -107,10 +113,12 @@ void UDESkill_BloodDrain::StartBloodDrain(ADECharacterBase* Player)
             continue;
 
 
-        CachedTargets.Add(Monster);
+        CachedTargets.Emplace(Monster, Monster->GetSpawnSerial());
         MonsterPositions.Add(Monster->GetActorLocation());
-        Monster->ApplyStun(StunDuration);
-        UE_LOG(LogTemp,Warning,TEXT("Monster Blood Drain posi : %s "),*Monster->GetActorLocation().ToString())
+        if (Monster->StatusEffectComponent)
+        {
+            Monster->StatusEffectComponent->AddEffect(StunEffectClass, Player, StunDuration, 0.f, 0.f, FDESkillContext());
+        }
 
         
     }
@@ -125,10 +133,10 @@ void UDESkill_BloodDrain::FinishBloodDrain()
 
     float TotalHeal = 0.f;
 
-    for (TWeakObjectPtr<ADEMonsterBase> MonsterPtr : CachedTargets)
+    for (const TPair<TWeakObjectPtr<ADEMonsterBase>, uint32>& Target : CachedTargets)
     {
-        ADEMonsterBase* Monster = MonsterPtr.Get();
-        if (!Monster || !Monster->IsAlive())
+        ADEMonsterBase* Monster = Target.Key.Get();
+        if (!Monster || !Monster->IsAlive() || Monster->GetSpawnSerial() != Target.Value)
             continue;
 
         ApplyFinishDamage(Monster, Player);
@@ -171,6 +179,10 @@ void UDESkill_BloodDrain::CollectTargets(
         if (!Monster || !Monster->IsAlive())
             continue;
 
+        // 보스는 광흡 면역
+        if (Monster->GetMonsterRank() == EDEMonsterRank::Boss)
+            continue;
+
         const float DistSq = FVector::DistSquared(
             PlayerLocation,
             Monster->GetActorLocation()
@@ -207,6 +219,9 @@ void UDESkill_BloodDrain::SpawnBloodDrainNiagara(
         Player->GetActorLocation()
     );
 
+    // 시전 시간 (초). 흐름이 플레이어에게 모이는 시점을 마무리 데미지 시점에 맞추는 데 쓴다
+    NiagaraComp->SetFloatParameter(TEXT("DrainDuration"), StunDuration);
+
     //// ⭐ 몬스터 위치 배열 전달
     //NiagaraComp->SetNiagaraVariableVec3Array(
     //    TEXT("User.MonsterPositions"),
@@ -217,12 +232,6 @@ void UDESkill_BloodDrain::SpawnBloodDrainNiagara(
         NiagaraComp,
         TEXT("MonsterPosi"), // 나이아가라 User Parameter 이름과 일치
         MonsterPositions);
-    TArray<FVector> DebugArray=UNiagaraDataInterfaceArrayFunctionLibrary::GetNiagaraArrayVector(NiagaraComp, TEXT("MonsterPosi"));
-    for (int i = 0; i < DebugArray.Num(); i++)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Monster Blood Drain Posi : %s"),*DebugArray[i].ToString());
-    }
-
 }
 
 void UDESkill_BloodDrain::ApplyFinishDamage(
@@ -230,11 +239,13 @@ void UDESkill_BloodDrain::ApplyFinishDamage(
     ADECharacterBase* Player
 ) const
 {
-    UGameplayStatics::ApplyDamage(
-        Monster,
-        DrainAmountPerMonster,
-        Player->GetController(),
-        Player,
-        UDamageType::StaticClass()
-    );
+    // ApplyCombatDamage를 거쳐야 킬 집계, OnHit/OnKill, 킬러 게이지가 붙는다. 크리티컬은 없다 (CritChance 0)
+    FDEDamageRequest Req;
+    Req.Instigator = Player;
+    Req.DamageCauser = Player;
+    Req.SourceObject = const_cast<UDESkill_BloodDrain*>(this);
+    Req.Victim = Monster;
+    Req.BaseDamage = DrainAmountPerMonster;
+
+    UDEGameplayLibrary::ApplyCombatDamage(Req);
 }
