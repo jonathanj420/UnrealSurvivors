@@ -65,11 +65,11 @@
   - 동작 변경: 이미 얻은 진화 결과 스킬도 DT에 다음 레벨 행이 있으면 레벨업 카드에 나온다 (전에는 상자에서만 올라갔다)
   - `FDESkillRow::MaxLevel` 컬럼 삭제 여부는 BP에서 쓰는지 Reference Viewer로 확인 후 결정
 - [x] 상자에서 진화 재료가 업그레이드로 같이 뽑혀 Lv1로 다시 생기던 문제: 진화 카드의 `ConsumedSkillIDs`를 업그레이드 후보에서 뺀다
-- [ ] 상자에서 같은 스킬이 업그레이드로 두 번 뽑히면, 남은 레벨이 1개일 때 두 번째는 적용 실패한다 (뽑을 때 예정된 레벨업을 반영하지 않음)
+- [x] 상자에서 같은 스킬/장신구가 두 번 뽑힐 때 예정된 레벨업을 반영: `GenerateChestRewards`가 상자 하나 안에서 뽑힌 레벨업 수를 들고 `GetRandomUpgradableChoice`에 넘긴다. 남은 레벨이 없으면 후보에서 빠지고, 두 번째 카드는 Lv+2로 표시된다
 - [x] 상태 일원화: `SkillLevels`, `UDESkillBase::CurrentLevel`(쓰기만 함) 삭제. 레벨은 `FActiveSkill::CurrentLevel` 하나. Inventory의 스킬 목록과 `MaxSkillSlots`를 `UDESkillManagerComponent::SkillSlotOrder`/`MaxSkillSlots`로 이동 (개발자 결정, 2026-10-20). HUD 스킬 위젯은 SkillManager의 `OnSkillUpdated`만 본다. 진화 결과는 재료 중 가장 앞 슬롯에 들어간다. 결과 스킬 데이터가 없으면 재료를 지우기 전에 진화를 취소한다
 - [ ] `UDEInventoryComponent`에는 장신구 ID 목록만 남았는데, `UDEAccessoryComponent`의 장착 맵과 겹친다. 쓰는 곳은 `CheckEvolution`의 `HasAccessory` 하나. AccessoryComponent로 합치고 Inventory 삭제 검토
 - [x] 레벨업 시 쿨다운 0 리셋이 진행 중인 시전을 끊던 문제: 레벨업하면 바로 재발동하되, 이전 시전(Delay로 멈춘 파이프라인, `FireProjectile` 연사)이 끝난 뒤에 발동한다 (개발자 결정 (b), 2026-10-20). `UDEAutoSkillBase::IsCastInProgress` + `UDESkillBehavior::IsInProgress`. 쿨다운이 시전 시간보다 짧을 때도 같은 이유로 끊기던 것이 같이 해결된다. 자체 타이머를 쓰는 Behavior를 새로 만들면 `IsInProgress`를 오버라이드할 것
-- [ ] `FireProjectile` 연사 타이머는 `EndBehavior`에서 정리되지 않는다. 진화로 `CancelSkill`된 스킬의 남은 연사가 끝까지 나간다
+- [x] `FireProjectile::EndBehavior`에서 연사 타이머 정리. 진화로 `CancelSkill`된 스킬의 남은 연사가 멈춘다. `EndBehavior`는 Duration 스킬의 `FinishSkill`에서도 불리므로, Duration이 연사보다 짧은 스킬은 그 시점에 연사가 끊긴다 (`InstantDamage`의 HitInterval과 같은 동작)
 - [ ] 죽은 코드: `GetRandomSkillChoices`, `GetUpgradeableSkills`, `ApplyCharacterDamageMultiplier`, `DeltaCheck`, `TotalReducedCooldownAmount`, `AccessoryWeight`, `bCooldownAfterDuration`(set만 하고 안 읽음)
 - [ ] 스킬 DT를 생성자의 하드코딩 경로로 로드해서 `SkillRowMap`을 만든다. `SkillRowTable`은 EditAnywhere라 BP에서 바꿔도 맵에 반영되지 않는다
 
@@ -133,7 +133,7 @@
 - [ ] `ECombatEventTrigger::OnCrit`/`OnTakeDamage`를 broadcast하는 곳이 없다. 이 트리거로 만든 이펙트는 아무 반응이 없다
 - [ ] `TotalDamageDealt`가 오버킬을 포함한다 (HP 차감 전 `FinalDamage`). 통계로 쓸 거면 실제 깎인 양으로
 - [x] `ResetMonster`의 중복 `ResetHealth` 호출 정리
-- [ ] `HandleDamageDealt`의 `Cast<IDEDamageInstigatorInterface>`는 BP 구현 인터페이스면 null이라 크래시. 지금은 C++ 구현체뿐
+- [x] `HandleDamageDealt`가 `Implements<>` 대신 `Cast` 결과로 판단 (BP에서 붙인 인터페이스면 null 역참조로 크래시). 인터페이스에 `CannotImplementInterfaceInBlueprint`
 
 ## 마스터(보스) (2026-10-20 결정)
 
