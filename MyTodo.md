@@ -118,6 +118,13 @@
 - [ ] 스킬 전부가 예전처럼 맞는지 확인: 투사체(관통 횟수대로 가까운 적부터), AcidBolt 폭발, GoreGland, Darkness/DanseMacabre, 범위/부채꼴/스윕 스킬, 가장 가까운 적 타겟팅
 - [ ] BP에서 몬스터 콜리전이나 오버랩에 의존하는 곳이 있는지 확인 (BP 스킬, 레벨 BP 등). 없으면 몬스터 캡슐 콜리전을 끈다
 
+## 스테이지 클리어
+
+- [ ] `WBP_Result`에 TextBlock `Text_ResultTitle` 추가 (선택. 없으면 제목만 안 바뀐다). 문구는 WBP Class Defaults의 `ClearTitleText`/`GameOverTitleText`
+- [ ] 스테이지 GameMode BP의 Class Defaults에서 `StageDuration`을 30 같은 짧은 값으로 바꿔 PIE: 30초에 멈추고 결과창이 클리어로 뜨는지, 시간이 0:30인지, 골드가 한 번만 정산되는지 확인 후 1800으로 되돌리기
+- [ ] ESC 메뉴의 나가기는 지금처럼 게임오버로 뜨는지
+- [ ] 웨이브 DT가 30분까지 채워져 있는지 (마지막 웨이브 이후 무엇이 나오는지)
+
 ## 성능 측정
 
 - [ ] `TestStage001`/`TestBlank`에서 `NavMeshBoundsVolume`, `RecastNavMesh` 삭제 (내비 사용처 없음. `TestPrototype`은 완료, 미커밋)

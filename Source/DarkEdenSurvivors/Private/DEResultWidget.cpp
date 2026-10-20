@@ -16,8 +16,13 @@ void UDEResultWidget::NativeConstruct()
 		Btn_MainMenu->OnClicked.AddDynamic(this, &UDEResultWidget::OnMainMenuClicked);
 }
 
-void UDEResultWidget::SetResultData(int32 EarnedGold, int32 KillCount, float DamageDealt, float SurviveTime)
+void UDEResultWidget::SetResultData(int32 EarnedGold, int32 KillCount, float DamageDealt, float SurviveTime, bool bCleared)
 {
+	bStageCleared = bCleared;
+
+	if (Text_ResultTitle)
+		Text_ResultTitle->SetText(bCleared ? ClearTitleText : GameOverTitleText);
+
 	// 1. 화면에 텍스트 갱신
 	if (Text_GoldEarned)
 		Text_GoldEarned->SetText(FText::AsNumber(EarnedGold));

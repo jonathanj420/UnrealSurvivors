@@ -42,7 +42,15 @@ void ADEGameMode_Stage::Tick(float DeltaTime)
 {
     Super::Tick(DeltaTime);
 
+    if (bStageEnded) return;
+
     ElapsedTime += DeltaTime;
+
+    if (StageDuration > 0.0f && ElapsedTime >= StageDuration)
+    {
+        ElapsedTime = StageDuration;
+        StageClear();
+    }
 }
 
 void ADEGameMode_Stage::BeginPlay()
@@ -122,9 +130,23 @@ const TArray<class ADEMonsterBase*>& ADEGameMode_Stage::GetActiveMonsters() cons
 
 void ADEGameMode_Stage::GameOver()
 {
-    UE_LOG(LogTemp, Warning, TEXT("=== GAME OVER ==="));
+    EndStage(false);
+}
 
-    // 1. 게임 일시 정지. 일시정지와 입력 모드는 각 플레이어 컨트롤러가 관리한다
+void ADEGameMode_Stage::StageClear()
+{
+    EndStage(true);
+}
+
+void ADEGameMode_Stage::EndStage(bool bCleared)
+{
+    // 사망과 클리어가 같은 프레임에 겹치거나 나가기가 두 번 눌려도 정산은 한 번만
+    if (bStageEnded) return;
+    bStageEnded = true;
+
+    UE_LOG(LogDarkEdenSurvivors, Log, TEXT("[Stage] %s at %.1fs"), bCleared ? TEXT("Cleared") : TEXT("Game over"), ElapsedTime);
+
+    // 1. 게임 일시 정지. 일시정지와 입력 모드는 각 플레이어 컨트롤러가 관리한다 (클리어도 같은 이유를 쓴다)
     for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
     {
         if (ADEPlayerController* PC = Cast<ADEPlayerController>(It->Get()))
@@ -170,7 +192,7 @@ void ADEGameMode_Stage::GameOver()
             }
 
             // 4. 위젯에 데이터 전달
-            ResultUI->SetResultData(FinalGold, FinalKills, FinalDamageDealt, FinalTime);
+            ResultUI->SetResultData(FinalGold, FinalKills, FinalDamageDealt, FinalTime, bCleared);
         }
     }
 

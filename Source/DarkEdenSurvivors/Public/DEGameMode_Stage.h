@@ -46,6 +46,14 @@ protected:
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Reward")
     int32 EarnedGold = 0;
 
+    // 이 시간(초)만큼 버티면 클리어. 0 이하면 클리어 없음 (테스트 맵용)
+    UPROPERTY(EditDefaultsOnly, Category = "Stage", meta = (Units = "s"))
+    float StageDuration = 1800.0f;
+
+    // 클리어나 게임오버로 스테이지가 끝났다. 정산이 두 번 일어나지 않게 막는다
+    UPROPERTY(VisibleInstanceOnly, Category = "GameInfo")
+    bool bStageEnded = false;
+
     
 
     // 결과창 위젯 클래스 (에디터에서 할당)
@@ -56,6 +64,16 @@ protected:
 public:
     UFUNCTION()
     void GameOver();
+
+    // ElapsedTime이 StageDuration에 도달하면 Tick에서 부른다
+    void StageClear();
+
+    bool IsStageEnded() const { return bStageEnded; }
+
+private:
+    // 클리어와 게임오버 공통: 정지, 골드 정산과 저장, 결과창
+    void EndStage(bool bCleared);
+
 public:
     // ★ 몬스터가 죽거나 상자를 먹었을 때 호출할 '입금' 함수
     UFUNCTION(BlueprintCallable, Category = "Reward")

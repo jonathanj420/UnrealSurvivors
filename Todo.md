@@ -19,7 +19,10 @@
 - [ ] AcidBolt 이중 반환 경로 확인: `Explode`가 한 번 반환된 뒤 다시 불리는 경로가 있는지 (같은 프레임 다중 오버랩 등). 가드 로그로 재현 확인 후 원인 수정
 - [x] AOE(Darkness/GreyDarkness/DanseMacabre)가 몬스터를 못 맞히던 문제: 오버랩은 양쪽 모두 `GenerateOverlapEvents`가 켜져 있어야 하는데 몬스터 캡슐과 `ADESkillActorBase` 구체 둘 다 꺼져 있었다. `ADESimpleAOEBase`가 오버랩 이벤트 대신 `OverlapMultiByObjectType`(Monster)으로 직접 쿼리하도록 변경. 장판은 HitInterval마다 한 번 범위 전체 타격, Orbit은 `bHitOnContact`로 매 Tick 쿼리 + 타겟별 쿨다운. SpatialGrid로 갈 때 `QueryTargets` 한 곳만 바꾸면 된다
 - [x] `DarkEdenSurvivors.h`의 채널 매크로 수정: `ECC_Monster`가 `GameTraceChannel2`(DECharacter), `ECC_PlayerAttack`가 `GameTraceChannel3`(Attack 트레이스)로 잘못 정의되어 있었다. ini 기준 5/6으로 고치고, 숫자를 직접 쓰던 6곳도 매크로로 통일. `UDEGameplayLibrary::GetNearestTarget`/`GetRandomTargets`의 반경 쿼리 경로가 몬스터를 못 찾던 문제 해결 (C++ 호출처는 전부 반경 -1이라 드러나지 않았음)
-- [ ] `GameOver` 중복 호출 가드 (`bIsGameOver`). 두 번 불리면 골드가 두 번 정산된다. 무적 해제할 때 같이
+- [x] `GameOver` 중복 호출 가드: 클리어와 게임오버가 `EndStage`를 같이 쓰고 `bStageEnded`로 한 번만 정산
+- [x] 스테이지 클리어: `StageDuration`(기본 1800초, 0 이하면 없음)만큼 버티면 `StageClear` → 결과창에 클리어 표시 (`SetResultData`의 `bCleared`, `Text_ResultTitle`)
+- [ ] 클리어 보상과 기록: 클리어 골드 보너스, 세이브에 스테이지 클리어 여부 저장(해금용). 미정
+- [ ] `StageDuration`이 GameMode 단위라 스테이지마다 다르게 하려면 GameMode BP를 나눠야 한다. 스테이지별로 필요해지면 `FDEStageRow`로 옮기고 로비에서 옵션으로 넘기기 (캐릭터 선택과 같은 방식)
 - [ ] 몬스터 접촉 공격을 `UGameplayStatics::ApplyDamage`에서 `ApplyCombatDamage`로 (`ADEMonsterBase::ExecuteAttackLogic`). `ApplyCombatDamage`는 `ProcessDamage`를 직접 불러 무적(`TakeDamage`)을 우회하므로 무적 해제할 때 같이
 - [x] 메타 업그레이드 Amount ×2: `FDEStatModifier::Multiplier` 기본값을 0으로 변경. 액세서리 DataAsset은 Multiplier를 전부 명시적으로 저장해 두어서 값이 그대로다 (Buman 0.1, 나머지 0). 다른 에셋 사용처 없음
 
