@@ -49,11 +49,11 @@
 - [x] 데미지 경로: 엔진 `TakeDamage` 오버라이드(몬스터, 캐릭터)를 삭제해서 `ApplyCombatDamage` 하나만 남았다. Content에 `ApplyDamage` 참조 0 (2026-10-21)
 - [x] 일시정지와 입력 모드 관리를 한 곳으로: `ADEPlayerController`가 멈춘 이유 집합(`EDEPauseReason`: LevelUp/Chest/PauseMenu/GameOver)을 갖고, `SetPause`/입력 모드/커서는 `ApplyPauseState` 한 곳에서만 바꾼다. 이유가 하나라도 남아 있으면 멈춘 상태 유지. 멈춘 동안 입력 모드는 GameAndUI (UIOnly는 ESC 바인딩까지 막는다). ESC는 다른 이유로 멈춰 있으면 무시. `GameOver`도 이 경로를 쓰고 `GetFirstPlayerController`로 입력 모드를 바꾸던 코드 삭제. `ResumeGame` 삭제. 멀티플레이에서 이유별로 월드를 멈출지는 `ApplyPauseState`에서 정하면 된다
   - BloodDrain의 `SetAutoSkillsPaused`는 월드 일시정지가 아니라 게임플레이 규칙이라 대상 아님
-- [ ] 스턴 2개 → StatusEffect 하나로
+- [x] 스턴 2개 → StatusEffect 하나로: BloodDrain 정리 때 옛 CC(`ApplyStun`/`IsStunned`/`EMonsterCrowdControl`)를 지워서 `UDEStatusEffect_Stun` 하나만 남았다 (2026-10-21 확인). 이동불가는 `AddMoveBlock`/`RemoveMoveBlock` 카운터
 - [x] 레벨업 큐: `UDELevelUpManagerComponent`가 대기 레벨업 수와 현재 선택지를 갖는다. `EnqueueLevelUp` → 선택지 생성 → `OnLevelUpChoicesReady` → 컨트롤러가 위젯 하나를 재사용해 표시 → 슬롯 클릭 → `ApplyChoice`(현재 선택지에 있는 것만 적용) → 다음 선택지 또는 `OnLevelUpClosed` → 컨트롤러가 닫는다. 선택지가 0개인 레벨업은 건너뛴다. 위젯은 더 이상 선택지를 만들거나 적용하지 않는다
   - [x] 상자 보상도 매니저로: `EnqueueChest` → 보상 생성 → `OnChestRewardsReady` → 컨트롤러가 표시 → 닫기 버튼 → `ClaimChestRewards` → 다음 상자 또는 `OnChestClosed`. 같은 프레임에 주운 상자가 덮어써져 사라지던 문제 해결. `ADEPickup_Chest`의 `GetPlayerController(0)` 제거
   - [x] 레벨업과 상자는 한 번에 하나만 띄운다 (겹치면 레벨업 먼저). 창이 겹쳐 보이던 문제와, 상자 보상이 레벨업 적용 전 상태로 만들어지던 문제 해결
-- [ ] 킬 처리를 `FDEDamageResult` 기반으로 일원화 (킬 카운터 중복 해소)
+- [x] 킬 처리를 `FDEDamageResult` 기반으로 일원화: 킬 카운터는 `UDECombatComponent::TotalKillCount` 하나이고 `HandleDamageDealt`에서 `Result.bIsDead`일 때만 오른다. `ProcessDamage`/`HandleDamageDealt`를 부르는 곳은 `ApplyCombatDamage` 하나뿐이라 모든 킬이 이 경로를 지난다 (2026-10-21 확인). 결산은 `ADEGameMode_Stage`가 이 값을 읽는다
 - [x] `EvolveSkill`이 `EndSkill` 대신 `CancelSkill`을 쓰도록. `CancelSkill`은 `RegisterSkillActor`로 등록된 액터(Orbit, SpawnAOE 등)도 회수한다. 날아가는 투사체는 추적하지 않으므로 수명이 다할 때까지 남는다
 - [ ] 레거시 스킬을 BP 조립 방식으로 이전
 
