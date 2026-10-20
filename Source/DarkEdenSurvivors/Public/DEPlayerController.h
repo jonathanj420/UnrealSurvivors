@@ -69,6 +69,14 @@ private:
 	
 
 public:
+	// 접속 옵션 "Character="에서 GameMode가 넣는다 (서버). 스폰할 폰 클래스를 고를 때 쓴다. 없으면 INDEX_NONE
+	void SetSelectedCharacterID(int32 InCharacterID) { SelectedCharacterID = InCharacterID; }
+	int32 GetSelectedCharacterID() const { return SelectedCharacterID; }
+
+private:
+	int32 SelectedCharacterID = INDEX_NONE;
+
+public:
 	// SetPause, 입력 모드, 커서는 이 두 함수만 바꾼다
 	void AddPauseReason(EDEPauseReason Reason);
 	void RemovePauseReason(EDEPauseReason Reason);

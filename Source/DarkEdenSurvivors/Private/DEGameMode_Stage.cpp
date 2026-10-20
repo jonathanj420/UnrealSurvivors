@@ -9,6 +9,8 @@
 #include "DEResultWidget.h" // 아까 만든 위젯 헤더
 #include "DEGameInstance.h"
 #include "DECombatComponent.h"
+#include "DECharacterRow.h"
+#include "DarkEdenSurvivors.h"
 
 ADEGameMode_Stage::ADEGameMode_Stage()
 {
@@ -46,23 +48,60 @@ void ADEGameMode_Stage::Tick(float DeltaTime)
 void ADEGameMode_Stage::BeginPlay()
 {
     Super::BeginPlay();
+}
 
-    APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(this, 0);
+FString ADEGameMode_Stage::InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl& UniqueId, const FString& Options, const FString& Portal)
+{
+    const FString ErrorMessage = Super::InitNewPlayer(NewPlayerController, UniqueId, Options, Portal);
+
+    if (ADEPlayerController* PC = Cast<ADEPlayerController>(NewPlayerController))
+    {
+        FString CharacterOption = UGameplayStatics::ParseOption(Options, TEXT("Character"));
+
+        // 호스트(로컬) 플레이어는 맵 URL 옵션이 곧 자기 선택이다. 접속 옵션에 안 실려 왔을 때를 대비해 맵 옵션도 본다
+        if (CharacterOption.IsEmpty() && PC->IsLocalController())
+        {
+            CharacterOption = UGameplayStatics::ParseOption(OptionsString, TEXT("Character"));
+        }
+
+        if (!CharacterOption.IsEmpty())
+        {
+            PC->SetSelectedCharacterID(FCString::Atoi(*CharacterOption));
+        }
+    }
+
+    return ErrorMessage;
+}
+
+UClass* ADEGameMode_Stage::GetDefaultPawnClassForController_Implementation(AController* InController)
+{
+    const ADEPlayerController* PC = Cast<ADEPlayerController>(InController);
+    const UDEGameInstance* GI = GetGameInstance<UDEGameInstance>();
+
+    if (PC && GI && PC->GetSelectedCharacterID() != INDEX_NONE)
+    {
+        const FDECharacterRow* Row = GI->GetCharacterRow(PC->GetSelectedCharacterID());
+        if (Row && Row->CharacterClass)
+        {
+            return Row->CharacterClass;
+        }
+
+        UE_LOG(LogDarkEdenSurvivors, Warning, TEXT("[Stage] Character %d has no row or CharacterClass, using DefaultPawnClass"), PC->GetSelectedCharacterID());
+    }
+
+    return Super::GetDefaultPawnClassForController_Implementation(InController);
+}
+
+void ADEGameMode_Stage::SetPlayerDefaults(APawn* PlayerPawn)
+{
+    Super::SetPlayerDefaults(PlayerPawn);
+
     if (ADECharacterBase* Player = Cast<ADECharacterBase>(PlayerPawn))
     {
-        // [수정] AddDynamic -> AddUObject
-        // 이제 함수 이름(String)이 아니라 함수 주소(&)를 직접 연결합니다. 훨씬 빠릅니다.
+        // 같은 폰으로 다시 불려도 중복 바인딩되지 않게
+        Player->OnPlayerDied.RemoveAll(this);
         Player->OnPlayerDied.AddUObject(this, &ADEGameMode_Stage::GameOver);
     }
-
-    UWorld* World = GetWorld();
-    if (World)
-    {
-        FActorSpawnParameters SpawnParams;
-        SpawnParams.Owner = this; // GameMode를 소유자로 지정
-        // ... 나머지 SpawnerManager와 PlayerSystemManager도 동일하게 생성합니다.
-    }
-
 }
 
 void ADEGameMode_Stage::RegisterMonsterSpawnManager(ADEMonsterSpawnManager* InManager)
