@@ -116,6 +116,12 @@ public:
 	UFUNCTION()
 	void OnCharacterLevelUp(int32 NewLevel);
 
+protected:
+	// CharacterData의 마일스톤 중 RequiredLevel이 (FromLevel, ToLevel]인 것을 스탯에 적용한다
+	void ApplyLevelMilestones(int32 FromLevel, int32 ToLevel);
+
+public:
+
 	UFUNCTION()
 	UDESkillManagerComponent* GetSkillManagerComponent() { return SkillManager; }
 
@@ -174,7 +180,7 @@ public:
 	void ForceLevelUpSkill(int32 SkillId);
 
 public:
-	// 아직 C++에서 읽지 않는다 (캐릭터 선택 흐름과 함께 연결 예정)
+	// 캐릭터별 데이터 (레벨 마일스톤 패시브). 캐릭터 BP에서 지정한다
 	UPROPERTY(EditDefaultsOnly, Category = "Character Data")
 	class UDECharacterData* CharacterData;
 };

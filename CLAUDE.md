@@ -20,7 +20,7 @@ UE 5.7 / C++로 만드는 *Vampire Survivors*류 액션 서바이벌 게임이�
 
 | 영역 | 핵심 클래스 |
 |---|---|
-| 게임 플로우 | `UDEGameInstance`(세이브, 골드, 메타 업그레이드, 몬스터 DT 캐시), `ADEGameMode_Lobby` + `ADEPlayerController_Lobby` + `UDEMainMenuWidget`, `ADEGameMode_Stage`(ElapsedTime, GameOver), `ADEPlayerController`(HUD, 레벨업/상자 창 표시, 일시정지는 `EDEPauseReason` 집합으로 `ApplyPauseState` 한 곳에서) |
+| 게임 플로우 | `UDEGameInstance`(세이브, 골드, 메타 업그레이드, 몬스터 DT 캐시, 캐릭터 DT), 캐릭터 선택은 메뉴 → `OpenLevel` 옵션 `Character=<id>` → `ADEGameMode_Stage::InitNewPlayer` → `GetDefaultPawnClassForController`, `ADEGameMode_Lobby` + `ADEPlayerController_Lobby` + `UDEMainMenuWidget`, `ADEGameMode_Stage`(ElapsedTime, GameOver), `ADEPlayerController`(HUD, 레벨업/상자 창 표시, 일시정지는 `EDEPauseReason` 집합으로 `ApplyPauseState` 한 곳에서) |
 | 캐릭터 | `ADECharacterBase`(→ `ADEFemaleVampire`), `UDEStatComponent`, `UDEHealthComponent`, `UDECombatComponent`, `UDEStatusEffectComponent`, `UDEAccessoryComponent`, `UDEProgressionComponent`, `UDELevelUpManagerComponent`(레벨업과 상자 큐, 선택지 생성과 적용. 한 번에 하나씩, 레벨업 먼저) |
 | 스탯 | `FGameplayStat` = `(Base + ΣAdditive) × (1 + ΣMultiplier)`. Multiplier는 "추가 %"다. 단, `FDEStatModifier::Multiplier`의 기본값이 1.0이라 버그가 있다. |
 | 데미지 | `FDEDamageRequest` → `UDEGameplayLibrary::ApplyCombatDamage` → `UDEHealthComponent::ProcessDamage` → `FDEDamageResult` → 공격자 `UDECombatComponent::HandleDamageDealt`(OnHit/OnKill) |

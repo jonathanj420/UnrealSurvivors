@@ -24,9 +24,9 @@ struct FPassiveMilestone
     UPROPERTY(EditDefaultsOnly, Category = "Milestone")
     float AdditiveBonus = 0.0f;
 
-    // 배율 (이동속도 20% 증가면 1.2f)
+    // 추가 % (이동속도 20% 증가면 0.2f). FDEStatModifier::Multiplier와 같은 의미
     UPROPERTY(EditDefaultsOnly, Category = "Milestone")
-    float MultiplierBonus = 1.0f;
+    float MultiplierBonus = 0.0f;
 };
 
 /**
@@ -38,7 +38,7 @@ class DARKEDENSURVIVORS_API UDECharacterData : public UPrimaryDataAsset
     GENERATED_BODY()
 
 public:
-    // 캐릭터 고유 레벨업 패시브 트리
+    // 캐릭터 고유 레벨업 패시브. RequiredLevel에 도달하면 한 번 적용된다 (ADECharacterBase::ApplyLevelMilestones)
     UPROPERTY(EditDefaultsOnly, Category = "Progression")
     TArray<FPassiveMilestone> LevelMilestones;
 

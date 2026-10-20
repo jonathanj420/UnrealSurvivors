@@ -69,7 +69,10 @@
 - [x] 디버그 치트(`MyDebugCheat`, `MyAnotherDebugCheat`, `ForceLevelUp`, `ForceLevelUpSkill`)를 Shipping에서 제외: 입력 바인딩과 본문을 `#if !UE_BUILD_SHIPPING`으로. UFUNCTION 선언은 UHT 제약으로 남김. 안 쓰던 `DebugAccessoryToEquip`과 생성자의 `DEAccessory_SeongsBless` 하드 로드 삭제
 - [x] 죽은 코드 삭제: `DEPlayerController` 캐시, `ActiveAOEMap`, `ActiveSkills`/`CurrentActiveSkillIndex`/`UseActiveSkill`, `IFrame`, 빈 `PostInitializeComponents`, 디버그 메시지만 띄우던 `BloodDrain()`과 그 입력 바인딩, `ForceKill`, `OnActiveSkillInput`의 로그, 헤더의 `DESkillBase.h` include
 - [x] 자동 스킬 일시정지 플래그 중복 제거: 캐릭터의 `bAutoSkillsPaused`/`IsAutoSkillsPaused` 삭제, 상태는 SkillManager만. `GetCapsuleHalfRadius` → `GetCapsuleRadius`(반경을 반환하므로). `IsDead`/`AddExp`/`SetMaxHP` null 체크
-- [ ] 메인 메뉴 캐릭터 선택이 게임에 반영되지 않는다: `UDEMainMenuWidget::SelectedCharacterID`는 위젯 안에만 있고, `ADEGameMode_Stage`는 `DefaultPawnClass = ADEFemaleVampire` 고정. `UDECharacterData`(`LevelMilestones`)는 C++에서 읽는 곳이 없다. 로비 → 스테이지 흐름 설계 필요
+- [x] 캐릭터 선택 흐름 (개발자 결정, 2026-10-20): 캐릭터 DT는 `UDEGameInstance::GetCharacterRow`(행 이름 = ID). 메뉴가 `OpenLevel(Stage, "Character=<id>")` → `ADEGameMode_Stage::InitNewPlayer`가 접속 옵션을 파싱해 `ADEPlayerController::SelectedCharacterID`에 저장 (로컬 호스트는 맵 옵션도 확인) → `GetDefaultPawnClassForController`가 DT 행의 `CharacterClass`로 스폰, 없으면 `DefaultPawnClass`. 멀티에서 클라이언트 접속 옵션도 같은 경로. 다른 플레이어의 선택을 보여줘야 할 때 PlayerState로 이동
+  - 사망 → 게임오버 바인딩을 `BeginPlay`의 `GetPlayerPawn(0)`에서 `SetPlayerDefaults`(스폰된 폰마다)로
+  - 캐릭터별 데이터는 캐릭터 BP 서브클래스에 (`BaseSkillID`, `CharacterData`). `ADEFemaleVampire` 생성자의 메시/BaseSkillID 하드코딩은 나중에 BP로
+- [x] `LevelMilestones` 적용: `ADECharacterBase::ApplyLevelMilestones`. 시작 시 시작 레벨까지, 레벨업마다 그 레벨의 마일스톤을 StatComponent에 적용. `FPassiveMilestone::MultiplierBonus` 기본값 1.0 → 0.0 ("추가 %", `FDEStatModifier`와 같은 의미)
 - [ ] 카메라 모드(`FREETPS`/`FPS`/`ViewChange`)는 일단 유지 (개발자 결정, 2026-10-20)
 
 ## Behavior (2026-10-20 리뷰)

@@ -19,6 +19,8 @@
 #include "DELevelUpManagerComponent.h"
 #include "DEGameInstance.h"
 #include "DEDamageTypes.h"
+#include "DECharacterData.h"
+#include "DEStatTypes.h"
 
 // Sets default values
 ADECharacterBase::ADECharacterBase()
@@ -108,6 +110,9 @@ void ADECharacterBase::BeginPlay()
     {
         // "야, 레벨업 하면 내 함수(OnLevelUp) 좀 실행해줘"
         ProgressionComponent->OnLevelUp.AddUObject(this, &ADECharacterBase::OnCharacterLevelUp);
+
+        // 시작 레벨까지의 마일스톤 (RequiredLevel 1 = 시작부터)
+        ApplyLevelMilestones(0, ProgressionComponent->GetCurrentLevel());
     }
     if (SkillManager && BaseSkillID > 0)
     {
@@ -445,8 +450,27 @@ void ADECharacterBase::SetMaxHP(float NewMaxHP)
     }
 }
 
+void ADECharacterBase::ApplyLevelMilestones(int32 FromLevel, int32 ToLevel)
+{
+    if (!CharacterData || !StatComponent) return;
+
+    for (const FPassiveMilestone& Milestone : CharacterData->LevelMilestones)
+    {
+        if (Milestone.RequiredLevel <= FromLevel || Milestone.RequiredLevel > ToLevel) continue;
+
+        FDEStatModifier Mod;
+        Mod.StatType = Milestone.StatType;
+        Mod.Additive = Milestone.AdditiveBonus;
+        Mod.Multiplier = Milestone.MultiplierBonus;
+        StatComponent->ApplyModifier(Mod);
+    }
+}
+
 void ADECharacterBase::OnCharacterLevelUp(int32 NewLevel)
 {
+    // ProgressionComponent는 여러 레벨을 한 번에 올려도 레벨마다 한 번씩 알린다
+    ApplyLevelMilestones(NewLevel - 1, NewLevel);
+
     // 표시는 LevelUpManager 신호를 받은 컨트롤러가 한다
     if (LevelUpManagerComponent)
     {

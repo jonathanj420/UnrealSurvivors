@@ -99,6 +99,15 @@
 - [ ] 치트 키(DebugCheat, AnotherDebugCheat)와 콘솔 `ForceLevelUp`이 에디터/Development에서는 여전히 동작하는지
 - [ ] 흡혈 시전 중 자동 스킬이 멈췄다가 끝나면 다시 도는지 (일시정지 플래그를 SkillManager 하나로 합침)
 
+## 캐릭터 선택
+
+- [ ] 로비에서 캐릭터 → 스테이지를 골라 입장했을 때 고른 캐릭터로 스폰되는지. 지금 DT_Characters 행은 `0`(Female Vampire)과 `1`이다. 행 `1`의 `CharacterClass`가 비어 있으면 Output Log에 `[Stage] Character 1 has no row or CharacterClass`가 뜨고 FemaleVampire로 나온다
+- [ ] 스테이지 맵을 PIE로 바로 켰을 때 지금처럼 FemaleVampire로 나오는지
+- [ ] 메뉴 위젯 BP(`UDEMainMenuWidget` 자식)에서 `CharacterDataTable` 프로퍼티를 삭제했다. 캐릭터 목록이 그대로 뜨는지 (이제 GameInstance가 `DT_Characters`를 직접 로드)
+- [ ] 스테이지 GameMode BP가 `DefaultPawnClass`를 따로 지정했다면 그 값이 옵션 없을 때의 기본값이다
+- [ ] 플레이어 사망 시 게임오버가 뜨는지 (바인딩 위치를 옮김. 무적 상태라 `ForceKill`이 없으니 체력 컴포넌트 주석을 잠깐 풀어야 확인 가능. CLAUDE.md의 OnDying/OnDeath 주의사항 참고)
+- [ ] 캐릭터 BP에 `CharacterData`를 지정하고 `LevelMilestones`에 항목을 넣어 레벨업 때 스탯이 오르는지. `MultiplierBonus`는 이제 "추가 %"다 (20% 증가 = 0.2). 기존 CharacterData 에셋에 1.2 같은 값을 넣어뒀다면 고쳐야 한다
+
 ## AOE
 
 - [ ] Darkness/GreyDarkness: 범위 안 몬스터가 HitInterval마다 한꺼번에 맞는지, 처음 켰을 때 바로 한 번 맞는지 확인
