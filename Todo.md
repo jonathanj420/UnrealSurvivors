@@ -161,7 +161,7 @@
 - [ ] 스킬 타겟 쿼리를 물리 씬 대신 SpatialGrid로, 몬스터 콜리전 끄기 (Chaos 바디 갱신 제거. 측정 ②에서 300마리 약 3ms)
   - [x] `UDEMonsterQuerySubsystem`(WorldSubsystem)에 그리드 이동. `UDEMonsterUpdateComponent::ResolveOverlaps`가 `RebuildGrid`로 채우고 겹침 해소에도 그대로 쓴다. 2D 쿼리 `QueryCircle`/`QueryNearest`/`QuerySegment`(Start에서 가까운 순). 쿼리 범위는 최대 몬스터 반지름 + 프레임당 최대 이동량(`MaxPushPerFrame`)만큼 넓힌다. 살아 있는 몬스터만 반환. 콘은 `QueryCircle` + 호출처 각도 필터
   - [x] 호출처 전부 이전: `SelectTargetsInRadius`, `SelectNearestTarget`, `SelectTargetsBySweep`, `CullByCone`, `DEGameplayLibrary`(`ApplyAoEDamage`/`GetNearestTarget`/`GetRandomTargets`), AcidBolt, GoreGland, `DESimpleAOEBase`, `DESimpleProjectileBase`. C++에 남은 물리 쿼리 없음
-  - [ ] 인게임 확인 후 몬스터 캡슐 `NoCollision`. 끄기 전에 BP에서 몬스터 콜리전/오버랩에 의존하는 곳이 없는지 확인 필요 (C++에서는 없음)
+  - [x] 몬스터 캡슐 `NoCollision` (인게임 확인, BP/C++ 의존 없음 확인 후 2026-10-20). 캡슐은 `CapsuleRadius`/`HalfHeight` 데이터 보관용으로만 남았고, 의미 없어진 `SetActorEnableCollision` 토글도 제거. 재측정은 MyTodo
   - 판정 차이: 예전엔 3D 구 vs 캡슐, 지금은 XY 평면에서 원 vs 원(몬스터 반지름 `CachedRadius`). 그리드는 SpawnManager Tick에서 갱신되므로 이번 프레임에 스폰/재배치된 몬스터는 다음 프레임부터 잡힌다
 - [ ] 렌더링을 몬스터별 SkeletalMesh에서 ISM + VAT로 (개발자가 ISM 진행 승인, 공부 목적 포함)
 - [x] `ResolveOverlaps`의 프레임마다 생성되는 로컬 `TSet` 재사용 (`TouchedCells` 멤버 하나로 통합)

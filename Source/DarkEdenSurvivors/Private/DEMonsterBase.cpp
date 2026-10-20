@@ -3,6 +3,7 @@
 
 #include "DEMonsterBase.h"
 #include "Components/CapsuleComponent.h"
+#include "Engine/CollisionProfile.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "EngineUtils.h"
@@ -24,7 +25,8 @@ ADEMonsterBase::ADEMonsterBase()
 	Tags.Add(TEXT("Enemy"));
 	Capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
 	Capsule->InitCapsuleSize(42.0f, 96.0f); // 반지름, 높이
-	Capsule->SetCollisionProfileName(TEXT("Monster"));
+	// 판정은 UDEMonsterQuerySubsystem 그리드로 하고 이동도 sweep을 쓰지 않으므로 물리 바디를 두지 않는다 (Chaos 바디 갱신 비용 제거)
+	Capsule->SetCollisionProfileName(UCollisionProfile::NoCollision_ProfileName);
 	Capsule->SetCastShadow(false);
 	Capsule->SetGenerateOverlapEvents(false);
 	// 몬스터는 내비게이션을 쓰지 않는다. 움직일 때마다 내비 옥트리 갱신이 일어나지 않도록 제외
@@ -279,7 +281,6 @@ void ADEMonsterBase::ResetMonster(const FDEMonsterData* Data, const FDEMonsterSt
 	// 5. 상태 초기화
 	HealthComponent->ResetHealth();
 	SetActorHiddenInGame(false);
-	SetActorEnableCollision(true);
 	SetActorTickEnabled(false);
 	bIsAlive = true;
 	bIsDying = false;
@@ -298,9 +299,8 @@ void ADEMonsterBase::ResetForPool()
 
 
 
-	// 비활성화: 숨기고 타이밍/충돌 끔
+	// 비활성화: 숨기고 Tick 끔
 	SetActorHiddenInGame(true);
-	SetActorEnableCollision(false);
 	SetActorTickEnabled(false);
 }
 
@@ -312,7 +312,6 @@ void ADEMonsterBase::Die()
 	bIsAlive = false;
 
 	StatusEffectComponent->RemoveAllEffects();
-	SetActorEnableCollision(false);
 	//DropExp();
 
 	OnMonsterDeath.Broadcast(this, nullptr);
@@ -324,7 +323,6 @@ void ADEMonsterBase::StartDying(AActor* Killer)
 	if (bIsDying) return;  // 이중 죽음 방지
 	bIsDying = true;
 	bIsAlive = false;
-	SetActorEnableCollision(false);
 
 	OnMonsterDeath.Broadcast(this, Killer);
 

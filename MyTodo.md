@@ -115,8 +115,19 @@
 
 ## SpatialGrid 쿼리 (몬스터 콜리전은 아직 켜져 있음)
 
-- [ ] 스킬 전부가 예전처럼 맞는지 확인: 투사체(관통 횟수대로 가까운 적부터), AcidBolt 폭발, GoreGland, Darkness/DanseMacabre, 범위/부채꼴/스윕 스킬, 가장 가까운 적 타겟팅
-- [ ] BP에서 몬스터 콜리전이나 오버랩에 의존하는 곳이 있는지 확인 (BP 스킬, 레벨 BP 등). 없으면 몬스터 캡슐 콜리전을 끈다
+스킬 판정이 이제 물리 씬 대신 그리드(`UDEMonsterQuerySubsystem`)를 쓴다. 판정은 XY 평면의 원 vs 원(몬스터 반지름은 DT `CapsuleRadius`)이다. 아래가 다 맞으면 몬스터 캡슐 콜리전을 끈다. 몬스터가 많은 곳(100마리 이상)에서 볼 것.
+
+- [ ] 투사체 (`DESimpleProjectileBase`, Inferno/BloodyKnife 등): 날아가는 길에 닿은 몬스터가 맞는지, 관통 횟수만큼만 맞는지, 한 번 맞은 몬스터를 같은 투사체가 또 때리지 않는지
+- [ ] AcidBolt 폭발 (`DEProjectile_AcidBolt`): 폭발 반경 안 몬스터가 다 맞는지. 동작 방식은 아래 "Behavior 스폰 액터"의 AcidBolt 항목 참고
+- [ ] GoreGland 소환수 (`DESummon_GoreGland`): 소환수가 근처 몬스터를 찾아 공격하는지
+- [ ] 장판/궤도 (`DESimpleAOEBase`): Darkness/GreyDarkness가 범위 안을 한꺼번에 때리는지, DanseMacabre 해골이 지나가며 맞히는지 (위 "AOE"와 같이 확인)
+- [ ] 가장 가까운 적 조준 (`SelectNearestTarget`): 조준 스킬이 실제로 제일 가까운 몬스터 쪽으로 쏘는지, 검색 반경 밖에 있을 때 안 쏘는지
+- [ ] 범위 타겟 (`SelectTargetsInRadius`): 반경 스킬이 반경 안만 맞히는지. `bTargetAllMonsters`를 켠 스킬이 있으면 화면 밖 몬스터까지 맞는지
+- [ ] 부채꼴 (`CullByCone`, TalonOfCrow 등): 바라보는 방향의 부채꼴 안만 맞는지, 등 뒤 몬스터는 안 맞는지
+- [ ] 직선/스윕 (`SelectTargetsBySweep`): 직선 위 몬스터가 가까운 순서로 맞는지
+- [ ] 체감 판정 크기: 몬스터 가장자리를 스치는 공격이 예전과 비슷하게 맞는지. 크게 다르면 어떤 스킬, 어떤 몬스터인지 알려줘
+- [ ] 방금 스폰된 몬스터와 재배치된 몬스터도 맞는지 (그리드는 다음 프레임부터 반영된다. 한 프레임 늦는 건 정상)
+- [x] BP에서 몬스터 콜리전이나 오버랩에 의존하는 곳 없음 (개발자 확인, 2026-10-20). C++도 없음 (BloodDrain은 SpawnManager의 활성 몬스터 목록을 쓴다. 몬스터 이동은 sweep 없이 위치를 직접 지정하고, 플레이어 캡슐은 원래 Monster 채널과 Overlap이라 막히지 않는다)
 
 ## 스테이지 클리어
 
@@ -148,6 +159,12 @@
 - [ ] 메타 업그레이드(상점 HP/데미지/속도 등)가 여전히 적용되는지. 시작 HP가 늘어난 최대 HP로 가득 찬 상태인지 (전에는 최대 HP만 늘고 현재 HP는 100이었을 수 있음)
 - [ ] 경험치 구슬, 골드, 상자 등 픽업을 여전히 주울 수 있는지 (`Player` 태그를 생성자에서 빙의 시점으로 옮김)
 - [ ] 플레이어 머리 위 데미지 숫자가 여전히 안 뜨는지
+
+## 몬스터 콜리전 끄기 후 확인
+
+- [ ] 몬스터 BP(DT_MonsterData의 클래스들)를 열어 Capsule의 Collision Presets가 `NoCollision`인지 확인. BP에서 프리셋을 따로 바꿔 저장해 둔 게 있으면 그 값이 남아서 콜리전이 켜진 채로 돈다
+- [ ] PIE에서 `show Collision`: 몬스터 캡슐이 안 보이고 스킬은 그대로 맞는지
+- [ ] 재측정: 에디터를 닫고 Standalone, `t.MaxFPS 0`, `r.VSync 0`, `TestPrototype` 300마리 `stat unit` + `stat game`. 비교 기준은 측정 ①(Game 12.80)과 ②(Game 9.64). 캡처는 새 이름으로 (예: `Docs/nocol_final_unit.png`)
 
 ## 성능 측정
 
