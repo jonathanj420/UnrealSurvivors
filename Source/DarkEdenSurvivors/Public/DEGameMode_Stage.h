@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "DEGameModeBase.h"
 #include "Curves/CurveFloat.h"
+#include "Data/DEMonsterData.h"
 #include "DEGameMode_Stage.generated.h"
 
 /**
@@ -37,9 +38,10 @@ public:
 
     int32 GetSpawnLimit() const { return SpawnLimit; }
 
-    // 난이도 곡선: 지금 경과 시간(분)에서 새로 스폰되는 몬스터에 곱할 배율. 커브가 비어 있으면 1. 플레이어 Curse 스탯을 곱한다
-    float GetMonsterHPMultiplier() const;
-    float GetMonsterDamageMultiplier() const;
+    // 지금 새로 스폰되는 몬스터에 곱할 배율. HP = 곡선 × Curse, 데미지 = 곡선, 이동속도 = Curse
+    FDEMonsterStatScale GetMonsterStatScale() const;
+
+    // 플레이어 Curse 스탯 (기본 1). 뱀서처럼 몬스터 HP, 이동속도, 수량, 스폰 빈도를 올린다. 데미지에는 걸지 않는다
     float GetCurseMultiplier() const;
 
 protected:

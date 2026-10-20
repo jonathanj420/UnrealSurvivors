@@ -223,7 +223,8 @@ void ADEMonsterSpawnManager::ProcessWave(float DeltaTime)
         bool bSpawned = TrySpawnMonster(*CurRow);
         if (bSpawned)
         {
-            NextSpawnTime = Now + FMath::Max(0.01f, CurRow->SpawnInterval);
+            // Curse가 높을수록 자주 나온다
+            NextSpawnTime = Now + FMath::Max(0.01f, CurRow->SpawnInterval / GetCurse());
         }
         else
         {
@@ -269,7 +270,7 @@ void ADEMonsterSpawnManager::StartWave(int32 WaveIndex)
 
     // WaveData의 SpawnInterval만큼 뒤로 미룸
     // (Interval이 0이면 0.01f라도 더해서 즉시 실행 방지)
-    float FirstDelay = FMath::Max(0.01f, WaveData->SpawnInterval);
+    float FirstDelay = FMath::Max(0.01f, WaveData->SpawnInterval / GetCurse());
 
     NextSpawnTime = CurrentTime + FirstDelay;
     
@@ -307,12 +308,18 @@ bool ADEMonsterSpawnManager::TrySpawnMonster(const FDEStageWaveData& WaveData)
 
 void ADEMonsterSpawnManager::ReplenishToMinimum(const FDEStageWaveData& WaveData)
 {
-    const int32 Need = WaveData.MinimumCount - CurrentWaveMonsters.Num();
+    // Curse가 높을수록 유지 수가 늘어난다. SpawnLimit(성능 상한)은 그대로
+    const int32 Need = FMath::RoundToInt(WaveData.MinimumCount * GetCurse()) - CurrentWaveMonsters.Num();
     for (int32 i = 0; i < Need; ++i)
     {
         // SpawnLimit 도달이나 데이터 오류면 이번 프레임은 중단, 다음 Tick에 다시 시도
         if (!TrySpawnMonster(WaveData)) break;
     }
+}
+
+float ADEMonsterSpawnManager::GetCurse() const
+{
+    return GameMode ? GameMode->GetCurseMultiplier() : 1.0f;
 }
 
 bool ADEMonsterSpawnManager::SpawnBoss(const FDEStageWaveData& WaveData)
@@ -427,9 +434,7 @@ ADEMonsterBase* ADEMonsterSpawnManager::SpawnFromPool(FVector& Location, const F
     // 5. 공통 초기화
     SpawnedMonster->SetActorLocationAndRotation(Location, FRotator::ZeroRotator, false, nullptr, ETeleportType::TeleportPhysics);
     // 난이도 곡선은 스폰 시점의 경과 시간으로 정한다. 살아 있는 몬스터는 다시 계산하지 않는다
-    const float HPMultiplier = GameMode ? GameMode->GetMonsterHPMultiplier() : 1.0f;
-    const float DamageMultiplier = GameMode ? GameMode->GetMonsterDamageMultiplier() : 1.0f;
-    SpawnedMonster->ResetMonster(DataToApply, HPMultiplier, DamageMultiplier);
+    SpawnedMonster->ResetMonster(DataToApply, GameMode ? GameMode->GetMonsterStatScale() : FDEMonsterStatScale());
 
     ActiveMonsters.Add(SpawnedMonster);
     return SpawnedMonster;

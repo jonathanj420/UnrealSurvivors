@@ -56,14 +56,15 @@ void ADEGameMode_Stage::Tick(float DeltaTime)
     }
 }
 
-float ADEGameMode_Stage::GetMonsterHPMultiplier() const
+FDEMonsterStatScale ADEGameMode_Stage::GetMonsterStatScale() const
 {
-    return EvaluateDifficultyCurve(MonsterHPCurve) * GetCurseMultiplier();
-}
+    const float Curse = GetCurseMultiplier();
 
-float ADEGameMode_Stage::GetMonsterDamageMultiplier() const
-{
-    return EvaluateDifficultyCurve(MonsterDamageCurve) * GetCurseMultiplier();
+    FDEMonsterStatScale Scale;
+    Scale.HP = EvaluateDifficultyCurve(MonsterHPCurve) * Curse;
+    Scale.Damage = EvaluateDifficultyCurve(MonsterDamageCurve);
+    Scale.MoveSpeed = Curse;
+    return Scale;
 }
 
 float ADEGameMode_Stage::GetCurseMultiplier() const

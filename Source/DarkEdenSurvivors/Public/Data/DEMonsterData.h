@@ -13,6 +13,14 @@ enum class EDEMonsterRank : uint8
 	Boss    UMETA(DisplayName = "Boss Mob")
 };
 
+// 스폰 시점에 DT 값에 곱하는 배율 (난이도 곡선 × Curse). ADEGameMode_Stage::GetMonsterStatScale
+struct FDEMonsterStatScale
+{
+	float HP = 1.0f;
+	float Damage = 1.0f;
+	float MoveSpeed = 1.0f;
+};
+
 USTRUCT(BlueprintType)
 struct FDEMonsterDropInfo
 {

@@ -214,7 +214,7 @@ float ADEMonsterBase::GetMaxHP() const
 	return HealthComponent->GetMaxHP();
 }
 
-void ADEMonsterBase::ResetMonster(const FDEMonsterData* Data, float HPMultiplier, float DamageMultiplier)
+void ADEMonsterBase::ResetMonster(const FDEMonsterData* Data, const FDEMonsterStatScale& Scale)
 {
 	TRACE_CPUPROFILER_EVENT_SCOPE(ADEMonsterBase::ResetMonster);
 
@@ -270,9 +270,9 @@ void ADEMonsterBase::ResetMonster(const FDEMonsterData* Data, float HPMultiplier
 
 
 	// 4. 스탯 적용 (기존과 동일)
-	HealthComponent->SetMaxHP(Data->MaxHP * HPMultiplier, true);
-	MoveSpeed = Data->MoveSpeed;
-	AttackDamage = Data->AttackDamage * DamageMultiplier;
+	HealthComponent->SetMaxHP(Data->MaxHP * Scale.HP, true);
+	MoveSpeed = Data->MoveSpeed * Scale.MoveSpeed;
+	AttackDamage = Data->AttackDamage * Scale.Damage;
 	AttackInterval = Data->AttackInterval;
 	KnockbackResistance = Data->KnockbackResistance;
 	DropTable = Data->DropTable;
