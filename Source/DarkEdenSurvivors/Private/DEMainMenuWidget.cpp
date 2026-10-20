@@ -5,6 +5,7 @@
 #include "DEStageSlotWidget.h"
 #include "DEShopWidget.h"
 #include "DECharacterRow.h"
+#include "DEGameInstance.h"
 #include "Components/Button.h"
 #include "DEGameTypes.h"
 #include "Components/WidgetSwitcher.h"
@@ -49,6 +50,8 @@ void UDEMainMenuWidget::NativeConstruct()
 
 void UDEMainMenuWidget::GenerateCharacterSlots()
 {
+    const UDEGameInstance* GI = GetGameInstance<UDEGameInstance>();
+    UDataTable* CharacterDataTable = GI ? GI->GetCharacterTable() : nullptr;
     if (!CharacterDataTable || !CharacterSlotClass || !WrapBox_CharacterList) return;
 
     WrapBox_CharacterList->ClearChildren();
@@ -74,8 +77,8 @@ void UDEMainMenuWidget::GenerateCharacterSlots()
 void UDEMainMenuWidget::OnCharacterSlotClicked(int32 ClickedCharacterID)
 {
     SelectedCharacterID = ClickedCharacterID;
-    FName RowName = FName(*FString::FromInt(ClickedCharacterID));
-    FDECharacterRow* FoundRow = CharacterDataTable->FindRow<FDECharacterRow>(RowName, TEXT("FindCharacter"));
+    const UDEGameInstance* GI = GetGameInstance<UDEGameInstance>();
+    const FDECharacterRow* FoundRow = GI ? GI->GetCharacterRow(ClickedCharacterID) : nullptr;
 
     if (FoundRow)
     {
@@ -147,7 +150,15 @@ void UDEMainMenuWidget::OnBackToTitleClicked() { if (Switcher_Main) Switcher_Mai
 void UDEMainMenuWidget::OnEnterGameClicked()
 {
     if (SelectedStageLevelName.IsNone()) return;
-    UGameplayStatics::OpenLevel(this, SelectedStageLevelName);
+
+    // 선택한 캐릭터는 레벨 URL 옵션으로 넘긴다. 스테이지 GameMode가 플레이어별 접속 옵션(InitNewPlayer)에서 읽는다.
+    // 멀티에서 클라이언트가 접속할 때 붙이는 옵션과 같은 경로라서 GameInstance에 두지 않는다
+    FString Options;
+    if (SelectedCharacterID >= 0)
+    {
+        Options = FString::Printf(TEXT("Character=%d"), SelectedCharacterID);
+    }
+    UGameplayStatics::OpenLevel(this, SelectedStageLevelName, true, Options);
 }
 
 void UDEMainMenuWidget::OnBackToCharacterClicked() { if (Switcher_Main) Switcher_Main->SetActiveWidgetIndex(1); }

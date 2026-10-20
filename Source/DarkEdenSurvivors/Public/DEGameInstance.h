@@ -75,9 +75,16 @@ public:
     // 몬스터 데이터를 가져오는 함수
     const FDEMonsterData* GetMonsterData(FName MonsterID);
 
+    // 캐릭터 DT (행 이름 = 캐릭터 ID). 메뉴와 스테이지 GameMode가 같이 쓴다
+    UDataTable* GetCharacterTable() const { return CharacterTable; }
+    const struct FDECharacterRow* GetCharacterRow(int32 CharacterID) const;
+
 protected:
     UPROPERTY(EditDefaultsOnly, Category = "Data")
     TObjectPtr<UDataTable> SourceMonsterTable;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Data")
+    TObjectPtr<UDataTable> CharacterTable;
 
 private:
     TMap<FName, FDEMonsterData> MonsterDataCache;

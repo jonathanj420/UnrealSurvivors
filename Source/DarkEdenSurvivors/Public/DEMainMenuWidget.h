@@ -47,9 +47,7 @@ private:
     UPROPERTY(meta = (BindWidget))
     UButton* Btn_BackToTitle;
 
-    UPROPERTY(EditDefaultsOnly, Category = "Data")
-    UDataTable* CharacterDataTable;
-
+    // 캐릭터 DT는 UDEGameInstance가 갖는다 (스테이지 GameMode와 같은 테이블)
     UPROPERTY(EditDefaultsOnly, Category = "UI")
     TSubclassOf<UDECharacterSlotWidget> CharacterSlotClass;
 

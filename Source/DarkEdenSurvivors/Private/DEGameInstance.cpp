@@ -7,6 +7,8 @@
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "Kismet/GameplayStatics.h"
+#include "DECharacterRow.h"
+#include "Engine/DataTable.h"
 
 UDEGameInstance::UDEGameInstance()
 {
@@ -18,6 +20,21 @@ UDEGameInstance::UDEGameInstance()
     {
         SourceMonsterTable = DT_MonsterAsset.Object;
     }
+
+    static ConstructorHelpers::FObjectFinder<UDataTable> DT_CharacterAsset(
+        TEXT("/Game/DarkEden/Data/Character/DT_Characters.DT_Characters")
+    );
+
+    if (DT_CharacterAsset.Succeeded())
+    {
+        CharacterTable = DT_CharacterAsset.Object;
+    }
+}
+
+const FDECharacterRow* UDEGameInstance::GetCharacterRow(int32 CharacterID) const
+{
+    if (!CharacterTable || CharacterID < 0) return nullptr;
+    return CharacterTable->FindRow<FDECharacterRow>(FName(*FString::FromInt(CharacterID)), TEXT("GetCharacterRow"), false);
 }
 
 void UDEGameInstance::Init()
