@@ -1,6 +1,6 @@
 # DarkEdenSurvivors
 
-UE 5.7 / C++로 만드는 *Vampire Survivors*류 액션 서바이벌 게임이고, *DarkEden*을 테마로 한다. 포트폴리오가 목표이고, 가능하면 출시까지 간다.
+UE 5.8 / C++로 만드는 *Vampire Survivors*류 액션 서바이벌 게임이고, *DarkEden*을 테마로 한다. 포트폴리오가 목표이고, 가능하면 출시까지 간다.
 
 - **GAS는 쓰지 않는다.** 명시적으로 요청받지 않으면 도입하지 않는다.
 - **현재 싱글플레이, 멀티플레이는 향후 고려 중.** 리플리케이션 코드는 아직 없다. 아래 "멀티플레이 대비"를 따른다.
@@ -69,7 +69,7 @@ UE 5.7 / C++로 만드는 *Vampire Survivors*류 액션 서바이벌 게임이�
 PowerShell에서 실행한다. Git Bash로 `Build.bat`을 호출하면 `C:\Program Files` 경로의 공백 때문에 실패한다.
 
 ```powershell
-& "C:\Program Files\Epic Games\UE_5.7\Engine\Build\BatchFiles\Build.bat" DarkEdenSurvivorsEditor Win64 Development "-Project=C:\Users\user\Documents\Unreal Projects\DarkEdenSurvivors\DarkEdenSurvivors.uproject" -WaitMutex -NoHotReloadFromIDE *> build.log
+& "C:\Program Files\Epic Games\UE_5.8\Engine\Build\BatchFiles\Build.bat" DarkEdenSurvivorsEditor Win64 Development "-Project=C:\Users\user\Documents\Unreal Projects\DarkEdenSurvivors\DarkEdenSurvivors.uproject" -WaitMutex -NoHotReloadFromIDE *> build.log
 ```
 
 - `%LOCALAPPDATA%\UnrealBuildTool\Log.txt`는 다른 프로젝트(Kuaqe) 빌드와 공유되므로, 출력은 따로 리다이렉트해서 본다.
