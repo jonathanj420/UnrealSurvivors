@@ -16,6 +16,15 @@ bool UDEBehavior_FireProjectile::IsInProgress() const
 	return CachedContext.Instigator && CachedContext.Instigator->GetWorldTimerManager().IsTimerActive(BurstTimerHandle);
 }
 
+void UDEBehavior_FireProjectile::EndBehavior()
+{
+	if (CachedContext.Instigator)
+	{
+		CachedContext.Instigator->GetWorldTimerManager().ClearTimer(BurstTimerHandle);
+	}
+	RemainingShots = 0;
+}
+
 void UDEBehavior_FireProjectile::Execute(FDESkillContext& Context)
 {
 	if (!Context.Instigator || !Context.SourceSkill) return;

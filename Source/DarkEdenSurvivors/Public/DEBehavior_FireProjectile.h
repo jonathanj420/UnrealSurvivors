@@ -18,6 +18,8 @@ class DARKEDENSURVIVORS_API UDEBehavior_FireProjectile : public UDESkillBehavior
 public:
 	virtual void Execute(FDESkillContext& Context) override;
 	virtual bool IsInProgress() const override;
+	// 진화 등으로 CancelSkill될 때 남은 연사를 멈춘다
+	virtual void EndBehavior() override;
 
 protected:
 	// 타이머가 호출할 함수
