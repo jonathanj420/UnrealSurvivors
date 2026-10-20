@@ -30,7 +30,7 @@ public:
 	virtual void Execute(FDESkillContext& Context) override;
 
 public:
-	// 남길 타겟 수 (예: 1이면 1마리만, 5면 5마리만 남김)
+	// 남길 타겟 수 (예: 1이면 1마리만, 5면 5마리만 남김). -1이면 Context.Amount(DT 투사체 수)
 	UPROPERTY(EditAnywhere, Category = "Filter")
 	int32 TargetCount = 1;
 

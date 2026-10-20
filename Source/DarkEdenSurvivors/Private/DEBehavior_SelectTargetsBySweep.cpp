@@ -24,9 +24,9 @@ void UDEBehavior_SelectTargetsBySweep::Execute(FDESkillContext& Context)
         Direction = (Context.Targets[0]->GetActorLocation() - StartLoc).GetSafeNormal();
     }
 
-    // 3. 스펙 세팅 (Context에 Range가 없다면, Radius 변수 등을 적절히 활용해 주세요)
-    float FinalRadius = Context.Radius;
-    float FinalRange = Context.GetValue(TEXT("Range"), 600.0f);
+    // 3. 스펙 세팅
+    const float FinalRadius = ResolveOverride(Width, Context.Radius);
+    const float FinalRange = ResolveOverride(Range, Context.GetValue(TEXT("Range"), 600.0f));
 
     FVector EndLoc = StartLoc + (Direction * FinalRange);
 

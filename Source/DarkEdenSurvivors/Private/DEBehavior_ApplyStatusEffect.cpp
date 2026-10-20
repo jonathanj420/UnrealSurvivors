@@ -10,9 +10,9 @@ void UDEBehavior_ApplyStatusEffect::Execute(FDESkillContext& Context)
 {
 	if (Context.Targets.Num() == 0 || !StatusClass) return;
 
-	float FinalDuration = (this->Duration == -1.0f) ? Context.Duration : this->Duration;
-	float FinalPower = (this->Power == -1.0f) ? Context.Damage : this->Power;
-	float FinalInterval = Context.GetValue(FName("Interval"), this->Interval);
+	const float FinalDuration = ResolveOverride(Duration, Context.Duration);
+	const float FinalPower = ResolveOverride(Power, Context.Damage);
+	const float FinalInterval = ResolveOverride(Interval, Context.GetValue(FName("Interval"), 1.0f));
 
 	// Context에 담겨있는 타겟들에게 상태이상을 겁니다.
 	// 즉, 이 Behavior 앞에는 반드시 "타겟을 찾는 Behavior"가 실행되어야 합니다.

@@ -77,7 +77,14 @@
   - 체력 컴포넌트 없는 대상의 `UGameplayStatics::ApplyDamage` 폴백 삭제 (타겟은 몬스터 쿼리로만 들어온다)
 - [x] 안 쓰는 프로퍼티 삭제: `PlayEffect::TargetType`(레거시 4개 스킬은 같은 의미의 `NiagaraTargetType`으로), `FireProjectileRadial::ProjectileClass`, `SelectNearestTarget::EnemyTag`, `SelectTargetsInRadius::VectorKeyName`/`bIgnoreInstigator`. `ApplyStatusEffect`의 빈 TODO 루프. `NiagaraTargetType`/`SoundTargetType` 기본값을 명시 (기존과 같은 Instigator)
 - [ ] 레거시 `DESkill_AcidBolt::InitBehaviors`의 `FireProjectileRadial`은 `ProjectileClasses`를 채우지 않아서 한 발도 안 쏜다 (전에도 `ProjectileClass`만 넣어서 같았다). AcidBolt가 BP에서 Behavior를 따로 조립해 동작 중이면 C++ 쪽은 BP 이전 때 삭제
-- [ ] 값 우선순위 규칙 통일 (개발자 결정 대기): Behavior마다 프로퍼티/Context/CustomValues 중 무엇이 이기는지, -1의 의미가 다르다. `SelectTargetsInRadius`의 맵 전체 검색은 `GetGameMode` 경유
+- [x] 값 우선순위 규칙 통일 (개발자 결정, 2026-10-20): 프로퍼티 -1이면 Context(DT), 0 이상이면 덮어씀. `UDESkillBehavior::ResolveOverride`. 규칙은 CLAUDE.md "스킬 제작 방식"에 기록
+  - `SelectTargetsInRadius`: Radius 기본 400 → -1. 맵 전체 검색은 -1 대신 `bTargetAllMonsters`. 레거시 BloodyScarify/BloodySpear 이전함
+  - `CullByCone`: Radius 기본 150 → -1, ConeAngle 기본 → -1 (DT `"Angle"`, 없으면 60)
+  - `SelectNearestTarget::DefaultSearchRadius` 기본 2000 → -1 (DT `"Radius"`, 없으면 2000)
+  - `ApplyStatusEffect::Interval` 기본 1.0 → -1 (DT `"Interval"`, 없으면 1.0)
+  - `SelectTargetsBySweep`에 `Range`/`Width` 프로퍼티 추가 (기본 -1)
+  - 맵 전체 검색이 `GetGameMode`를 거치는 건 그대로 둠. 멀티에서도 스킬 판정은 서버에서 돌 것이라 문제 아님
+- [ ] OptionValues 키가 문자열로 흩어져 있다 (`"Range"`, `"Angle"`, `"Interval"`, `"HitInterval"`, `"OrbitRadius"`, `"Radius"`). 키 상수를 한 곳에 모을지 검토. `SelectNearestTarget`의 `"Radius"` 키는 DT의 Radius 컬럼과 이름이 겹친다
 
 ## 몬스터 최적화 (목표 동시 1000마리)
 

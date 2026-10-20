@@ -16,7 +16,7 @@ void UDEBehavior_FilterTargets::Execute(FDESkillContext& Context)
 	// 1. 예외 처리: 타겟이 없거나, 이미 목표보다 적으면 필터링할 필요 없음
 	if (Context.Targets.Num() == 0) return;
 
-	const int32 FinalCount = (TargetCount == -1) ? Context.Amount : TargetCount;
+	const int32 FinalCount = (TargetCount < 0) ? Context.Amount : TargetCount;
 
 	// 거리 계산을 위해 내 위치 가져오기
 	FVector MyLoc = FVector::ZeroVector;

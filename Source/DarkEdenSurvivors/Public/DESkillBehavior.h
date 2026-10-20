@@ -34,4 +34,8 @@ public:
     // 진행 중에 Activate가 다시 불리면 상태를 덮어써서 이전 시전이 끊기므로, 매니저는 끝날 때까지 발동을 미룬다
     virtual bool IsInProgress() const { return false; }
 
+protected:
+    // 수치 프로퍼티의 공통 규칙: 0 이상이면 이 Behavior만 그 값으로 덮어쓰고, 음수(-1)면 Context(DT) 값을 따른다.
+    // 새 Behavior에서 DT 값을 덮어쓸 수 있는 프로퍼티를 만들면 기본값을 -1로 두고 이 함수로 고른다
+    static float ResolveOverride(float Override, float ContextValue) { return Override >= 0.f ? Override : ContextValue; }
 };

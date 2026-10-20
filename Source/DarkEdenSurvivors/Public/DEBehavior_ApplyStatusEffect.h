@@ -25,11 +25,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect")
 	float Duration = -1.0f;
 
-	// -1.0 이면 Context의 Power를 따라갑니다.
+	// -1.0 이면 Context의 Damage를 따라갑니다.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect")
 	float Power = -1.0f;
 
+	// -1 이면 DT OptionValues의 "Interval"(없으면 1.0)을 따라갑니다.
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status Effect")
-	float Interval = 1.0f;
+	float Interval = -1.0f;
 	
 };

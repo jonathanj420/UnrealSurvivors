@@ -29,11 +29,15 @@ class DARKEDENSURVIVORS_API UDEBehavior_SelectTargetsInRadius : public UDESkillB
 public:
     virtual void Execute(FDESkillContext& Context) override;
 
-    // 1. 검색 반경 (이건 고정값이라 숫자 입력)
+    // 검색 반경. -1이면 Context.Radius(DT), 0 이상이면 이 값
     UPROPERTY(EditAnywhere, Category = "Search")
-    float Radius = 400.f;
+    float Radius = -1.f;
 
-    // 2. 기준점 타입 (이건 '방법'이라 Enum 입력)
+    // 반경과 기준점을 무시하고 맵의 활성 몬스터 전부를 타겟으로
+    UPROPERTY(EditAnywhere, Category = "Search")
+    bool bTargetAllMonsters = false;
+
+    // 기준점 타입
     UPROPERTY(EditAnywhere, Category = "Search")
     ESearchOrigin OriginType = ESearchOrigin::Instigator;
 

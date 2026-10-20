@@ -19,9 +19,8 @@ void UDEBehavior_SelectNearestTarget::Execute(FDESkillContext& Context)
 	UWorld* World = Context.Instigator->GetWorld();
 	if (!World) return;
 
-	// 2. 탐색 범위 결정 (Context에 'Range'나 'Radius'가 있으면 우선 사용)
-	float Radius = Context.GetValue(TEXT("Radius"), DefaultSearchRadius);
-	if (Radius <= 0.f) Radius = DefaultSearchRadius;
+	// 2. 탐색 범위 결정
+	const float Radius = ResolveOverride(DefaultSearchRadius, Context.GetValue(TEXT("Radius"), 2000.0f));
 
 	const UDEMonsterQuerySubsystem* Query = World->GetSubsystem<UDEMonsterQuerySubsystem>();
 	if (!Query) return;

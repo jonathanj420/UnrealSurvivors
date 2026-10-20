@@ -45,7 +45,7 @@ void UDESkill_BloodyScarify::InitBehaviors()
 
 
 	UDEBehavior_SelectTargetsInRadius* Targeting = NewObject<UDEBehavior_SelectTargetsInRadius>(this);
-	Targeting->Radius = -1.0f;
+	Targeting->bTargetAllMonsters = true;
 	Targeting->OriginType = ESearchOrigin::Instigator;
 	Behaviors.Add(Targeting);
 

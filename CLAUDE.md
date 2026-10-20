@@ -36,6 +36,8 @@ UE 5.7 / C++로 만드는 *Vampire Survivors*류 액션 서바이벌 게임이�
 - **레거시:** `DESkill_*` C++ 서브클래스는 `InitBehaviors()`에서 Behavior를 하드코딩한다. 이들은 점진적으로 BP로 옮길 대상이다.
   - 주의: `UDEAutoSkillBase`의 `Behaviors.Empty()`가 주석 처리되어 있다. BP에 Behavior를 넣고 C++ `InitBehaviors()`도 추가하면 **두 번 실행된다.**
 - `UDEActiveSkillBase`(BloodDrain)는 수동 스킬이고 이 프레임워크 밖에 있다.
+- **Behavior 수치 프로퍼티 규칙 (2026-10-20):** 기본값은 -1이고, -1이면 Context(DT 컬럼 또는 OptionValues 키) 값을 따른다. 0 이상이면 그 Behavior만 그 값으로 덮어쓴다. `UDESkillBehavior::ResolveOverride`로 고른다. "맵 전체" 같은 모드는 -1에 싣지 않고 별도 bool로 둔다 (`SelectTargetsInRadius::bTargetAllMonsters`).
+- **스폰 액터 소유:** 키당 하나인 액터는 `OwnedSkillActorMap` + `FindKeyedSkillActor`, 여러 개는 `RegisterSkillActor`. 둘 다 `IsActiveFor`로 소유를 확인한다. 약포인터가 유효해도 풀에 반환됐을 수 있다.
 
 ## 멀티플레이 대비
 

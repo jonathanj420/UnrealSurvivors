@@ -18,9 +18,10 @@ public:
 	virtual void Execute(FDESkillContext& Context) override;
 
 public:
-	// 탐색 범위 (Context에 "Range" 값이 있으면 그걸 쓰고, 없으면 이 값을 씀)
+	// 탐색 범위. -1이면 DT OptionValues의 "Radius"(없으면 2000), 0 이상이면 이 값.
+	// Context.Radius(장판/투사체 크기)와는 다른 값이라 OptionValues에서 읽는다
 	UPROPERTY(EditAnywhere)
-	float DefaultSearchRadius = 2000.0f;
+	float DefaultSearchRadius = -1.0f;
 
 	
 };

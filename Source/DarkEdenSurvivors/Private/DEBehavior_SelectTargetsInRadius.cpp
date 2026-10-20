@@ -16,6 +16,20 @@ void UDEBehavior_SelectTargetsInRadius::Execute(FDESkillContext& Context)
     if (!Context.Instigator) return;
     UWorld* World = Context.Instigator->GetWorld();
 
+    // 맵 전체 검색: 스폰 매니저가 들고 있는 활성 몬스터를 그대로 쓴다
+    if (bTargetAllMonsters)
+    {
+        Context.Targets.Reset();
+        if (ADEGameMode_Stage* GameMode = Cast<ADEGameMode_Stage>(UGameplayStatics::GetGameMode(World)))
+        {
+            if (ADEMonsterSpawnManager* SpawnManager = GameMode->GetMonsterSpawnManager())
+            {
+                Context.Targets.Append(SpawnManager->GetActiveMonsters());
+            }
+        }
+        return;
+    }
+
     // 1. 중심점 리스트(CenterPoints) 수집
     TArray<FVector> CenterPoints;
 
@@ -48,28 +62,7 @@ void UDEBehavior_SelectTargetsInRadius::Execute(FDESkillContext& Context)
     TArray<AActor*> RawResults; // 중복 허용 그릇
     TSet<AActor*> UniqueResults; // 중복 방지 그릇
 
-    //float FinalRadius = Context.GetValue(TEXT("Radius"), Radius);
-    float FinalRadius = (this->Radius==-1.0f) ? this->Radius : Context.Radius;
-    //float FinalRadius = (Context.Radius != 0.f) ? Context.Radius : this->Radius;
-
-   // UE_LOG(LogTemp, Error, TEXT("Try Select In Radius"));
-
-    // ★ 반경이 0 미만(-1)일 때: 맵 전체 몬스터 검색
-    if (FinalRadius < 0.f)
-    {
-        //UE_LOG(LogTemp, Error, TEXT("Search Radius is -1, Targetting All Active Monsters"));
-        // 1. 게임모드를 캐스팅해서 가져옴
-        if (ADEGameMode_Stage* GameMode = Cast<ADEGameMode_Stage>(UGameplayStatics::GetGameMode(World)))
-        {
-            // 2. 게임모드가 들고 있는 스폰 매니저를 가져옴
-            if (ADEMonsterSpawnManager* SpawnManager = GameMode->GetMonsterSpawnManager())
-            {
-                // 3. 매니저가 들고 있는 활성화된 몬스터 리스트를 그대로 복사! (초고속 O(1))
-                Context.Targets.Append(SpawnManager->GetActiveMonsters()); // THIS ADDS, ADDS NOT COPYING
-            }
-        }
-        return; // 광역 검색 끝났으니 리턴
-    }
+    const float FinalRadius = ResolveOverride(Radius, Context.Radius);
 
     const UDEMonsterQuerySubsystem* Query = World->GetSubsystem<UDEMonsterQuerySubsystem>();
     if (!Query) return;

@@ -76,6 +76,12 @@
 - [ ] `InstantDamage`에서 `HitCount`/`HitInterval`을 BP에 넣어둔 스킬이 있는지. 전엔 무시됐는데 이제 그만큼 때린다
 - [ ] HitCount 3, HitInterval 0.2 정도로 하나 만들어서: 3번 맞는지, 첫 타격에 죽은 몬스터 자리에 새로 나온 몬스터가 맞지 않는지
 - [ ] BP 컴파일: `PlayEffect::TargetType`, `FireProjectileRadial::ProjectileClass`, `SelectNearestTarget::EnemyTag`, `SelectTargetsInRadius::VectorKeyName`/`bIgnoreInstigator`를 삭제했다 (BP 그래프에서 읽을 수 없는 EditAnywhere 전용이라 에러는 안 날 것)
+- [ ] **값 우선순위 규칙 변경 확인** (프로퍼티 -1이면 DT, 0 이상이면 덮어씀). 기본값을 -1로 바꿔서 손대지 않은 BP는 대체로 그대로지만, 아래는 동작이 바뀔 수 있다:
+  - `SelectTargetsInRadius`에서 **Radius를 -1로 넣어 맵 전체를 노린 BP 스킬**: 이제 `bTargetAllMonsters`를 체크해야 한다 (안 하면 DT 반경으로 검색). 레거시 C++ BloodyScarify/BloodySpear는 이전함
+  - `SelectTargetsInRadius`에서 Radius를 직접 넣어둔 BP와 레거시 DeathSentence/Executioner(800): 전엔 무시되고 DT Radius를 썼는데, 이제 그 값으로 검색한다
+  - `CullByCone` 스킬: 전엔 DT Radius가 0이면 150으로 대체됐는데, 이제 0이면 아무도 안 맞는다. 해당 스킬 DT의 Radius 확인
+  - `SelectNearestTarget`의 DefaultSearchRadius를 넣어둔 BP와 레거시 AcidBolt(800)/DeadlyGround/GoreGland(1000): 전엔 DT OptionValues `"Radius"`가 있으면 그게 이겼는데, 이제 프로퍼티가 이긴다
+  - `ApplyStatusEffect`의 Interval을 넣어둔 BP와 레거시 BloodyScarify(0): 전엔 DT `"Interval"`이 있으면 그게 이겼는데, 이제 프로퍼티가 이긴다
 - [ ] AcidBolt가 지금 어떻게 동작하는지: 스킬 클래스가 C++ `DESkill_AcidBolt`인지 BP인지, BP라면 `FireProjectileRadial`의 `ProjectileClasses`를 채웠는지
 
 ## AOE
