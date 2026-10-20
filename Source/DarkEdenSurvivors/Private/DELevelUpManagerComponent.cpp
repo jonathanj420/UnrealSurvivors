@@ -348,9 +348,11 @@ TArray<UDELevelUpChoiceBase*> UDELevelUpManagerComponent::GenerateChestRewards(f
     }
 
     // 3. 남은 자리 채우기 (기존에 가진 스킬/악세 중에서만 레벨업)
+    TMap<int32, int32> PlannedSkillLevels;
+    TMap<const UDEAccessoryData*, int32> PlannedAccessoryLevels;
     for (int32 i = 0; i < RewardCount; ++i)
     {
-        if (UDELevelUpChoiceBase* UpgradeChoice = GetRandomUpgradableChoice(ConsumedSkillIDs))
+        if (UDELevelUpChoiceBase* UpgradeChoice = GetRandomUpgradableChoice(ConsumedSkillIDs, PlannedSkillLevels, PlannedAccessoryLevels))
         {
             ChestRewards.Add(UpgradeChoice);
         }
@@ -426,7 +428,8 @@ UDELevelUpChoice_Skill* UDELevelUpManagerComponent::TryGetEvolutionChoice()
 
 }
 
-UDELevelUpChoiceBase* UDELevelUpManagerComponent::GetRandomUpgradableChoice(const TArray<int32>& ExcludedSkillIDs)
+UDELevelUpChoiceBase* UDELevelUpManagerComponent::GetRandomUpgradableChoice(const TArray<int32>& ExcludedSkillIDs,
+    TMap<int32, int32>& PlannedSkillLevels, TMap<const UDEAccessoryData*, int32>& PlannedAccessoryLevels)
 {
     APawn* OwnerPawn = Cast<APawn>(GetOwner());
     if (!OwnerPawn) return nullptr;
@@ -448,7 +451,8 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::GetRandomUpgradableChoice(cons
     {
         // Pair.Key는 SkillID, Pair.Value는 FActiveSkill 구조체라고 가정
         int32 SkillID = Pair.Key;
-        if (SkillMgr->CanLevelUp(SkillID) && !ExcludedSkillIDs.Contains(SkillID))
+        const int32 PlannedLevel = SkillMgr->GetSkillLevel(SkillID) + PlannedSkillLevels.FindRef(SkillID);
+        if (SkillMgr->HasSkillData(SkillID, PlannedLevel + 1) && !ExcludedSkillIDs.Contains(SkillID))
         {
             UpgradableSkillIDs.Add(SkillID);
         }
@@ -461,7 +465,7 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::GetRandomUpgradableChoice(cons
     for (const auto& Pair : EquippedAcc)
     {
         const UDEAccessoryData* AccData = Pair.Key;
-        int32 CurrentLevel = Pair.Value;
+        int32 CurrentLevel = Pair.Value + PlannedAccessoryLevels.FindRef(AccData);
 
         if (AccData && CurrentLevel < AccData->MaxLevel)
         {
@@ -489,9 +493,10 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::GetRandomUpgradableChoice(cons
         int32 PickedSkillID = UpgradableSkillIDs[RandomIndex];
         const FDESkillRow* Row = SkillMgr->GetSkillRow(PickedSkillID);
 
-        // ★ [추가] 현재 레벨 파악 & 다음 레벨 데이터 가져오기
-        int32 CurrentLevel = SkillMgr->GetSkillLevel(PickedSkillID);
-        int32 TargetLevel = CurrentLevel + 1;
+        // 같은 상자에서 이미 뽑힌 레벨업까지 반영한 다음 레벨
+        int32& PlannedCount = PlannedSkillLevels.FindOrAdd(PickedSkillID);
+        ++PlannedCount;
+        int32 TargetLevel = SkillMgr->GetSkillLevel(PickedSkillID) + PlannedCount;
 
         FText DisplayDescription;
         const FDESkillData* DataRow = SkillMgr->GetSkillDataRow(PickedSkillID, TargetLevel);
@@ -520,6 +525,7 @@ UDELevelUpChoiceBase* UDELevelUpManagerComponent::GetRandomUpgradableChoice(cons
         // [장신구 당첨!] 무기 개수를 뺀 나머지 인덱스면 장신구임
         int32 AccIndex = RandomIndex - UpgradableSkillIDs.Num();
         const UDEAccessoryData* PickedAcc = UpgradableAccessories[AccIndex];
+        ++PlannedAccessoryLevels.FindOrAdd(PickedAcc);
 
         UDELevelUpChoice_Accessory* Choice = NewObject<UDELevelUpChoice_Accessory>(this);
         Choice->Init(PickedAcc);

@@ -122,7 +122,9 @@ private:
     UDELevelUpChoice_Skill* TryGetEvolutionChoice();
 
     // 3단계: 현재 가진 스킬/악세 중 '만렙이 아닌 녀석' 하나를 랜덤으로 뽑기
-    UDELevelUpChoiceBase* GetRandomUpgradableChoice(const TArray<int32>& ExcludedSkillIDs);
+    // 상자 보상은 한꺼번에 적용되므로, 같은 상자에서 앞서 뽑힌 레벨업(Planned*)을 현재 레벨에 더해서 본다. 뽑은 것은 Planned*에 더한다
+    UDELevelUpChoiceBase* GetRandomUpgradableChoice(const TArray<int32>& ExcludedSkillIDs,
+        TMap<int32, int32>& PlannedSkillLevels, TMap<const UDEAccessoryData*, int32>& PlannedAccessoryLevels);
 
     // 4단계: 다 만렙일 때 줄 꽝 보상 (돈 주머니, 체력 회복 등)
     UDELevelUpChoiceBase* GetFallbackChoice();
