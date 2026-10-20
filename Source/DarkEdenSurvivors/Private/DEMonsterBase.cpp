@@ -245,6 +245,17 @@ void ADEMonsterBase::ResetMonster(const FDEMonsterData* Data, const FDEMonsterSt
 	MoveBlockCount = 0;
 	bCanMove = true;
 }
+void ADEMonsterBase::SetSkeletalMeshActive(bool bActive)
+{
+	Mesh->SetVisibility(bActive);
+	Mesh->SetComponentTickEnabled(bActive);
+}
+
+FTransform ADEMonsterBase::GetRenderTransform() const
+{
+	return Mesh->GetRelativeTransform() * GetActorTransform();
+}
+
 void ADEMonsterBase::ResetForPool()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Reset For Pool"));

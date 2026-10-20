@@ -22,7 +22,7 @@ public class DarkEdenSurvivors : ModuleRules
             "AIModule"
         });
 
-		PrivateDependencyModuleNames.AddRange(new string[] {"DarkEdenSurvivorsSetting" });
+		PrivateDependencyModuleNames.AddRange(new string[] {"DarkEdenSurvivorsSetting", "AnimToTexture" });
 
 		PublicIncludePaths.AddRange(new string[] {
 			"DarkEdenSurvivors",

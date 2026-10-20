@@ -103,6 +103,10 @@ public:
 	FOnMonsterDeath OnMonsterDeath;
 	// Scale은 스테이지 난이도 곡선과 Curse (ADEGameMode_Stage::GetMonsterStatScale). DT 값에 곱한다
 	void ResetMonster(const struct FDEMonsterData* Data, const FDEMonsterStatScale& Scale = FDEMonsterStatScale());
+	// VAT(ISM)로 그릴 때는 SkeletalMesh를 숨기고 Tick을 끈다. UDEMonsterRenderComponent가 스폰마다 부른다
+	void SetSkeletalMeshActive(bool bActive);
+	// ISM 인스턴스 트랜스폼. SkeletalMesh 컴포넌트의 상대 트랜스폼(MeshZOffset, BP에서 준 회전)을 그대로 따른다
+	FTransform GetRenderTransform() const;
 	// 이동불가 효과마다 Add/Remove를 한 번씩 부른다. 서로 다른 효과가 겹쳐도 마지막 효과가 풀릴 때만 움직인다
 	void AddMoveBlock();
 	void RemoveMoveBlock();

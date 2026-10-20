@@ -81,6 +81,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
 	TSoftObjectPtr<UAnimSequence> WalkAnim;
 
+	// AnimToTexture로 구운 VAT 데이터. 지정하면 MonsterMesh 대신 이 에셋의 StaticMesh를 ISM 인스턴스로 그린다 (UDEMonsterRenderComponent).
+	// 비어 있거나 보스면 MonsterMesh(SkeletalMesh)로 그린다
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
+	TSoftObjectPtr<class UAnimToTextureDataAsset> VATData;
+
+	// VATData의 Animations 중 반복 재생할 것 (걷기)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
+	int32 VATAnimationIndex = 0;
+
 	// 메쉬마다 중심점이 다르니 높이 보정용
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Visual")
 	float MeshZOffset = 0.0f; // 예: -90.0f

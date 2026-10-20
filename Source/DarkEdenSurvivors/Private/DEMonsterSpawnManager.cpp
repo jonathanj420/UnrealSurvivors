@@ -11,6 +11,8 @@
 #include "DEGameInstance.h"
 #include "DEGameMode_Stage.h"
 #include "DEMonsterUpdateComponent.h"
+#include "DEMonsterRenderComponent.h"
+#include "AnimToTextureDataAsset.h"
 #include "DEPickupManager.h"
 
 ADEMonsterSpawnManager::ADEMonsterSpawnManager()
@@ -25,6 +27,7 @@ ADEMonsterSpawnManager::ADEMonsterSpawnManager()
     USceneComponent* RootSceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootScene"));
     RootComponent = RootSceneComponent;
     MonsterUpdateComponent = CreateDefaultSubobject<UDEMonsterUpdateComponent>(TEXT("MonsterUpdater"));
+    MonsterRenderComponent = CreateDefaultSubobject<UDEMonsterRenderComponent>(TEXT("MonsterRenderer"));
 }
 
 void ADEMonsterSpawnManager::BeginPlay()
@@ -138,6 +141,8 @@ void ADEMonsterSpawnManager::Tick(float DeltaTime)
         }
     }
 
+    // 이동, 재배치, 스폰, 사망 처리가 다 끝난 위치로 그린다
+    MonsterRenderComponent->UpdateInstances();
 
 }
 
@@ -435,6 +440,8 @@ ADEMonsterBase* ADEMonsterSpawnManager::SpawnFromPool(FVector& Location, const F
     SpawnedMonster->SetActorLocationAndRotation(Location, FRotator::ZeroRotator, false, nullptr, ETeleportType::TeleportPhysics);
     // 난이도 곡선은 스폰 시점의 경과 시간으로 정한다. 살아 있는 몬스터는 다시 계산하지 않는다
     SpawnedMonster->ResetMonster(DataToApply, GameMode ? GameMode->GetMonsterStatScale() : FDEMonsterStatScale());
+    // ResetMonster가 메시 위치(MeshZOffset)를 맞춘 뒤에 인스턴스를 만든다
+    MonsterRenderComponent->AssignMonster(SpawnedMonster, DataToApply);
 
     ActiveMonsters.Add(SpawnedMonster);
     return SpawnedMonster;
@@ -445,6 +452,7 @@ void ADEMonsterSpawnManager::ReturnMonsterToPool(ADEMonsterBase* Monster)
 {
     if (!Monster) return;
 
+    MonsterRenderComponent->ReleaseMonster(Monster);
     Monster->ResetForPool();
 
     Monster->SetActorLocation(FVector::ZeroVector);
@@ -571,6 +579,19 @@ void ADEMonsterSpawnManager::PreloadMonsterResources()
             if (!MData->MonsterMesh.IsNull())
             {
                 AssetsToLoad.Add(MData->MonsterMesh.ToSoftObjectPath());
+            }
+
+            // VAT: DataAsset은 작아서 여기서 바로 읽고, 그 안의 StaticMesh(머티리얼, VAT 텍스처 포함)를 같이 비동기로 받는다
+            if (!MData->VATData.IsNull())
+            {
+                AssetsToLoad.Add(MData->VATData.ToSoftObjectPath());
+                if (const UAnimToTextureDataAsset* VATData = MData->VATData.LoadSynchronous())
+                {
+                    if (!VATData->StaticMesh.IsNull())
+                    {
+                        AssetsToLoad.Add(VATData->StaticMesh.ToSoftObjectPath());
+                    }
+                }
             }
         }
     }

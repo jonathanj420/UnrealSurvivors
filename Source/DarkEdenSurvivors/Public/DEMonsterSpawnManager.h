@@ -13,6 +13,7 @@
 
 class ADEGameMode_Stage;
 class UDEMonsterUpdateComponent;
+class UDEMonsterRenderComponent;
 class ADEMonsterBase;
 class UDEGameInstance;
 
@@ -116,4 +117,7 @@ private:
     // UPROPERTY 추가
     UPROPERTY(VisibleAnywhere, Category = "Components")
     UDEMonsterUpdateComponent* MonsterUpdateComponent;
+
+    UPROPERTY(VisibleAnywhere, Category = "Components")
+    UDEMonsterRenderComponent* MonsterRenderComponent;
 };
