@@ -119,23 +119,23 @@ void ADEMonsterBase::UpdateKnockback(float DeltaTime)
 	}
 }
 
-void ADEMonsterBase::SetCanMove(bool bNewCanMove)
+void ADEMonsterBase::AddMoveBlock()
 {
-	bCanMove = bNewCanMove;
+	++MoveBlockCount;
+	bCanMove = false;
+	// 멈춤 연출(VAT 재생 정지, 석화 색)은 상태가 바뀌는 이 지점에 넣는다
+}
 
-	// ★ [핵심] 상태가 변하는 이 '순간'에 시각적 처리를 몰아넣습니다!
-	if (!bCanMove) // 스턴(석화) 걸림
+void ADEMonsterBase::RemoveMoveBlock()
+{
+	if (MoveBlockCount <= 0)
 	{
-		// 1. VAT 애니메이션 시간 정지 (예시)
-		// MeshComp->SetScalarParameterValueOnMaterials(TEXT("PlayRate"), 0.0f);
+		UE_LOG(LogDarkEdenSurvivors, Warning, TEXT("[Monster] RemoveMoveBlock without a matching AddMoveBlock: %s"), *GetName());
+		return;
+	}
 
-		// 2. 돌덩이 텍스처(Lerp) 켜기 (예시)
-		// MeshComp->SetScalarParameterValueOnMaterials(TEXT("IsPetrified"), 1.0f);
-	}
-	else // 스턴 풀림
-	{
-		// 원래 색상 및 애니메이션 속도 복구
-	}
+	--MoveBlockCount;
+	bCanMove = (MoveBlockCount == 0);
 }
 float ADEMonsterBase::GetCollisionRadius() const
 {
@@ -237,6 +237,9 @@ void ADEMonsterBase::ResetMonster(const FDEMonsterData* Data, const FDEMonsterSt
 	SetActorTickEnabled(false);
 	bIsAlive = true;
 	bIsDying = false;
+	// 상태이상은 ExecuteFinalDeath의 RemoveAllEffects로 이미 풀려 있어야 한다. 경로가 빠져도 재사용된 몬스터가 멈춰 있지 않게
+	MoveBlockCount = 0;
+	bCanMove = true;
 }
 void ADEMonsterBase::ResetForPool()
 {

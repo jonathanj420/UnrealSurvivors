@@ -2,6 +2,7 @@
 
 
 #include "DEStatusEffectComponent.h"
+#include "DarkEdenSurvivors.h"
 #include "DEStatusEffectBase.h"
 #include "GameFramework/Actor.h"
 
@@ -99,9 +100,14 @@ void UDEStatusEffectComponent::AddEffect(TSubclassOf<UDEStatusEffectBase> Effect
 			return;
 
 		case EStackPolicy::Refresh:
+		{
+			// 남은 시간과 새 지속시간 중 긴 쪽으로. 0 이하는 무한
+			const float Remaining = Existing->Duration - Existing->ElapsedTime;
+			Existing->Duration = (Existing->Duration <= 0.f || Duration < 0.f) ? -1.f : FMath::Max(Remaining, Duration);
 			Existing->ElapsedTime = 0.f;
 			Existing->Power = FMath::Max(Existing->Power, Power);
 			return;
+		}
 
 		case EStackPolicy::Stack:
 			// (참고: CDO에 MaxStacks 변수가 있다고 가정합니다)
@@ -208,7 +214,7 @@ void UDEStatusEffectComponent::RemoveAllEffects()
 		{
 			// 싹 다 원상복구 로직 실행
 			EffectData.EffectDef->OnRemove(OwnerActor.Get(), EffectData);
-			UE_LOG(LogTemp, Warning, TEXT("Status Effect : %s Removed by RemoveAllEffects"), *EffectData.EffectDef->GetName());
+			UE_LOG(LogDarkEdenSurvivors, Verbose, TEXT("Status Effect : %s Removed by RemoveAllEffects"), *EffectData.EffectDef->GetName());
 		}
 	}
 

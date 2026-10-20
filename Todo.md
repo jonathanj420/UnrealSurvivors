@@ -125,7 +125,9 @@
   - 벽 사이 틈이 몬스터 지름보다 넓으면 그 틈으로는 들어온다. 링 밀도는 범위 안 몬스터 수에 달려 있다
 - [x] BloodDrain 데미지는 대상 최대 HP의 % (`DrainDamagePercent`, 기본 0.3). 회복량은 마리당 고정 `DrainAmountPerMonster` 그대로. 면역은 몬스터 DT 행의 `bImmuneToBloodDrain`, 보스는 이 값과 상관없이 항상 면역 (개발자 결정, 2026-10-20)
 - [ ] BloodDrain 특화 빌드(범위 증가 퍽/악세서리) 구상 중. 지금 `DrainRadius`/`StunDuration`/데미지는 고정값이라 스탯(AreaSize 등)을 받지 않는다
-- [ ] 이동불가가 `bCanMove` bool 하나라 서로 다른 스턴 클래스가 겹치면 먼저 끝난 쪽이 풀어 버린다. 같은 클래스는 `StackPolicy::Ignore`(기본)라 나중 스턴의 더 긴 시간이 무시된다
+- [x] 몬스터 이동불가를 카운터로 (`AddMoveBlock`/`RemoveMoveBlock`, `bCanMove`는 카운터가 0일 때만 true). 서로 다른 이동불가 효과가 겹쳐도 마지막 것이 풀릴 때 움직인다. `ResetMonster`에서 0으로
+  - `UDEStatusEffect_Stun`의 스택 정책을 `Refresh`로. `Refresh`는 이제 남은 시간과 새 지속시간 중 긴 쪽을 쓴다 (전엔 경과 시간만 0으로 돌려 옛 Duration을 다시 셌다. Refresh를 쓰던 효과는 없었음). BloodDrain 중 GlareOfBasilisk 스턴이 짧게 걸려도 배리어가 먼저 풀리지 않는다
+  - 플레이어의 `ADECharacterBase::SetCanMove`는 BloodDrain 하나만 써서 그대로 둠
 - [x] `ADEMonsterBase::TakeDamage`/`ADECharacterBase::TakeDamage` 오버라이드 삭제 (Content 참조 0)
 - [ ] 글로벌 OnPreHit(`ApplyCombatDamage`)이 DoT 틱과 처형에도 걸린다. 상태이상 피해 보정은 DoT를 제외하는데 글로벌 PreHit은 안 한다. 의도인지 결정. 글로벌 `PreHitData`에는 `SourceObject`/`SourceContext`가 없어 스킬별 조건 PreHit은 만들 수 없다
 - [x] 죽은 코드 삭제: `ADEMonsterBase::Die`(`StartDying`과 중복), `UDEHealthComponent::InstantKill`(킬 집계를 안 거침. 에셋의 "InstantKill"은 태그 `Damage.Mechanic.InstantKill`뿐), 몬스터의 빈 `OnOverlapBegin`, 안 쓰는 `Root`/`TestMesh`/`TargetPlayer`

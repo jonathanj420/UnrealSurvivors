@@ -100,10 +100,15 @@ public:
 	FOnMonsterDeath OnMonsterDeath;
 	// Scale은 스테이지 난이도 곡선과 Curse (ADEGameMode_Stage::GetMonsterStatScale). DT 값에 곱한다
 	void ResetMonster(const struct FDEMonsterData* Data, const FDEMonsterStatScale& Scale = FDEMonsterStatScale());
-	void SetCanMove(bool bNewCanMove);
+	// 이동불가 효과마다 Add/Remove를 한 번씩 부른다. 서로 다른 효과가 겹쳐도 마지막 효과가 풀릴 때만 움직인다
+	void AddMoveBlock();
+	void RemoveMoveBlock();
 
-	// 매니저가 고속으로 읽어갈 상태 플래그
+	// 매니저가 고속으로 읽어갈 상태 플래그. MoveBlockCount가 0일 때만 true
 	bool bCanMove = true;
+private:
+	int32 MoveBlockCount = 0;
+public:
 
 	bool IsAlive() const;
 protected:

@@ -186,6 +186,8 @@
 - [ ] 스킬 BP의 `LocalEffects`에 Execution을 단 게 있으면, 처형 킬에서 Output Log에 `SourceObject null` Warning이 더는 안 뜨는지 확인
 - [ ] BloodDrain 시전 중 범위 안 몬스터가 실제로 멈추는지, 바깥 몬스터가 링을 밀고 들어오지 않는지 확인. 몬스터가 많을 때 벽 앞에서 떨리거나 겹쳐 보이면 알려줘
 - [ ] 석화/스턴 스킬(GlareOfBasilisk 등)에 걸린 몬스터도 이제 다른 몬스터를 막는 벽이 된다. 의도와 맞는지 확인
+- [ ] BloodDrain 시전 중에 GlareOfBasilisk로 같은 몬스터를 석화: 석화 시간이 짧아도 배리어 몬스터가 BloodDrain 스턴 시간까지 멈춰 있는지. 반대로 석화가 더 길면 그만큼 멈춰 있는지
+- [ ] 스턴 걸린 채 죽은 몬스터가 풀에서 다시 나올 때 정상적으로 움직이는지. Output Log에 `RemoveMoveBlock without a matching AddMoveBlock`이 뜨면 알려줘
 - [ ] `NS_BloodDrainCustom`에 float User Parameter `DrainDuration`(시전 시간, 초) 추가. 흐름이 플레이어에게 모이는 시점을 이 값에 맞추면 마무리 데미지와 맞는다. 위치 배열은 기존 `MonsterPosi`, 플레이어는 `PlayerPosition`
 - [ ] 몬스터 DT에서 보스 행의 `MonsterRank`가 Boss인지 확인. 이제 DT 값이 몬스터에 들어가고, Boss면 광흡 대상에서 빠진다
 - [ ] 몬스터 DT에서 광흡 면역으로 할 엘리트 행에 `bImmuneToBloodDrain` 체크 (새 컬럼, 기본 false)
