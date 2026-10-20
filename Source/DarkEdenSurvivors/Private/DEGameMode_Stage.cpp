@@ -10,6 +10,9 @@
 #include "DEGameInstance.h"
 #include "DECombatComponent.h"
 #include "DECharacterRow.h"
+#include "DECharacterBase.h"
+#include "DEStatComponent.h"
+#include "DEStatTypes.h"
 #include "DarkEdenSurvivors.h"
 
 ADEGameMode_Stage::ADEGameMode_Stage()
@@ -55,12 +58,32 @@ void ADEGameMode_Stage::Tick(float DeltaTime)
 
 float ADEGameMode_Stage::GetMonsterHPMultiplier() const
 {
-    return EvaluateDifficultyCurve(MonsterHPCurve);
+    return EvaluateDifficultyCurve(MonsterHPCurve) * GetCurseMultiplier();
 }
 
 float ADEGameMode_Stage::GetMonsterDamageMultiplier() const
 {
-    return EvaluateDifficultyCurve(MonsterDamageCurve);
+    return EvaluateDifficultyCurve(MonsterDamageCurve) * GetCurseMultiplier();
+}
+
+float ADEGameMode_Stage::GetCurseMultiplier() const
+{
+    // Curse 스탯은 기본 1 (저주 없음). 멀티에서는 파티 중 가장 높은 값을 쓴다
+    float Curse = 1.0f;
+    bool bFound = false;
+
+    for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+    {
+        const ADECharacterBase* Player = It->IsValid() ? Cast<ADECharacterBase>((*It)->GetPawn()) : nullptr;
+        const UDEStatComponent* Stats = Player ? Player->GetStatComponent() : nullptr;
+        if (!Stats) continue;
+
+        const float PlayerCurse = Stats->GetStatValue(EDEStatType::Curse);
+        Curse = bFound ? FMath::Max(Curse, PlayerCurse) : PlayerCurse;
+        bFound = true;
+    }
+
+    return FMath::Max(Curse, 0.01f);
 }
 
 float ADEGameMode_Stage::EvaluateDifficultyCurve(const FRuntimeFloatCurve& Curve) const

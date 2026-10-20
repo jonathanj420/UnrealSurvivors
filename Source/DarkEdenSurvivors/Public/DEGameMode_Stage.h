@@ -37,9 +37,10 @@ public:
 
     int32 GetSpawnLimit() const { return SpawnLimit; }
 
-    // 난이도 곡선: 지금 경과 시간(분)에서 새로 스폰되는 몬스터에 곱할 배율. 커브가 비어 있으면 1
+    // 난이도 곡선: 지금 경과 시간(분)에서 새로 스폰되는 몬스터에 곱할 배율. 커브가 비어 있으면 1. 플레이어 Curse 스탯을 곱한다
     float GetMonsterHPMultiplier() const;
     float GetMonsterDamageMultiplier() const;
+    float GetCurseMultiplier() const;
 
 protected:
     // X: 경과 시간(분), Y: DT 값에 곱할 배율. Class Defaults에서 직접 그리거나 CurveFloat 에셋을 지정한다
