@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "GameplayTagContainer.h"
 #include "DEPickupBase.h"
 #include "DEMonsterData.generated.h"
 
@@ -65,6 +66,9 @@ public:
 	// 광흡(BloodDrain) 면역. 보스는 이 값과 상관없이 항상 면역
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "System")
 	bool bImmuneToBloodDrain = false;
+	// 상태이상 면역. 효과의 StatusTags와 하나라도 겹치면 걸리지 않는다 (예: Status.Debuff.Stun)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "System", meta = (Categories = "Status"))
+	FGameplayTagContainer ImmuneStatusTags;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "System")
 	TSoftClassPtr<class ADEMonsterBase> OverrideClass;
 

@@ -179,6 +179,10 @@ void ADEMonsterBase::ResetMonster(const FDEMonsterData* Data, const FDEMonsterSt
 	// 한 클래스가 여러 DT 행을 쓰므로 등급은 BP 기본값이 아니라 행에서 가져온다
 	MonsterRank = Data->MonsterRank;
 	bImmuneToBloodDrain = Data->bImmuneToBloodDrain || MonsterRank == EDEMonsterRank::Boss;
+	if (StatusEffectComponent)
+	{
+		StatusEffectComponent->SetImmuneTags(Data->ImmuneStatusTags);
+	}
 
 	//mesh for later
 	// 1. 메쉬 교체 (Get() 사용 - 미리 로드되어 있어야 함)
